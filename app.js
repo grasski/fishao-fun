@@ -463,32 +463,182 @@
     }
   }
 
-  async function editNickname() {
+  // -------------------------------------------------------------
+  // Profile, Avatar & Custom Dialogs (GDPR & UX)
+  // -------------------------------------------------------------
+
+  var selectedProfilePresetEmoji = "🎣";
+  var confirmModalResolver = null;
+  var appToastTimer = null;
+
+  function showToast(msg, type) {
+    var toast = document.getElementById("appToast");
+    if (!toast) return;
+    if (appToastTimer) {
+      clearTimeout(appToastTimer);
+      appToastTimer = null;
+    }
+    toast.className = "app-toast " + (type || "");
+    toast.innerText = msg;
+    toast.style.display = "inline-flex";
+    appToastTimer = setTimeout(function () {
+      toast.style.display = "none";
+    }, 3500);
+  }
+
+  function showConfirmModal(title, message, confirmText, isDanger) {
+    return new Promise(function (resolve) {
+      confirmModalResolver = resolve;
+      var titleEl = document.getElementById("confirmModalTitle");
+      var msgEl = document.getElementById("confirmModalMessage");
+      var btnEl = document.getElementById("confirmModalBtnConfirm");
+      var overlay = document.getElementById("confirmModalOverlay");
+
+      if (titleEl) titleEl.innerText = title || "Potvrzení";
+      if (msgEl) msgEl.innerText = message || "";
+      if (btnEl) {
+        btnEl.innerText = confirmText || t('confirm_btn');
+        btnEl.className = "pill-btn active " + (isDanger ? "danger" : "purple");
+      }
+      if (overlay) overlay.style.display = "flex";
+    });
+  }
+
+  function resolveConfirmModal(result) {
+    var overlay = document.getElementById("confirmModalOverlay");
+    if (overlay) overlay.style.display = "none";
+    if (typeof confirmModalResolver === "function") {
+      confirmModalResolver(Boolean(result));
+      confirmModalResolver = null;
+    }
+  }
+
+  function openProfileModal() {
+    if (!currentUser) {
+      signIn();
+      return;
+    }
+    var overlay = document.getElementById("profileModalOverlay");
+    var nickInput = document.getElementById("inputProfileNickname");
+    var urlInput = document.getElementById("inputProfileAvatarUrl");
+
+    var curName = (userProfile && userProfile.displayName) ? userProfile.displayName : "";
+    var curAv = (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "🎣";
+
+    if (nickInput) nickInput.value = curName;
+
+    if (curAv.startsWith("http://") || curAv.startsWith("https://")) {
+      if (urlInput) urlInput.value = curAv;
+      selectedProfilePresetEmoji = "🎣";
+      updateProfileModalPreview(curAv);
+    } else {
+      if (urlInput) urlInput.value = "";
+      selectedProfilePresetEmoji = curAv || "🎣";
+      updateProfileModalPreview(selectedProfilePresetEmoji);
+    }
+
+    var btns = document.querySelectorAll(".emoji-pick-btn");
+    btns.forEach(function (b) {
+      b.classList.toggle("active", b.innerText.trim() === selectedProfilePresetEmoji);
+    });
+
+    if (overlay) overlay.style.display = "flex";
+  }
+
+  function closeProfileModal() {
+    var overlay = document.getElementById("profileModalOverlay");
+    if (overlay) overlay.style.display = "none";
+  }
+
+  function selectPresetAvatar(emoji) {
+    selectedProfilePresetEmoji = emoji;
+    var urlInput = document.getElementById("inputProfileAvatarUrl");
+    if (urlInput) urlInput.value = "";
+    var btns = document.querySelectorAll(".emoji-pick-btn");
+    btns.forEach(function (b) {
+      b.classList.toggle("active", b.innerText.trim() === emoji);
+    });
+    updateProfileModalPreview(emoji);
+  }
+
+  function onAvatarUrlInput(val) {
+    var trimmed = (val || "").trim();
+    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+      var btns = document.querySelectorAll(".emoji-pick-btn");
+      btns.forEach(function (b) { b.classList.remove("active"); });
+      updateProfileModalPreview(trimmed);
+    } else {
+      updateProfileModalPreview(selectedProfilePresetEmoji);
+    }
+  }
+
+  function updateProfileModalPreview(val) {
+    var img = document.getElementById("profilePreviewImg");
+    var badge = document.getElementById("profilePreviewBadge");
+    if (!img || !badge) return;
+
+    if (val.startsWith("http://") || val.startsWith("https://")) {
+      img.src = val;
+      img.style.display = "block";
+      badge.style.display = "none";
+    } else {
+      img.style.display = "none";
+      badge.innerText = val || "🎣";
+      badge.style.display = "flex";
+    }
+  }
+
+  async function saveProfile() {
     if (!currentUser || !db) return;
-    var currentName = (userProfile && userProfile.displayName) ? userProfile.displayName : "";
-    var newNick = prompt(t('prompt_edit_nickname'), currentName);
-    if (newNick === null) return;
-    newNick = newNick.trim();
+    var nickInput = document.getElementById("inputProfileNickname");
+    var urlInput = document.getElementById("inputProfileAvatarUrl");
+
+    var newNick = (nickInput ? nickInput.value : "").trim();
     if (newNick.length < 2) {
-      alert(t('nick_too_short'));
+      showToast(t('nick_too_short'), "error");
       return;
     }
     if (newNick.length > 40) {
-      alert("Přezdívka může mít maximálně 40 znaků.");
+      showToast("Přezdívka může mít maximálně 40 znaků.", "error");
       return;
+    }
+
+    var avatarUrlVal = (urlInput ? urlInput.value : "").trim();
+    var finalAvatar = "";
+    if (avatarUrlVal.startsWith("http://") || avatarUrlVal.startsWith("https://")) {
+      if (avatarUrlVal.length > 500) {
+        showToast("URL adresa je příliš dlouhá (max 500 znaků).", "error");
+        return;
+      }
+      finalAvatar = avatarUrlVal;
+    } else {
+      finalAvatar = selectedProfilePresetEmoji || "🎣";
     }
 
     try {
       var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
       var userDocRef = fsModule.doc(db, "users", currentUser.uid);
-      await fsModule.updateDoc(userDocRef, { displayName: newNick });
-      if (userProfile) userProfile.displayName = newNick;
-      var nameEl = document.getElementById("userName");
-      if (nameEl) nameEl.innerText = newNick;
+      await fsModule.updateDoc(userDocRef, {
+        displayName: newNick,
+        avatarUrl: finalAvatar
+      });
+
+      if (userProfile) {
+        userProfile.displayName = newNick;
+        userProfile.avatarUrl = finalAvatar;
+      }
+
+      closeProfileModal();
+      updateAuthUI();
+      showToast(t('profile_saved_success', 'Profil byl úspěšně uložen!'), "success");
     } catch (err) {
-      console.error("Failed to update nickname:", err);
-      alert("Chyba při ukládání přezdívky: " + err.message);
+      console.error("Failed to save profile:", err);
+      showToast("Chyba při ukládání: " + err.message, "error");
     }
+  }
+
+  function editNickname() {
+    openProfileModal();
   }
 
   // -------------------------------------------------------------
@@ -623,11 +773,11 @@
     var input = document.getElementById("newClubNameInput");
     var clubName = (name !== undefined ? name : (input ? input.value : "")).trim();
     if (clubName.length < 2) {
-      alert(t('club_name_too_short'));
+      showToast(t('club_name_too_short'), "error");
       return;
     }
     if (clubName.length > 40) {
-      alert("Název klubu může mít maximálně 40 znaků.");
+      showToast("Název klubu může mít maximálně 40 znaků.", "error");
       return;
     }
 
@@ -672,11 +822,11 @@
       });
 
       if (input) input.value = "";
-      alert(t('club_created_success', { name: clubName }));
+      showToast(t('club_created_success', { name: clubName }), "success");
       bindClubListener(newDocRef.id);
     } catch (err) {
       console.error("Failed to create club:", err);
-      alert("Chyba při vytváření klubu: " + err.message);
+      showToast("Chyba při vytváření klubu: " + err.message, "error");
     }
   }
 
@@ -686,7 +836,7 @@
       return;
     }
     if (currentClubId === clubId) {
-      alert("V tomto klubu již jsi!");
+      showToast("V tomto klubu již jsi!", "purple");
       return;
     }
 
@@ -694,6 +844,15 @@
       var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
 
       if (currentClubId) {
+        var targetClubName = clubName || "Klub";
+        var ok = await showConfirmModal(
+          t('club_btn_join'),
+          t('club_change_confirm', { current: currentClubName || 'Klub', target: targetClubName }),
+          t('club_btn_join'),
+          false
+        );
+        if (!ok) return;
+
         try {
           var oldClubRef = fsModule.doc(db, "clubs", currentClubId);
           var oldSnap = await fsModule.getDoc(oldClubRef);
@@ -713,7 +872,7 @@
       var newClubRef = fsModule.doc(db, "clubs", clubId);
       var newSnap = await fsModule.getDoc(newClubRef);
       if (!newSnap.exists()) {
-        alert(t('club_not_found'));
+        showToast(t('club_not_found'), "error");
         return;
       }
       var newCount = (newSnap.data().memberCount || 0) + 1;
@@ -729,17 +888,23 @@
         clubName: clubName || newSnap.data().name || "Klub"
       });
 
-      alert(t('club_joined_success', { name: clubName || newSnap.data().name }));
+      showToast(t('club_joined_success', { name: clubName || newSnap.data().name }), "success");
       bindClubListener(clubId);
     } catch (err) {
       console.error("Failed to join club:", err);
-      alert("Chyba při připojování ke klubu: " + err.message);
+      showToast("Chyba při připojování ke klubu: " + err.message, "error");
     }
   }
 
   async function leaveClub() {
     if (!currentUser || !db || !currentClubId) return;
-    if (!confirm(t('club_leave_confirm'))) return;
+    var ok = await showConfirmModal(
+      t('club_btn_leave'),
+      t('club_leave_confirm'),
+      t('club_btn_leave'),
+      true
+    );
+    if (!ok) return;
 
     try {
       var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
@@ -765,11 +930,11 @@
       });
 
       unbindClubListener();
-      alert(t('club_left_success'));
+      showToast(t('club_left_success'), "purple");
       searchClubs("");
     } catch (err) {
       console.error("Failed to leave club:", err);
-      alert("Chyba při opouštění klubu: " + err.message);
+      showToast("Chyba při opouštění klubu: " + err.message, "error");
     }
   }
 
@@ -949,6 +1114,24 @@
 
       var nameEl = document.getElementById("userName");
       if (nameEl) nameEl.innerText = (userProfile && userProfile.displayName) ? userProfile.displayName : t('user_default_player');
+
+      var avatarImg = document.getElementById("userAvatarImg");
+      var avatarBadge = document.getElementById("userAvatarBadge");
+      var uAv = (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "";
+      if (uAv && (uAv.startsWith("http://") || uAv.startsWith("https://"))) {
+        if (avatarImg) {
+          avatarImg.src = uAv;
+          avatarImg.style.display = "block";
+        }
+        if (avatarBadge) avatarBadge.style.display = "none";
+      } else {
+        if (avatarImg) avatarImg.style.display = "none";
+        if (avatarBadge) {
+          avatarBadge.innerText = uAv || "🎣";
+          avatarBadge.style.display = "flex";
+        }
+      }
+
       if (adminBadge) adminBadge.style.display = isAdmin ? "inline-block" : "none";
       var resetBtn = document.getElementById("btnResetPrices");
       if (resetBtn) resetBtn.style.display = isAdmin ? "inline-block" : "none";
@@ -978,6 +1161,8 @@
           if (acName) acName.innerText = currentClubName || "Klub";
           var acMemb = document.getElementById("activeClubMembers");
           if (acMemb) acMemb.innerText = t('club_active_members', { count: currentClubMemberCount });
+          var acPtsDisplay = document.getElementById("activeClubPtsDisplay");
+          if (acPtsDisplay) acPtsDisplay.innerText = currentClubPoints.toLocaleString(getLocale());
           var ptsManage = document.getElementById("clubPointsManageInput");
           if (ptsManage) ptsManage.value = currentClubPoints;
         } else {
@@ -1450,12 +1635,16 @@
   function closeAllModals() {
     closePriceModal();
     closeBulkModal();
+    closeProfileModal();
+    resolveConfirmModal(false);
   }
 
   function onModalOverlayClick(e, id) {
     if (e.target.id === id) {
       if (id === 'priceModalOverlay') closePriceModal();
       if (id === 'bulkModalOverlay') closeBulkModal();
+      if (id === 'profileModalOverlay') closeProfileModal();
+      if (id === 'confirmModalOverlay') resolveConfirmModal(false);
     }
   }
 
@@ -1970,7 +2159,7 @@
       if (btnP) btnP.classList.add("active");
       var sortEl = document.getElementById("sortBy");
       if (sortEl) sortEl.value = "price_desc";
-    } else if (view === "club") {
+    } else {
       filterOnlyPrice = false;
       var btnP2 = document.getElementById("btnOnlyPrice");
       if (btnP2) btnP2.classList.remove("active");
@@ -2564,6 +2753,13 @@
     signIn: signIn,
     signOut: signOut,
     editNickname: editNickname,
+    openProfileModal: openProfileModal,
+    closeProfileModal: closeProfileModal,
+    selectPresetAvatar: selectPresetAvatar,
+    onAvatarUrlInput: onAvatarUrlInput,
+    saveProfile: saveProfile,
+    resolveConfirmModal: resolveConfirmModal,
+    showToast: showToast,
     toggleCaughtFish: toggleCaughtFish,
     searchClubs: searchClubs,
     createClub: createClub,

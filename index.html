@@ -77,16 +77,17 @@
             </svg>
             <span data-i18n="sign_in">Přihlásit se</span>
           </button>
-          <div class="user-info-bar" id="userInfoBar" style="display: none;">
-            <div class="user-avatar-badge" id="userAvatarBadge" title="Profil hráče">🎣</div>
+          <div class="user-info-bar" id="userInfoBar" style="display: none;" onclick="window.fishaoApp.openProfileModal()" title="Upravit hráčský profil">
+            <img class="user-avatar-img" id="userAvatarImg" src="" alt="Avatar" style="display: none;" onerror="this.style.display='none'; document.getElementById('userAvatarBadge').style.display='flex';">
+            <div class="user-avatar-badge" id="userAvatarBadge">🎣</div>
             <div class="user-details">
               <div class="user-name-row">
                 <span class="user-name" id="userName" data-i18n="user_default">Uživatel</span>
-                <button class="edit-nick-btn" onclick="window.fishaoApp.editNickname()" title="Změnit přezdívku" data-i18n-title="prompt_edit_nickname">✏️</button>
+                <button class="edit-nick-btn" onclick="event.stopPropagation(); window.fishaoApp.openProfileModal()" title="Změnit přezdívku a avatar" data-i18n-title="modal_profile_title">✏️</button>
               </div>
               <span class="admin-badge" id="adminBadge" style="display: none;" data-i18n="admin_badge">🛡️ Admin</span>
             </div>
-            <button class="sign-out-btn" onclick="window.fishaoApp.signOut()" title="Odhlásit se" data-i18n="sign_out"
+            <button class="sign-out-btn" onclick="event.stopPropagation(); window.fishaoApp.signOut()" title="Odhlásit se" data-i18n="sign_out"
               data-i18n-title="sign_out">Odhlásit</button>
           </div>
         </div>
@@ -224,6 +225,17 @@
 
         <!-- STATE A: No Club Joined (Search & Join or Create) -->
         <div id="clubNoClubState" style="display: none;">
+          <!-- No Club Header Bar -->
+          <div class="view-action-bar purple" id="noClubBar" style="margin-bottom: 14px;">
+            <div class="action-bar-left">
+              <span class="action-bar-title" style="color: #c084fc;">🏰 <span data-i18n="club_join_title">Připojit se ke klubu nebo založit nový</span></span>
+              <span class="action-bar-hint">Najdi existující klub v seznamu nebo si založ vlastní</span>
+            </div>
+            <div class="action-bar-right">
+              <span class="stat-chip" style="color: var(--text-muted);">Bez klubu</span>
+            </div>
+          </div>
+
           <div class="dash-card purple-card no-club-card">
             <div class="dash-card-header">
               <span class="dash-card-title" data-i18n="club_join_title">🏰 Připojit se ke klubu nebo založit nový</span>
@@ -251,7 +263,7 @@
                       data-i18n-placeholder="club_create_placeholder" maxlength="40" onkeydown="if(event.key==='Enter') window.fishaoApp.createClub()">
                     <button class="pill-btn gold active" onclick="window.fishaoApp.createClub()" style="white-space: nowrap;" data-i18n="club_btn_create">➕ Vytvořit klub</button>
                   </div>
-                  <p style="font-size: 11px; color: var(--text-muted); margin-top: 10px; line-height: 1.4;">
+                  <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px; line-height: 1.4;" data-i18n="club_create_info">
                     Založením klubu získáš vlastní komunitu. Všichni členové, kteří se připojí, uvidí společné body a odemčené ryby v reálném čase.
                   </p>
                 </div>
@@ -263,15 +275,15 @@
         <!-- STATE B: Active Club Joined -->
         <div id="clubActiveState" style="display: none;">
           <!-- Active Club Header Bar -->
-          <div class="active-club-bar">
-            <div class="active-club-info">
-              <span class="active-club-icon">🏰</span>
-              <div>
-                <h3 class="active-club-name" id="activeClubName">Klub</h3>
-                <span class="active-club-badge" id="activeClubMembers">👥 1 člen</span>
-              </div>
+          <div class="view-action-bar purple" id="activeClubBar" style="margin-bottom: 14px;">
+            <div class="action-bar-left">
+              <span class="action-bar-title" style="color: #c084fc;">🏰 <span id="activeClubName">Klub</span></span>
+              <span class="stat-chip" id="activeClubMembers" style="background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.35); color: #c084fc;">👥 1 člen</span>
+              <span class="action-bar-hint" id="activeClubPtsHint">⭐ <strong id="activeClubPtsDisplay" style="color: #fbbf24;">0</strong> bodů</span>
             </div>
-            <button class="pill-btn danger" onclick="window.fishaoApp.leaveClub()" data-i18n="club_btn_leave">🚪 Opustit klub</button>
+            <div class="action-bar-right">
+              <button class="pill-btn danger" onclick="window.fishaoApp.leaveClub()" data-i18n="club_btn_leave">🚪 Opustit klub</button>
+            </div>
           </div>
 
           <!-- Top Grid (Points, Next Target, Summary) -->
@@ -753,6 +765,83 @@
       </div>
     </div>
   </div>
+
+  <!-- Profile & Avatar Edit Modal -->
+  <div class="modal-overlay" id="profileModalOverlay" onclick="window.fishaoApp.onModalOverlayClick(event, 'profileModalOverlay')">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span data-i18n="modal_profile_title">👤 Hráčský profil &amp; Avatar</span>
+        </div>
+        <button class="modal-close" onclick="window.fishaoApp.closeProfileModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+        <!-- Avatar selection -->
+        <div>
+          <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 8px;" data-i18n="profile_avatar_label">
+            Vyber si ikonu nebo vlož URL fotky:
+          </label>
+          <div class="profile-avatar-row">
+            <div class="profile-preview-box">
+              <img id="profilePreviewImg" src="" alt="Avatar" style="display: none;" onerror="this.style.display='none'; document.getElementById('profilePreviewBadge').style.display='flex';">
+              <div id="profilePreviewBadge" class="user-avatar-badge big">🎣</div>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+              <div class="emoji-avatar-grid">
+                <button type="button" class="emoji-pick-btn active" onclick="window.fishaoApp.selectPresetAvatar('🎣')">🎣</button>
+                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🦈')">🦈</button>
+                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🐡')">🐡</button>
+                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🐋')">🐋</button>
+                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('👑')">👑</button>
+                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🏆')">🏆</button>
+                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('⭐')">⭐</button>
+                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('⚡')">⚡</button>
+                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🌊')">🌊</button>
+                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🐉')">🐉</button>
+              </div>
+              <input type="url" id="inputProfileAvatarUrl" class="dash-input" placeholder="Vložit URL obrázku (např. https://...)" data-i18n-placeholder="profile_avatar_url_placeholder" oninput="window.fishaoApp.onAvatarUrlInput(this.value)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Nickname input -->
+        <div>
+          <label for="inputProfileNickname" style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 6px;" data-i18n="profile_nick_label">
+            Herní přezdívka (zobrazí se v klubu):
+          </label>
+          <input type="text" id="inputProfileNickname" class="dash-input" maxlength="40" placeholder="Zadej svou přezdívku..." onkeydown="if(event.key==='Enter') window.fishaoApp.saveProfile()">
+        </div>
+
+        <!-- Action buttons -->
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--border);">
+          <button type="button" class="pill-btn" onclick="window.fishaoApp.closeProfileModal()" data-i18n="confirm_cancel">Zrušit</button>
+          <button type="button" class="pill-btn purple active" onclick="window.fishaoApp.saveProfile()" data-i18n="profile_btn_save">💾 Uložit profil</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generic Confirmation Modal -->
+  <div class="modal-overlay" id="confirmModalOverlay" onclick="window.fishaoApp.onModalOverlayClick(event, 'confirmModalOverlay')">
+    <div class="modal-box" style="max-width: 440px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span id="confirmModalTitle">Potvrzení akce</span>
+        </div>
+        <button class="modal-close" onclick="window.fishaoApp.resolveConfirmModal(false)">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 18px 20px;">
+        <p id="confirmModalMessage" style="font-size: 14px; color: #cbd5e1; margin: 0 0 20px 0; line-height: 1.5;"></p>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="pill-btn" onclick="window.fishaoApp.resolveConfirmModal(false)" data-i18n="confirm_cancel">Zrušit</button>
+          <button type="button" id="confirmModalBtnConfirm" class="pill-btn danger active" onclick="window.fishaoApp.resolveConfirmModal(true)" data-i18n="confirm_btn">Potvrdit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Floating Toast Notification -->
+  <div id="appToast" class="app-toast" style="display: none;"></div>
 
   <!-- Data scripts and application logic -->
   <script src="data/i18n.js"></script>

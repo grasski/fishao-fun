@@ -67,11 +67,12 @@ service cloud.firestore {
         && request.auth.uid == userId
         && request.resource.data.keys().hasOnly([
              'displayName', 'role', 'clubId', 'clubName', 
-             'caughtFishIds', 'createdAt', 'lastLogin'
+             'caughtFishIds', 'createdAt', 'lastLogin', 'avatarUrl'
            ])
         && request.resource.data.role == 'member'
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() <= 40
+        && (!('avatarUrl' in request.resource.data) || (request.resource.data.avatarUrl is string && request.resource.data.avatarUrl.size() <= 500))
         && request.resource.data.caughtFishIds is list
         && request.resource.data.caughtFishIds.size() <= 1000;
 
@@ -79,10 +80,11 @@ service cloud.firestore {
       allow update: if request.auth != null
         && request.auth.uid == userId
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-             'displayName', 'clubId', 'clubName', 'caughtFishIds', 'lastLogin'
+             'displayName', 'clubId', 'clubName', 'caughtFishIds', 'lastLogin', 'avatarUrl'
            ])
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() <= 40
+        && (!('avatarUrl' in request.resource.data) || (request.resource.data.avatarUrl is string && request.resource.data.avatarUrl.size() <= 500))
         && request.resource.data.caughtFishIds is list
         && request.resource.data.caughtFishIds.size() <= 1000;
 

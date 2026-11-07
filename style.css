@@ -271,6 +271,32 @@ body {
   user-select: none;
 }
 
+.lang-widget {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 3px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  gap: 2px;
+}
+
+.lang-toggle {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  user-select: none;
+}
+
 .lang-toggle:hover {
   color: #fff;
   background: rgba(255, 255, 255, 0.08);
@@ -280,7 +306,7 @@ body {
   background: #0284c7;
   border-color: #38bdf8;
   color: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.4);
 }
 
 /* AUTH PANEL */
@@ -292,41 +318,58 @@ body {
 .sign-in-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: #fff;
-  color: #1e293b;
+  color: #0f172a;
   border: none;
   border-radius: 10px;
-  padding: 7px 14px;
-  font-size: 12px;
+  padding: 8px 16px;
+  font-size: 13.5px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
-.sign-in-btn:hover { background: #f1f5f9; transform: translateY(-1px); }
+.sign-in-btn:hover { background: #f8fafc; transform: translateY(-1px); }
 
 .user-info-bar {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid var(--border);
-  padding: 4px 10px;
-  border-radius: 10px;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 5px 14px 5px 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.user-info-bar:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(139, 92, 246, 0.4);
 }
 
 .user-avatar-badge {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(139, 92, 246, 0.35));
-  border: 1px solid rgba(56, 189, 248, 0.4);
+  border: 1.5px solid rgba(56, 189, 248, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
+  font-size: 18px;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.user-avatar-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid rgba(56, 189, 248, 0.5);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
   flex-shrink: 0;
 }
 
@@ -338,23 +381,23 @@ body {
 .user-name-row {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 
 .user-name {
   color: #fff;
-  font-weight: 700;
-  font-size: 12px;
+  font-weight: 800;
+  font-size: 13.5px;
   line-height: 1.2;
 }
 
 .edit-nick-btn {
   background: transparent;
   border: none;
-  font-size: 11px;
+  font-size: 13px;
   cursor: pointer;
-  opacity: 0.65;
-  padding: 0 2px;
+  opacity: 0.7;
+  padding: 0 3px;
   transition: opacity 0.2s, transform 0.2s;
   line-height: 1;
 }
@@ -368,24 +411,25 @@ body {
   background: rgba(239, 68, 68, 0.2);
   color: #f87171;
   border: 1px solid rgba(239, 68, 68, 0.4);
-  font-size: 9px;
-  padding: 1px 5px;
+  font-size: 9.5px;
+  padding: 1px 6px;
   border-radius: 4px;
   font-weight: 800;
   width: fit-content;
 }
 
 .sign-out-btn {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-muted);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 3px 8px;
-  font-size: 11px;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 }
-.sign-out-btn:hover { color: var(--rose-light); border-color: var(--rose); }
+.sign-out-btn:hover { color: var(--rose-light); border-color: var(--rose); background: rgba(244, 63, 94, 0.15); }
 
 /* ===================================================================
    2. MAIN NAVIGATION BAR (Segmented Control)
@@ -499,30 +543,35 @@ body {
 }
 
 /* ===================================================================
-   3. COMPACT VIEW ACTION BARS (Sleek Sub-Toolbars)
+   3. COMPACT VIEW ACTION BARS (Sleek Sub-Toolbars - Unified 54px min-height)
    =================================================================== */
 
 .view-action-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 14px;
+  padding: 10px 16px;
+  min-height: 54px;
+  box-sizing: border-box;
   border-radius: 12px;
   margin-bottom: 14px;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   background: var(--surface);
   border: 1px solid var(--border);
 }
 
 .view-action-bar.gold {
-  border-left: 3px solid var(--gold);
+  border-left: 4px solid var(--gold);
 }
 .view-action-bar.green {
-  border-left: 3px solid var(--emerald);
+  border-left: 4px solid var(--emerald);
 }
 .view-action-bar.yellow {
-  border-left: 3px solid var(--theme-market);
+  border-left: 4px solid var(--theme-market);
+}
+.view-action-bar.purple {
+  border-left: 4px solid var(--purple);
 }
 
 .action-bar-left, .action-bar-right {
@@ -532,49 +581,62 @@ body {
   flex-wrap: wrap;
 }
 
-.action-badge-club {
+/* UNIFIED CONTROLS IN ACTION BARS (Identical 32px height) */
+.view-action-bar .pill-btn,
+.view-action-bar .toggle-pill,
+.view-action-bar .btn-subtle-link,
+.view-action-bar .btn-action.sm,
+.view-action-bar .btn-reset.sm {
+  height: 32px;
+  line-height: 30px;
+  padding: 0 12px;
   font-size: 12px;
   font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.action-badge-club {
+  font-size: 13px;
+  font-weight: 700;
   color: #f1f5f9;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .action-bar-hint {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--text-muted);
 }
 
 .btn-subtle-link {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border);
-  color: #94a3b8;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
+  color: #cbd5e1;
   cursor: pointer;
   transition: all 0.2s;
 }
 .btn-subtle-link:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .toggle-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11.5px;
   color: var(--text-secondary);
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border);
-  padding: 4px 10px;
-  border-radius: 999px;
   user-select: none;
   transition: all 0.15s;
 }
 .toggle-pill:hover {
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
 .toggle-pill input {
@@ -584,9 +646,12 @@ body {
 
 /* Collection Bar Specific */
 .action-bar-title {
-  font-size: 12.5px;
+  font-size: 13.5px;
   font-weight: 800;
   color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .collection-stats-group {
@@ -598,16 +663,19 @@ body {
 .stat-chip {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border);
-  padding: 2px 7px;
+  padding: 3px 8px;
   border-radius: 6px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 .stat-chip.pct {
   font-weight: 800;
   color: #f8fafc;
   background: rgba(16, 185, 129, 0.15);
-  border-color: rgba(16, 185, 129, 0.3);
+  border-color: rgba(16, 185, 129, 0.35);
 }
 
 .caught-progress-track {
@@ -2091,4 +2159,116 @@ textarea.bulk-input {
   .manage-top-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ===================================================================
+   11. PROFILE MODAL, EMOJI PICKER & TOAST
+   =================================================================== */
+
+.profile-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.profile-preview-box {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(139, 92, 246, 0.4);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.profile-preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-avatar-badge.big {
+  width: 64px;
+  height: 64px;
+  font-size: 32px;
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.3);
+}
+
+.emoji-avatar-grid {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.emoji-pick-btn {
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.emoji-pick-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(139, 92, 246, 0.5);
+  transform: scale(1.12);
+}
+.emoji-pick-btn.active {
+  background: rgba(139, 92, 246, 0.3);
+  border-color: #a78bfa;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+}
+
+/* APP FLOATING TOAST NOTIFICATION */
+.app-toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 10px 22px;
+  font-size: 13.5px;
+  font-weight: 700;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.55);
+  z-index: 10001;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  animation: toastSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.app-toast.success {
+  border-color: rgba(16, 185, 129, 0.5);
+  background: linear-gradient(135deg, #064e3b 0%, #0f172a 100%);
+  color: #34d399;
+}
+.app-toast.error {
+  border-color: rgba(239, 68, 68, 0.5);
+  background: linear-gradient(135deg, #7f1d1d 0%, #0f172a 100%);
+  color: #f87171;
+}
+.app-toast.purple {
+  border-color: rgba(139, 92, 246, 0.5);
+  background: linear-gradient(135deg, #4c1d95 0%, #0f172a 100%);
+  color: #c084fc;
+}
+
+@keyframes toastSlideUp {
+  from { opacity: 0; transform: translate(-50%, 15px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
 }

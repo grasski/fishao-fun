@@ -279,7 +279,16 @@
       "club_no_search_results": "Žádný klub neodpovídá hledání. Můžeš vytvořit nový!",
       "club_active_members": "{count} členů",
       "unlock_club_fc_unlocked": "✓ Odemčeno klubem (FC)",
-      "unlock_club_monster_unlocked": "✓ Nakrmeno klubem (Monstrum)"
+      "unlock_club_monster_unlocked": "✓ Nakrmeno klubem (Monstrum)",
+      "club_create_info": "Založením klubu získáš vlastní komunitu. Všichni členové, kteří se připojí, uvidí společné body a odemčené ryby v reálném čase.",
+      "modal_profile_title": "👤 Hráčský profil & Avatar",
+      "profile_nick_label": "Herní přezdívka (zobrazí se v klubu):",
+      "profile_avatar_label": "Vyber si ikonu nebo vlož URL fotky:",
+      "profile_avatar_url_placeholder": "Vložit URL obrázku (např. https://...)",
+      "profile_btn_save": "💾 Uložit profil",
+      "confirm_cancel": "Zrušit",
+      "confirm_btn": "Potvrdit",
+      "club_change_confirm": "Už jsi v klubu '{current}'. Chceš jej opustit a připojit se ke klubu '{target}'?"
 },
       en: {
       "admin_badge": "🛡️ Admin",
@@ -547,7 +556,16 @@
       "club_no_search_results": "No club matched your search. You can create a new one!",
       "club_active_members": "{count} members",
       "unlock_club_fc_unlocked": "✓ Club Unlocked (FC)",
-      "unlock_club_monster_unlocked": "✓ Club Fed (Monster)"
+      "unlock_club_monster_unlocked": "✓ Club Fed (Monster)",
+      "club_create_info": "Creating a club gives you your own community. All joined members will see shared points and unlocked fishes in real time.",
+      "modal_profile_title": "👤 Player Profile & Avatar",
+      "profile_nick_label": "Game nickname (displayed in club):",
+      "profile_avatar_label": "Choose an icon or paste photo URL:",
+      "profile_avatar_url_placeholder": "Paste image URL (e.g. https://...)",
+      "profile_btn_save": "💾 Save Profile",
+      "confirm_cancel": "Cancel",
+      "confirm_btn": "Confirm",
+      "club_change_confirm": "You are already in club '{current}'. Do you want to leave and join club '{target}'?"
 }
     },
 
