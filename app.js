@@ -334,10 +334,16 @@
     try {
       var authModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
       var provider = new authModule.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
       await authModule.signInWithPopup(auth, provider);
     } catch (err) {
-      if (err.code !== 'auth/popup-closed-by-user') {
-        console.error("Sign-in error:", err);
+      if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
+        return;
+      }
+      console.error("Sign-in error:", err);
+      if (err.code === 'auth/unauthorized-domain') {
+        alert("Doména " + window.location.hostname + " není povolena ve Firebase Console -> Authentication -> Settings -> Authorized domains.");
+      } else {
         alert("Přihlášení se nezdařilo: " + err.message);
       }
     }
