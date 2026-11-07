@@ -1897,9 +1897,8 @@
 
       var normCz = normStr(nameCz);
       var normEn = normStr(nameEn);
-      var idStr = String(f.id);
 
-      if (normCz.includes(nq) || (normEn && normEn.includes(nq)) || idStr === nq) {
+      if (normCz.includes(nq) || (normEn && normEn.includes(nq))) {
         if (!seenNames.has(curName)) {
           seenNames.add(curName);
           var latestPr = getLatestPrice(f.id);
@@ -2785,7 +2784,7 @@
       }
 
       var localizedName = (window.FISHAO_I18N && window.FISHAO_I18N.getFishName) ? window.FISHAO_I18N.getFishName(f).toLowerCase() : '';
-      if (q && !f.name.toLowerCase().includes(q) && !localizedName.includes(q) && !f.id.toString().includes(q)) return false;
+      if (q && !f.name.toLowerCase().includes(q) && !localizedName.includes(q)) return false;
 
       if (bait && !f.baits.includes(bait)) return false;
 
@@ -2874,6 +2873,12 @@
       filtered.sort(function (a, b) { return (b.points || 0) - (a.points || 0); });
     } else if (sortBy === "points_asc" && currentView === "club") {
       filtered.sort(function (a, b) { return (a.points || 999999) - (b.points || 999999); });
+    } else {
+      filtered.sort(function (a, b) {
+        var nameA = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(a) : a.name;
+        var nameB = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(b) : b.name;
+        return nameA.localeCompare(nameB, curLang);
+      });
     }
 
     // Localized active filter summary
@@ -3041,7 +3046,6 @@
     select.innerHTML =
       '<option value="name_asc">' + t('opt_sort_name_asc') + '</option>' +
       '<option value="name_desc">' + t('opt_sort_name_desc') + '</option>' +
-      '<option value="default">' + t('opt_sort_default') + '</option>' +
       '<option value="price_desc">' + t('opt_sort_price_desc') + '</option>' +
       '<option value="price_asc">' + t('opt_sort_price_asc') + '</option>' +
       '<option value="rating_desc">' + t('opt_sort_rating_desc') + '</option>' +
@@ -3050,7 +3054,7 @@
       '<option value="max_asc">' + t('opt_sort_max_asc') + '</option>' +
       '<option value="avg_desc">' + t('opt_sort_avg_desc') + '</option>' +
       '<option value="avg_asc">' + t('opt_sort_avg_asc') + '</option>';
-    select.value = curVal || "name_asc";
+    select.value = (curVal && curVal !== "default") ? curVal : "name_asc";
   }
 
   function updateRatingFilterOptions() {
