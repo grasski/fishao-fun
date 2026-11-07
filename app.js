@@ -1060,7 +1060,7 @@
           '<div class="club-item-meta">' +
           '<span>⭐ ' + pts.toLocaleString(getLocale()) + ' ' + t('unit_pts') + '</span>' +
           '<span>👥 ' + t('club_active_members', { count: members }) + '</span>' +
-          '<span>💎 ' + unlockedFcCount + '/24</span>' +
+          '<span>🪙 ' + unlockedFcCount + '/24</span>' +
           '</div>' +
           '</div>' +
           '<button class="pill-btn purple" onclick="window.fishaoApp.joinClub(\'' + cId + '\', \'' + escapeHtml(name).replace(/'/g, "\\'") + '\')">' + t('club_btn_join') + '</button>' +
@@ -1390,7 +1390,7 @@
       var isMonster = (f.unlock_type === 'monster');
       var isUnlocked = isMonster ? currentClubUnlockedMonsterIds.has(f.id) : currentClubUnlockedFcFishIds.has(f.id);
       var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
-      var costLabel = isMonster ? ("👾 " + t('unlock_monster')) : ("💎 " + (f.fc || "") + " FC");
+      var costLabel = isMonster ? ("👾 " + t('unlock_monster')) : ("🪙 " + (f.fc || "") + " FC");
 
       var btnClass = isUnlocked ? "special-toggle-btn unlocked" : "special-toggle-btn locked";
       var btnText = isUnlocked ? t('special_status_unlocked') : t('special_status_locked');
@@ -1820,7 +1820,7 @@
     var clubBox = document.getElementById("modalFishClubBox");
     var clubUnlockEl = document.getElementById("modalFishClubUnlock");
     if (clubBox && clubUnlockEl) {
-      var status = getUnlockStatus(f, currentClubPoints, true);
+      var status = getUnlockStatus(f, currentClubPoints);
       if (status && (f.is_club || f.unlock_type)) {
         clubBox.style.display = "block";
         clubUnlockEl.innerHTML = '<strong style="color: #fbbf24;">' + status.costText + '</strong> (' + status.desc + ')';
@@ -2343,8 +2343,8 @@
     applyFilters();
   }
 
-  function getUnlockStatus(fish, userPoints, includeFc) {
-    if (!fish) return null;
+  function getUnlockStatus(fish, userPoints) {
+    if (!fish) return { isUnlocked: false, costText: "", desc: "" };
     // If fish is missing unlock_type (e.g. general instance), look it up in clubFishes
     if (!fish.unlock_type && clubFishes) {
       var cf = clubFishes.find(function (x) { return x.id === fish.id; });
@@ -2361,22 +2361,24 @@
       };
     } else if (fish.unlock_type === 'fc') {
       var isFcClub = currentClubUnlockedFcFishIds.has(fish.id);
-      var isUnlocked = isFcClub || Boolean(includeFc);
       return {
-        isUnlocked: isUnlocked,
-        costText: (fish.fc || 0) + " FC",
-        desc: isFcClub ? t('unlock_club_fc_unlocked') : (includeFc ? "✓ Fishcoins" : t('unlock_requires_fc'))
+        isUnlocked: isFcClub,
+        costText: "🪙 " + (fish.fc || 0) + " FC",
+        desc: isFcClub ? t('unlock_club_fc_unlocked') : t('unlock_requires_fc')
       };
     } else if (fish.unlock_type === 'monster') {
       var isMonsterClub = currentClubUnlockedMonsterIds.has(fish.id);
-      var isUnlocked = isMonsterClub || Boolean(includeFc);
       return {
-        isUnlocked: isUnlocked,
-        costText: t('unlock_monster'),
-        desc: isMonsterClub ? t('unlock_club_monster_unlocked') : (includeFc ? t('unlock_club_feeding') : t('unlock_club_monster'))
+        isUnlocked: isMonsterClub,
+        costText: "👾 " + t('unlock_monster'),
+        desc: isMonsterClub ? t('unlock_club_monster_unlocked') : t('unlock_club_monster')
       };
     }
-    return null;
+    return {
+      isUnlocked: true,
+      costText: "",
+      desc: ""
+    };
   }
 
   function renderRatingBadge(r) {
@@ -2550,8 +2552,8 @@
       } else if (f.unlock_type === 'fc') {
         isUnlocked = currentClubUnlockedFcFishIds.has(f.id);
         statusClass = isUnlocked ? "unlocked" : "fc";
-        statusText = isUnlocked ? t('special_status_unlocked') : "💎 Fishcoins";
-        costBadge = (f.fc || "") + " FC";
+        statusText = isUnlocked ? t('special_status_unlocked') : ("🪙 " + t('unlock_fc_badge'));
+        costBadge = "🪙 " + (f.fc || "") + " FC";
       } else {
         isUnlocked = currentClubUnlockedMonsterIds.has(f.id);
         statusClass = isUnlocked ? "unlocked" : "monster";
@@ -2735,7 +2737,7 @@
       tbody.innerHTML = data.map(function (f) {
         var isNow = isFishActiveNow(f.raw_times);
         var timeInfo = formatCatchTime(f.raw_times);
-        var unlock = getUnlockStatus(f, currentClubPoints, includeFc);
+        var unlock = getUnlockStatus(f, currentClubPoints);
         var rowClass = [];
         if (!unlock.isUnlocked) rowClass.push("row-locked");
         if (caughtFishIds.has(f.id)) rowClass.push("row-caught");
@@ -2817,7 +2819,7 @@
 
     for (var i = 0; i < clubFishes.length; i++) {
       var f = clubFishes[i];
-      var status = getUnlockStatus(f, currentClubPoints, includeFc);
+      var status = getUnlockStatus(f, currentClubPoints);
       if (status.isUnlocked) {
         unlockedCount++;
       } else if (f.unlock_type === 'points' && f.points > currentClubPoints) {
@@ -2887,9 +2889,14 @@
     var dataset = currentView === "club" ? clubFishes : allFishes;
 
     var filtered = dataset.filter(function (f) {
-      if (currentView === "club" && hideLocked) {
-        var status = getUnlockStatus(f, currentClubPoints, includeFc);
-        if (!status.isUnlocked) return false;
+      if (currentView === "club") {
+        if (!includeFc && (f.unlock_type === 'fc' || f.unlock_type === 'monster')) {
+          return false;
+        }
+        if (hideLocked) {
+          var status = getUnlockStatus(f, currentClubPoints);
+          if (!status.isUnlocked) return false;
+        }
       }
 
       var localizedName = (window.FISHAO_I18N && window.FISHAO_I18N.getFishName) ? window.FISHAO_I18N.getFishName(f).toLowerCase() : '';
@@ -3236,11 +3243,11 @@
     updateRatingFilterOptions();
     renderTableHead();
     updateCaughtStats();
+    updateClubStats();
+    renderClubMilestones();
+    renderClubSpecialFishes();
+    renderClubMembers(currentClubMembersMap, currentClubCreatorId);
     applyFilters();
-
-    if (currentView === "club_manage") {
-      renderClubMilestones();
-    }
 
     if (selectedModalFishId) {
       var modal = document.getElementById("priceModalOverlay");
