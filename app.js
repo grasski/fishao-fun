@@ -785,10 +785,11 @@
 
   function openPriceModal(fid) {
     selectedModalFishId = fid;
-    var f = (currentView === "club" ? clubFishes : allFishes).find(function (x) { return x.id === fid; })
-      || allFishes.find(function (x) { return x.id === fid; })
-      || clubFishes.find(function (x) { return x.id === fid; });
-    if (!f) return;
+    var clubFishObj = clubFishes.find(function (x) { return x.id === fid; });
+    var allFishObj = allFishes.find(function (x) { return x.id === fid; });
+    if (!clubFishObj && !allFishObj) return;
+
+    var f = Object.assign({}, allFishObj || {}, clubFishObj || {});
 
     var nameEl = document.getElementById("modalFishName");
     var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
@@ -866,9 +867,9 @@
     var clubBox = document.getElementById("modalFishClubBox");
     var clubUnlockEl = document.getElementById("modalFishClubUnlock");
     if (clubBox && clubUnlockEl) {
-      if (f.unlock_type || f.is_club) {
+      var status = getUnlockStatus(f, currentClubPoints, true);
+      if (status && (f.is_club || f.unlock_type)) {
         clubBox.style.display = "block";
-        var status = getUnlockStatus(f, currentClubPoints, true);
         clubUnlockEl.innerHTML = '<strong style="color: #fbbf24;">' + status.costText + '</strong> (' + status.desc + ')';
       } else {
         clubBox.style.display = "none";
@@ -1219,7 +1220,13 @@
   }
 
   function getUnlockStatus(fish, userPoints, includeFc) {
-    if (fish.unlock_type === 'points') {
+    if (!fish) return null;
+    // If fish is missing unlock_type (e.g. general instance), look it up in clubFishes
+    if (!fish.unlock_type && clubFishes) {
+      var cf = clubFishes.find(function (x) { return x.id === fish.id; });
+      if (cf) fish = Object.assign({}, fish, cf);
+    }
+    if (fish.unlock_type === 'points' && fish.points !== undefined && fish.points !== null) {
       var required = fish.points;
       var diff = required - userPoints;
       var isUnlocked = diff <= 0;
@@ -1230,17 +1237,18 @@
       };
     } else if (fish.unlock_type === 'fc') {
       return {
-        isUnlocked: includeFc,
-        costText: fish.fc + " FC",
+        isUnlocked: Boolean(includeFc),
+        costText: (fish.fc || 0) + " FC",
         desc: includeFc ? "✓ Fishcoins" : t('unlock_requires_fc')
       };
-    } else {
+    } else if (fish.unlock_type === 'monster') {
       return {
-        isUnlocked: includeFc,
+        isUnlocked: Boolean(includeFc),
         costText: t('unlock_monster'),
         desc: includeFc ? t('unlock_club_feeding') : t('unlock_club_monster')
       };
     }
+    return null;
   }
 
   function renderRatingBadge(r) {

@@ -9767,7 +9767,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 21,
     "avg_l": 32,
-    "max_l": 50
+    "max_l": 50,
+    "water": "Slaná",
+    "points": 25,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 2
   },
   {
     "id": 708,
@@ -9787,7 +9792,12 @@ window.FISHAO_DATA = {
     "is_night": true,
     "min_l": 11,
     "avg_l": 22,
-    "max_l": 43
+    "max_l": 43,
+    "water": "Slaná",
+    "points": null,
+    "fc": 25,
+    "unlock_type": "fc",
+    "order": 36
   },
   {
     "id": 709,
@@ -9807,7 +9817,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 5,
     "avg_l": 11,
-    "max_l": 14
+    "max_l": 14,
+    "water": "Slaná",
+    "points": 50,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 3
   },
   {
     "id": 710,
@@ -9826,7 +9841,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 3,
     "avg_l": 5,
-    "max_l": 10
+    "max_l": 10,
+    "water": "Slaná",
+    "points": 100,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 4
   },
   {
     "id": 711,
@@ -9844,7 +9864,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 3,
     "avg_l": 6,
-    "max_l": 11
+    "max_l": 11,
+    "water": "Slaná",
+    "points": 200,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 5
   },
   {
     "id": 712,
@@ -9865,7 +9890,12 @@ window.FISHAO_DATA = {
     "is_night": true,
     "min_l": 41,
     "avg_l": 62,
-    "max_l": 90
+    "max_l": 90,
+    "water": "Slaná",
+    "points": 1000,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 11
   },
   {
     "id": 713,
@@ -9885,7 +9915,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 12,
     "avg_l": 25,
-    "max_l": 53
+    "max_l": 53,
+    "water": "Slaná",
+    "points": 300,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 6
   },
   {
     "id": 714,
@@ -9904,7 +9939,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 8,
     "avg_l": 13,
-    "max_l": 16
+    "max_l": 16,
+    "water": "Slaná",
+    "points": null,
+    "fc": 18,
+    "unlock_type": "fc",
+    "order": 34
   },
   {
     "id": 715,
@@ -9924,7 +9964,12 @@ window.FISHAO_DATA = {
     "is_night": true,
     "min_l": 5,
     "avg_l": 41,
-    "max_l": 53
+    "max_l": 53,
+    "water": "Slaná",
+    "points": 5000,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 28
   },
   {
     "id": 716,
@@ -9945,7 +9990,12 @@ window.FISHAO_DATA = {
     "is_night": true,
     "min_l": 14,
     "avg_l": 31,
-    "max_l": 40
+    "max_l": 40,
+    "water": "Sladká",
+    "points": null,
+    "fc": 49,
+    "unlock_type": "fc",
+    "order": 25
   },
   {
     "id": 717,
@@ -9965,7 +10015,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 28,
     "avg_l": 33,
-    "max_l": 42
+    "max_l": 42,
+    "water": "Sladká",
+    "points": null,
+    "fc": 50,
+    "unlock_type": "fc",
+    "order": 26
   },
   {
     "id": 718,
@@ -9985,7 +10040,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 25,
     "avg_l": 31,
-    "max_l": 38
+    "max_l": 38,
+    "water": "Sladká",
+    "points": 75,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 2
   },
   {
     "id": 719,
@@ -10005,7 +10065,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 27,
     "avg_l": 63,
-    "max_l": 140
+    "max_l": 140,
+    "water": "Sladká",
+    "points": 3000,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 14
   },
   {
     "id": 720,
@@ -10025,7 +10090,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 2,
     "avg_l": 3,
-    "max_l": 4
+    "max_l": 4,
+    "water": "Sladká",
+    "points": 15,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 1
   },
   {
     "id": 721,
@@ -10043,7 +10113,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 23,
     "avg_l": 39,
-    "max_l": 70
+    "max_l": 70,
+    "water": "Slaná",
+    "points": 400,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 7
   },
   {
     "id": 722,
@@ -10062,7 +10137,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 42,
     "avg_l": 78,
-    "max_l": 150
+    "max_l": 150,
+    "water": "Slaná",
+    "points": 500,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 8
   },
   {
     "id": 723,
@@ -10080,7 +10160,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 43,
     "avg_l": 100,
-    "max_l": 170
+    "max_l": 170,
+    "water": "Sladká",
+    "points": 600,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 3
   },
   {
     "id": 724,
@@ -10098,7 +10183,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 54,
     "avg_l": 92,
-    "max_l": 137
+    "max_l": 137,
+    "water": "Slaná",
+    "points": 700,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 9
   },
   {
     "id": 725,
@@ -10117,7 +10207,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 12,
     "avg_l": 18,
-    "max_l": 23
+    "max_l": 23,
+    "water": "Sladká",
+    "points": 800,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 4
   },
   {
     "id": 726,
@@ -10136,7 +10231,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 16,
     "avg_l": 31,
-    "max_l": 45
+    "max_l": 45,
+    "water": "Slaná",
+    "points": 900,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 10
   },
   {
     "id": 727,
@@ -10154,7 +10254,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 4,
     "avg_l": 7,
-    "max_l": 9
+    "max_l": 9,
+    "water": "Sladká",
+    "points": 1100,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 5
   },
   {
     "id": 728,
@@ -10172,7 +10277,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 50,
     "avg_l": 70,
-    "max_l": 150
+    "max_l": 150,
+    "water": "Slaná",
+    "points": 1200,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 12
   },
   {
     "id": 729,
@@ -10193,7 +10303,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 14,
     "avg_l": 29,
-    "max_l": 65
+    "max_l": 65,
+    "water": "Slaná",
+    "points": 1350,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 14
   },
   {
     "id": 730,
@@ -10212,7 +10327,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 10,
     "avg_l": 20,
-    "max_l": 30
+    "max_l": 30,
+    "water": "Slaná",
+    "points": 1400,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 15
   },
   {
     "id": 731,
@@ -10231,7 +10351,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 13,
     "avg_l": 20,
-    "max_l": 27
+    "max_l": 27,
+    "water": "Slaná",
+    "points": null,
+    "fc": 199,
+    "unlock_type": "fc",
+    "order": 44
   },
   {
     "id": 732,
@@ -10252,7 +10377,12 @@ window.FISHAO_DATA = {
     "is_night": true,
     "min_l": 34,
     "avg_l": 48,
-    "max_l": 70
+    "max_l": 70,
+    "water": "Slaná",
+    "points": null,
+    "fc": 999,
+    "unlock_type": "fc",
+    "order": 46
   },
   {
     "id": 733,
@@ -10271,7 +10401,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 60,
     "avg_l": 120,
-    "max_l": 299
+    "max_l": 299,
+    "water": "Sladká",
+    "points": 4000,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 16
   },
   {
     "id": 734,
@@ -10291,7 +10426,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 14,
     "avg_l": 39,
-    "max_l": 72
+    "max_l": 72,
+    "water": "Slaná",
+    "points": 1300,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 13
   },
   {
     "id": 735,
@@ -10309,7 +10449,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 4,
     "avg_l": 7,
-    "max_l": 9
+    "max_l": 9,
+    "water": "Slaná",
+    "points": 1450,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 16
   },
   {
     "id": 736,
@@ -10329,7 +10474,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 12,
     "avg_l": 14,
-    "max_l": 20
+    "max_l": 20,
+    "water": "Slaná",
+    "points": 1500,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 17
   },
   {
     "id": 737,
@@ -10349,7 +10499,12 @@ window.FISHAO_DATA = {
     "is_night": true,
     "min_l": 8,
     "avg_l": 10,
-    "max_l": 14
+    "max_l": 14,
+    "water": "Slaná",
+    "points": 10,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 1
   },
   {
     "id": 738,
@@ -10368,7 +10523,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 7,
     "avg_l": 10,
-    "max_l": 15
+    "max_l": 15,
+    "water": "Sladká",
+    "points": 1600,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 6
   },
   {
     "id": 739,
@@ -10387,7 +10547,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 14,
     "avg_l": 20,
-    "max_l": 28
+    "max_l": 28,
+    "water": "Sladká",
+    "points": 1700,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 7
   },
   {
     "id": 740,
@@ -10406,7 +10571,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 1,
     "avg_l": 2,
-    "max_l": 5
+    "max_l": 5,
+    "water": "Sladká",
+    "points": null,
+    "fc": 75,
+    "unlock_type": "fc",
+    "order": 28
   },
   {
     "id": 741,
@@ -10425,7 +10595,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 10,
     "avg_l": 12,
-    "max_l": 15
+    "max_l": 15,
+    "water": "Sladká",
+    "points": 1800,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 8
   },
   {
     "id": 742,
@@ -10445,7 +10620,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 3,
     "avg_l": 5,
-    "max_l": 7
+    "max_l": 7,
+    "water": "Sladká",
+    "points": 1900,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 9
   },
   {
     "id": 743,
@@ -10463,7 +10643,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 22,
     "avg_l": 30,
-    "max_l": 58
+    "max_l": 58,
+    "water": "Sladká",
+    "points": 2000,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 10
   },
   {
     "id": 744,
@@ -10481,7 +10666,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 72,
     "avg_l": 135,
-    "max_l": 320
+    "max_l": 320,
+    "water": "Sladká",
+    "points": null,
+    "fc": 99,
+    "unlock_type": "fc",
+    "order": 29
   },
   {
     "id": 745,
@@ -10499,7 +10689,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 129,
     "avg_l": 180,
-    "max_l": 520
+    "max_l": 520,
+    "water": "Slaná",
+    "points": null,
+    "fc": 99,
+    "unlock_type": "fc",
+    "order": 43
   },
   {
     "id": 746,
@@ -10615,7 +10810,12 @@ window.FISHAO_DATA = {
     "is_night": true,
     "min_l": 8,
     "avg_l": 14,
-    "max_l": 22
+    "max_l": 22,
+    "water": "Slaná",
+    "points": 1625,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 18
   },
   {
     "id": 752,
@@ -10636,7 +10836,12 @@ window.FISHAO_DATA = {
     "is_night": true,
     "min_l": 9,
     "avg_l": 13,
-    "max_l": 20
+    "max_l": 20,
+    "water": "Slaná",
+    "points": null,
+    "fc": 39,
+    "unlock_type": "fc",
+    "order": 38
   },
   {
     "id": 753,
@@ -10658,7 +10863,12 @@ window.FISHAO_DATA = {
     "is_night": true,
     "min_l": 4,
     "avg_l": 8,
-    "max_l": 13
+    "max_l": 13,
+    "water": "Slaná",
+    "points": 1750,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 19
   },
   {
     "id": 754,
@@ -10676,7 +10886,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 17,
     "avg_l": 31,
-    "max_l": 45
+    "max_l": 45,
+    "water": "Slaná",
+    "points": null,
+    "fc": 49,
+    "unlock_type": "fc",
+    "order": 40
   },
   {
     "id": 755,
@@ -10695,7 +10910,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 5,
     "avg_l": 7,
-    "max_l": 13
+    "max_l": 13,
+    "water": "Slaná",
+    "points": 1850,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 20
   },
   {
     "id": 756,
@@ -10715,7 +10935,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 11,
     "avg_l": 19,
-    "max_l": 45
+    "max_l": 45,
+    "water": "Slaná",
+    "points": null,
+    "fc": 79,
+    "unlock_type": "fc",
+    "order": 42
   },
   {
     "id": 757,
@@ -10735,7 +10960,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 9,
     "avg_l": 13,
-    "max_l": 25
+    "max_l": 25,
+    "water": "Slaná",
+    "points": 1950,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 21
   },
   {
     "id": 758,
@@ -10753,7 +10983,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 43,
     "avg_l": 73,
-    "max_l": 252
+    "max_l": 252,
+    "water": "Sladká",
+    "points": null,
+    "fc": 499,
+    "unlock_type": "fc",
+    "order": 31
   },
   {
     "id": 759,
@@ -10771,7 +11006,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 4,
     "avg_l": 11,
-    "max_l": 18
+    "max_l": 18,
+    "water": "Slaná",
+    "points": 2100,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 22
   },
   {
     "id": 760,
@@ -10790,7 +11030,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 19,
     "avg_l": 38,
-    "max_l": 116
+    "max_l": 116,
+    "water": "Slaná",
+    "points": null,
+    "fc": 45,
+    "unlock_type": "fc",
+    "order": 39
   },
   {
     "id": 761,
@@ -10810,7 +11055,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 4,
     "avg_l": 6,
-    "max_l": 15
+    "max_l": 15,
+    "water": "Slaná",
+    "points": 2300,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 23
   },
   {
     "id": 762,
@@ -10829,7 +11079,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 1,
     "avg_l": 2,
-    "max_l": 4
+    "max_l": 4,
+    "water": "Slaná",
+    "points": null,
+    "fc": 30,
+    "unlock_type": "fc",
+    "order": 37
   },
   {
     "id": 763,
@@ -10847,7 +11102,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 61,
     "avg_l": 105,
-    "max_l": 204
+    "max_l": 204,
+    "water": "Sladká",
+    "points": 2200,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 11
   },
   {
     "id": 764,
@@ -10865,7 +11125,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 44,
     "avg_l": 55,
-    "max_l": 143
+    "max_l": 143,
+    "water": "Sladká",
+    "points": 2500,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 12
   },
   {
     "id": 765,
@@ -10884,7 +11149,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 42,
     "avg_l": 59,
-    "max_l": 132
+    "max_l": 132,
+    "water": "Sladká",
+    "points": null,
+    "fc": 180,
+    "unlock_type": "fc",
+    "order": 30
   },
   {
     "id": 800,
@@ -11083,7 +11353,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 40,
     "avg_l": 72,
-    "max_l": 150
+    "max_l": 150,
+    "water": "Sladká",
+    "points": 2750,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 13
   },
   {
     "id": 811,
@@ -11103,7 +11378,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 2,
     "avg_l": 3,
-    "max_l": 4
+    "max_l": 4,
+    "water": "Sladká",
+    "points": null,
+    "fc": 12,
+    "unlock_type": "fc",
+    "order": 24
   },
   {
     "id": 812,
@@ -11122,7 +11402,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 2,
     "avg_l": 4,
-    "max_l": 8
+    "max_l": 8,
+    "water": "Slaná",
+    "points": 3250,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 26
   },
   {
     "id": 813,
@@ -11142,7 +11427,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 19,
     "avg_l": 23,
-    "max_l": 32
+    "max_l": 32,
+    "water": "Sladká",
+    "points": null,
+    "fc": 62,
+    "unlock_type": "fc",
+    "order": 27
   },
   {
     "id": 814,
@@ -11161,7 +11451,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 1,
     "avg_l": 2,
-    "max_l": 3
+    "max_l": 3,
+    "water": "Slaná",
+    "points": 2550,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 24
   },
   {
     "id": 815,
@@ -11271,7 +11566,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 502,
     "avg_l": 640,
-    "max_l": 730
+    "max_l": 730,
+    "water": "Slaná",
+    "points": null,
+    "fc": null,
+    "unlock_type": "monster",
+    "order": 47
   },
   {
     "id": 1001,
@@ -11289,7 +11589,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 555,
     "avg_l": 628,
-    "max_l": 750
+    "max_l": 750,
+    "water": "Slaná",
+    "points": null,
+    "fc": null,
+    "unlock_type": "monster",
+    "order": 48
   },
   {
     "id": 1002,
@@ -11307,7 +11612,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 329,
     "avg_l": 639,
-    "max_l": 752
+    "max_l": 752,
+    "water": "Slaná",
+    "points": null,
+    "fc": null,
+    "unlock_type": "monster",
+    "order": 49
   },
   {
     "id": 1003,
@@ -11325,7 +11635,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 16,
     "avg_l": 25,
-    "max_l": 50
+    "max_l": 50,
+    "water": "Slaná",
+    "points": null,
+    "fc": 20,
+    "unlock_type": "fc",
+    "order": 35
   },
   {
     "id": 1004,
@@ -11347,7 +11662,12 @@ window.FISHAO_DATA = {
     "is_night": true,
     "min_l": 18,
     "avg_l": 34,
-    "max_l": 40
+    "max_l": 40,
+    "water": "Sladká",
+    "points": 3500,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 15
   },
   {
     "id": 1005,
@@ -11367,7 +11687,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 29,
     "avg_l": 47,
-    "max_l": 120
+    "max_l": 120,
+    "water": "Slaná",
+    "points": null,
+    "fc": 59,
+    "unlock_type": "fc",
+    "order": 41
   },
   {
     "id": 1006,
@@ -11385,7 +11710,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 55,
     "avg_l": 72,
-    "max_l": 150
+    "max_l": 150,
+    "water": "Slaná",
+    "points": 2800,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 25
   },
   {
     "id": 1007,
@@ -11403,7 +11733,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 96,
     "avg_l": 120,
-    "max_l": 190
+    "max_l": 190,
+    "water": "Slaná",
+    "points": null,
+    "fc": 555,
+    "unlock_type": "fc",
+    "order": 45
   },
   {
     "id": 1008,
@@ -11422,7 +11757,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 1,
     "avg_l": 2,
-    "max_l": 3
+    "max_l": 3,
+    "water": "Sladká",
+    "points": 10000,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 22
   },
   {
     "id": 1009,
@@ -11441,7 +11781,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 22,
     "avg_l": 45,
-    "max_l": 91
+    "max_l": 91,
+    "water": "Slaná",
+    "points": 3300,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 27
   },
   {
     "id": 1010,
@@ -11459,7 +11804,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 8,
     "avg_l": 16,
-    "max_l": 29
+    "max_l": 29,
+    "water": "Sladká",
+    "points": 6000,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 17
   },
   {
     "id": 1011,
@@ -11479,7 +11829,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 1,
     "avg_l": 2,
-    "max_l": 3
+    "max_l": 3,
+    "water": "Sladká",
+    "points": 7000,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 18
   },
   {
     "id": 1012,
@@ -11498,7 +11853,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 11,
     "avg_l": 21,
-    "max_l": 29
+    "max_l": 29,
+    "water": "Sladká",
+    "points": 8000,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 19
   },
   {
     "id": 1013,
@@ -11519,7 +11879,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 13,
     "avg_l": 27,
-    "max_l": 50
+    "max_l": 50,
+    "water": "Sladká",
+    "points": 9000,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 20
   },
   {
     "id": 1014,
@@ -11539,7 +11904,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 1,
     "avg_l": 3,
-    "max_l": 5
+    "max_l": 5,
+    "water": "Sladká",
+    "points": 9500,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 21
   },
   {
     "id": 1100,
@@ -11746,7 +12116,12 @@ window.FISHAO_DATA = {
     "is_night": true,
     "min_l": 9,
     "avg_l": 14,
-    "max_l": 23
+    "max_l": 23,
+    "water": "Slaná",
+    "points": 15000,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 29
   },
   {
     "id": 1111,
@@ -13347,7 +13722,12 @@ window.FISHAO_DATA = {
     "is_night": true,
     "min_l": 48,
     "avg_l": 78,
-    "max_l": 122
+    "max_l": 122,
+    "water": "Slaná",
+    "points": 17500,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 30
   },
   {
     "id": 1195,
@@ -13366,7 +13746,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 3,
     "avg_l": 5,
-    "max_l": 12
+    "max_l": 12,
+    "water": "Slaná",
+    "points": 22500,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 31
   },
   {
     "id": 1196,
@@ -13384,7 +13769,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 8,
     "avg_l": 12,
-    "max_l": 15
+    "max_l": 15,
+    "water": "Slaná",
+    "points": 27500,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 32
   },
   {
     "id": 1197,
@@ -13403,7 +13793,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 14,
     "avg_l": 28,
-    "max_l": 40
+    "max_l": 40,
+    "water": "Slaná",
+    "points": 30000,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 33
   },
   {
     "id": 1198,
@@ -13422,7 +13817,12 @@ window.FISHAO_DATA = {
     "is_night": false,
     "min_l": 29,
     "avg_l": 73,
-    "max_l": 204
+    "max_l": 204,
+    "water": "Sladká",
+    "points": 40000,
+    "fc": null,
+    "unlock_type": "points",
+    "order": 23
   },
   {
     "id": 1199,

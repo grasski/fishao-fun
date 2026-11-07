@@ -129,6 +129,7 @@ for item in all_club_raw:
     club_data.append(item)
 
 club_ids_set = {item['id'] for item in club_data}
+club_map = {item['id']: item for item in club_data}
 
 # 2. Process all 615 fishes for encyclopedia
 print("-> Processing all 615 encyclopedia fishes...")
@@ -146,10 +147,11 @@ for f in fishes:
     times = req.get('caught_time', [])
     times_str = ", ".join(times) if times else "Celý den"
 
-    all_fishes.append({
+    club_info = club_map.get(fid)
+    fish_entry = {
         'id': fid,
         'name': name,
-        'is_club': fid in club_ids_set,
+        'is_club': bool(club_info),
         'rating': rating_num,
         'locations': loc_names,
         'baits': baits_cz,
@@ -159,7 +161,15 @@ for f in fishes:
         'min_l': int(f.get('min_length', 0)),
         'avg_l': int(f.get('avg_length', 0)),
         'max_l': int(f.get('max_length', 0))
-    })
+    }
+    if club_info:
+        fish_entry['water'] = club_info.get('water')
+        fish_entry['points'] = club_info.get('points')
+        fish_entry['fc'] = club_info.get('fc')
+        fish_entry['unlock_type'] = club_info.get('unlock_type')
+        fish_entry['order'] = club_info.get('order')
+
+    all_fishes.append(fish_entry)
 
 # Write data/fishes.js
 fishes_file = os.path.join(DATA_DIR, "fishes.js")
