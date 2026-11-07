@@ -27,7 +27,7 @@ service cloud.firestore {
       allow create: if request.auth != null
         && request.resource.data.keys().hasOnly([
              'name', 'name_lower', 'points', 'unlockedFcFishIds', 
-             'unlockedMonsterIds', 'memberCount', 'createdBy', 'createdAt', 'updatedAt'
+             'unlockedMonsterIds', 'memberCount', 'members', 'createdBy', 'createdAt', 'updatedAt'
            ])
         && request.resource.data.name is string
         && request.resource.data.name.size() >= 2
@@ -37,18 +37,20 @@ service cloud.firestore {
         && request.resource.data.unlockedFcFishIds is list
         && request.resource.data.unlockedMonsterIds is list
         && request.resource.data.memberCount is number
+        && (!('members' in request.resource.data) || request.resource.data.members is map)
         && request.resource.data.createdBy == request.auth.uid;
 
       allow update: if request.auth != null
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
              'name', 'name_lower', 'points', 'unlockedFcFishIds', 
-             'unlockedMonsterIds', 'memberCount', 'updatedAt', 'lastUpdatedBy'
+             'unlockedMonsterIds', 'memberCount', 'members', 'updatedAt', 'lastUpdatedBy'
            ])
         && request.resource.data.points is number
         && request.resource.data.points >= 0
         && request.resource.data.unlockedFcFishIds is list
         && request.resource.data.unlockedMonsterIds is list
-        && request.resource.data.memberCount is number;
+        && request.resource.data.memberCount is number
+        && (!('members' in request.resource.data) || request.resource.data.members is map);
 
       allow delete: if isAdmin();
     }

@@ -628,6 +628,18 @@
         userProfile.avatarUrl = finalAvatar;
       }
 
+      if (currentClubId) {
+        try {
+          var clubDocRef = fsModule.doc(db, "clubs", currentClubId);
+          var memUp = {};
+          memUp["members." + currentUser.uid + ".displayName"] = newNick;
+          memUp["members." + currentUser.uid + ".avatarUrl"] = finalAvatar;
+          await fsModule.updateDoc(clubDocRef, memUp);
+        } catch (e) {
+          console.warn("Could not sync member profile to club doc:", e);
+        }
+      }
+
       closeProfileModal();
       updateAuthUI();
       showToast(t('profile_saved_success', 'Profil byl úspěšně uložen!'), "success");
@@ -664,6 +676,24 @@
           currentClubMemberCount = typeof data.memberCount === 'number' ? data.memberCount : 1;
           currentClubUnlockedFcFishIds = new Set(data.unlockedFcFishIds || []);
           currentClubUnlockedMonsterIds = new Set(data.unlockedMonsterIds || []);
+          renderClubMembers(data.members || {}, data.createdBy);
+
+          // Self-heal: ensure current user is registered in members map
+          if (currentUser && (!data.members || !data.members[currentUser.uid])) {
+            try {
+              var mObj = {
+                displayName: (userProfile && userProfile.displayName) ? userProfile.displayName : "Rybář",
+                avatarUrl: (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "🎣",
+                isCreator: (data.createdBy === currentUser.uid),
+                joinedAt: new Date().toISOString()
+              };
+              var upM = {};
+              upM["members." + currentUser.uid] = mObj;
+              fsModule.updateDoc(clubDocRef, upM);
+            } catch (e) {
+              console.warn("Could not auto-register member in club:", e);
+            }
+          }
         } else {
           console.warn("Club document not found:", clubId);
           currentClubId = "";
@@ -672,6 +702,7 @@
           currentClubMemberCount = 1;
           currentClubUnlockedFcFishIds.clear();
           currentClubUnlockedMonsterIds.clear();
+          renderClubMembers({}, "");
         }
         updateClubStats();
         renderClubMilestones();
@@ -686,6 +717,55 @@
     }
   }
 
+  function renderClubMembers(membersMap, creatorId) {
+    var grid = document.getElementById("clubMembersGrid");
+    var countEl = document.getElementById("activeClubMembersCount");
+    if (!grid) return;
+
+    var memberKeys = Object.keys(membersMap || {});
+    if (memberKeys.length === 0 && currentUser) {
+      var myName = (userProfile && userProfile.displayName) ? userProfile.displayName : "Rybář";
+      var myAv = (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "🎣";
+      membersMap = {};
+      membersMap[currentUser.uid] = {
+        displayName: myName,
+        avatarUrl: myAv,
+        isCreator: (creatorId === currentUser.uid)
+      };
+      memberKeys = [currentUser.uid];
+    }
+
+    if (countEl) countEl.innerText = Math.max(memberKeys.length, currentClubMemberCount || 1);
+
+    var html = "";
+    memberKeys.forEach(function (uid) {
+      var m = membersMap[uid] || {};
+      var dName = m.displayName || "Rybář";
+      var av = m.avatarUrl || "🎣";
+      var isCr = (m.isCreator || uid === creatorId);
+      var isMe = (currentUser && uid === currentUser.uid);
+
+      var avatarHtml = "";
+      if (av && (av.startsWith("http://") || av.startsWith("https://"))) {
+        avatarHtml = '<div class="club-member-avatar"><img src="' + escapeHtml(av) + '" alt="" onerror="this.parentElement.innerHTML=\'🎣\'"></div>';
+      } else {
+        avatarHtml = '<div class="club-member-avatar">' + escapeHtml(av || "🎣") + '</div>';
+      }
+
+      html += '<div class="club-member-chip' + (isCr ? ' creator' : '') + '">' +
+        avatarHtml +
+        '<div class="club-member-info">' +
+          '<div class="club-member-name">' + escapeHtml(dName) + (isMe ? ' <span style="font-size:11px;color:#a78bfa;">(Ty)</span>' : '') + '</div>' +
+          '<div class="club-member-tag">' +
+            (isCr ? '<span class="club-member-creator-badge">👑 ' + (t('club_member_creator') || 'Zakladatel') + '</span>' : '<span>🎣 ' + (t('club_member_role') || 'Člen') + '</span>') +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    });
+
+    grid.innerHTML = html;
+  }
+
   function unbindClubListener() {
     if (clubUnsubscribe) {
       clubUnsubscribe();
@@ -697,6 +777,7 @@
     currentClubMemberCount = 1;
     currentClubUnlockedFcFishIds.clear();
     currentClubUnlockedMonsterIds.clear();
+    renderClubMembers({}, "");
     updateClubStats();
     renderClubMilestones();
     renderClubSpecialFishes();
@@ -792,16 +873,27 @@
           var prevSnap = await fsModule.getDoc(prevClubRef);
           if (prevSnap.exists()) {
             var prevCount = prevSnap.data().memberCount || 1;
-            await fsModule.updateDoc(prevClubRef, {
+            var prevUpdate = {
               memberCount: Math.max(0, prevCount - 1),
               updatedAt: new Date().toISOString(),
               lastUpdatedBy: currentUser.uid
-            });
+            };
+            prevUpdate["members." + currentUser.uid] = fsModule.deleteField();
+            await fsModule.updateDoc(prevClubRef, prevUpdate);
           }
         } catch (e) {
           console.warn("Could not decrement prev club:", e);
         }
       }
+
+      var memberData = {
+        displayName: (userProfile && userProfile.displayName) ? userProfile.displayName : "Rybář",
+        avatarUrl: (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "🎣",
+        isCreator: true,
+        joinedAt: new Date().toISOString()
+      };
+      var initialMembers = {};
+      initialMembers[currentUser.uid] = memberData;
 
       var newDocRef = await fsModule.addDoc(clubsCol, {
         name: clubName,
@@ -810,6 +902,7 @@
         unlockedFcFishIds: [],
         unlockedMonsterIds: [],
         memberCount: 1,
+        members: initialMembers,
         createdBy: currentUser.uid,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
@@ -858,11 +951,13 @@
           var oldSnap = await fsModule.getDoc(oldClubRef);
           if (oldSnap.exists()) {
             var oldCnt = oldSnap.data().memberCount || 1;
-            await fsModule.updateDoc(oldClubRef, {
+            var oldUpdate = {
               memberCount: Math.max(0, oldCnt - 1),
               updatedAt: new Date().toISOString(),
               lastUpdatedBy: currentUser.uid
-            });
+            };
+            oldUpdate["members." + currentUser.uid] = fsModule.deleteField();
+            await fsModule.updateDoc(oldClubRef, oldUpdate);
           }
         } catch (e) {
           console.warn("Could not decrement old club:", e);
@@ -876,11 +971,19 @@
         return;
       }
       var newCount = (newSnap.data().memberCount || 0) + 1;
-      await fsModule.updateDoc(newClubRef, {
+      var memberData = {
+        displayName: (userProfile && userProfile.displayName) ? userProfile.displayName : "Rybář",
+        avatarUrl: (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "🎣",
+        isCreator: false,
+        joinedAt: new Date().toISOString()
+      };
+      var updatePayload = {
         memberCount: newCount,
         updatedAt: new Date().toISOString(),
         lastUpdatedBy: currentUser.uid
-      });
+      };
+      updatePayload["members." + currentUser.uid] = memberData;
+      await fsModule.updateDoc(newClubRef, updatePayload);
 
       var userDocRef = fsModule.doc(db, "users", currentUser.uid);
       await fsModule.updateDoc(userDocRef, {
@@ -913,11 +1016,13 @@
         var snap = await fsModule.getDoc(clubRef);
         if (snap.exists()) {
           var cnt = snap.data().memberCount || 1;
-          await fsModule.updateDoc(clubRef, {
+          var leaveUpdate = {
             memberCount: Math.max(0, cnt - 1),
             updatedAt: new Date().toISOString(),
             lastUpdatedBy: currentUser.uid
-          });
+          };
+          leaveUpdate["members." + currentUser.uid] = fsModule.deleteField();
+          await fsModule.updateDoc(clubRef, leaveUpdate);
         }
       } catch (e) {
         console.warn("Could not decrement club:", e);
@@ -1626,10 +1731,176 @@
     }
     document.getElementById("bulkModalOverlay").classList.add("active");
     document.getElementById("bulkResultMsg").style.display = "none";
+    var fishInp = document.getElementById("bulkFishInput");
+    var priceInp = document.getElementById("bulkFishPrice");
+    var drop = document.getElementById("bulkFishSuggestions");
+    if (fishInp) fishInp.value = "";
+    if (priceInp) priceInp.value = "";
+    if (drop) { drop.style.display = "none"; drop.innerHTML = ""; }
+    setTimeout(function () {
+      if (fishInp) fishInp.focus();
+    }, 100);
   }
 
   function closeBulkModal() {
     document.getElementById("bulkModalOverlay").classList.remove("active");
+    var drop = document.getElementById("bulkFishSuggestions");
+    if (drop) { drop.style.display = "none"; drop.innerHTML = ""; }
+  }
+
+  var bulkSelectedSuggestionIndex = -1;
+  var currentBulkSuggestions = [];
+
+  function onBulkSearchInput(e) {
+    var query = (e.target.value || "").trim();
+    var drop = document.getElementById("bulkFishSuggestions");
+    if (!drop) return;
+
+    if (!query || query.length < 1) {
+      drop.style.display = "none";
+      drop.innerHTML = "";
+      currentBulkSuggestions = [];
+      bulkSelectedSuggestionIndex = -1;
+      return;
+    }
+
+    var nq = normStr(query);
+    var matches = [];
+    var seenNames = new Set();
+
+    for (var i = 0; i < allFishes.length; i++) {
+      var f = allFishes[i];
+      var nameCz = f.name || "";
+      var nameEn = (window.FISHAO_I18N && window.FISHAO_I18N.translations && window.FISHAO_I18N.translations.en && window.FISHAO_I18N.translations.en.fish_names && window.FISHAO_I18N.translations.en.fish_names[f.id]) || "";
+      var curName = (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name) || "";
+
+      var normCz = normStr(nameCz);
+      var normEn = normStr(nameEn);
+      var idStr = String(f.id);
+
+      if (normCz.includes(nq) || (normEn && normEn.includes(nq)) || idStr === nq) {
+        if (!seenNames.has(curName)) {
+          seenNames.add(curName);
+          var latestPr = getLatestPrice(f.id);
+          matches.push({
+            id: f.id,
+            name: curName,
+            altName: (getLang() === 'cz' ? nameEn : nameCz),
+            latestPrice: latestPr ? latestPr.price : null
+          });
+          if (matches.length >= 8) break;
+        }
+      }
+    }
+
+    currentBulkSuggestions = matches;
+    bulkSelectedSuggestionIndex = -1;
+
+    if (matches.length === 0) {
+      drop.innerHTML = '<div style="padding: 8px 12px; font-size: 12px; color: var(--text-muted);">Žádná ryba nenalezena</div>';
+      drop.style.display = "block";
+      return;
+    }
+
+    var html = "";
+    matches.forEach(function (m, idx) {
+      var priceHint = m.latestPrice ? '<span class="bulk-suggestion-meta">💵 ' + m.latestPrice.toLocaleString(getLocale()) + ' FB</span>' : '';
+      html += '<div class="bulk-suggestion-item" data-index="' + idx + '" onclick="window.fishaoApp.selectBulkFishSuggestion(\'' + escapeHtml(m.name).replace(/'/g, "\\'") + '\')">' +
+        '<span class="bulk-suggestion-name">' + escapeHtml(m.name) + (m.altName ? ' <small style="color:var(--text-muted);font-weight:normal;">(' + escapeHtml(m.altName) + ')</small>' : '') + '</span>' +
+        priceHint +
+      '</div>';
+    });
+
+    drop.innerHTML = html;
+    drop.style.display = "block";
+  }
+
+  function selectBulkFishSuggestion(name) {
+    var input = document.getElementById("bulkFishInput");
+    var drop = document.getElementById("bulkFishSuggestions");
+    var priceInput = document.getElementById("bulkFishPrice");
+    if (input) input.value = name;
+    if (drop) {
+      drop.style.display = "none";
+      drop.innerHTML = "";
+    }
+    currentBulkSuggestions = [];
+    bulkSelectedSuggestionIndex = -1;
+    if (priceInput) {
+      priceInput.focus();
+      priceInput.select();
+    }
+  }
+
+  function onBulkInputKeyDown(e) {
+    var drop = document.getElementById("bulkFishSuggestions");
+    if (!drop || drop.style.display === "none" || currentBulkSuggestions.length === 0) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        var priceInput = document.getElementById("bulkFishPrice");
+        if (priceInput) priceInput.focus();
+      }
+      return;
+    }
+
+    var items = drop.querySelectorAll(".bulk-suggestion-item");
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      bulkSelectedSuggestionIndex = (bulkSelectedSuggestionIndex + 1) % currentBulkSuggestions.length;
+      items.forEach(function (el, idx) {
+        el.classList.toggle("highlighted", idx === bulkSelectedSuggestionIndex);
+      });
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      bulkSelectedSuggestionIndex = (bulkSelectedSuggestionIndex - 1 + currentBulkSuggestions.length) % currentBulkSuggestions.length;
+      items.forEach(function (el, idx) {
+        el.classList.toggle("highlighted", idx === bulkSelectedSuggestionIndex);
+      });
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (bulkSelectedSuggestionIndex >= 0 && bulkSelectedSuggestionIndex < currentBulkSuggestions.length) {
+        selectBulkFishSuggestion(currentBulkSuggestions[bulkSelectedSuggestionIndex].name);
+      } else if (currentBulkSuggestions.length > 0) {
+        selectBulkFishSuggestion(currentBulkSuggestions[0].name);
+      }
+    } else if (e.key === "Escape") {
+      drop.style.display = "none";
+    }
+  }
+
+  function addFishToBulkList() {
+    var nameInput = document.getElementById("bulkFishInput");
+    var priceInput = document.getElementById("bulkFishPrice");
+    var textArea = document.getElementById("bulkInputText");
+    if (!nameInput || !priceInput || !textArea) return;
+
+    var nameVal = (nameInput.value || "").trim();
+    var priceVal = (priceInput.value || "").trim();
+
+    if (!nameVal) {
+      showToast("Zadej nebo vyber název ryby.", "error");
+      nameInput.focus();
+      return;
+    }
+    if (!priceVal || isNaN(Number(priceVal)) || Number(priceVal) < 0) {
+      showToast("Zadej platnou cenu ryby.", "error");
+      priceInput.focus();
+      return;
+    }
+
+    var newLine = nameVal + ": " + priceVal;
+    if (textArea.value.trim().length > 0) {
+      textArea.value = textArea.value.trimEnd() + "\n" + newLine + "\n";
+    } else {
+      textArea.value = newLine + "\n";
+    }
+
+    showToast("Přidáno: " + newLine, "success");
+    nameInput.value = "";
+    priceInput.value = "";
+    var drop = document.getElementById("bulkFishSuggestions");
+    if (drop) drop.style.display = "none";
+    nameInput.focus();
   }
 
   function closeAllModals() {
@@ -1882,6 +2153,10 @@
   var currentMilestoneFilter = 'all';
 
   function setCollectionFilter(mode, btn) {
+    if (mode !== 'all' && !currentUser) {
+      showAuthNotice(t('coll_gate_title', 'Sbírka úlovků vyžaduje přihlášení.'));
+      return;
+    }
     collectionFilterMode = mode;
     document.querySelectorAll("#bannerCollection .pill-btn").forEach(function (b) {
       b.classList.remove("active");
@@ -2077,12 +2352,11 @@
     }
     currentView = view;
 
-    var tabs = ["tabClub", "tabAll", "tabClubManage", "tabCollection", "tabMarket"];
+    var tabs = ["tabClub", "tabAll", "tabClubManage", "tabMarket"];
     var tabMap = {
       "club": "tabClub",
       "all": "tabAll",
       "club_manage": "tabClubManage",
-      "collection": "tabCollection",
       "market": "tabMarket"
     };
 
@@ -2092,7 +2366,6 @@
     });
 
     var bClub = document.getElementById("bannerClub");
-    var bAll = document.getElementById("bannerAll");
     var bCollection = document.getElementById("bannerCollection");
     var bMarket = document.getElementById("bannerMarket");
     var secManage = document.getElementById("sectionClubManage");
@@ -2100,17 +2373,14 @@
     var filterCard = document.getElementById("filterCard");
     var gateClub = document.getElementById("gateClubManage");
     var manageContent = document.getElementById("manageClubContent");
-    var gateCollection = document.getElementById("gateCollection");
 
     if (bClub) bClub.style.display = (view === "club") ? "flex" : "none";
-    if (bAll) bAll.style.display = (view === "all") ? "flex" : "none";
-    if (bCollection) bCollection.style.display = (view === "collection" && currentUser) ? "flex" : "none";
+    if (bCollection) bCollection.style.display = (view === "all") ? "flex" : "none";
     if (bMarket) bMarket.style.display = (view === "market") ? "flex" : "none";
 
     if (view === "club_manage") {
       if (secManage) secManage.style.display = "block";
       if (secTable) secTable.style.display = "none";
-      if (gateCollection) gateCollection.style.display = "none";
 
       if (!currentUser) {
         if (gateClub) gateClub.style.display = "block";
@@ -2126,21 +2396,6 @@
       return;
     } else {
       if (secManage) secManage.style.display = "none";
-    }
-
-    if (view === "collection") {
-      if (!currentUser) {
-        if (gateCollection) gateCollection.style.display = "block";
-        if (secTable) secTable.style.display = "none";
-        if (filterCard) filterCard.style.display = "none";
-        return;
-      } else {
-        if (gateCollection) gateCollection.style.display = "none";
-        if (secTable) secTable.style.display = "block";
-        if (filterCard) filterCard.style.display = "flex";
-      }
-    } else {
-      if (gateCollection) gateCollection.style.display = "none";
       if (secTable) secTable.style.display = "block";
       if (filterCard) filterCard.style.display = "flex";
     }
@@ -2151,7 +2406,7 @@
 
     if (waterFilterGroup) waterFilterGroup.style.display = (view === "club") ? "flex" : "none";
     if (locationFilterGroup) locationFilterGroup.style.display = (view !== "club") ? "flex" : "none";
-    if (missionSizeRow) missionSizeRow.style.display = (view === "all" || view === "collection") ? "flex" : "none";
+    if (missionSizeRow) missionSizeRow.style.display = (view === "all") ? "flex" : "none";
 
     if (view === "market") {
       filterOnlyPrice = true;
@@ -2446,7 +2701,7 @@
 
       if (filterUncaught && caughtFishIds.has(f.id)) return false;
 
-      if (currentView === "collection") {
+      if (currentView === "collection" || currentView === "all") {
         if (collectionFilterMode === "caught" && !caughtFishIds.has(f.id)) return false;
         if (collectionFilterMode === "missing" && caughtFishIds.has(f.id)) return false;
       }
@@ -2533,7 +2788,7 @@
     var loc = document.getElementById("locationFilter");
     if (loc) loc.value = "";
     document.getElementById("timeFilter").value = "";
-    document.getElementById("sortBy").value = "default";
+    document.getElementById("sortBy").value = "name_asc";
     var minEl = document.getElementById("minSizeInput");
     if (minEl) minEl.value = "";
     var maxEl = document.getElementById("maxSizeInput");
@@ -2661,18 +2916,18 @@
     if (!select) return;
     var curVal = select.value;
     select.innerHTML =
-      '<option value="default">' + t('opt_sort_default') + '</option>' +
       '<option value="name_asc">' + t('opt_sort_name_asc') + '</option>' +
       '<option value="name_desc">' + t('opt_sort_name_desc') + '</option>' +
-      '<option value="rating_desc">' + t('opt_sort_rating_desc') + '</option>' +
-      '<option value="rating_asc">' + t('opt_sort_rating_asc') + '</option>' +
+      '<option value="default">' + t('opt_sort_default') + '</option>' +
       '<option value="price_desc">' + t('opt_sort_price_desc') + '</option>' +
       '<option value="price_asc">' + t('opt_sort_price_asc') + '</option>' +
+      '<option value="rating_desc">' + t('opt_sort_rating_desc') + '</option>' +
+      '<option value="rating_asc">' + t('opt_sort_rating_asc') + '</option>' +
       '<option value="max_desc">' + t('opt_sort_max_desc') + '</option>' +
       '<option value="max_asc">' + t('opt_sort_max_asc') + '</option>' +
       '<option value="avg_desc">' + t('opt_sort_avg_desc') + '</option>' +
       '<option value="avg_asc">' + t('opt_sort_avg_asc') + '</option>';
-    select.value = curVal || "default";
+    select.value = curVal || "name_asc";
   }
 
   function updateRatingFilterOptions() {
@@ -2745,6 +3000,10 @@
     closeBulkModal: closeBulkModal,
     closeAllModals: closeAllModals,
     onModalOverlayClick: onModalOverlayClick,
+    onBulkSearchInput: onBulkSearchInput,
+    selectBulkFishSuggestion: selectBulkFishSuggestion,
+    onBulkInputKeyDown: onBulkInputKeyDown,
+    addFishToBulkList: addFishToBulkList,
     submitNewPrice: submitNewPrice,
     deletePriceEntry: deletePriceEntry,
     processBulkImport: processBulkImport,
@@ -2765,6 +3024,7 @@
     createClub: createClub,
     joinClub: joinClub,
     leaveClub: leaveClub,
+    renderClubMembers: renderClubMembers,
     setClubPoints: setClubPoints,
     addClubPoints: addClubPoints,
     toggleClubSpecialFish: toggleClubSpecialFish,

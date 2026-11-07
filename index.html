@@ -111,11 +111,6 @@
         <span class="tab-title" data-i18n="nav_manage">Můj Klub &amp; Milníky</span>
         <span class="tab-pill" id="navClubPtsBadge">Zamčeno 🔒</span>
       </button>
-      <button class="nav-tab green" id="tabCollection" onclick="window.fishaoApp.switchView('collection')">
-        <span class="tab-icon">🎣</span>
-        <span class="tab-title" data-i18n="nav_collection">Sbírka úlovků</span>
-        <span class="tab-pill" id="navCaughtBadge">Zamčeno 🔒</span>
-      </button>
       <button class="nav-tab yellow" id="tabMarket" onclick="window.fishaoApp.switchView('market')">
         <span class="tab-icon">💵</span>
         <span class="tab-title" data-i18n="nav_market">Fish Market</span>
@@ -152,8 +147,8 @@
       </div>
     </div>
 
-    <!-- Compact Sub-Toolbar: Collection (Emerald Theme) -->
-    <div class="view-action-bar green" id="bannerCollection" style="display: none;">
+    <!-- Compact Sub-Toolbar: Encyclopedia / Collection Stats (Blue Theme) -->
+    <div class="view-action-bar blue" id="bannerCollection" style="display: none;">
       <div class="action-bar-left">
         <span class="action-bar-title" data-i18n="coll_title">🎣 Sbírka úlovků:</span>
         <div class="collection-stats-group">
@@ -286,6 +281,18 @@
             </div>
           </div>
 
+          <!-- Club Members Grid Card -->
+          <div class="dash-card purple-card" style="margin-bottom: 14px;">
+            <div class="dash-card-header">
+              <span class="dash-card-title">👥 Členové klubu (<span id="activeClubMembersCount">0</span>)</span>
+            </div>
+            <div class="dash-card-body">
+              <div class="club-members-grid" id="clubMembersGrid">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+
           <!-- Top Grid (Points, Next Target, Summary) -->
           <div class="manage-top-grid">
             <!-- Card 1: Club Points Management -->
@@ -394,27 +401,6 @@
       </div>
     </section>
 
-    <!-- Auth Gate: Collection Locked Screen (shown when on collection tab while not logged in) -->
-    <div class="auth-gate-card green-card" id="gateCollection" style="display: none;">
-      <div class="auth-gate-icon">🎣</div>
-      <h3 data-i18n="coll_gate_title">Sbírka úlovků vyžaduje přihlášení</h3>
-      <p data-i18n="coll_gate_desc">Osobní sbírka úlovků a sledování dokončení hry jsou vázány na tvůj hráčský účet.
-        Přihlas se přes Google a měj své chycené ryby bezpečně uložené v cloudu na PC i v mobilu.</p>
-      <button class="sign-in-btn" onclick="window.fishaoApp.signIn()" style="margin-top: 6px;">
-        <svg width="16" height="16" viewBox="0 0 24 24">
-          <path fill="#4285F4"
-            d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" />
-          <path fill="#34A853"
-            d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z" />
-          <path fill="#FBBC05"
-            d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z" />
-          <path fill="#EA4335"
-            d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" />
-        </svg>
-        <span data-i18n="sign_in_google">Přihlásit se přes Google</span>
-      </button>
-    </div>
-
     <!-- SECTION: Fish Table and Standard Filters Container -->
     <div id="sectionFishTable">
 
@@ -510,11 +496,11 @@
           <div class="filter-group">
             <label class="filter-label" for="sortBy" data-i18n="filter_sort_label">Řadit podle</label>
             <select id="sortBy" class="filter-control" onchange="window.fishaoApp.applyFilters()">
+              <option value="name_asc" selected>Název (A - Z)</option>
+              <option value="name_desc">Název (Z - A)</option>
               <option value="default">Výchozí (pořadí)</option>
               <option value="price_desc">Cena Fish Market (nejvyšší)</option>
               <option value="price_asc">Cena Fish Market (nejnižší)</option>
-              <option value="name_asc">Název (A - Z)</option>
-              <option value="name_desc">Název (Z - A)</option>
               <option value="rating_desc">Rating (nejvyšší)</option>
               <option value="avg_desc">Průměrná velikost (největší)</option>
               <option value="avg_asc">Průměrná velikost (nejmenší)</option>
@@ -735,6 +721,21 @@
             style="font-size: 12px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;"
             data-i18n="bulk_date_label"> Datum pro tento import: </label>
           <input type="date" id="bulkImportDate" class="filter-control" style="width: 180px;">
+        </div>
+
+        <!-- Quick Add with Fish Autocomplete -->
+        <div class="bulk-autocomplete-container">
+          <label style="font-size: 12px; font-weight: 700; color: var(--gold); display: block; margin-bottom: 4px;">
+            🔍 Rychlé přidání ryby (našeptávač jmen):
+          </label>
+          <div class="bulk-quick-add-row">
+            <div style="position: relative; flex: 1;">
+              <input type="text" id="bulkFishInput" class="filter-control" placeholder="Začni psát název ryby..." autocomplete="off" oninput="window.fishaoApp.onBulkSearchInput(event)" onkeydown="window.fishaoApp.onBulkInputKeyDown(event)">
+              <div id="bulkFishSuggestions" class="bulk-suggestions-dropdown" style="display: none;"></div>
+            </div>
+            <input type="number" id="bulkFishPrice" class="filter-control" placeholder="Cena (FB)" style="width: 110px;" min="0" step="1" onkeydown="if(event.key==='Enter')window.fishaoApp.addFishToBulkList()">
+            <button class="pill-btn yellow" type="button" onclick="window.fishaoApp.addFishToBulkList()" style="height: 38px; padding: 0 14px; font-weight: 700;">➕ Přidat</button>
+          </div>
         </div>
 
         <div>
