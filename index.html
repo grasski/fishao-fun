@@ -78,9 +78,12 @@
             <span data-i18n="sign_in">Přihlásit se</span>
           </button>
           <div class="user-info-bar" id="userInfoBar" style="display: none;">
-            <img class="user-avatar" id="userAvatar" src="" alt="Avatar">
+            <div class="user-avatar-badge" id="userAvatarBadge" title="Profil hráče">🎣</div>
             <div class="user-details">
-              <span class="user-name" id="userName" data-i18n="user_default">Uživatel</span>
+              <div class="user-name-row">
+                <span class="user-name" id="userName" data-i18n="user_default">Uživatel</span>
+                <button class="edit-nick-btn" onclick="window.fishaoApp.editNickname()" title="Změnit přezdívku" data-i18n-title="prompt_edit_nickname">✏️</button>
+              </div>
               <span class="admin-badge" id="adminBadge" style="display: none;" data-i18n="admin_badge">🛡️ Admin</span>
             </div>
             <button class="sign-out-btn" onclick="window.fishaoApp.signOut()" title="Odhlásit se" data-i18n="sign_out"
@@ -218,96 +221,164 @@
 
       <!-- Club Management Content: shown when logged in -->
       <div id="manageClubContent">
-        <div class="manage-top-grid">
-          <!-- Card 1: Club Settings -->
-          <div class="dash-card manage-card purple-card">
+
+        <!-- STATE A: No Club Joined (Search & Join or Create) -->
+        <div id="clubNoClubState" style="display: none;">
+          <div class="dash-card purple-card no-club-card">
             <div class="dash-card-header">
-              <span class="dash-card-title" data-i18n="club_settings_title">🏰 Nastavení &amp; Body klubu</span>
+              <span class="dash-card-title" data-i18n="club_join_title">🏰 Připojit se ke klubu nebo založit nový</span>
             </div>
             <div class="dash-card-body">
-              <div class="dash-input-grid">
-                <div class="dash-field">
-                  <label for="clubNameManageInput" data-i18n="club_name_label">Název klubu</label>
-                  <input type="text" id="clubNameManageInput" class="dash-input" placeholder="Např. Lovci z Prahy"
-                    data-i18n-placeholder="club_name_placeholder" oninput="window.fishaoApp.syncClubName(this.value)">
+              <div class="club-finder-grid">
+                <!-- Column 1: Search Existing Clubs -->
+                <div class="club-finder-col">
+                  <h4 style="margin: 0 0 8px 0; color: #fff; font-size: 14px;" data-i18n="club_search_label">Vyhledat existující klub:</h4>
+                  <div class="club-search-bar">
+                    <input type="text" id="clubSearchInput" class="dash-input" placeholder="Hledat klub podle názvu..."
+                      data-i18n-placeholder="club_search_placeholder" onkeydown="if(event.key==='Enter') window.fishaoApp.searchClubs()">
+                    <button class="pill-btn purple active" onclick="window.fishaoApp.searchClubs()" data-i18n="club_btn_search">Hledat</button>
+                  </div>
+                  <div id="clubSearchResults" class="club-search-results">
+                    <!-- Dynamic search list -->
+                  </div>
                 </div>
-                <div class="dash-field">
-                  <label for="clubPointsManageInput" data-i18n="club_pts_label">Aktuální body klubu</label>
-                  <input type="number" id="clubPointsManageInput" class="dash-input points" value="0" min="0" step="50"
-                    oninput="window.fishaoApp.syncClubPoints(this.value)">
-                </div>
-              </div>
-              <div class="manage-quick-pts">
-                <span style="font-size: 11px; color: var(--text-muted);" data-i18n="club_quick_add">Rychlé přidání
-                  bodů:</span>
-                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                  <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(100)">+100</button>
-                  <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(500)">+500</button>
-                  <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(1000)">+1 000</button>
-                  <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(5000)">+5 000</button>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <!-- Card 2: Next Milestone Target -->
-          <div class="dash-card manage-card gold-card" id="nextMilestoneCard">
-            <!-- Dynamically rendered -->
-          </div>
-
-          <!-- Card 3: Summary Progress -->
-          <div class="dash-card manage-card green-card">
-            <div class="dash-card-header">
-              <span class="dash-card-title" data-i18n="club_summary_title">📊 Souhrn klubu &amp; Úlovků</span>
-            </div>
-            <div class="dash-card-body">
-              <div class="manage-stats-list">
-                <div class="manage-stat-item">
-                  <span data-i18n="club_pts_unlocked">Odemčeno bodových ryb:</span>
-                  <strong id="managePointsUnlocked" style="color: #34d399;">--</strong>
+                <!-- Column 2: Create a New Club -->
+                <div class="club-finder-col club-create-col">
+                  <h4 style="margin: 0 0 8px 0; color: #fff; font-size: 14px;" data-i18n="club_create_title">Nebo založit nový klub:</h4>
+                  <div class="club-create-form">
+                    <input type="text" id="newClubNameInput" class="dash-input" placeholder="Zadej název nového klubu..."
+                      data-i18n-placeholder="club_create_placeholder" maxlength="40" onkeydown="if(event.key==='Enter') window.fishaoApp.createClub()">
+                    <button class="pill-btn gold active" onclick="window.fishaoApp.createClub()" style="white-space: nowrap;" data-i18n="club_btn_create">➕ Vytvořit klub</button>
+                  </div>
+                  <p style="font-size: 11px; color: var(--text-muted); margin-top: 10px; line-height: 1.4;">
+                    Založením klubu získáš vlastní komunitu. Všichni členové, kteří se připojí, uvidí společné body a odemčené ryby v reálném čase.
+                  </p>
                 </div>
-                <div class="manage-stat-item">
-                  <span data-i18n="club_fc_monsters">Ryby za Fishcoins &amp; Monstra:</span>
-                  <strong style="color: #fbbf24;" data-i18n="club_fc_monsters_count">15 ryb</strong>
-                </div>
-                <div class="manage-stat-item">
-                  <span data-i18n="club_fishes_caught">Klubových ryb chyceno:</span>
-                  <strong id="manageCaughtClub" style="color: #38bdf8;">-- / 80</strong>
-                </div>
-              </div>
-              <div class="caught-progress-track" style="margin-top: 10px;">
-                <div class="caught-progress-fill" id="manageProgressFill" style="width: 0%;"></div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Milestone Roadmap Header -->
-        <div class="milestone-roadmap-header">
-          <div class="roadmap-header-left">
-            <h3 data-i18n="roadmap_title">🗺️ Cesta odemykání klubových ryb (80 milníků)</h3>
-            <p data-i18n="roadmap_desc">Všechny klubové ryby seřazené podle potřebných bodů. Zelené jsou odemčené, u
-              červených vidíš zbývající body.</p>
+        <!-- STATE B: Active Club Joined -->
+        <div id="clubActiveState" style="display: none;">
+          <!-- Active Club Header Bar -->
+          <div class="active-club-bar">
+            <div class="active-club-info">
+              <span class="active-club-icon">🏰</span>
+              <div>
+                <h3 class="active-club-name" id="activeClubName">Klub</h3>
+                <span class="active-club-badge" id="activeClubMembers">👥 1 člen</span>
+              </div>
+            </div>
+            <button class="pill-btn danger" onclick="window.fishaoApp.leaveClub()" data-i18n="club_btn_leave">🚪 Opustit klub</button>
           </div>
-          <div class="roadmap-header-filters">
-            <button class="pill-btn active" id="filterMilestoneAll"
-              onclick="window.fishaoApp.filterMilestones('all', this)" data-i18n="roadmap_filter_all">Všechny
-              (80)</button>
-            <button class="pill-btn" id="filterMilestoneUnlocked"
-              onclick="window.fishaoApp.filterMilestones('unlocked', this)" data-i18n="roadmap_filter_unlocked">✓
-              Odemčené</button>
-            <button class="pill-btn" id="filterMilestoneLocked"
-              onclick="window.fishaoApp.filterMilestones('locked', this)" data-i18n="roadmap_filter_locked">🔒
-              Zamčené</button>
-            <button class="pill-btn" id="filterMilestoneFc" onclick="window.fishaoApp.filterMilestones('fc', this)"
-              data-i18n="roadmap_filter_fc">💎 FC &amp; Monstra</button>
+
+          <!-- Top Grid (Points, Next Target, Summary) -->
+          <div class="manage-top-grid">
+            <!-- Card 1: Club Points Management -->
+            <div class="dash-card manage-card purple-card">
+              <div class="dash-card-header">
+                <span class="dash-card-title" data-i18n="club_settings_title">🏰 Body klubu</span>
+              </div>
+              <div class="dash-card-body">
+                <div class="dash-input-grid">
+                  <div class="dash-field" style="width: 100%;">
+                    <label for="clubPointsManageInput" data-i18n="club_pts_label">Aktuální body klubu</label>
+                    <input type="number" id="clubPointsManageInput" class="dash-input points" value="0" min="0" step="50"
+                      onchange="window.fishaoApp.setClubPoints(this.value)">
+                  </div>
+                </div>
+                <div class="manage-quick-pts">
+                  <span style="font-size: 11px; color: var(--text-muted);" data-i18n="club_quick_add">Rychlé přidání bodů všem:</span>
+                  <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                    <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(100)">+100</button>
+                    <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(500)">+500</button>
+                    <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(1000)">+1 000</button>
+                    <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(5000)">+5 000</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Next Milestone Target -->
+            <div class="dash-card manage-card gold-card" id="nextMilestoneCard">
+              <!-- Dynamically rendered -->
+            </div>
+
+            <!-- Card 3: Summary Progress -->
+            <div class="dash-card manage-card green-card">
+              <div class="dash-card-header">
+                <span class="dash-card-title" data-i18n="club_summary_title">📊 Souhrn klubu &amp; Úlovků</span>
+              </div>
+              <div class="dash-card-body">
+                <div class="manage-stats-list">
+                  <div class="manage-stat-item">
+                    <span data-i18n="club_pts_unlocked">Odemčeno bodových ryb:</span>
+                    <strong id="managePointsUnlocked" style="color: #34d399;">--</strong>
+                  </div>
+                  <div class="manage-stat-item">
+                    <span data-i18n="club_fc_monsters">Ryby za Fishcoins &amp; Monstra:</span>
+                    <strong id="manageSpecialUnlocked" style="color: #fbbf24;">0 / 24</strong>
+                  </div>
+                  <div class="manage-stat-item">
+                    <span data-i18n="club_fishes_caught">Klubových ryb chyceno:</span>
+                    <strong id="manageCaughtClub" style="color: #38bdf8;">-- / 80</strong>
+                  </div>
+                </div>
+                <div class="caught-progress-track" style="margin-top: 10px;">
+                  <div class="caught-progress-fill" id="manageProgressFill" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION: Special Fish Manager (Fishcoins & Monsters) -->
+          <div class="special-fishes-panel">
+            <div class="special-panel-header">
+              <div class="special-header-left">
+                <h3 data-i18n="club_special_title">💎 Speciální ryby klubu (Fishcoins &amp; Monstra)</h3>
+                <p data-i18n="club_special_desc">Odemčením ryby ji zpřístupníš všem členům klubu v reálném čase.</p>
+              </div>
+              <div class="special-header-filters">
+                <button class="pill-btn active" id="filterSpecialAll" onclick="window.fishaoApp.filterSpecialFishes('all', this)" data-i18n="club_special_filter_all">Všechny speciální (24)</button>
+                <button class="pill-btn" id="filterSpecialFc" onclick="window.fishaoApp.filterSpecialFishes('fc', this)" data-i18n="club_special_filter_fc">Fishcoins (21)</button>
+                <button class="pill-btn" id="filterSpecialMonsters" onclick="window.fishaoApp.filterSpecialFishes('monster', this)" data-i18n="club_special_filter_monsters">Monstra (3)</button>
+              </div>
+            </div>
+            <div class="special-fishes-grid" id="clubSpecialGrid">
+              <!-- Dynamically rendered special fish cards -->
+            </div>
+          </div>
+
+          <!-- Milestone Roadmap Header -->
+          <div class="milestone-roadmap-header">
+            <div class="roadmap-header-left">
+              <h3 data-i18n="roadmap_title">🗺️ Cesta odemykání klubových ryb (80 milníků)</h3>
+              <p data-i18n="roadmap_desc">Všechny klubové ryby seřazené podle potřebných bodů. Zelené jsou odemčené, u
+                červených vidíš zbývající body.</p>
+            </div>
+            <div class="roadmap-header-filters">
+              <button class="pill-btn active" id="filterMilestoneAll"
+                onclick="window.fishaoApp.filterMilestones('all', this)" data-i18n="roadmap_filter_all">Všechny
+                (80)</button>
+              <button class="pill-btn" id="filterMilestoneUnlocked"
+                onclick="window.fishaoApp.filterMilestones('unlocked', this)" data-i18n="roadmap_filter_unlocked">✓
+                Odemčené</button>
+              <button class="pill-btn" id="filterMilestoneLocked"
+                onclick="window.fishaoApp.filterMilestones('locked', this)" data-i18n="roadmap_filter_locked">🔒
+                Zamčené</button>
+              <button class="pill-btn" id="filterMilestoneFc" onclick="window.fishaoApp.filterMilestones('fc', this)"
+                data-i18n="roadmap_filter_fc">💎 FC &amp; Monstra</button>
+            </div>
+          </div>
+
+          <!-- Milestone Grid Container -->
+          <div class="milestone-grid" id="milestoneGrid">
+            <!-- Generated dynamically by renderClubMilestones() -->
           </div>
         </div>
 
-        <!-- Milestone Grid Container -->
-        <div class="milestone-grid" id="milestoneGrid">
-          <!-- Generated dynamically by renderClubMilestones() -->
-        </div>
       </div>
     </section>
 

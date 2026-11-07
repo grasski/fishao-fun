@@ -15,12 +15,28 @@
 
   // Application state
   var currentView = "all";
-  var currentClubPoints = 0;
+  var currentClubId = "";
   var currentClubName = "";
+  var currentClubPoints = 0;
+  var currentClubMemberCount = 1;
+  var currentClubUnlockedFcFishIds = new Set();
+  var currentClubUnlockedMonsterIds = new Set();
+  var clubUnsubscribe = null;
+  var currentSpecialFilter = "all"; // 'all' | 'fc' | 'monster'
   var filterNowActive = false;
   var filterOnlyPrice = false;
   var selectedModalFishId = null;
   var currentSyncState = "local"; // 'local' | 'live' | 'offline' | 'error'
+
+  function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 
   // Unified i18n translation helper delegating to window.FISHAO_I18N
   function getLang() {
@@ -303,16 +319,18 @@
           userProfile = null;
           isAdmin = false;
           caughtFishIds = new Set();
+          if (clubUnsubscribe) {
+            clubUnsubscribe();
+            clubUnsubscribe = null;
+          }
+          currentClubId = "";
           currentClubName = "";
           currentClubPoints = 0;
-          var ptsInput = document.getElementById("clubPointsInput");
-          if (ptsInput) ptsInput.value = 0;
-          var nameInput = document.getElementById("clubNameInput");
-          if (nameInput) nameInput.value = "";
+          currentClubMemberCount = 1;
+          currentClubUnlockedFcFishIds.clear();
+          currentClubUnlockedMonsterIds.clear();
           var ptsManage = document.getElementById("clubPointsManageInput");
           if (ptsManage) ptsManage.value = 0;
-          var nameManage = document.getElementById("clubNameManageInput");
-          if (nameManage) nameManage.value = "";
         }
         updateAuthUI();
         updateCaughtStats();
@@ -393,13 +411,13 @@
         userProfile = docSnap.data();
         fsModule.updateDoc(userDocRef, { lastLogin: new Date().toISOString() });
       } else {
+        // Privacy / GDPR: zero PII (NO email, NO avatar photo stored)
+        var defaultNick = t('user_default_player') + " #" + Math.floor(1000 + Math.random() * 9000);
         userProfile = {
-          displayName: user.displayName || t('user_default_player'),
-          email: user.email || "",
-          photoURL: user.photoURL || "",
+          displayName: defaultNick,
           role: "member",
+          clubId: "",
           clubName: "",
-          clubPoints: currentClubPoints,
           caughtFishIds: Array.from(caughtFishIds),
           createdAt: new Date().toISOString(),
           lastLogin: new Date().toISOString()
@@ -408,44 +426,31 @@
       }
 
       isAdmin = (userProfile.role === "admin");
-      if (userProfile.clubPoints !== undefined) {
-        currentClubPoints = userProfile.clubPoints;
-        var ptsEl = document.getElementById("clubPointsInput");
-        if (ptsEl) ptsEl.value = currentClubPoints;
-        var ptsManage = document.getElementById("clubPointsManageInput");
-        if (ptsManage) ptsManage.value = currentClubPoints;
-      }
-      if (userProfile.clubName !== undefined) {
-        currentClubName = (userProfile.clubName || "").trim();
-        var cnEl = document.getElementById("clubNameInput");
-        if (cnEl) cnEl.value = currentClubName;
-        var cnManage = document.getElementById("clubNameManageInput");
-        if (cnManage) cnManage.value = currentClubName;
-      }
       if (userProfile.caughtFishIds && Array.isArray(userProfile.caughtFishIds)) {
         caughtFishIds = new Set(userProfile.caughtFishIds);
       }
 
+      if (userProfile.clubId) {
+        bindClubListener(userProfile.clubId);
+      } else {
+        unbindClubListener();
+      }
+
       fsModule.onSnapshot(userDocRef, function (snap) {
         if (snap.exists()) {
-          userProfile = snap.data();
+          var updated = snap.data();
+          var oldClubId = userProfile ? userProfile.clubId : "";
+          userProfile = updated;
           isAdmin = (userProfile.role === "admin");
-          if (userProfile.clubPoints !== undefined) {
-            currentClubPoints = userProfile.clubPoints;
-            var ptsEl2 = document.getElementById("clubPointsInput");
-            if (ptsEl2) ptsEl2.value = currentClubPoints;
-            var ptsManage2 = document.getElementById("clubPointsManageInput");
-            if (ptsManage2) ptsManage2.value = currentClubPoints;
-          }
-          if (userProfile.clubName !== undefined) {
-            currentClubName = (userProfile.clubName || "").trim();
-            var cnEl2 = document.getElementById("clubNameInput");
-            if (cnEl2) cnEl2.value = currentClubName;
-            var cnManage2 = document.getElementById("clubNameManageInput");
-            if (cnManage2) cnManage2.value = currentClubName;
-          }
           if (userProfile.caughtFishIds && Array.isArray(userProfile.caughtFishIds)) {
             caughtFishIds = new Set(userProfile.caughtFishIds);
+          }
+          if (userProfile.clubId !== oldClubId) {
+            if (userProfile.clubId) {
+              bindClubListener(userProfile.clubId);
+            } else {
+              unbindClubListener();
+            }
           }
           updateAuthUI();
           updateCaughtStats();
@@ -458,9 +463,448 @@
     }
   }
 
+  async function editNickname() {
+    if (!currentUser || !db) return;
+    var currentName = (userProfile && userProfile.displayName) ? userProfile.displayName : "";
+    var newNick = prompt(t('prompt_edit_nickname'), currentName);
+    if (newNick === null) return;
+    newNick = newNick.trim();
+    if (newNick.length < 2) {
+      alert(t('nick_too_short'));
+      return;
+    }
+    if (newNick.length > 40) {
+      alert("Přezdívka může mít maximálně 40 znaků.");
+      return;
+    }
+
+    try {
+      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      var userDocRef = fsModule.doc(db, "users", currentUser.uid);
+      await fsModule.updateDoc(userDocRef, { displayName: newNick });
+      if (userProfile) userProfile.displayName = newNick;
+      var nameEl = document.getElementById("userName");
+      if (nameEl) nameEl.innerText = newNick;
+    } catch (err) {
+      console.error("Failed to update nickname:", err);
+      alert("Chyba při ukládání přezdívky: " + err.message);
+    }
+  }
+
+  // -------------------------------------------------------------
+  // Real-time Shared Club Synchronization
+  // -------------------------------------------------------------
+
+  async function bindClubListener(clubId) {
+    if (!db || !clubId) return;
+    try {
+      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      if (clubUnsubscribe) {
+        clubUnsubscribe();
+        clubUnsubscribe = null;
+      }
+      currentClubId = clubId;
+      var clubDocRef = fsModule.doc(db, "clubs", clubId);
+
+      clubUnsubscribe = fsModule.onSnapshot(clubDocRef, function (snap) {
+        if (snap.exists()) {
+          var data = snap.data();
+          currentClubName = data.name || "";
+          currentClubPoints = typeof data.points === 'number' ? data.points : 0;
+          currentClubMemberCount = typeof data.memberCount === 'number' ? data.memberCount : 1;
+          currentClubUnlockedFcFishIds = new Set(data.unlockedFcFishIds || []);
+          currentClubUnlockedMonsterIds = new Set(data.unlockedMonsterIds || []);
+        } else {
+          console.warn("Club document not found:", clubId);
+          currentClubId = "";
+          currentClubName = "";
+          currentClubPoints = 0;
+          currentClubMemberCount = 1;
+          currentClubUnlockedFcFishIds.clear();
+          currentClubUnlockedMonsterIds.clear();
+        }
+        updateClubStats();
+        renderClubMilestones();
+        renderClubSpecialFishes();
+        updateAuthUI();
+        applyFilters();
+      }, function (err) {
+        console.warn("Club snapshot error:", err);
+      });
+    } catch (err) {
+      console.error("Error binding club listener:", err);
+    }
+  }
+
+  function unbindClubListener() {
+    if (clubUnsubscribe) {
+      clubUnsubscribe();
+      clubUnsubscribe = null;
+    }
+    currentClubId = "";
+    currentClubName = "";
+    currentClubPoints = 0;
+    currentClubMemberCount = 1;
+    currentClubUnlockedFcFishIds.clear();
+    currentClubUnlockedMonsterIds.clear();
+    updateClubStats();
+    renderClubMilestones();
+    renderClubSpecialFishes();
+    updateAuthUI();
+    applyFilters();
+  }
+
+  async function searchClubs(query) {
+    if (!db) return;
+    var searchInput = document.getElementById("clubSearchInput");
+    var q = (query !== undefined ? query : (searchInput ? searchInput.value : "")).trim();
+    var resultsEl = document.getElementById("clubSearchResults");
+    if (!resultsEl) return;
+
+    resultsEl.innerHTML = '<div style="padding: 10px; color: var(--text-muted); font-size: 12px;">⏳ ' + t('club_btn_search') + '...</div>';
+
+    try {
+      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      var clubsCol = fsModule.collection(db, "clubs");
+      var qry;
+
+      if (!q) {
+        qry = fsModule.query(clubsCol, fsModule.orderBy("points", "desc"), fsModule.limit(15));
+      } else {
+        var qLower = q.toLowerCase();
+        qry = fsModule.query(
+          clubsCol,
+          fsModule.where("name_lower", ">=", qLower),
+          fsModule.where("name_lower", "<=", qLower + "\uf8ff"),
+          fsModule.limit(15)
+        );
+      }
+
+      var snap = await fsModule.getDocs(qry);
+      if (snap.empty) {
+        resultsEl.innerHTML = '<div style="padding: 12px; color: var(--text-muted); font-size: 12px; text-align: center;">' + t('club_no_search_results') + '</div>';
+        return;
+      }
+
+      var html = "";
+      snap.forEach(function (doc) {
+        var d = doc.data();
+        var cId = doc.id;
+        var name = d.name || "Klub";
+        var pts = typeof d.points === 'number' ? d.points : 0;
+        var members = typeof d.memberCount === 'number' ? d.memberCount : 1;
+        var unlockedFcCount = (d.unlockedFcFishIds || []).length + (d.unlockedMonsterIds || []).length;
+
+        html += '<div class="club-search-item">' +
+          '<div>' +
+          '<div class="club-item-name">🏰 ' + escapeHtml(name) + '</div>' +
+          '<div class="club-item-meta">' +
+          '<span>⭐ ' + pts.toLocaleString(getLocale()) + ' ' + t('unit_pts') + '</span>' +
+          '<span>👥 ' + t('club_active_members', { count: members }) + '</span>' +
+          '<span>💎 ' + unlockedFcCount + '/24</span>' +
+          '</div>' +
+          '</div>' +
+          '<button class="pill-btn purple" onclick="window.fishaoApp.joinClub(\'' + cId + '\', \'' + escapeHtml(name).replace(/'/g, "\\'") + '\')">' + t('club_btn_join') + '</button>' +
+          '</div>';
+      });
+
+      resultsEl.innerHTML = html;
+    } catch (err) {
+      console.error("Error searching clubs:", err);
+      resultsEl.innerHTML = '<div style="padding: 10px; color: #f87171; font-size: 12px;">Chyba: ' + err.message + '</div>';
+    }
+  }
+
+  async function createClub(name) {
+    if (!currentUser || !db) {
+      showAuthNotice(t('auth_notice_club'));
+      return;
+    }
+    var input = document.getElementById("newClubNameInput");
+    var clubName = (name !== undefined ? name : (input ? input.value : "")).trim();
+    if (clubName.length < 2) {
+      alert(t('club_name_too_short'));
+      return;
+    }
+    if (clubName.length > 40) {
+      alert("Název klubu může mít maximálně 40 znaků.");
+      return;
+    }
+
+    try {
+      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      var clubsCol = fsModule.collection(db, "clubs");
+
+      // Decrement previous club member count if user was in a club
+      if (currentClubId) {
+        try {
+          var prevClubRef = fsModule.doc(db, "clubs", currentClubId);
+          var prevSnap = await fsModule.getDoc(prevClubRef);
+          if (prevSnap.exists()) {
+            var prevCount = prevSnap.data().memberCount || 1;
+            await fsModule.updateDoc(prevClubRef, {
+              memberCount: Math.max(0, prevCount - 1),
+              updatedAt: new Date().toISOString(),
+              lastUpdatedBy: currentUser.uid
+            });
+          }
+        } catch (e) {
+          console.warn("Could not decrement prev club:", e);
+        }
+      }
+
+      var newDocRef = await fsModule.addDoc(clubsCol, {
+        name: clubName,
+        name_lower: clubName.toLowerCase(),
+        points: 0,
+        unlockedFcFishIds: [],
+        unlockedMonsterIds: [],
+        memberCount: 1,
+        createdBy: currentUser.uid,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+
+      var userDocRef = fsModule.doc(db, "users", currentUser.uid);
+      await fsModule.updateDoc(userDocRef, {
+        clubId: newDocRef.id,
+        clubName: clubName
+      });
+
+      if (input) input.value = "";
+      alert(t('club_created_success', { name: clubName }));
+      bindClubListener(newDocRef.id);
+    } catch (err) {
+      console.error("Failed to create club:", err);
+      alert("Chyba při vytváření klubu: " + err.message);
+    }
+  }
+
+  async function joinClub(clubId, clubName) {
+    if (!currentUser || !db) {
+      showAuthNotice(t('auth_notice_club'));
+      return;
+    }
+    if (currentClubId === clubId) {
+      alert("V tomto klubu již jsi!");
+      return;
+    }
+
+    try {
+      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+
+      if (currentClubId) {
+        try {
+          var oldClubRef = fsModule.doc(db, "clubs", currentClubId);
+          var oldSnap = await fsModule.getDoc(oldClubRef);
+          if (oldSnap.exists()) {
+            var oldCnt = oldSnap.data().memberCount || 1;
+            await fsModule.updateDoc(oldClubRef, {
+              memberCount: Math.max(0, oldCnt - 1),
+              updatedAt: new Date().toISOString(),
+              lastUpdatedBy: currentUser.uid
+            });
+          }
+        } catch (e) {
+          console.warn("Could not decrement old club:", e);
+        }
+      }
+
+      var newClubRef = fsModule.doc(db, "clubs", clubId);
+      var newSnap = await fsModule.getDoc(newClubRef);
+      if (!newSnap.exists()) {
+        alert(t('club_not_found'));
+        return;
+      }
+      var newCount = (newSnap.data().memberCount || 0) + 1;
+      await fsModule.updateDoc(newClubRef, {
+        memberCount: newCount,
+        updatedAt: new Date().toISOString(),
+        lastUpdatedBy: currentUser.uid
+      });
+
+      var userDocRef = fsModule.doc(db, "users", currentUser.uid);
+      await fsModule.updateDoc(userDocRef, {
+        clubId: clubId,
+        clubName: clubName || newSnap.data().name || "Klub"
+      });
+
+      alert(t('club_joined_success', { name: clubName || newSnap.data().name }));
+      bindClubListener(clubId);
+    } catch (err) {
+      console.error("Failed to join club:", err);
+      alert("Chyba při připojování ke klubu: " + err.message);
+    }
+  }
+
+  async function leaveClub() {
+    if (!currentUser || !db || !currentClubId) return;
+    if (!confirm(t('club_leave_confirm'))) return;
+
+    try {
+      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      try {
+        var clubRef = fsModule.doc(db, "clubs", currentClubId);
+        var snap = await fsModule.getDoc(clubRef);
+        if (snap.exists()) {
+          var cnt = snap.data().memberCount || 1;
+          await fsModule.updateDoc(clubRef, {
+            memberCount: Math.max(0, cnt - 1),
+            updatedAt: new Date().toISOString(),
+            lastUpdatedBy: currentUser.uid
+          });
+        }
+      } catch (e) {
+        console.warn("Could not decrement club:", e);
+      }
+
+      var userDocRef = fsModule.doc(db, "users", currentUser.uid);
+      await fsModule.updateDoc(userDocRef, {
+        clubId: "",
+        clubName: ""
+      });
+
+      unbindClubListener();
+      alert(t('club_left_success'));
+      searchClubs("");
+    } catch (err) {
+      console.error("Failed to leave club:", err);
+      alert("Chyba při opouštění klubu: " + err.message);
+    }
+  }
+
+  async function setClubPoints(val) {
+    if (!currentUser || !db) {
+      showAuthNotice(t('auth_notice_points'));
+      return;
+    }
+    if (!currentClubId) {
+      alert("Pro nastavení bodů musíš být členem klubu!");
+      return;
+    }
+    var num = Math.max(0, parseInt(val) || 0);
+    try {
+      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      var clubRef = fsModule.doc(db, "clubs", currentClubId);
+      await fsModule.updateDoc(clubRef, {
+        points: num,
+        updatedAt: new Date().toISOString(),
+        lastUpdatedBy: currentUser.uid
+      });
+    } catch (err) {
+      console.error("Failed to update club points:", err);
+    }
+  }
+
+  function addClubPoints(amount) {
+    setClubPoints(currentClubPoints + amount);
+  }
+
+  async function toggleClubSpecialFish(fishId) {
+    if (!currentUser || !db) {
+      showAuthNotice(t('auth_notice_club'));
+      return;
+    }
+    if (!currentClubId) {
+      alert("Pro odemykání speciálních ryb musíš být členem klubu!");
+      return;
+    }
+
+    var cf = clubFishes.find(function (x) { return x.id === fishId; });
+    if (!cf) return;
+
+    var isMonster = (cf.unlock_type === 'monster');
+    var isFc = (cf.unlock_type === 'fc');
+    if (!isMonster && !isFc) return;
+
+    try {
+      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      var clubRef = fsModule.doc(db, "clubs", currentClubId);
+
+      if (isMonster) {
+        var updatedMonsters = new Set(currentClubUnlockedMonsterIds);
+        if (updatedMonsters.has(fishId)) {
+          updatedMonsters.delete(fishId);
+        } else {
+          updatedMonsters.add(fishId);
+        }
+        await fsModule.updateDoc(clubRef, {
+          unlockedMonsterIds: Array.from(updatedMonsters),
+          updatedAt: new Date().toISOString(),
+          lastUpdatedBy: currentUser.uid
+        });
+      } else {
+        var updatedFc = new Set(currentClubUnlockedFcFishIds);
+        if (updatedFc.has(fishId)) {
+          updatedFc.delete(fishId);
+        } else {
+          updatedFc.add(fishId);
+        }
+        await fsModule.updateDoc(clubRef, {
+          unlockedFcFishIds: Array.from(updatedFc),
+          updatedAt: new Date().toISOString(),
+          lastUpdatedBy: currentUser.uid
+        });
+      }
+    } catch (err) {
+      console.error("Failed to toggle special fish:", err);
+      alert("Chyba při ukládání: " + err.message);
+    }
+  }
+
+  function filterSpecialFishes(filter, btn) {
+    currentSpecialFilter = filter || 'all';
+    var btns = document.querySelectorAll('.special-header-filters .pill-btn');
+    btns.forEach(function (b) { b.classList.remove('active'); });
+    if (btn) btn.classList.add('active');
+    renderClubSpecialFishes();
+  }
+
+  function renderClubSpecialFishes() {
+    var grid = document.getElementById("clubSpecialGrid");
+    if (!grid) return;
+
+    var specials = clubFishes.filter(function (f) {
+      return f.unlock_type === 'fc' || f.unlock_type === 'monster';
+    });
+
+    var filtered = specials.filter(function (f) {
+      if (currentSpecialFilter === 'fc') return f.unlock_type === 'fc';
+      if (currentSpecialFilter === 'monster') return f.unlock_type === 'monster';
+      return true;
+    });
+
+    var manageSpecialUnlocked = document.getElementById("manageSpecialUnlocked");
+    var totalUnlockedSpecial = currentClubUnlockedFcFishIds.size + currentClubUnlockedMonsterIds.size;
+    if (manageSpecialUnlocked) {
+      manageSpecialUnlocked.innerText = totalUnlockedSpecial + " / " + specials.length;
+    }
+
+    grid.innerHTML = filtered.map(function (f) {
+      var isMonster = (f.unlock_type === 'monster');
+      var isUnlocked = isMonster ? currentClubUnlockedMonsterIds.has(f.id) : currentClubUnlockedFcFishIds.has(f.id);
+      var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
+      var costLabel = isMonster ? ("👾 " + t('unlock_monster')) : ("💎 " + (f.fc || "") + " FC");
+
+      var btnClass = isUnlocked ? "special-toggle-btn unlocked" : "special-toggle-btn locked";
+      var btnText = isUnlocked ? t('special_status_unlocked') : t('special_status_locked');
+
+      return '<div class="special-fish-card ' + (isUnlocked ? 'unlocked' : '') + '">' +
+        '<div class="special-fish-left" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" style="cursor: pointer;">' +
+        '<img src="images/fish_' + f.id + '.png" class="special-fish-img" alt="' + fishName + '" onerror="this.src=\'images/default-fish.png\'">' +
+        '<div class="special-fish-details">' +
+        '<span class="special-fish-name" title="' + fishName + '">' + fishName + '</span>' +
+        '<span class="special-fish-cost">' + costLabel + '</span>' +
+        '</div>' +
+        '</div>' +
+        '<button class="' + btnClass + '" onclick="window.fishaoApp.toggleClubSpecialFish(' + f.id + ')">' + btnText + '</button>' +
+        '</div>';
+    }).join("");
+  }
+
   function updateAuthUI() {
     var tabClub = document.getElementById("tabClub");
-    var isInClub = !!(currentUser && currentClubName && currentClubName.trim().length > 0);
+    var isInClub = !!(currentUser && currentClubId);
     if (tabClub) {
       tabClub.style.display = isInClub ? "" : "none";
     }
@@ -481,6 +925,17 @@
     var secTable = document.getElementById("sectionFishTable");
     var filterCard = document.getElementById("filterCard");
 
+    var clubPtsBadge = document.getElementById("navClubPtsBadge");
+    if (clubPtsBadge) {
+      if (!currentUser) {
+        clubPtsBadge.innerText = t('badge_locked');
+      } else if (currentClubId) {
+        clubPtsBadge.innerText = currentClubPoints.toLocaleString(getLocale()) + " " + t('unit_pts');
+      } else {
+        clubPtsBadge.innerText = t('badge_no_club');
+      }
+    }
+
     if (!isFirebaseConfigured) {
       if (signInBtn) signInBtn.style.display = "none";
       if (userInfoBar) userInfoBar.style.display = "none";
@@ -492,13 +947,8 @@
       if (signInBtn) signInBtn.style.display = "none";
       if (userInfoBar) userInfoBar.style.display = "inline-flex";
 
-      var avatarEl = document.getElementById("userAvatar");
       var nameEl = document.getElementById("userName");
-      if (avatarEl) {
-        avatarEl.src = currentUser.photoURL || "images/default-avatar.png";
-        avatarEl.style.display = currentUser.photoURL ? "block" : "none";
-      }
-      if (nameEl) nameEl.innerText = currentUser.displayName || currentUser.email || t('user_default_player');
+      if (nameEl) nameEl.innerText = (userProfile && userProfile.displayName) ? userProfile.displayName : t('user_default_player');
       if (adminBadge) adminBadge.style.display = isAdmin ? "inline-block" : "none";
       var resetBtn = document.getElementById("btnResetPrices");
       if (resetBtn) resetBtn.style.display = isAdmin ? "inline-block" : "none";
@@ -512,12 +962,32 @@
 
       var collNotice = document.getElementById("collectionSyncNotice");
       if (collNotice) {
-        collNotice.innerHTML = t('coll_sync_google', { user: currentUser.displayName || currentUser.email || t('user_default_player') });
+        var pName = (userProfile && userProfile.displayName) ? userProfile.displayName : t('user_default_player');
+        collNotice.innerHTML = t('coll_sync_google', { user: pName });
       }
 
       if (currentView === "club_manage") {
         if (gateClub) gateClub.style.display = "none";
         if (manageContent) manageContent.style.display = "block";
+        var noClubSt = document.getElementById("clubNoClubState");
+        var activeSt = document.getElementById("clubActiveState");
+        if (currentClubId) {
+          if (noClubSt) noClubSt.style.display = "none";
+          if (activeSt) activeSt.style.display = "block";
+          var acName = document.getElementById("activeClubName");
+          if (acName) acName.innerText = currentClubName || "Klub";
+          var acMemb = document.getElementById("activeClubMembers");
+          if (acMemb) acMemb.innerText = t('club_active_members', { count: currentClubMemberCount });
+          var ptsManage = document.getElementById("clubPointsManageInput");
+          if (ptsManage) ptsManage.value = currentClubPoints;
+        } else {
+          if (activeSt) activeSt.style.display = "none";
+          if (noClubSt) noClubSt.style.display = "block";
+          var resEl = document.getElementById("clubSearchResults");
+          if (resEl && !resEl.children.length) {
+            searchClubs("");
+          }
+        }
       } else if (currentView === "collection") {
         if (gateCollection) gateCollection.style.display = "none";
         if (bCollection) bCollection.style.display = "flex";
@@ -673,60 +1143,11 @@
   // -------------------------------------------------------------
 
   function syncClubName(val) {
-    if (!currentUser) {
-      showAuthNotice(t('auth_notice_club'));
-      return;
-    }
     currentClubName = (val || "").trim();
-
-    var el1 = document.getElementById("clubNameInput");
-    if (el1 && el1.value !== currentClubName) el1.value = currentClubName;
-    var el2 = document.getElementById("clubNameManageInput");
-    if (el2 && el2.value !== currentClubName) el2.value = currentClubName;
-
-    updateAuthUI();
-    updateCaughtStats();
-
-    if (currentUser && db) {
-      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(function (fsModule) {
-        var userDocRef = fsModule.doc(db, "users", currentUser.uid);
-        fsModule.updateDoc(userDocRef, { clubName: currentClubName });
-      }).catch(function (e) { console.error("Failed to update club name:", e); });
-    }
   }
 
   function syncClubPoints(val) {
-    if (!currentUser) {
-      showAuthNotice(t('auth_notice_points'));
-      return;
-    }
-    var pts = Math.max(0, parseInt(val) || 0);
-    currentClubPoints = pts;
-
-    var el1 = document.getElementById("clubPointsInput");
-    if (el1 && parseInt(el1.value) !== pts) el1.value = pts;
-    var el2 = document.getElementById("clubPointsManageInput");
-    if (el2 && parseInt(el2.value) !== pts) el2.value = pts;
-
-    var badge = document.getElementById("navClubPtsBadge");
-    if (badge) badge.innerText = pts.toLocaleString(getLocale()) + " " + t('unit_pts');
-
-    if (currentUser && db) {
-      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(function (fsModule) {
-        var userDocRef = fsModule.doc(db, "users", currentUser.uid);
-        fsModule.updateDoc(userDocRef, { clubPoints: pts });
-      }).catch(function (e) { console.error("Failed to update club points:", e); });
-    }
-
-    if (currentView === 'club_manage') {
-      renderClubMilestones();
-    } else {
-      applyFilters();
-    }
-  }
-
-  function addClubPoints(amount) {
-    syncClubPoints(currentClubPoints + amount);
+    setClubPoints(val);
   }
 
   function onClubNameChange() {
@@ -736,7 +1157,7 @@
 
   function onPointsChange() {
     var val = document.getElementById("clubPointsInput") ? document.getElementById("clubPointsInput").value : 0;
-    syncClubPoints(val);
+    setClubPoints(val);
   }
 
   // -------------------------------------------------------------
@@ -1236,16 +1657,20 @@
         desc: isUnlocked ? t('unlock_unlocked') : t('unlock_needs_pts', { diff: diff })
       };
     } else if (fish.unlock_type === 'fc') {
+      var isFcClub = currentClubUnlockedFcFishIds.has(fish.id);
+      var isUnlocked = isFcClub || Boolean(includeFc);
       return {
-        isUnlocked: Boolean(includeFc),
+        isUnlocked: isUnlocked,
         costText: (fish.fc || 0) + " FC",
-        desc: includeFc ? "✓ Fishcoins" : t('unlock_requires_fc')
+        desc: isFcClub ? t('unlock_club_fc_unlocked') : (includeFc ? "✓ Fishcoins" : t('unlock_requires_fc'))
       };
     } else if (fish.unlock_type === 'monster') {
+      var isMonsterClub = currentClubUnlockedMonsterIds.has(fish.id);
+      var isUnlocked = isMonsterClub || Boolean(includeFc);
       return {
-        isUnlocked: Boolean(includeFc),
+        isUnlocked: isUnlocked,
         costText: t('unlock_monster'),
-        desc: includeFc ? t('unlock_club_feeding') : t('unlock_club_monster')
+        desc: isMonsterClub ? t('unlock_club_monster_unlocked') : (includeFc ? t('unlock_club_feeding') : t('unlock_club_monster'))
       };
     }
     return null;
@@ -1389,9 +1814,16 @@
     if (!grid) return;
 
     var filteredCards = sorted.filter(function (f) {
-      var isUnlocked = (f.unlock_type === 'points') ? (currentClubPoints >= f.points) : true;
-      if (currentMilestoneFilter === 'unlocked') return isUnlocked && f.unlock_type === 'points';
-      if (currentMilestoneFilter === 'locked') return !isUnlocked && f.unlock_type === 'points';
+      var isUnlocked = false;
+      if (f.unlock_type === 'points') {
+        isUnlocked = currentClubPoints >= f.points;
+      } else if (f.unlock_type === 'fc') {
+        isUnlocked = currentClubUnlockedFcFishIds.has(f.id);
+      } else if (f.unlock_type === 'monster') {
+        isUnlocked = currentClubUnlockedMonsterIds.has(f.id);
+      }
+      if (currentMilestoneFilter === 'unlocked') return isUnlocked;
+      if (currentMilestoneFilter === 'locked') return !isUnlocked;
       if (currentMilestoneFilter === 'fc') return f.unlock_type !== 'points';
       return true;
     });
@@ -1409,14 +1841,14 @@
         statusText = isUnlocked ? t('unlock_unlocked') : t('unlock_needs_pts_short', { diff: diff });
         costBadge = f.points + " " + t('unit_pts');
       } else if (f.unlock_type === 'fc') {
-        isUnlocked = true;
-        statusClass = "fc";
-        statusText = "💎 Fishcoins";
+        isUnlocked = currentClubUnlockedFcFishIds.has(f.id);
+        statusClass = isUnlocked ? "unlocked" : "fc";
+        statusText = isUnlocked ? t('special_status_unlocked') : "💎 Fishcoins";
         costBadge = (f.fc || "") + " FC";
       } else {
-        isUnlocked = true;
-        statusClass = "monster";
-        statusText = t('unlock_monster_badge');
+        isUnlocked = currentClubUnlockedMonsterIds.has(f.id);
+        statusClass = isUnlocked ? "unlocked" : "monster";
+        statusText = isUnlocked ? t('special_status_unlocked') : t('unlock_monster_badge');
         costBadge = t('unlock_club_short');
       }
 
@@ -1450,7 +1882,7 @@
   }
 
   function switchView(view) {
-    var isInClub = !!(currentUser && currentClubName && currentClubName.trim().length > 0);
+    var isInClub = !!(currentUser && currentClubId);
     if (view === "club" && !isInClub) {
       view = "all";
     }
@@ -1497,7 +1929,9 @@
       } else {
         if (gateClub) gateClub.style.display = "none";
         if (manageContent) manageContent.style.display = "block";
+        updateAuthUI();
         renderClubMilestones();
+        renderClubSpecialFishes();
         updateCaughtStats();
       }
       return;
@@ -2129,11 +2563,20 @@
     resetPriceHistoryToDefault: resetPriceHistoryToDefault,
     signIn: signIn,
     signOut: signOut,
+    editNickname: editNickname,
     toggleCaughtFish: toggleCaughtFish,
+    searchClubs: searchClubs,
+    createClub: createClub,
+    joinClub: joinClub,
+    leaveClub: leaveClub,
+    setClubPoints: setClubPoints,
+    addClubPoints: addClubPoints,
+    toggleClubSpecialFish: toggleClubSpecialFish,
+    filterSpecialFishes: filterSpecialFishes,
+    renderClubSpecialFishes: renderClubSpecialFishes,
     onClubNameChange: onClubNameChange,
     syncClubName: syncClubName,
     syncClubPoints: syncClubPoints,
-    addClubPoints: addClubPoints,
     setCollectionFilter: setCollectionFilter,
     filterMilestones: filterMilestones,
     renderClubMilestones: renderClubMilestones,

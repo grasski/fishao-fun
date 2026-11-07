@@ -11,7 +11,6 @@ service cloud.firestore {
     }
 
     // Market prices: public read, update allowed for authenticated users (cannot delete, strictly prices_history only)
-    // NOTE: If you want ONLY admins to edit prices, change 'create, update' condition to: if isAdmin();
     match /fishao_market/{docId} {
       allow read: if true;
       allow create, update: if request.auth != null
@@ -21,42 +20,69 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // User profiles: strictly isolated per user, protected from arbitrary field injection
+    // Shared Clubs collection: public read, authenticated write/update
+    match /clubs/{clubId} {
+      allow read: if true;
+
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly([
+             'name', 'name_lower', 'points', 'unlockedFcFishIds', 
+             'unlockedMonsterIds', 'memberCount', 'createdBy', 'createdAt', 'updatedAt'
+           ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2
+        && request.resource.data.name.size() <= 40
+        && request.resource.data.points is number
+        && request.resource.data.points >= 0
+        && request.resource.data.unlockedFcFishIds is list
+        && request.resource.data.unlockedMonsterIds is list
+        && request.resource.data.memberCount is number
+        && request.resource.data.createdBy == request.auth.uid;
+
+      allow update: if request.auth != null
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+             'name', 'name_lower', 'points', 'unlockedFcFishIds', 
+             'unlockedMonsterIds', 'memberCount', 'updatedAt', 'lastUpdatedBy'
+           ])
+        && request.resource.data.points is number
+        && request.resource.data.points >= 0
+        && request.resource.data.unlockedFcFishIds is list
+        && request.resource.data.unlockedMonsterIds is list
+        && request.resource.data.memberCount is number;
+
+      allow delete: if isAdmin();
+    }
+
+    // User profiles: GDPR-free (NO email, NO avatar photo stored in DB)
     match /users/{userId} {
-      // Users can only read their own profile (protects email & privacy); admins can read all
+      // Users can only read their own profile; admins can read all
       allow read: if request.auth != null
         && (request.auth.uid == userId || isAdmin());
 
-      // Admin has full write access (management, role assignment, data cleanup)
+      // Admin has full write access
       allow write: if isAdmin();
 
-      // Profile creation on first Google Sign-In
+      // Profile creation on first sign-in
       allow create: if request.auth != null
         && request.auth.uid == userId
         && request.resource.data.keys().hasOnly([
-             'displayName', 'email', 'photoURL', 'role', 
-             'clubName', 'clubPoints', 'caughtFishIds', 
-             'createdAt', 'lastLogin'
+             'displayName', 'role', 'clubId', 'clubName', 
+             'caughtFishIds', 'createdAt', 'lastLogin'
            ])
         && request.resource.data.role == 'member'
         && request.resource.data.displayName is string
-        && request.resource.data.displayName.size() <= 60
-        && request.resource.data.clubPoints is number
-        && request.resource.data.clubPoints >= 0
+        && request.resource.data.displayName.size() <= 40
         && request.resource.data.caughtFishIds is list
         && request.resource.data.caughtFishIds.size() <= 1000;
 
-      // Profile update by owner: forbidden from modifying 'role', 'email' or 'createdAt'
+      // Profile update by owner: forbidden from modifying 'role' or 'createdAt'
       allow update: if request.auth != null
         && request.auth.uid == userId
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-             'displayName', 'photoURL', 'clubName', 'clubPoints', 
-             'caughtFishIds', 'lastLogin'
+             'displayName', 'clubId', 'clubName', 'caughtFishIds', 'lastLogin'
            ])
         && request.resource.data.displayName is string
-        && request.resource.data.displayName.size() <= 60
-        && request.resource.data.clubPoints is number
-        && request.resource.data.clubPoints >= 0
+        && request.resource.data.displayName.size() <= 40
         && request.resource.data.caughtFishIds is list
         && request.resource.data.caughtFishIds.size() <= 1000;
 
