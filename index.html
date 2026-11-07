@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FISHAO – Encyklopedie a Klubové ryby</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-row">
+          <span class="app-logo">🐟</span>
+          <h1><span data-i18n="app_title">FISHAO</span> <span class="header-highlight" data-i18n="app_subtitle">Encyklopedie</span></h1>
+          <!-- Sync status indicator -->
+          <div id="syncStatusBadge" class="sync-status-badge local" title="Stav synchronizace dat">
+            <span class="sync-dot"></span>
+            <span id="syncStatusText" data-i18n="sync_local">Lokální</span>
+          </div>
+        </div>
+        <p class="header-desc" data-i18n="app_desc">Kompletní přehled 80 klubových &amp; 615 obecných ryb • Živý čas
+          lovu • Ceník Fish Market • Osobní sbírka úlovků</p>
+        <div class="header-disclaimer">
+          <span class="disclaimer-badge" data-i18n="disclaimer_badge">Fanouškovský projekt</span>
+          <span><span data-i18n="disclaimer_text">Jedná se pouze o fanouškovský projekt. Reálná hra je dostupná
+              na</span> <a href="https://www.fishao.net/" target="_blank"
+              rel="noopener noreferrer">https://www.fishao.net/</a></span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Time widget with automatic timezone detection -->
+        <div class="time-widget">
+          <div class="time-clock-box">
+            <span class="clock-face" id="liveClock">--:--:--</span>
+            <span class="clock-label" id="clockLabel" data-i18n="clock_local_label">Místní čas</span>
+          </div>
+          <div class="tz-btn-group">
+            <button class="tz-toggle active" id="tzLocalBtn" onclick="window.fishaoApp.setTimezone('local')"
+              title="Automaticky podle tvého zařízení" data-i18n="tz_local_btn">
+              📍 Místní
+            </button>
+            <button class="tz-toggle" id="tzUtcBtn" onclick="window.fishaoApp.setTimezone('utc')"
+              title="Herní čas serveru (UTC)" data-i18n="tz_utc_btn">
+              🌐 UTC
+            </button>
+          </div>
+        </div>
+
+        <!-- Language switcher -->
+        <div class="lang-widget" id="langWidget">
+          <button class="lang-toggle active" id="langCsBtn" onclick="window.fishaoApp.setLanguage('cs')"
+            title="Čeština">🇨🇿 CZ</button>
+          <button class="lang-toggle" id="langEnBtn" onclick="window.fishaoApp.setLanguage('en')" title="English">🇬🇧
+            EN</button>
+        </div>
+
+        <!-- Auth panel -->
+        <div class="auth-panel" id="authPanel">
+          <button class="sign-in-btn" id="signInBtn" onclick="window.fishaoApp.signIn()" style="display: none;"
+            title="Přihlásit se přes Google účet">
+            <svg width="16" height="16" viewBox="0 0 24 24">
+              <path fill="#4285F4"
+                d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" />
+              <path fill="#34A853"
+                d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z" />
+              <path fill="#FBBC05"
+                d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z" />
+              <path fill="#EA4335"
+                d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" />
+            </svg>
+            <span data-i18n="sign_in">Přihlásit se</span>
+          </button>
+          <div class="user-info-bar" id="userInfoBar" style="display: none;">
+            <img class="user-avatar" id="userAvatar" src="" alt="Avatar">
+            <div class="user-details">
+              <span class="user-name" id="userName" data-i18n="user_default">Uživatel</span>
+              <span class="admin-badge" id="adminBadge" style="display: none;" data-i18n="admin_badge">🛡️ Admin</span>
+            </div>
+            <button class="sign-out-btn" onclick="window.fishaoApp.signOut()" title="Odhlásit se" data-i18n="sign_out"
+              data-i18n-title="sign_out">Odhlásit</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Navigation Bar -->
+    <nav class="main-nav-bar" id="mainNavBar">
+      <button class="nav-tab blue active" id="tabAll" onclick="window.fishaoApp.switchView('all')">
+        <span class="tab-icon">🌐</span>
+        <span class="tab-title" data-i18n="nav_all">Encyklopedie</span>
+        <span class="tab-pill" data-i18n="nav_all_pill">615 ryb</span>
+      </button>
+      <button class="nav-tab gold" id="tabClub" onclick="window.fishaoApp.switchView('club')" style="display: none;">
+        <span class="tab-icon">🏆</span>
+        <span class="tab-title" data-i18n="nav_club">Klubové ryby</span>
+        <span class="tab-pill" id="tabClubBadge" data-i18n="nav_club_pill">80 ryb</span>
+      </button>
+      <button class="nav-tab purple" id="tabClubManage" onclick="window.fishaoApp.switchView('club_manage')">
+        <span class="tab-icon">🏰</span>
+        <span class="tab-title" data-i18n="nav_manage">Můj Klub &amp; Milníky</span>
+        <span class="tab-pill" id="navClubPtsBadge">Zamčeno 🔒</span>
+      </button>
+      <button class="nav-tab green" id="tabCollection" onclick="window.fishaoApp.switchView('collection')">
+        <span class="tab-icon">🎣</span>
+        <span class="tab-title" data-i18n="nav_collection">Sbírka úlovků</span>
+        <span class="tab-pill" id="navCaughtBadge">Zamčeno 🔒</span>
+      </button>
+      <button class="nav-tab yellow" id="tabMarket" onclick="window.fishaoApp.switchView('market')">
+        <span class="tab-icon">💵</span>
+        <span class="tab-title" data-i18n="nav_market">Fish Market</span>
+        <span class="tab-pill" data-i18n="nav_market_pill">Výkup</span>
+      </button>
+    </nav>
+
+    <!-- Compact Sub-Toolbar: Club View (Gold Theme) -->
+    <div class="view-action-bar gold" id="bannerClub" style="display: none;">
+      <div class="action-bar-left">
+        <div class="action-badge-club" id="clubUnlockBadge">
+          <span data-i18n="club_unlocked_label">🏆 Odemčeno klubem:</span> <strong id="unlockedCount" style="color: #34d399;">--</strong> / 80
+          <span id="lockedNotice" style="color: #f87171; margin-left: 4px;"></span>
+        </div>
+        <span class="action-bar-hint" id="nextUnlockHint" data-i18n="club_next_unlock_loading">🎯 Načítání postupu...</span>
+        <button class="btn-subtle-link" onclick="window.fishaoApp.switchView('club_manage')"
+          data-i18n="club_bar_edit_btn">⚙️ Upravit body v Klubu</button>
+      </div>
+      <div class="action-bar-right">
+        <label class="toggle-pill" id="lblHideLocked">
+          <input type="checkbox" id="hideLockedCheckbox" onchange="window.fishaoApp.applyFilters()">
+          <span data-i18n="club_hide_locked">Skrýt zamčené</span>
+        </label>
+        <label class="toggle-pill" id="lblIncludeFc">
+          <input type="checkbox" id="includeFcCheckbox" checked onchange="window.fishaoApp.applyFilters()">
+          <span data-i18n="club_include_fc">FC &amp; Monstra</span>
+        </label>
+        <label class="toggle-pill" id="lblFilterUncaught">
+          <input type="checkbox" id="filterUncaughtCheckbox" onchange="window.fishaoApp.applyFilters()">
+          <span data-i18n="club_only_uncaught">Pouze nechycené</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Compact Sub-Toolbar: Collection (Emerald Theme) -->
+    <div class="view-action-bar green" id="bannerCollection" style="display: none;">
+      <div class="action-bar-left">
+        <span class="action-bar-title" data-i18n="coll_title">🎣 Sbírka úlovků:</span>
+        <div class="collection-stats-group">
+          <span class="stat-chip"><span data-i18n="coll_club_label">Klubové:</span> <strong id="caughtClubCount" style="color: #34d399;">0</strong> / 80</span>
+          <span class="stat-chip"><span data-i18n="coll_total_label">Celkem:</span> <strong id="caughtAllCount" style="color: #38bdf8;">0</strong> / 615</span>
+          <span class="stat-chip pct" id="caughtPctText">0%</span>
+        </div>
+        <div class="caught-progress-track">
+          <div class="caught-progress-fill" id="caughtProgressFill" style="width: 0%;"></div>
+        </div>
+      </div>
+      <div class="action-bar-right">
+        <div class="btn-group-pills">
+          <button class="pill-btn active" id="collFilterAll" onclick="window.fishaoApp.setCollectionFilter('all', this)"
+            data-i18n="coll_filter_all">Všechny ryby</button>
+          <button class="pill-btn" id="collFilterCaught" onclick="window.fishaoApp.setCollectionFilter('caught', this)"
+            data-i18n="coll_filter_caught">✅ Pouze chycené</button>
+          <button class="pill-btn" id="collFilterMissing" onclick="window.fishaoApp.setCollectionFilter('missing', this)" data-i18n="coll_filter_missing">❓ Chybějící</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compact Sub-Toolbar: Market (Yellow/Gold Theme) -->
+    <div class="view-action-bar yellow" id="bannerMarket" style="display: none;">
+      <div class="action-bar-left">
+        <span class="action-bar-title" style="color: #34d399;" data-i18n="market_bar_title">💵 Fish Market:</span>
+        <span class="action-bar-hint" id="marketStatsSummary" data-i18n="market_bar_subtitle">Výkupní ceník ve fishměně (FB)</span>
+      </div>
+      <div class="action-bar-right">
+        <button class="btn-action sm" onclick="window.fishaoApp.openBulkModal()" title="Hromadný import cen do Fish Marketu" data-i18n="market_btn_import" data-i18n-title="market_btn_import"> 📥 Import cen do Marketu </button>
+        <button id="btnResetPrices" class="btn-reset sm" style="display: none;" onclick="window.fishaoApp.resetPriceHistoryToDefault()" data-i18n="market_btn_default"> ↺ Výchozí ceník (Admin) </button>
+      </div>
+    </div>
+
+    <!-- SECTION: Club Management & Milestones Center (Purple Theme) -->
+    <section id="sectionClubManage" class="club-manage-section" style="display: none;">
+      <!-- Auth Gate: shown when user is not logged in -->
+      <div class="auth-gate-card purple-card" id="gateClubManage" style="display: none;">
+        <div class="auth-gate-icon">🏰</div>
+        <h3 data-i18n="club_gate_title">Správa Klubu vyžaduje přihlášení</h3> <p data-i18n="club_gate_desc">Přihlas se svým Google účtem, abys mohl zadat svůj klub, sledovat klubové body a odemykání všech 80 klubových ryb.</p>
+        <button class="sign-in-btn" onclick="window.fishaoApp.signIn()" style="margin-top: 6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24">
+            <path fill="#4285F4"
+              d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" />
+            <path fill="#34A853"
+              d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z" />
+            <path fill="#FBBC05"
+              d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z" />
+            <path fill="#EA4335"
+              d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" />
+          </svg>
+          <span data-i18n="sign_in_google">Přihlásit se přes Google</span>
+        </button>
+      </div>
+
+      <!-- Club Management Content: shown when logged in -->
+      <div id="manageClubContent">
+        <div class="manage-top-grid">
+          <!-- Card 1: Club Settings -->
+          <div class="dash-card manage-card purple-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title" data-i18n="club_settings_title">🏰 Nastavení &amp; Body klubu</span>
+            </div>
+            <div class="dash-card-body">
+              <div class="dash-input-grid">
+                <div class="dash-field">
+                  <label for="clubNameManageInput" data-i18n="club_name_label">Název klubu</label>
+                  <input type="text" id="clubNameManageInput" class="dash-input" placeholder="Např. Lovci z Prahy"
+                    oninput="window.fishaoApp.syncClubName(this.value)">
+                </div>
+                <div class="dash-field">
+                  <label for="clubPointsManageInput" data-i18n="club_pts_label">Aktuální body klubu</label>
+                  <input type="number" id="clubPointsManageInput" class="dash-input points" value="0" min="0" step="50"
+                    oninput="window.fishaoApp.syncClubPoints(this.value)">
+                </div>
+              </div>
+              <div class="manage-quick-pts">
+                <span style="font-size: 11px; color: var(--text-muted);" data-i18n="club_quick_add">Rychlé přidání bodů:</span>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+                  <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(100)">+100</button>
+                  <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(500)">+500</button>
+                  <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(1000)">+1 000</button>
+                  <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(5000)">+5 000</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Next Milestone Target -->
+          <div class="dash-card manage-card gold-card" id="nextMilestoneCard">
+            <!-- Dynamically rendered -->
+          </div>
+
+          <!-- Card 3: Summary Progress -->
+          <div class="dash-card manage-card green-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title" data-i18n="club_summary_title">📊 Souhrn klubu &amp; Úlovků</span>
+            </div>
+            <div class="dash-card-body">
+              <div class="manage-stats-list">
+                <div class="manage-stat-item">
+                  <span data-i18n="club_pts_unlocked">Odemčeno bodových ryb:</span>
+                  <strong id="managePointsUnlocked" style="color: #34d399;">--</strong>
+                </div>
+                <div class="manage-stat-item">
+                  <span data-i18n="club_fc_monsters">Ryby za Fishcoins &amp; Monstra:</span>
+                  <strong style="color: #fbbf24;" data-i18n="club_fc_monsters_count">15 ryb</strong>
+                </div>
+                <div class="manage-stat-item">
+                  <span data-i18n="club_fishes_caught">Klubových ryb chyceno:</span>
+                  <strong id="manageCaughtClub" style="color: #38bdf8;">-- / 80</strong>
+                </div>
+              </div>
+              <div class="caught-progress-track" style="margin-top: 10px;">
+                <div class="caught-progress-fill" id="manageProgressFill" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Milestone Roadmap Header -->
+        <div class="milestone-roadmap-header">
+          <div class="roadmap-header-left">
+            <h3 data-i18n="roadmap_title">🗺️ Cesta odemykání klubových ryb (80 milníků)</h3> <p data-i18n="roadmap_desc">Všechny klubové ryby seřazené podle potřebných bodů. Zelené jsou odemčené, u červených vidíš zbývající body.</p>
+          </div>
+          <div class="roadmap-header-filters">
+            <button class="pill-btn active" id="filterMilestoneAll" onclick="window.fishaoApp.filterMilestones('all', this)" data-i18n="roadmap_filter_all">Všechny (80)</button>
+            <button class="pill-btn" id="filterMilestoneUnlocked" onclick="window.fishaoApp.filterMilestones('unlocked', this)" data-i18n="roadmap_filter_unlocked">✓ Odemčené</button>
+            <button class="pill-btn" id="filterMilestoneLocked" onclick="window.fishaoApp.filterMilestones('locked', this)" data-i18n="roadmap_filter_locked">🔒 Zamčené</button>
+            <button class="pill-btn" id="filterMilestoneFc" onclick="window.fishaoApp.filterMilestones('fc', this)" data-i18n="roadmap_filter_fc">💎 FC &amp; Monstra</button>
+          </div>
+        </div>
+
+        <!-- Milestone Grid Container -->
+        <div class="milestone-grid" id="milestoneGrid">
+          <!-- Generated dynamically by renderClubMilestones() -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Auth Gate: Collection Locked Screen (shown when on collection tab while not logged in) -->
+    <div class="auth-gate-card green-card" id="gateCollection" style="display: none;">
+      <div class="auth-gate-icon">🎣</div>
+      <h3 data-i18n="coll_gate_title">Sbírka úlovků vyžaduje přihlášení</h3> <p data-i18n="coll_gate_desc">Osobní sbírka úlovků a sledování dokončení hry jsou vázány na tvůj hráčský účet. Přihlas se přes Google a měj své chycené ryby bezpečně uložené v cloudu na PC i v mobilu.</p>
+      <button class="sign-in-btn" onclick="window.fishaoApp.signIn()" style="margin-top: 6px;">
+        <svg width="16" height="16" viewBox="0 0 24 24">
+          <path fill="#4285F4"
+            d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" />
+          <path fill="#34A853"
+            d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z" />
+          <path fill="#FBBC05"
+            d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z" />
+          <path fill="#EA4335"
+            d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" />
+        </svg>
+        <span data-i18n="sign_in_google">Přihlásit se přes Google</span>
+      </button>
+    </div>
+
+    <!-- SECTION: Fish Table and Standard Filters Container -->
+    <div id="sectionFishTable">
+
+      <!-- Filter Card -->
+      <div class="filter-card" id="filterCard">
+        <!-- Row 1: Search and Primary Category Selectors -->
+        <div class="filter-row filter-row-main">
+          <div class="filter-group search-group">
+            <label class="filter-label" for="search" data-i18n="filter_search_label">Hledat rybu</label>
+            <div class="search-input-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="search" class="filter-control search-input"
+                placeholder="Název ryby nebo ID (#713)..." data-i18n-placeholder="filter_search_placeholder"
+                oninput="window.fishaoApp.applyFilters()">
+            </div>
+          </div>
+
+          <div class="filter-group" id="waterFilterGroup" style="display: none;">
+            <label class="filter-label" for="waterFilter" data-i18n="filter_water_label">Typ vody</label>
+            <select id="waterFilter" class="filter-control" onchange="window.fishaoApp.applyFilters()">
+              <option value="">Všechny vody</option>
+              <option value="Slaná">🌊 Slaná voda (Moře)</option>
+              <option value="Sladká">🌿 Sladká voda</option>
+            </select>
+          </div>
+
+          <div class="filter-group" id="locationFilterGroup">
+            <label class="filter-label" for="locationFilter" data-i18n="filter_loc_label">Lokace výskytu</label>
+            <select id="locationFilter" class="filter-control" onchange="window.fishaoApp.applyFilters()">
+              <option value="">Všechny lokace</option>
+              <option value="Laketown">Laketown</option>
+              <option value="Rio Tropical">Rio Tropical</option>
+              <option value="Pinheira Beach">Pinheira Beach</option>
+              <option value="Cool Mountain">Cool Mountain</option>
+              <option value="Mystic Desert">Mystic Desert</option>
+              <option value="Sibiri City">Sibiri City</option>
+              <option value="Aquayama">Aquayama</option>
+              <option value="Little Shore">Little Shore</option>
+              <option value="Palm Island">Palm Island</option>
+              <option value="Seagull Harbor">Seagull Harbor</option>
+              <option value="Bonsai Island">Bonsai Island</option>
+              <option value="Thombani Island">Thombani Island</option>
+              <option value="Pirate Island">Pirate Island</option>
+              <option value="Lost Valley">Lost Valley</option>
+              <option value="Tiki Atoll">Tiki Atoll</option>
+              <option value="Marshlands">Marshlands</option>
+              <option value="Golden Fish">Golden Fish</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="baitFilter" data-i18n="filter_bait_label">Návnada</label>
+            <select id="baitFilter" class="filter-control" onchange="window.fishaoApp.applyFilters()">
+              <option value="">Všechny návnady</option>
+              <option value="Hmyz">Hmyz</option>
+              <option value="Rostlinné">Rostlinné</option>
+              <option value="Ryby">Ryby</option>
+              <option value="Těsta">Těsta</option>
+              <option value="Přívlač/Nástrahy">Přívlač/Nástrahy</option>
+              <option value="Maso">Maso</option>
+              <option value="Žraločí">Žraločí</option>
+            </select>
+          </div>
+
+          <div class="filter-group sm">
+            <label class="filter-label" for="ratingFilter" data-i18n="filter_rating_label">Rating</label>
+            <select id="ratingFilter" class="filter-control" onchange="window.fishaoApp.applyFilters()">
+              <option value="">Všechny</option>
+              <option value="5">★★★★★ (5)</option>
+              <option value="4">★★★★☆ (4)</option>
+              <option value="3">★★★☆☆ (3)</option>
+              <option value="2">★★☆☆☆ (2)</option>
+              <option value="1">★☆☆☆☆ (1)</option>
+              <option value="min3">Minimálně 3★</option>
+              <option value="min4">Minimálně 4★</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="timeFilter" data-i18n="filter_time_label">Čas a aktivita</label>
+            <select id="timeFilter" class="filter-control" onchange="window.fishaoApp.applyFilters()">
+              <option value="">Celý den i noc</option>
+              <option value="now">⚡ PRÁVĚ BERE (ŽIVĚ)</option>
+              <option value="night">🌙 Noční ryby</option>
+              <option value="day">☀️ Denní ryby</option>
+              <option value="morning">🌅 Ráno (06:00 - 12:00)</option>
+              <option value="afternoon">☀️ Odpoledne (12:00 - 18:00)</option>
+              <option value="evening">🌇 Večer (18:00 - 24:00)</option>
+              <option value="deepnight">🌌 Hluboká noc (00:00 - 06:00)</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="sortBy" data-i18n="filter_sort_label">Řadit podle</label>
+            <select id="sortBy" class="filter-control" onchange="window.fishaoApp.applyFilters()">
+              <option value="default">Výchozí (pořadí)</option>
+              <option value="price_desc">Cena Fish Market (nejvyšší)</option>
+              <option value="price_asc">Cena Fish Market (nejnižší)</option>
+              <option value="name_asc">Název (A - Z)</option>
+              <option value="name_desc">Název (Z - A)</option>
+              <option value="rating_desc">Rating (nejvyšší)</option>
+              <option value="avg_desc">Průměrná velikost (největší)</option>
+              <option value="avg_asc">Průměrná velikost (nejmenší)</option>
+              <option value="max_desc">Maximální velikost (největší)</option>
+              <option value="points_asc">Body klubu (vzestupně)</option>
+              <option value="points_desc">Body klubu (sestupně)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: Size Filter & Quick Toggles -->
+        <div class="filter-row filter-row-sub" id="missionSizeRow">
+          <div class="size-filter-cluster">
+            <span class="size-cluster-label" data-i18n="filter_size_label">📏 Velikost ryby (cm):</span>
+            <div class="size-inputs-pair">
+              <label class="size-input-item">
+                <span data-i18n="filter_size_from">Od</span>
+                <input type="number" id="minSizeInput" class="filter-control size-input" placeholder="cm" min="0"
+                  step="1" oninput="window.fishaoApp.onRangeSizeInput()">
+              </label>
+              <label class="size-input-item">
+                <span data-i18n="filter_size_to">Do</span>
+                <input type="number" id="maxSizeInput" class="filter-control size-input" placeholder="cm" min="0"
+                  step="1" oninput="window.fishaoApp.onRangeSizeInput()">
+              </label>
+            </div>
+            <div class="size-quick-presets">
+              <button class="pill-btn pill-btn-size"
+                onclick="window.fishaoApp.setSizeFilter(100, null, null, this)">100+ cm</button>
+              <button class="pill-btn pill-btn-size"
+                onclick="window.fishaoApp.setSizeFilter(200, null, null, this)">200+ cm</button>
+              <button class="pill-btn pill-btn-size"
+                onclick="window.fishaoApp.setSizeFilter(500, null, null, this)">500+ cm</button>
+              <button class="pill-btn pill-btn-size" onclick="window.fishaoApp.setSizeFilter(null, null, 50, this)">&lt;
+                50 cm</button>
+            </div>
+          </div>
+
+          <div class="quick-status-toggles">
+            <button class="pill-btn" id="btnNow" onclick="window.fishaoApp.toggleNowActive()"
+              data-i18n="filter_btn_now">⚡ Právě bere</button>
+            <button class="pill-btn" id="btnOnlyPrice" onclick="window.fishaoApp.toggleOnlyPrice()"
+              data-i18n="filter_btn_only_price">💵 Pouze s cenou</button>
+          </div>
+
+          <button class="btn-reset" onclick="window.fishaoApp.resetFilters()" title="Obnovit všechny filtry"
+            data-i18n="filter_btn_reset" data-i18n-title="filter_btn_reset">
+            <span data-i18n="filter_btn_reset">↺ Obnovit filtry</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Status and counter bar -->
+      <div class="status-counter-bar">
+        <div class="counter-left">
+          <span id="counter" class="counter-text">Zobrazeno 0 ryb</span>
+          <span id="activeFilterDesc" class="active-filter-tags"></span>
+        </div>
+        <div class="counter-hint" data-i18n="counter_hint">
+          💡 Kliknutím na rybu zobrazíš její detail a kompletní historii ve Fish Marketu.
+        </div>
+      </div>
+
+      <!-- Fish table -->
+      <div class="table-container">
+        <table>
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div> <!-- Closes #sectionFishTable -->
+  </div> <!-- Closes .container -->
+
+  <!-- Authentication notice popup -->
+  <div class="auth-notice" id="authNotice" style="display: none;" data-i18n="toast_login_required"> 🔑 Pro tuto akci se musíš nejdříve přihlásit přes Google účet. </div>
+
+  <!-- Price detail and history modal -->
+  <div class="modal-overlay" id="priceModalOverlay"
+    onclick="window.fishaoApp.onModalOverlayClick(event, 'priceModalOverlay')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span data-i18n="modal_fish_detail">🐟 Detail ryby &amp; Fish Market</span>
+        </div>
+        <button class="modal-close" onclick="window.fishaoApp.closePriceModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Fish Hero Card -->
+        <div class="modal-fish-hero">
+          <div class="modal-fish-img-container">
+            <img id="modalFishImg" src="" class="modal-fish-img" alt="">
+            <span id="modalFishActiveBadge" class="modal-active-badge" style="display: none;">⚡ BERE TEĎ</span>
+          </div>
+          <div class="modal-fish-header-info">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span id="modalFishName" style="font-size: 20px; font-weight: 800; color: #fff;"></span>
+                <span id="modalFishIdBadge" class="fish-id-tag">#--</span>
+                <span id="modalFishClubTag" class="badge-club-tag" style="display: none;">🏆 Klubová</span>
+              </div>
+              <button id="modalBtnCaught" class="btn-caught-pill" onclick="window.fishaoApp.toggleCaughtFromModal()">
+                ✓ Chyceno
+              </button>
+            </div>
+            <div id="modalFishRatingBox" style="margin-top: 8px;"></div>
+          </div>
+        </div>
+
+        <!-- Fish Details Grid -->
+        <div class="modal-details-grid">
+          <div class="modal-detail-item">
+            <span class="detail-label" data-i18n="modal_water_loc">🌊 Voda a Lokace výskytu</span>
+            <div class="detail-val" id="modalFishLocations">--</div>
+          </div>
+          <div class="modal-detail-item">
+            <span class="detail-label" data-i18n="modal_baits">🪱 Vhodné návnady</span>
+            <div class="detail-val" id="modalFishBaits">--</div>
+          </div>
+          <div class="modal-detail-item">
+            <span class="detail-label" data-i18n="modal_time">⏰ Čas lovu</span>
+            <div class="detail-val" id="modalFishTime">--</div>
+          </div>
+          <div class="modal-detail-item">
+            <span class="detail-label" data-i18n="modal_dimensions">📏 Velikost (Min / Průměr / Max)</span>
+            <div class="detail-val" id="modalFishDimensions">--</div>
+          </div>
+          <div class="modal-detail-item" id="modalFishClubBox" style="display: none; grid-column: 1 / -1;">
+            <span class="detail-label" data-i18n="modal_club_unlock">🏰 Klubové podmínky odemčení</span>
+            <div class="detail-val" id="modalFishClubUnlock">--</div>
+          </div>
+        </div>
+
+        <!-- Fish Market Section Header -->
+        <div class="modal-market-divider"> <span data-i18n="modal_market_divider">💵 Fish Market – Výkupní ceny a historie</span> </div>
+
+        <div class="price-stats-grid">
+          <div class="price-stat-card">
+            <div class="price-stat-label" data-i18n="modal_today_price">Dnešní cena</div>
+            <div class="price-stat-val" id="statTodayPrice">--</div>
+          </div>
+          <div class="price-stat-card">
+            <div class="price-stat-label" data-i18n="modal_min_price">Minimální cena</div>
+            <div class="price-stat-val" id="statMinPrice" style="color: #f87171;">--</div>
+          </div>
+          <div class="price-stat-card">
+            <div class="price-stat-label" data-i18n="modal_max_price">Maximální cena</div>
+            <div class="price-stat-val" id="statMaxPrice" style="color: #34d399;">--</div>
+          </div>
+        </div>
+
+        <!-- Add price form (gated: shown when logged in) -->
+        <div id="priceAddFormBox" class="price-form-box" style="display: none;">
+          <span style="font-size: 13px; font-weight: 700; color: #e2e8f0;" data-i18n="modal_add_record">+ Přidat nový záznam do historie:</span>
+          <div class="price-form-row">
+            <div style="flex: 1;">
+              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 2px;" data-i18n="modal_sale_date">Datum prodeje</label>
+              <input type="date" id="newPriceDate" class="filter-control" style="width: 100%;">
+            </div>
+            <div style="flex: 1;">
+              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 2px;" data-i18n="modal_price_label">Cena (fishměna / FB)</label>
+              <input type="number" id="newPriceValue" class="filter-control" style="width: 100%;" min="1" placeholder="Např. 152" data-i18n-placeholder="modal_price_placeholder">
+            </div>
+          </div>
+          <button class="btn-submit" onclick="window.fishaoApp.submitNewPrice()" data-i18n="modal_save_price_btn">💾 Uložit cenu</button>
+        </div>
+
+        <!-- Add price login notice (gated: shown when guest) -->
+        <div id="priceAddLoginNotice"
+          style="display: none; padding: 12px; background: rgba(30, 41, 59, 0.7); border: 1px dashed var(--border); border-radius: 8px; font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 16px;">
+          <span data-i18n="modal_login_notice_prefix">🔒 Pro zadání ceny do Fish Marketu se musíš</span> <a href="javascript:void(0)" onclick="window.fishaoApp.signIn()" style="color: #60a5fa; font-weight: 700; text-decoration: underline;" data-i18n="modal_login_notice_link">přihlásit přes Google</a>.
+        </div>
+
+        <div>
+          <span style="font-size: 13px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 8px;" data-i18n="modal_history_title"> Historie prodejů této ryby: </span>
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th data-i18n="modal_th_date">Datum</th> <th data-i18n="modal_th_price">Cena (fishměna / FB)</th> <th style="width: 50px; text-align: center;" data-i18n="modal_th_action">Akce</th>
+              </tr>
+            </thead>
+            <tbody id="modalPriceHistoryTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulk price import and export modal -->
+  <div class="modal-overlay" id="bulkModalOverlay"
+    onclick="window.fishaoApp.onModalOverlayClick(event, 'bulkModalOverlay')">
+    <div class="modal-box" style="max-width: 640px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span data-i18n="bulk_header_title">💵 Správa a hromadný import cen do Fish Marketu</span>
+        </div>
+        <button class="modal-close" onclick="window.fishaoApp.closeBulkModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 13px; color: var(--text-muted);" data-i18n="bulk_desc"> Zde můžeš vložit seznam denních cen (např. ve formátu jako v souboru <code>prices.txt</code>, tedy <em>Název ryby: cena</em>) a všechny ryby se automaticky přiřadí a uloží do historie ve fishměně (FB). </p>
+
+        <div>
+          <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;" data-i18n="bulk_date_label"> Datum pro tento import: </label>
+          <input type="date" id="bulkImportDate" class="filter-control" style="width: 180px;">
+        </div>
+
+        <div>
+          <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;" data-i18n="bulk_textarea_label"> Vložit text se seznamem ryb a cen: </label>
+          <textarea id="bulkInputText" class="bulk-input"
+            placeholder="Havýš rohatý: 152&#10;Pomčík Potterův: 178&#10;Klaun uzdičkatý: 43..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button class="btn-submit" style="flex: 2;" onclick="window.fishaoApp.processBulkImport()" data-i18n="bulk_import_btn"> ⚡ Importovat do historie </button>
+          <button id="btnExportPrices" class="btn-action" style="flex: 1; display: none;" onclick="window.fishaoApp.exportPricesJson()" data-i18n="bulk_export_btn"> 📥 Export JSON (Admin) </button>
+        </div>
+
+        <div id="bulkResultMsg" style="font-size: 12px; padding: 10px; border-radius: 8px; display: none;"></div>
+
+        <div
+          style="padding-top: 10px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 11px; color: var(--text-muted);" data-i18n="bulk_note_secure">Data jsou zabezpečená a sdílená v reálném čase.</span>
+          <button id="btnResetPricesModal" class="btn-reset" style="padding: 4px 8px; font-size: 11px; display: none;" onclick="window.fishaoApp.resetPriceHistoryToDefault()" data-i18n="bulk_reset_btn"> ↺ Obnovit výchozí ceník (Admin) </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data scripts and application logic -->
+  <script src="data/i18n.js"></script>
+  <script src="data/fishes.js"></script>
+  <script src="data/prices.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="app.js"></script>
+
+</body>
+
+</html>
