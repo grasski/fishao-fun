@@ -678,20 +678,27 @@
           currentClubUnlockedMonsterIds = new Set(data.unlockedMonsterIds || []);
           renderClubMembers(data.members || {}, data.createdBy);
 
-          // Self-heal: ensure current user is registered in members map
-          if (currentUser && (!data.members || !data.members[currentUser.uid])) {
-            try {
-              var mObj = {
-                displayName: (userProfile && userProfile.displayName) ? userProfile.displayName : "Rybář",
-                avatarUrl: (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "🎣",
-                isCreator: (data.createdBy === currentUser.uid),
-                joinedAt: new Date().toISOString()
-              };
-              var upM = {};
-              upM["members." + currentUser.uid] = mObj;
-              fsModule.updateDoc(clubDocRef, upM);
-            } catch (e) {
-              console.warn("Could not auto-register member in club:", e);
+          // Self-heal: ensure current user is registered in members map and stats are synced
+          if (currentUser) {
+            var myClubCount = 0;
+            clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myClubCount++; });
+            var curMember = (data.members && data.members[currentUser.uid]) || {};
+            if (!data.members || !data.members[currentUser.uid] || curMember.caughtCount !== caughtFishIds.size || curMember.caughtClubCount !== myClubCount) {
+              try {
+                var mObj = {
+                  displayName: (userProfile && userProfile.displayName) ? userProfile.displayName : (curMember.displayName || "Rybář"),
+                  avatarUrl: (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : (curMember.avatarUrl || "🎣"),
+                  isCreator: (data.createdBy === currentUser.uid || curMember.isCreator || false),
+                  joinedAt: curMember.joinedAt || new Date().toISOString(),
+                  caughtCount: caughtFishIds.size,
+                  caughtClubCount: myClubCount
+                };
+                var upM = {};
+                upM["members." + currentUser.uid] = mObj;
+                fsModule.updateDoc(clubDocRef, upM);
+              } catch (e) {
+                console.warn("Could not auto-register member in club:", e);
+              }
             }
           }
         } else {
@@ -717,21 +724,33 @@
     }
   }
 
+  var currentClubMembersMap = {};
+  var currentClubCreatorId = "";
+
   function renderClubMembers(membersMap, creatorId) {
+    currentClubMembersMap = membersMap || {};
+    currentClubCreatorId = creatorId || "";
+
     var grid = document.getElementById("clubMembersGrid");
     var countEl = document.getElementById("activeClubMembersCount");
     if (!grid) return;
 
     var memberKeys = Object.keys(membersMap || {});
     if (memberKeys.length === 0 && currentUser) {
+      var myClubCount = 0;
+      clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myClubCount++; });
       var myName = (userProfile && userProfile.displayName) ? userProfile.displayName : "Rybář";
       var myAv = (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "🎣";
       membersMap = {};
       membersMap[currentUser.uid] = {
         displayName: myName,
         avatarUrl: myAv,
-        isCreator: (creatorId === currentUser.uid)
+        isCreator: (creatorId === currentUser.uid),
+        joinedAt: new Date().toISOString(),
+        caughtCount: caughtFishIds.size,
+        caughtClubCount: myClubCount
       };
+      currentClubMembersMap = membersMap;
       memberKeys = [currentUser.uid];
     }
 
@@ -752,18 +771,106 @@
         avatarHtml = '<div class="club-member-avatar">' + escapeHtml(av || "🎣") + '</div>';
       }
 
-      html += '<div class="club-member-chip' + (isCr ? ' creator' : '') + '">' +
+      var roleBadge = isCr
+        ? '<span class="club-member-creator-badge">👑 ' + t('club_member_creator', 'Zakladatel') + '</span>'
+        : '<span>🎣 ' + t('club_member_role', 'Člen') + '</span>';
+
+      var cCount = isMe ? caughtFishIds.size : (m.caughtCount !== undefined ? m.caughtCount : null);
+      var countBadge = (cCount !== null)
+        ? '<span style="color: #38bdf8; font-size: 11px; margin-left: 4px; font-weight: 600;">• 🎣 ' + cCount + '/615</span>'
+        : '';
+
+      html += '<div class="club-member-chip' + (isCr ? ' creator' : '') + '" onclick="window.fishaoApp.openPlayerModal(\'' + uid + '\')" title="' + escapeHtml(t('club_member_view_profile', 'Kliknutím zobrazíš detail hráče')) + '">' +
         avatarHtml +
         '<div class="club-member-info">' +
           '<div class="club-member-name">' + escapeHtml(dName) + (isMe ? ' <span style="font-size:11px;color:#a78bfa;">(Ty)</span>' : '') + '</div>' +
           '<div class="club-member-tag">' +
-            (isCr ? '<span class="club-member-creator-badge">👑 ' + (t('club_member_creator') || 'Zakladatel') + '</span>' : '<span>🎣 ' + (t('club_member_role') || 'Člen') + '</span>') +
+            roleBadge + countBadge +
           '</div>' +
         '</div>' +
       '</div>';
     });
 
     grid.innerHTML = html;
+  }
+
+  function openPlayerModal(uid) {
+    if (!uid) return;
+    var m = (currentClubMembersMap && currentClubMembersMap[uid]) || {};
+    var isMe = !!(currentUser && uid === currentUser.uid);
+    var isCr = !!(m.isCreator || uid === currentClubCreatorId);
+
+    var dName = isMe
+      ? ((userProfile && userProfile.displayName) ? userProfile.displayName : (m.displayName || "Rybář"))
+      : (m.displayName || "Rybář");
+
+    var av = isMe
+      ? ((userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : (m.avatarUrl || "🎣"))
+      : (m.avatarUrl || "🎣");
+
+    var myClubCount = 0;
+    if (isMe) {
+      clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myClubCount++; });
+    }
+    var cClub = isMe ? myClubCount : (m.caughtClubCount || 0);
+    var cTotal = isMe ? caughtFishIds.size : (m.caughtCount || 0);
+
+    var avatarWrap = document.getElementById("playerModalAvatarWrap");
+    if (avatarWrap) {
+      if (av && (av.startsWith("http://") || av.startsWith("https://"))) {
+        avatarWrap.innerHTML = '<div class="player-modal-avatar-large"><img src="' + escapeHtml(av) + '" alt="" onerror="this.parentElement.innerHTML=\'🎣\'"></div>';
+      } else {
+        avatarWrap.innerHTML = '<div class="player-modal-avatar-large">' + escapeHtml(av || "🎣") + '</div>';
+      }
+    }
+
+    var nameEl = document.getElementById("playerModalName");
+    if (nameEl) nameEl.innerText = dName + (isMe ? " (Ty)" : "");
+
+    var roleEl = document.getElementById("playerModalRole");
+    if (roleEl) {
+      roleEl.innerHTML = isCr
+        ? '<span class="pill-btn gold active" style="cursor: default; font-size: 11px; padding: 2px 10px;">👑 ' + t('club_member_creator', 'Zakladatel') + '</span>'
+        : '<span class="pill-btn purple" style="cursor: default; font-size: 11px; padding: 2px 10px;">🎣 ' + t('club_member_role', 'Člen') + '</span>';
+    }
+
+    var clubCountEl = document.getElementById("playerModalClubCount");
+    var clubFillEl = document.getElementById("playerModalClubFill");
+    if (clubCountEl) clubCountEl.innerText = cClub + " / 80";
+    if (clubFillEl) clubFillEl.style.width = Math.min(100, Math.round((cClub / 80) * 100)) + "%";
+
+    var totalCountEl = document.getElementById("playerModalTotalCount");
+    var totalFillEl = document.getElementById("playerModalTotalFill");
+    var totalPct = Math.round((cTotal / allFishes.length) * 100);
+    if (totalCountEl) totalCountEl.innerText = cTotal + " / " + allFishes.length + " (" + totalPct + "%)";
+    if (totalFillEl) totalFillEl.style.width = Math.min(100, (cTotal / allFishes.length) * 100).toFixed(1) + "%";
+
+    var joinedEl = document.getElementById("playerModalJoined");
+    if (joinedEl) {
+      var dateStr = "";
+      if (m.joinedAt) {
+        try {
+          var d = new Date(m.joinedAt);
+          dateStr = d.toLocaleDateString(getLocale(), { day: 'numeric', month: 'numeric', year: 'numeric' });
+        } catch (e) {
+          dateStr = m.joinedAt;
+        }
+      }
+      joinedEl.innerText = dateStr
+        ? t('club_member_joined', { date: dateStr })
+        : (isCr ? t('club_member_creator', 'Zakladatel') : t('club_member_role', 'Člen'));
+    }
+
+    var selfActions = document.getElementById("playerModalSelfActions");
+    if (selfActions) selfActions.style.display = isMe ? "block" : "none";
+
+    var modal = document.getElementById("playerModalOverlay");
+    if (modal) modal.classList.add("active");
+  }
+
+  function closePlayerModal() {
+    var modal = document.getElementById("playerModalOverlay");
+    if (modal) modal.classList.remove("active");
   }
 
   function unbindClubListener() {
@@ -886,11 +993,15 @@
         }
       }
 
+      var myClubCount = 0;
+      clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myClubCount++; });
       var memberData = {
         displayName: (userProfile && userProfile.displayName) ? userProfile.displayName : "Rybář",
         avatarUrl: (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "🎣",
         isCreator: true,
-        joinedAt: new Date().toISOString()
+        joinedAt: new Date().toISOString(),
+        caughtCount: caughtFishIds.size,
+        caughtClubCount: myClubCount
       };
       var initialMembers = {};
       initialMembers[currentUser.uid] = memberData;
@@ -971,11 +1082,15 @@
         return;
       }
       var newCount = (newSnap.data().memberCount || 0) + 1;
+      var myJoinClubCount = 0;
+      clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myJoinClubCount++; });
       var memberData = {
         displayName: (userProfile && userProfile.displayName) ? userProfile.displayName : "Rybář",
         avatarUrl: (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "🎣",
         isCreator: false,
-        joinedAt: new Date().toISOString()
+        joinedAt: new Date().toISOString(),
+        caughtCount: caughtFishIds.size,
+        caughtClubCount: myJoinClubCount
       };
       var updatePayload = {
         memberCount: newCount,
@@ -1238,10 +1353,6 @@
       }
 
       if (adminBadge) adminBadge.style.display = isAdmin ? "inline-block" : "none";
-      var resetBtn = document.getElementById("btnResetPrices");
-      if (resetBtn) resetBtn.style.display = isAdmin ? "inline-block" : "none";
-      var resetModalBtn = document.getElementById("btnResetPricesModal");
-      if (resetModalBtn) resetModalBtn.style.display = isAdmin ? "inline-block" : "none";
       var exportBtn = document.getElementById("btnExportPrices");
       if (exportBtn) exportBtn.style.display = isAdmin ? "inline-block" : "none";
 
@@ -1288,10 +1399,6 @@
       if (signInBtn) signInBtn.style.display = "inline-flex";
       if (userInfoBar) userInfoBar.style.display = "none";
       if (adminBadge) adminBadge.style.display = "none";
-      var resetBtnOffline = document.getElementById("btnResetPrices");
-      if (resetBtnOffline) resetBtnOffline.style.display = "none";
-      var resetModalBtnOff = document.getElementById("btnResetPricesModal");
-      if (resetModalBtnOff) resetModalBtnOff.style.display = "none";
       var exportBtnOff = document.getElementById("btnExportPrices");
       if (exportBtnOff) exportBtnOff.style.display = "none";
 
@@ -1351,6 +1458,20 @@
         await fsModule.updateDoc(userDocRef, {
           caughtFishIds: Array.from(caughtFishIds)
         });
+
+        if (currentClubId) {
+          try {
+            var myClubCount = 0;
+            clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myClubCount++; });
+            var clubDocRef = fsModule.doc(db, "clubs", currentClubId);
+            var mSync = {};
+            mSync["members." + currentUser.uid + ".caughtCount"] = caughtFishIds.size;
+            mSync["members." + currentUser.uid + ".caughtClubCount"] = myClubCount;
+            await fsModule.updateDoc(clubDocRef, mSync);
+          } catch (e) {
+            console.warn("Could not sync member catch counts to club:", e);
+          }
+        }
       } catch (err) {
         console.error("Failed to update caught fish:", err);
       }
@@ -1907,6 +2028,7 @@
     closePriceModal();
     closeBulkModal();
     closeProfileModal();
+    closePlayerModal();
     resolveConfirmModal(false);
   }
 
@@ -1915,6 +2037,7 @@
       if (id === 'priceModalOverlay') closePriceModal();
       if (id === 'bulkModalOverlay') closeBulkModal();
       if (id === 'profileModalOverlay') closeProfileModal();
+      if (id === 'playerModalOverlay') closePlayerModal();
       if (id === 'confirmModalOverlay') resolveConfirmModal(false);
     }
   }
@@ -3008,12 +3131,13 @@
     deletePriceEntry: deletePriceEntry,
     processBulkImport: processBulkImport,
     exportPricesJson: exportPricesJson,
-    resetPriceHistoryToDefault: resetPriceHistoryToDefault,
     signIn: signIn,
     signOut: signOut,
     editNickname: editNickname,
     openProfileModal: openProfileModal,
     closeProfileModal: closeProfileModal,
+    openPlayerModal: openPlayerModal,
+    closePlayerModal: closePlayerModal,
     selectPresetAvatar: selectPresetAvatar,
     onAvatarUrlInput: onAvatarUrlInput,
     saveProfile: saveProfile,

@@ -186,9 +186,6 @@
         <button class="btn-action sm" onclick="window.fishaoApp.openBulkModal()"
           title="Hromadný import cen do Fish Marketu" data-i18n="market_btn_import" data-i18n-title="market_btn_import">
           📥 Import cen do Marketu </button>
-        <button id="btnResetPrices" class="btn-reset sm" style="display: none;"
-          onclick="window.fishaoApp.resetPriceHistoryToDefault()" data-i18n="market_btn_default"> ↺ Výchozí ceník
-          (Admin) </button>
       </div>
     </div>
 
@@ -759,9 +756,6 @@
           style="padding-top: 10px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
           <span style="font-size: 11px; color: var(--text-muted);" data-i18n="bulk_note_secure">Data jsou zabezpečená a
             sdílená v reálném čase.</span>
-          <button id="btnResetPricesModal" class="btn-reset" style="padding: 4px 8px; font-size: 11px; display: none;"
-            onclick="window.fishaoApp.resetPriceHistoryToDefault()" data-i18n="bulk_reset_btn"> ↺ Obnovit výchozí ceník
-            (Admin) </button>
         </div>
       </div>
     </div>
@@ -836,6 +830,52 @@
         <div style="display: flex; justify-content: flex-end; gap: 10px;">
           <button type="button" class="pill-btn" onclick="window.fishaoApp.resolveConfirmModal(false)" data-i18n="confirm_cancel">Zrušit</button>
           <button type="button" id="confirmModalBtnConfirm" class="pill-btn danger active" onclick="window.fishaoApp.resolveConfirmModal(true)" data-i18n="confirm_btn">Potvrdit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Player Profile Detail Modal -->
+  <div class="modal-overlay" id="playerModalOverlay"
+    onclick="window.fishaoApp.onModalOverlayClick(event, 'playerModalOverlay')">
+    <div class="modal-box" style="max-width: 440px; text-align: center;">
+      <div class="modal-header" style="justify-content: flex-end; padding-bottom: 0; border-bottom: none;">
+        <button class="modal-close" onclick="window.fishaoApp.closePlayerModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding-top: 0;">
+        <div class="player-modal-avatar-wrap" id="playerModalAvatarWrap">
+          <!-- Large Avatar -->
+        </div>
+        <h3 id="playerModalName" style="margin: 10px 0 4px 0; font-size: 20px; color: var(--text-main);"></h3>
+        <div id="playerModalRole" style="margin-bottom: 16px;"></div>
+
+        <div class="player-modal-stats-box">
+          <!-- Club catches -->
+          <div class="player-stat-row">
+            <span class="player-stat-label">🏆 <span data-i18n="club_member_stats_club">Klubové ryby:</span></span>
+            <strong id="playerModalClubCount" style="color: #34d399;">0 / 80</strong>
+          </div>
+          <div class="caught-progress-track" style="margin-bottom: 12px; height: 7px;">
+            <div class="caught-progress-fill" id="playerModalClubFill" style="width: 0%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
+          </div>
+
+          <!-- Total catches -->
+          <div class="player-stat-row">
+            <span class="player-stat-label">🎣 <span data-i18n="club_member_stats_total">Celkem uloveno:</span></span>
+            <strong id="playerModalTotalCount" style="color: #38bdf8;">0 / 615</strong>
+          </div>
+          <div class="caught-progress-track" style="margin-bottom: 12px; height: 7px;">
+            <div class="caught-progress-fill" id="playerModalTotalFill" style="width: 0%; background: linear-gradient(90deg, #0284c7, #38bdf8);"></div>
+          </div>
+
+          <!-- Member since -->
+          <div class="player-stat-meta" id="playerModalJoined"></div>
+        </div>
+
+        <div id="playerModalSelfActions" style="margin-top: 16px; display: none;">
+          <button class="pill-btn purple" style="width: 100%; height: 38px; font-weight: 700;" onclick="window.fishaoApp.closePlayerModal(); window.fishaoApp.openProfileModal();">
+            ✏️ Upravit můj profil (přezdívka / avatar)
+          </button>
         </div>
       </div>
     </div>
