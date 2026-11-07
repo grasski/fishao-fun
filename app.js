@@ -726,6 +726,86 @@
 
   var currentClubMembersMap = {};
   var currentClubCreatorId = "";
+  var pendingMemberFetches = new Set();
+
+  async function fetchAndSyncMemberStats(uid) {
+    if (!db || !uid || !currentUser || pendingMemberFetches.has(uid)) return;
+    pendingMemberFetches.add(uid);
+    try {
+      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      var uSnap = await fsModule.getDoc(fsModule.doc(db, "users", uid));
+      if (uSnap.exists()) {
+        var uData = uSnap.data();
+        var uCaught = Array.isArray(uData.caughtFishIds) ? uData.caughtFishIds : [];
+        var totalC = uCaught.length;
+        var clubFishIdsSet = new Set(clubFishes.map(function (f) { return f.id; }));
+        var clubC = 0;
+        uCaught.forEach(function (fid) { if (clubFishIdsSet.has(fid)) clubC++; });
+
+        if (currentClubMembersMap) {
+          if (!currentClubMembersMap[uid]) currentClubMembersMap[uid] = {};
+          currentClubMembersMap[uid].caughtCount = totalC;
+          currentClubMembersMap[uid].caughtClubCount = clubC;
+          if (uData.displayName) currentClubMembersMap[uid].displayName = uData.displayName;
+          if (uData.avatarUrl) currentClubMembersMap[uid].avatarUrl = uData.avatarUrl;
+        }
+
+        // Update member chip badge in active grid
+        var badgeEl = document.getElementById("clubMemberCatchBadge_" + uid);
+        if (badgeEl) {
+          badgeEl.innerText = "• 🎣 " + totalC + "/615";
+          badgeEl.style.display = "inline";
+        }
+
+        // If player modal is open for this player, update modal live
+        var modalNameEl = document.getElementById("playerModalName");
+        if (modalNameEl && modalNameEl.dataset.currentUid === uid) {
+          var clubCountEl = document.getElementById("playerModalClubCount");
+          var clubFillEl = document.getElementById("playerModalClubFill");
+          if (clubCountEl) clubCountEl.innerText = clubC + " / 80";
+          if (clubFillEl) clubFillEl.style.width = Math.min(100, Math.round((clubC / 80) * 100)) + "%";
+
+          var totalCountEl = document.getElementById("playerModalTotalCount");
+          var totalFillEl = document.getElementById("playerModalTotalFill");
+          var totalPct = Math.round((totalC / allFishes.length) * 100);
+          if (totalCountEl) totalCountEl.innerText = totalC + " / " + allFishes.length + " (" + totalPct + "%)";
+          if (totalFillEl) totalFillEl.style.width = Math.min(100, (totalC / allFishes.length) * 100).toFixed(1) + "%";
+
+          var avWrap = document.getElementById("playerModalAvatarWrap");
+          var av = uData.avatarUrl || "🎣";
+          if (avWrap) {
+            if (av && (av.startsWith("http://") || av.startsWith("https://"))) {
+              avWrap.innerHTML = '<div class="player-modal-avatar-large"><img src="' + escapeHtml(av) + '" alt="" onerror="this.parentElement.innerHTML=\'🎣\'"></div>';
+            } else {
+              avWrap.innerHTML = '<div class="player-modal-avatar-large">' + escapeHtml(av || "🎣") + '</div>';
+            }
+          }
+        }
+
+        // Cache into club doc so next time anyone loads the club, it is already cached
+        if (currentClubId) {
+          try {
+            var cRef = fsModule.doc(db, "clubs", currentClubId);
+            var patch = {
+              updatedAt: new Date().toISOString(),
+              lastUpdatedBy: currentUser.uid
+            };
+            patch["members." + uid + ".caughtCount"] = totalC;
+            patch["members." + uid + ".caughtClubCount"] = clubC;
+            if (uData.displayName) patch["members." + uid + ".displayName"] = uData.displayName;
+            if (uData.avatarUrl) patch["members." + uid + ".avatarUrl"] = uData.avatarUrl;
+            await fsModule.updateDoc(cRef, patch);
+          } catch (e) {
+            // Silently ignore if permissions prevent caching
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("Could not fetch user stats for member " + uid + ":", err);
+    } finally {
+      pendingMemberFetches.delete(uid);
+    }
+  }
 
   function renderClubMembers(membersMap, creatorId) {
     currentClubMembersMap = membersMap || {};
@@ -775,10 +855,8 @@
         ? '<span class="club-member-creator-badge">👑 ' + t('club_member_creator', 'Zakladatel') + '</span>'
         : '<span>🎣 ' + t('club_member_role', 'Člen') + '</span>';
 
-      var cCount = isMe ? caughtFishIds.size : (m.caughtCount !== undefined ? m.caughtCount : null);
-      var countBadge = (cCount !== null)
-        ? '<span style="color: #38bdf8; font-size: 11px; margin-left: 4px; font-weight: 600;">• 🎣 ' + cCount + '/615</span>'
-        : '';
+      var cCount = isMe ? caughtFishIds.size : (typeof m.caughtCount === 'number' ? m.caughtCount : null);
+      var countBadge = '<span id="clubMemberCatchBadge_' + uid + '" style="color: #38bdf8; font-size: 11px; margin-left: 4px; font-weight: 600;">• 🎣 ' + (cCount !== null ? cCount : (typeof m.caughtCount === 'number' ? m.caughtCount : 0)) + '/615</span>';
 
       html += '<div class="club-member-chip' + (isCr ? ' creator' : '') + '" onclick="window.fishaoApp.openPlayerModal(\'' + uid + '\')" title="' + escapeHtml(t('club_member_view_profile', 'Kliknutím zobrazíš detail hráče')) + '">' +
         avatarHtml +
@@ -789,6 +867,10 @@
           '</div>' +
         '</div>' +
       '</div>';
+
+      if (!isMe && currentUser && db && (m.caughtCount === undefined || m.caughtClubCount === undefined)) {
+        fetchAndSyncMemberStats(uid);
+      }
     });
 
     grid.innerHTML = html;
@@ -825,7 +907,10 @@
     }
 
     var nameEl = document.getElementById("playerModalName");
-    if (nameEl) nameEl.innerText = dName + (isMe ? " (Ty)" : "");
+    if (nameEl) {
+      nameEl.innerText = dName + (isMe ? " (Ty)" : "");
+      nameEl.dataset.currentUid = uid;
+    }
 
     var roleEl = document.getElementById("playerModalRole");
     if (roleEl) {
@@ -866,6 +951,11 @@
 
     var modal = document.getElementById("playerModalOverlay");
     if (modal) modal.classList.add("active");
+
+    // Fetch live user doc to guarantee fresh real-time stats even if member is offline or was added earlier
+    if (!isMe && currentUser && db) {
+      fetchAndSyncMemberStats(uid);
+    }
   }
 
   function closePlayerModal() {
