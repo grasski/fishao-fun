@@ -782,8 +782,10 @@
           }
         }
 
-        // Cache into club doc so next time anyone loads the club, it is already cached
-        if (currentClubId) {
+        // Cache into club doc only if values changed to avoid unnecessary Firestore updates
+        var existingMem = (currentClubMembersMap && currentClubMembersMap[uid]) || {};
+        var needsUpdate = (existingMem.caughtCount !== totalC || existingMem.caughtClubCount !== clubC || existingMem.displayName !== uData.displayName || existingMem.avatarUrl !== uData.avatarUrl);
+        if (needsUpdate && currentClubId) {
           try {
             var cRef = fsModule.doc(db, "clubs", currentClubId);
             var patch = {
@@ -833,6 +835,35 @@
       currentClubMembersMap = membersMap;
       memberKeys = [currentUser.uid];
     }
+
+    // Sort memberKeys deterministically so order NEVER jumps or flips when clicking
+    memberKeys.sort(function (a, b) {
+      var mA = membersMap[a] || {};
+      var mB = membersMap[b] || {};
+      var isCrA = !!(mA.isCreator || a === creatorId);
+      var isCrB = !!(mB.isCreator || b === creatorId);
+
+      // 1. Creator ALWAYS first
+      if (isCrA && !isCrB) return -1;
+      if (!isCrA && isCrB) return 1;
+
+      // 2. Original join date (joinedAt)
+      var jA = mA.joinedAt || "";
+      var jB = mB.joinedAt || "";
+      if (jA && jB && jA !== jB) {
+        return jA.localeCompare(jB);
+      }
+
+      // 3. Alphabetical by display name
+      var nameA = (mA.displayName || "").toLowerCase();
+      var nameB = (mB.displayName || "").toLowerCase();
+      if (nameA !== nameB) {
+        return nameA.localeCompare(nameB);
+      }
+
+      // 4. UID tie-breaker
+      return a.localeCompare(b);
+    });
 
     if (countEl) countEl.innerText = Math.max(memberKeys.length, currentClubMemberCount || 1);
 
@@ -2620,21 +2651,9 @@
     if (locationFilterGroup) locationFilterGroup.style.display = (view !== "club") ? "flex" : "none";
     if (missionSizeRow) missionSizeRow.style.display = (view === "all") ? "flex" : "none";
 
-    if (view === "market") {
-      filterOnlyPrice = true;
-      var btnP = document.getElementById("btnOnlyPrice");
-      if (btnP) btnP.classList.add("active");
-      var sortEl = document.getElementById("sortBy");
-      if (sortEl) sortEl.value = "price_desc";
-    } else {
-      filterOnlyPrice = false;
-      var btnP2 = document.getElementById("btnOnlyPrice");
-      if (btnP2) btnP2.classList.remove("active");
-    }
-
-    renderTableHead();
+    // Reset filters completely when switching tabs
+    resetFilters();
     updateCaughtStats();
-    applyFilters();
   }
 
   function renderTableHead() {
@@ -2999,32 +3018,64 @@
   }
 
   function resetFilters() {
-    document.getElementById("search").value = "";
-    document.getElementById("baitFilter").value = "";
-    document.getElementById("ratingFilter").value = "";
-    document.getElementById("waterFilter").value = "";
+    var searchEl = document.getElementById("search");
+    if (searchEl) searchEl.value = "";
+    var baitEl = document.getElementById("baitFilter");
+    if (baitEl) baitEl.value = "";
+    var ratingEl = document.getElementById("ratingFilter");
+    if (ratingEl) ratingEl.value = "";
+    var waterEl = document.getElementById("waterFilter");
+    if (waterEl) waterEl.value = "";
     var loc = document.getElementById("locationFilter");
     if (loc) loc.value = "";
-    document.getElementById("timeFilter").value = "";
-    document.getElementById("sortBy").value = "name_asc";
+    var timeEl = document.getElementById("timeFilter");
+    if (timeEl) timeEl.value = "";
+
+    var sortEl = document.getElementById("sortBy");
+    if (sortEl) {
+      sortEl.value = (currentView === "market") ? "price_desc" : "name_asc";
+    }
+
     var minEl = document.getElementById("minSizeInput");
     if (minEl) minEl.value = "";
     var maxEl = document.getElementById("maxSizeInput");
     if (maxEl) maxEl.value = "";
-    filterNowActive = false;
-    filterOnlyPrice = false;
 
+    filterNowActive = false;
     var btnNow = document.getElementById("btnNow");
     if (btnNow) btnNow.classList.remove("active");
-    var btnOnlyPrice = document.getElementById("btnOnlyPrice");
-    if (btnOnlyPrice) btnOnlyPrice.classList.remove("active");
-    var activeDesc = document.getElementById("activeFilterDesc");
-    if (activeDesc) activeDesc.innerText = "";
+
+    if (currentView === "market") {
+      filterOnlyPrice = true;
+      var btnOnlyPrice = document.getElementById("btnOnlyPrice");
+      if (btnOnlyPrice) btnOnlyPrice.classList.add("active");
+    } else {
+      filterOnlyPrice = false;
+      var btnOnlyPrice2 = document.getElementById("btnOnlyPrice");
+      if (btnOnlyPrice2) btnOnlyPrice2.classList.remove("active");
+    }
 
     var uncaughtCb = document.getElementById("filterUncaughtCheckbox");
     if (uncaughtCb) uncaughtCb.checked = false;
 
-    document.querySelectorAll(".pill-btn").forEach(function (p) { p.classList.remove("active"); });
+    var hideLockedCb = document.getElementById("hideLockedCheckbox");
+    if (hideLockedCb) hideLockedCb.checked = false;
+
+    var includeFcCb = document.getElementById("includeFcCheckbox");
+    if (includeFcCb) includeFcCb.checked = true;
+
+    collectionFilterMode = "all";
+    var collAll = document.getElementById("collFilterAll");
+    var collCaught = document.getElementById("collFilterCaught");
+    var collMissing = document.getElementById("collFilterMissing");
+    if (collAll) collAll.classList.add("active");
+    if (collCaught) collCaught.classList.remove("active");
+    if (collMissing) collMissing.classList.remove("active");
+
+    document.querySelectorAll(".pill-btn-size").forEach(function (p) { p.classList.remove("active"); });
+
+    var activeDesc = document.getElementById("activeFilterDesc");
+    if (activeDesc) activeDesc.innerText = "";
 
     renderTableHead();
     applyFilters();

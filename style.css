@@ -878,18 +878,28 @@ select.filter-control option {
 }
 
 /* Reset button */
+.filter-group-reset {
+  flex: 0 0 auto;
+  align-self: flex-end;
+}
 .btn-reset {
   background: transparent;
   border: 1px solid rgba(239, 68, 68, 0.4);
   color: #f87171;
-  padding: 6px 12px;
+  height: 38px;
+  line-height: 36px;
+  padding: 0 14px;
   border-radius: 8px;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.18s;
-  margin-left: auto;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-sizing: border-box;
 }
 .btn-reset:hover {
   background: rgba(239, 68, 68, 0.15);
@@ -897,7 +907,9 @@ select.filter-control option {
   color: #fff;
 }
 .btn-reset.sm {
-  padding: 4px 10px;
+  height: 32px;
+  line-height: 30px;
+  padding: 0 10px;
   font-size: 11px;
 }
 
@@ -2151,6 +2163,10 @@ textarea.bulk-input {
   .filter-row-sub {
     flex-direction: column;
     align-items: stretch;
+  }
+  .filter-group-reset {
+    flex: 1 1 100%;
+    width: 100%;
   }
   .btn-reset {
     margin-left: 0;
