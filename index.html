@@ -16,7 +16,8 @@
       <div class="header-left">
         <div class="logo-row">
           <span class="app-logo">🐟</span>
-          <h1><span data-i18n="app_title">FISHAO</span> <span class="header-highlight" data-i18n="app_subtitle">Encyklopedie</span></h1>
+          <h1><span data-i18n="app_title">FISHAO</span> <span class="header-highlight"
+              data-i18n="app_subtitle">Encyklopedie</span></h1>
           <!-- Sync status indicator -->
           <div id="syncStatusBadge" class="sync-status-badge local" title="Stav synchronizace dat">
             <span class="sync-dot"></span>
@@ -122,10 +123,12 @@
     <div class="view-action-bar gold" id="bannerClub" style="display: none;">
       <div class="action-bar-left">
         <div class="action-badge-club" id="clubUnlockBadge">
-          <span data-i18n="club_unlocked_label">🏆 Odemčeno klubem:</span> <strong id="unlockedCount" style="color: #34d399;">--</strong> / 80
+          <span data-i18n="club_unlocked_label">🏆 Odemčeno klubem:</span> <strong id="unlockedCount"
+            style="color: #34d399;">--</strong> / 80
           <span id="lockedNotice" style="color: #f87171; margin-left: 4px;"></span>
         </div>
-        <span class="action-bar-hint" id="nextUnlockHint" data-i18n="club_next_unlock_loading">🎯 Načítání postupu...</span>
+        <span class="action-bar-hint" id="nextUnlockHint" data-i18n="club_next_unlock_loading">🎯 Načítání
+          postupu...</span>
         <button class="btn-subtle-link" onclick="window.fishaoApp.switchView('club_manage')"
           data-i18n="club_bar_edit_btn">⚙️ Upravit body v Klubu</button>
       </div>
@@ -150,8 +153,10 @@
       <div class="action-bar-left">
         <span class="action-bar-title" data-i18n="coll_title">🎣 Sbírka úlovků:</span>
         <div class="collection-stats-group">
-          <span class="stat-chip"><span data-i18n="coll_club_label">Klubové:</span> <strong id="caughtClubCount" style="color: #34d399;">0</strong> / 80</span>
-          <span class="stat-chip"><span data-i18n="coll_total_label">Celkem:</span> <strong id="caughtAllCount" style="color: #38bdf8;">0</strong> / 615</span>
+          <span class="stat-chip"><span data-i18n="coll_club_label">Klubové:</span> <strong id="caughtClubCount"
+              style="color: #34d399;">0</strong> / 80</span>
+          <span class="stat-chip"><span data-i18n="coll_total_label">Celkem:</span> <strong id="caughtAllCount"
+              style="color: #38bdf8;">0</strong> / 615</span>
           <span class="stat-chip pct" id="caughtPctText">0%</span>
         </div>
         <div class="caught-progress-track">
@@ -164,7 +169,9 @@
             data-i18n="coll_filter_all">Všechny ryby</button>
           <button class="pill-btn" id="collFilterCaught" onclick="window.fishaoApp.setCollectionFilter('caught', this)"
             data-i18n="coll_filter_caught">✅ Pouze chycené</button>
-          <button class="pill-btn" id="collFilterMissing" onclick="window.fishaoApp.setCollectionFilter('missing', this)" data-i18n="coll_filter_missing">❓ Chybějící</button>
+          <button class="pill-btn" id="collFilterMissing"
+            onclick="window.fishaoApp.setCollectionFilter('missing', this)" data-i18n="coll_filter_missing">❓
+            Chybějící</button>
         </div>
       </div>
     </div>
@@ -173,11 +180,16 @@
     <div class="view-action-bar yellow" id="bannerMarket" style="display: none;">
       <div class="action-bar-left">
         <span class="action-bar-title" style="color: #34d399;" data-i18n="market_bar_title">💵 Fish Market:</span>
-        <span class="action-bar-hint" id="marketStatsSummary" data-i18n="market_bar_subtitle">Výkupní ceník ve fishměně (FB)</span>
+        <span class="action-bar-hint" id="marketStatsSummary" data-i18n="market_bar_subtitle">Výkupní ceník ve fishměně
+          (FB)</span>
       </div>
       <div class="action-bar-right">
-        <button class="btn-action sm" onclick="window.fishaoApp.openBulkModal()" title="Hromadný import cen do Fish Marketu" data-i18n="market_btn_import" data-i18n-title="market_btn_import"> 📥 Import cen do Marketu </button>
-        <button id="btnResetPrices" class="btn-reset sm" style="display: none;" onclick="window.fishaoApp.resetPriceHistoryToDefault()" data-i18n="market_btn_default"> ↺ Výchozí ceník (Admin) </button>
+        <button class="btn-action sm" onclick="window.fishaoApp.openBulkModal()"
+          title="Hromadný import cen do Fish Marketu" data-i18n="market_btn_import" data-i18n-title="market_btn_import">
+          📥 Import cen do Marketu </button>
+        <button id="btnResetPrices" class="btn-reset sm" style="display: none;"
+          onclick="window.fishaoApp.resetPriceHistoryToDefault()" data-i18n="market_btn_default"> ↺ Výchozí ceník
+          (Admin) </button>
       </div>
     </div>
 
@@ -186,7 +198,9 @@
       <!-- Auth Gate: shown when user is not logged in -->
       <div class="auth-gate-card purple-card" id="gateClubManage" style="display: none;">
         <div class="auth-gate-icon">🏰</div>
-        <h3 data-i18n="club_gate_title">Správa Klubu vyžaduje přihlášení</h3> <p data-i18n="club_gate_desc">Přihlas se svým Google účtem, abys mohl zadat svůj klub, sledovat klubové body a odemykání všech 80 klubových ryb.</p>
+        <h3 data-i18n="club_gate_title">Správa Klubu vyžaduje přihlášení</h3>
+        <p data-i18n="club_gate_desc">Přihlas se svým Google účtem, abys mohl zadat svůj klub, sledovat klubové body a
+          odemykání všech 80 klubových ryb.</p>
         <button class="sign-in-btn" onclick="window.fishaoApp.signIn()" style="margin-top: 6px;">
           <svg width="16" height="16" viewBox="0 0 24 24">
             <path fill="#4285F4"
@@ -215,7 +229,7 @@
                 <div class="dash-field">
                   <label for="clubNameManageInput" data-i18n="club_name_label">Název klubu</label>
                   <input type="text" id="clubNameManageInput" class="dash-input" placeholder="Např. Lovci z Prahy"
-                    oninput="window.fishaoApp.syncClubName(this.value)">
+                    data-i18n-placeholder="club_name_placeholder" oninput="window.fishaoApp.syncClubName(this.value)">
                 </div>
                 <div class="dash-field">
                   <label for="clubPointsManageInput" data-i18n="club_pts_label">Aktuální body klubu</label>
@@ -224,7 +238,8 @@
                 </div>
               </div>
               <div class="manage-quick-pts">
-                <span style="font-size: 11px; color: var(--text-muted);" data-i18n="club_quick_add">Rychlé přidání bodů:</span>
+                <span style="font-size: 11px; color: var(--text-muted);" data-i18n="club_quick_add">Rychlé přidání
+                  bodů:</span>
                 <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
                   <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(100)">+100</button>
                   <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(500)">+500</button>
@@ -270,13 +285,22 @@
         <!-- Milestone Roadmap Header -->
         <div class="milestone-roadmap-header">
           <div class="roadmap-header-left">
-            <h3 data-i18n="roadmap_title">🗺️ Cesta odemykání klubových ryb (80 milníků)</h3> <p data-i18n="roadmap_desc">Všechny klubové ryby seřazené podle potřebných bodů. Zelené jsou odemčené, u červených vidíš zbývající body.</p>
+            <h3 data-i18n="roadmap_title">🗺️ Cesta odemykání klubových ryb (80 milníků)</h3>
+            <p data-i18n="roadmap_desc">Všechny klubové ryby seřazené podle potřebných bodů. Zelené jsou odemčené, u
+              červených vidíš zbývající body.</p>
           </div>
           <div class="roadmap-header-filters">
-            <button class="pill-btn active" id="filterMilestoneAll" onclick="window.fishaoApp.filterMilestones('all', this)" data-i18n="roadmap_filter_all">Všechny (80)</button>
-            <button class="pill-btn" id="filterMilestoneUnlocked" onclick="window.fishaoApp.filterMilestones('unlocked', this)" data-i18n="roadmap_filter_unlocked">✓ Odemčené</button>
-            <button class="pill-btn" id="filterMilestoneLocked" onclick="window.fishaoApp.filterMilestones('locked', this)" data-i18n="roadmap_filter_locked">🔒 Zamčené</button>
-            <button class="pill-btn" id="filterMilestoneFc" onclick="window.fishaoApp.filterMilestones('fc', this)" data-i18n="roadmap_filter_fc">💎 FC &amp; Monstra</button>
+            <button class="pill-btn active" id="filterMilestoneAll"
+              onclick="window.fishaoApp.filterMilestones('all', this)" data-i18n="roadmap_filter_all">Všechny
+              (80)</button>
+            <button class="pill-btn" id="filterMilestoneUnlocked"
+              onclick="window.fishaoApp.filterMilestones('unlocked', this)" data-i18n="roadmap_filter_unlocked">✓
+              Odemčené</button>
+            <button class="pill-btn" id="filterMilestoneLocked"
+              onclick="window.fishaoApp.filterMilestones('locked', this)" data-i18n="roadmap_filter_locked">🔒
+              Zamčené</button>
+            <button class="pill-btn" id="filterMilestoneFc" onclick="window.fishaoApp.filterMilestones('fc', this)"
+              data-i18n="roadmap_filter_fc">💎 FC &amp; Monstra</button>
           </div>
         </div>
 
@@ -290,7 +314,9 @@
     <!-- Auth Gate: Collection Locked Screen (shown when on collection tab while not logged in) -->
     <div class="auth-gate-card green-card" id="gateCollection" style="display: none;">
       <div class="auth-gate-icon">🎣</div>
-      <h3 data-i18n="coll_gate_title">Sbírka úlovků vyžaduje přihlášení</h3> <p data-i18n="coll_gate_desc">Osobní sbírka úlovků a sledování dokončení hry jsou vázány na tvůj hráčský účet. Přihlas se přes Google a měj své chycené ryby bezpečně uložené v cloudu na PC i v mobilu.</p>
+      <h3 data-i18n="coll_gate_title">Sbírka úlovků vyžaduje přihlášení</h3>
+      <p data-i18n="coll_gate_desc">Osobní sbírka úlovků a sledování dokončení hry jsou vázány na tvůj hráčský účet.
+        Přihlas se přes Google a měj své chycené ryby bezpečně uložené v cloudu na PC i v mobilu.</p>
       <button class="sign-in-btn" onclick="window.fishaoApp.signIn()" style="margin-top: 6px;">
         <svg width="16" height="16" viewBox="0 0 24 24">
           <path fill="#4285F4"
@@ -480,7 +506,8 @@
   </div> <!-- Closes .container -->
 
   <!-- Authentication notice popup -->
-  <div class="auth-notice" id="authNotice" style="display: none;" data-i18n="toast_login_required"> 🔑 Pro tuto akci se musíš nejdříve přihlásit přes Google účet. </div>
+  <div class="auth-notice" id="authNotice" style="display: none;" data-i18n="toast_login_required"> 🔑 Pro tuto akci se
+    musíš nejdříve přihlásit přes Google účet. </div>
 
   <!-- Price detail and history modal -->
   <div class="modal-overlay" id="priceModalOverlay"
@@ -539,7 +566,8 @@
         </div>
 
         <!-- Fish Market Section Header -->
-        <div class="modal-market-divider"> <span data-i18n="modal_market_divider">💵 Fish Market – Výkupní ceny a historie</span> </div>
+        <div class="modal-market-divider"> <span data-i18n="modal_market_divider">💵 Fish Market – Výkupní ceny a
+            historie</span> </div>
 
         <div class="price-stats-grid">
           <div class="price-stat-card">
@@ -558,32 +586,43 @@
 
         <!-- Add price form (gated: shown when logged in) -->
         <div id="priceAddFormBox" class="price-form-box" style="display: none;">
-          <span style="font-size: 13px; font-weight: 700; color: #e2e8f0;" data-i18n="modal_add_record">+ Přidat nový záznam do historie:</span>
+          <span style="font-size: 13px; font-weight: 700; color: #e2e8f0;" data-i18n="modal_add_record">+ Přidat nový
+            záznam do historie:</span>
           <div class="price-form-row">
             <div style="flex: 1;">
-              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 2px;" data-i18n="modal_sale_date">Datum prodeje</label>
+              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 2px;"
+                data-i18n="modal_sale_date">Datum prodeje</label>
               <input type="date" id="newPriceDate" class="filter-control" style="width: 100%;">
             </div>
             <div style="flex: 1;">
-              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 2px;" data-i18n="modal_price_label">Cena (fishměna / FB)</label>
-              <input type="number" id="newPriceValue" class="filter-control" style="width: 100%;" min="1" placeholder="Např. 152" data-i18n-placeholder="modal_price_placeholder">
+              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 2px;"
+                data-i18n="modal_price_label">Cena (fishměna / FB)</label>
+              <input type="number" id="newPriceValue" class="filter-control" style="width: 100%;" min="1"
+                placeholder="Např. 152" data-i18n-placeholder="modal_price_placeholder">
             </div>
           </div>
-          <button class="btn-submit" onclick="window.fishaoApp.submitNewPrice()" data-i18n="modal_save_price_btn">💾 Uložit cenu</button>
+          <button class="btn-submit" onclick="window.fishaoApp.submitNewPrice()" data-i18n="modal_save_price_btn">💾
+            Uložit cenu</button>
         </div>
 
         <!-- Add price login notice (gated: shown when guest) -->
         <div id="priceAddLoginNotice"
           style="display: none; padding: 12px; background: rgba(30, 41, 59, 0.7); border: 1px dashed var(--border); border-radius: 8px; font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 16px;">
-          <span data-i18n="modal_login_notice_prefix">🔒 Pro zadání ceny do Fish Marketu se musíš</span> <a href="javascript:void(0)" onclick="window.fishaoApp.signIn()" style="color: #60a5fa; font-weight: 700; text-decoration: underline;" data-i18n="modal_login_notice_link">přihlásit přes Google</a>.
+          <span data-i18n="modal_login_notice_prefix">🔒 Pro zadání ceny do Fish Marketu se musíš</span> <a
+            href="javascript:void(0)" onclick="window.fishaoApp.signIn()"
+            style="color: #60a5fa; font-weight: 700; text-decoration: underline;"
+            data-i18n="modal_login_notice_link">přihlásit přes Google</a>.
         </div>
 
         <div>
-          <span style="font-size: 13px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 8px;" data-i18n="modal_history_title"> Historie prodejů této ryby: </span>
+          <span style="font-size: 13px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 8px;"
+            data-i18n="modal_history_title"> Historie prodejů této ryby: </span>
           <table class="history-table">
             <thead>
               <tr>
-                <th data-i18n="modal_th_date">Datum</th> <th data-i18n="modal_th_price">Cena (fishměna / FB)</th> <th style="width: 50px; text-align: center;" data-i18n="modal_th_action">Akce</th>
+                <th data-i18n="modal_th_date">Datum</th>
+                <th data-i18n="modal_th_price">Cena (fishměna / FB)</th>
+                <th style="width: 50px; text-align: center;" data-i18n="modal_th_action">Akce</th>
               </tr>
             </thead>
             <tbody id="modalPriceHistoryTbody"></tbody>
@@ -604,30 +643,41 @@
         <button class="modal-close" onclick="window.fishaoApp.closeBulkModal()">&times;</button>
       </div>
       <div class="modal-body">
-        <p style="font-size: 13px; color: var(--text-muted);" data-i18n="bulk_desc"> Zde můžeš vložit seznam denních cen (např. ve formátu jako v souboru <code>prices.txt</code>, tedy <em>Název ryby: cena</em>) a všechny ryby se automaticky přiřadí a uloží do historie ve fishměně (FB). </p>
+        <p style="font-size: 13px; color: var(--text-muted);" data-i18n="bulk_desc"> Zde můžeš vložit seznam denních cen
+          (např. ve formátu jako v souboru <code>prices.txt</code>, tedy <em>Název ryby: cena</em>) a všechny ryby se
+          automaticky přiřadí a uloží do historie ve fishměně (FB). </p>
 
         <div>
-          <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;" data-i18n="bulk_date_label"> Datum pro tento import: </label>
+          <label
+            style="font-size: 12px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;"
+            data-i18n="bulk_date_label"> Datum pro tento import: </label>
           <input type="date" id="bulkImportDate" class="filter-control" style="width: 180px;">
         </div>
 
         <div>
-          <label style="font-size: 12px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;" data-i18n="bulk_textarea_label"> Vložit text se seznamem ryb a cen: </label>
+          <label
+            style="font-size: 12px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;"
+            data-i18n="bulk_textarea_label"> Vložit text se seznamem ryb a cen: </label>
           <textarea id="bulkInputText" class="bulk-input"
             placeholder="Havýš rohatý: 152&#10;Pomčík Potterův: 178&#10;Klaun uzdičkatý: 43..."></textarea>
         </div>
 
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <button class="btn-submit" style="flex: 2;" onclick="window.fishaoApp.processBulkImport()" data-i18n="bulk_import_btn"> ⚡ Importovat do historie </button>
-          <button id="btnExportPrices" class="btn-action" style="flex: 1; display: none;" onclick="window.fishaoApp.exportPricesJson()" data-i18n="bulk_export_btn"> 📥 Export JSON (Admin) </button>
+          <button class="btn-submit" style="flex: 2;" onclick="window.fishaoApp.processBulkImport()"
+            data-i18n="bulk_import_btn"> ⚡ Importovat do historie </button>
+          <button id="btnExportPrices" class="btn-action" style="flex: 1; display: none;"
+            onclick="window.fishaoApp.exportPricesJson()" data-i18n="bulk_export_btn"> 📥 Export JSON (Admin) </button>
         </div>
 
         <div id="bulkResultMsg" style="font-size: 12px; padding: 10px; border-radius: 8px; display: none;"></div>
 
         <div
           style="padding-top: 10px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-          <span style="font-size: 11px; color: var(--text-muted);" data-i18n="bulk_note_secure">Data jsou zabezpečená a sdílená v reálném čase.</span>
-          <button id="btnResetPricesModal" class="btn-reset" style="padding: 4px 8px; font-size: 11px; display: none;" onclick="window.fishaoApp.resetPriceHistoryToDefault()" data-i18n="bulk_reset_btn"> ↺ Obnovit výchozí ceník (Admin) </button>
+          <span style="font-size: 11px; color: var(--text-muted);" data-i18n="bulk_note_secure">Data jsou zabezpečená a
+            sdílená v reálném čase.</span>
+          <button id="btnResetPricesModal" class="btn-reset" style="padding: 4px 8px; font-size: 11px; display: none;"
+            onclick="window.fishaoApp.resetPriceHistoryToDefault()" data-i18n="bulk_reset_btn"> ↺ Obnovit výchozí ceník
+            (Admin) </button>
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 /**
  * FISHAO – Internationalization (i18n) Module
- * Supports CS (Czech) and EN (English).
- * Official game dictionaries extracted from game assets.
+ * Unified bilingual dictionary (CS / EN) for UI, Game Data, Locations, Baits & Waters.
+ * Single Source of Truth for all translations.
  */
 (function () {
   'use strict';
@@ -14,689 +14,484 @@
 
     ui: {
       cs: {
-      "app_title": "FISHAO",
+      "admin_badge": "🛡️ Admin",
+      "app_desc": "Kompletní přehled 80 klubových &amp; 615 obecných ryb • Živý čas lovu • Ceník Fish Market • Osobní sbírka úlovků",
       "app_subtitle": "Encyklopedie",
+      "app_title": "FISHAO",
+      "auth_need_config": "Pro přihlášení je potřeba nejdříve vyplnit firebase-config.js.",
+      "auth_notice_bulk": "Hromadný import do Fish Marketu vyžaduje přihlášení přes Google.",
+      "auth_notice_club": "Pro správu klubu se musíš přihlásit přes Google.",
+      "auth_notice_collection": "Pro ukládání úlovků do sbírky se musíš přihlásit přes Google.",
+      "auth_notice_default": "Pro tuto akci se musíš nejdříve přihlásit přes Google účet.",
+      "auth_notice_points": "Pro nastavení klubových bodů se musíš přihlásit přes Google.",
+      "auth_notice_price": "Pro zadání ceny do Fish Marketu se prosím přihlas přes Google.",
+      "auth_signin_failed": "Přihlášení se nezdařilo: {msg}",
+      "auth_unauth_domain": "Doména {domain} není povolena ve Firebase Console -> Authentication -> Settings -> Authorized domains.",
+      "badge_club_fish": "🏆 Klubová",
+      "badge_locked": "Zamčeno 🔒",
+      "badge_no_club": "Bez klubu",
+      "bait_unknown": "Neznámé",
+      "btn_catch_short": "+ Chytit",
+      "btn_caught_short": "✓ Chyceno",
+      "bulk_date_label": "Datum pro tento import:",
+      "bulk_desc": "Zde můžeš vložit seznam denních cen (např. ve formátu jako v souboru <code>prices.txt</code>, tedy <em>Název ryby: cena</em>) a všechny ryby se automaticky přiřadí a uloží do historie ve fishměně (FB).",
+      "bulk_empty_error": "Vlož prosím nejprve text se seznamem ryb a cen.",
+      "bulk_export_btn": "📥 Export JSON (Admin)",
+      "bulk_header_title": "💵 Správa a hromadný import cen do Fish Marketu",
+      "bulk_import_btn": "⚡ Importovat do historie",
+      "bulk_note_secure": "Data jsou zabezpečená a sdílená v reálném čase.",
+      "bulk_reset_btn": "↺ Obnovit výchozí ceník (Admin)",
+      "bulk_result_msg": "Zpracováno: {matched} cen k datu {date}{skippedPart}.",
+      "bulk_result_skipped": " ({skipped} přeskočeno: buď neznámé, nebo cena pro daný den již existuje a nemáš admin práva na přepsání)",
+      "bulk_textarea_label": "Vložit text se seznamem ryb a cen:",
+      "caught_btn_mark_title": "Klikni pro označení jako chycené",
+      "caught_btn_unmarked_title": "Označeno jako chycené (klikni pro zrušení)",
+      "clock_local_label": "Místní čas",
+      "clock_local_time": "Místní čas",
+      "clock_utc_server": "UTC čas (server)",
+      "club_all_unlocked_hint": "🎉 Všechny bodové klubové ryby máš odemčeny!",
+      "club_bar_edit_btn": "⚙️ Upravit body v Klubu",
+      "club_fc_monsters": "Ryby za Fishcoins &amp; Monstra:",
+      "club_fc_monsters_count": "15 ryb",
+      "club_fishes_caught": "Klubových ryb chyceno:",
+      "club_gate_desc": "Přihlas se svým Google účtem, abys mohl zadat svůj klub, sledovat klubové body a odemykání všech 80 klubových ryb.",
+      "club_gate_title": "Správa Klubu vyžaduje přihlášení",
+      "club_hide_locked": "Skrýt zamčené",
+      "club_include_fc": "FC &amp; Monstra",
+      "club_locked_count": "({count} zamčeno)",
+      "club_name_label": "Název klubu",
+      "club_name_placeholder": "Např. Lovci z Prahy",
+      "club_next_hint": "🎯 Další ryba k odemčení: <strong>{name}</strong> ({water}, vyžaduje {points} b. – zbývá ještě <strong>{diff} b.</strong>)",
+      "club_next_unlock_loading": "🎯 Načítání postupu...",
+      "club_only_uncaught": "Pouze nechycené",
+      "club_pts_label": "Aktuální body klubu",
+      "club_pts_unlocked": "Odemčeno bodových ryb:",
+      "club_quick_add": "Rychlé přidání bodů:",
+      "club_settings_title": "🏰 Nastavení &amp; Body klubu",
+      "club_summary_title": "📊 Souhrn klubu &amp; Úlovků",
+      "club_unlocked_label": "🏆 Odemčeno klubem:",
+      "col_appearance": "Vzhled",
+      "col_baits": "Návnada",
+      "col_caught_title": "Označ ryby, které jsi již chytil/a",
+      "col_fish": "Název ryby",
+      "col_loc": "Lokace výskytu",
+      "col_price": "Cena (Fish Market)",
+      "col_rarity": "Rating",
+      "col_size": "Rozměry (Min / PRŮMĚR / Max)",
+      "col_time": "Čas lovu",
+      "col_unlock": "Klubové odemčení",
+      "col_water": "Voda",
+      "coll_club_label": "Klubové:",
+      "coll_filter_all": "Všechny ryby",
+      "coll_filter_caught": "✅ Pouze chycené",
+      "coll_filter_missing": "❓ Chybějící",
+      "coll_gate_desc": "Osobní sbírka úlovků a sledování dokončení hry jsou vázány na tvůj hráčský účet. Přihlas se přes Google a měj své chycené ryby bezpečně uložené v cloudu na PC i v mobilu.",
+      "coll_gate_title": "Sbírka úlovků vyžaduje přihlášení",
+      "coll_sync_google": "☁️ Synchronizováno s Google profilem ({user})",
+      "coll_sync_logged_out": "🔒 Pro ukládání úlovků do sbírky se <a href=\"javascript:window.fishaoApp.signIn()\" style=\"color: #34d399; font-weight: 700; text-decoration: underline;\">přihlas přes Google</a>",
+      "coll_title": "🎣 Sbírka úlovků:",
+      "coll_total_label": "Celkem:",
+      "counter_hint": "💡 Kliknutím na rybu zobrazíš její detail a kompletní historii ve Fish Marketu.",
+      "counter_showing": "Zobrazeno {shown} z {total} ryb",
+      "dim_avg": "Průměr: {val} cm",
+      "dim_max": "Max: {val} cm",
+      "dim_min": "Min: {val} cm",
       "disclaimer_badge": "Fanouškovský projekt",
       "disclaimer_text": "Jedná se pouze o fanouškovský projekt. Reálná hra je dostupná na",
-      "sync_local": "Lokální",
-      "sync_live": "Živě",
-      "clock_local_label": "Místní čas",
-      "clock_utc_label": "UTC čas",
-      "tz_local_btn": "📍 Místní",
-      "tz_utc_btn": "🌐 UTC",
-      "sign_in": "Přihlásit se",
-      "sign_out": "Odhlásit",
-      "user_default": "Uživatel",
-      "admin_badge": "🛡️ Admin",
+      "filter_active_wrapper": "[Aktivní: {notes}]",
+      "filter_bait_label": "Návnada",
+      "filter_btn_now": "⚡ Právě bere",
+      "filter_btn_only_price": "💵 Pouze s cenou",
+      "filter_btn_reset": "<span data-i18n=\"filter_btn_reset\">↺ Obnovit filtry</span>",
+      "filter_loc_label": "Lokace výskytu",
+      "filter_note_now": "Právě beroucí v {time}",
+      "filter_note_priced": "Pouze s cenou",
+      "filter_note_size_max": "Velikost do {max} cm",
+      "filter_note_size_min": "Velikost {min}+ cm",
+      "filter_note_size_range": "Velikost {min}–{max} cm",
+      "filter_note_uncaught": "Pouze nechycené",
+      "filter_note_unlocked": "Pouze odemčené",
+      "filter_rating_label": "Rating",
+      "filter_search_label": "Hledat rybu",
+      "filter_search_placeholder": "Název ryby nebo ID (#713)...",
+      "filter_size_from": "Od",
+      "filter_size_label": "📏 Velikost ryby (cm):",
+      "filter_size_to": "Do",
+      "filter_sort_label": "Řadit podle",
+      "filter_time_label": "Čas a aktivita",
+      "filter_water_label": "Typ vody",
+      "loc_unspecified": "Nespecifikováno",
+      "market_bar_subtitle": "Výkupní ceník ve fishměně (FB)",
+      "market_bar_title": "💵 Fish Market:",
+      "market_btn_default": "↺ Výchozí ceník (Admin)",
+      "market_btn_import": "📥 Import cen do Marketu",
+      "market_recorded_prices": "Zaznamenáno cen ryb: {count}",
+      "milestone_all_congrats": "Gratulace k dosažení {pts} bodů.",
+      "milestone_all_desc": "Váš klub má odemčené všechny bodové ryby!",
+      "milestone_all_title": "🎉 Vše odemčeno!",
+      "milestone_next_title": "🎯 Nejbližší odemknutelná ryba",
+      "milestone_progress_title": "Postup k tomuto milníku: {pct}%",
+      "milestone_remaining_pts": "Zbývá ještě {diff} bodů",
+      "modal_add_record": "+ Přidat nový záznam do historie:",
+      "modal_baits": "🪱 Vhodné návnady",
+      "modal_btn_caught_no": "+ Označit jako chycené",
+      "modal_btn_caught_yes": "✓ Chyceno (ve sbírce)",
+      "modal_club_unlock": "🏰 Klubové podmínky odemčení",
+      "modal_dimensions": "📏 Velikost (Min / Průměr / Max)",
+      "modal_fish_detail": "🐟 Detail ryby &amp; Fish Market",
+      "modal_history_title": "Historie prodejů této ryby:",
+      "modal_login_notice_link": "přihlásit přes Google",
+      "modal_login_notice_prefix": "🔒 Pro zadání ceny do Fish Marketu se musíš",
+      "modal_market_divider": "💵 Fish Market – Výkupní ceny a historie",
+      "modal_max_price": "Maximální cena",
+      "modal_min_price": "Minimální cena",
+      "modal_price_label": "Cena (fishměna / FB)",
+      "modal_price_placeholder": "Např. 152",
+      "modal_sale_date": "Datum prodeje",
+      "modal_save_price_btn": "💾 Uložit cenu",
+      "modal_th_action": "Akce",
+      "modal_th_date": "Datum",
+      "modal_th_price": "Cena (fishměna / FB)",
+      "modal_time": "⏰ Čas lovu",
+      "modal_today_price": "Dnešní cena",
+      "modal_water_loc": "🌊 Voda a Lokace výskytu",
       "nav_all": "Encyklopedie",
       "nav_all_pill": "615 ryb",
       "nav_club": "Klubové ryby",
       "nav_club_pill": "80 ryb",
-      "nav_manage": "Můj Klub & Milníky",
       "nav_collection": "Sbírka úlovků",
+      "nav_manage": "Můj Klub &amp; Milníky",
       "nav_market": "Fish Market",
       "nav_market_pill": "Výkup",
-      "nav_locked": "Zamčeno 🔒",
-      "nav_no_club": "Bez klubu",
-      "club_bar_unlocked": "🏆 Odemčeno klubem:",
-      "club_bar_hint_loading": "🎯 Načítání postupu...",
-      "club_bar_edit_btn": "⚙️ Upravit body v Klubu",
-      "club_hide_locked": "Skrýt zamčené",
-      "club_include_fc": "FC & Monstra",
-      "club_only_uncaught": "Pouze nechycené",
-      "coll_title": "🎣 Sbírka úlovků:",
-      "coll_club_label": "Klubové:",
-      "coll_total_label": "Celkem:",
-      "coll_filter_all": "Všechny ryby",
-      "coll_filter_caught": "✅ Pouze chycené",
-      "coll_filter_uncaught": "⬜ Pouze nechycené",
-      "filter_search_placeholder": "Hledat rybu podle názvu...",
-      "filter_water_label": "Voda:",
-      "filter_water_all": "Všechny typy vody",
-      "filter_water_salt": "Slaná voda",
-      "filter_water_fresh": "Sladká voda",
-      "filter_loc_label": "Lokace:",
-      "filter_loc_all": "Všechny lokace",
-      "filter_bait_label": "Návnada:",
-      "filter_bait_all": "Všechny návnady",
-      "filter_time_label": "Čas lovu:",
-      "filter_time_any": "Kdykoliv",
-      "filter_time_now": "Právě bere",
-      "filter_time_night": "Pouze noc (20:00-06:00)",
-      "filter_time_day": "Pouze den",
-      "filter_sort_label": "Řadit podle:",
-      "filter_sort_default": "Výchozí pořadí",
-      "filter_sort_rating": "Hodnocení / Rarita",
-      "filter_sort_price": "Dnešní cena (nejvyšší)",
-      "filter_sort_alpha": "Abecedně (A-Z)",
-      "filter_sort_size": "Délka ryby",
-      "filter_size_label": "Velikost ryby (cm):",
-      "filter_size_from": "Od",
-      "filter_size_to": "Do",
-      "filter_btn_now": "⚡ Právě bere",
-      "filter_btn_only_price": "💵 Pouze s cenou",
-      "filter_btn_reset": "↺ Obnovit filtry",
-      "counter_showing": "Zobrazeno {count} ryb",
-      "counter_hint": "💡 Kliknutím na rybu zobrazíš její detail a kompletní historii ve Fish Marketu.",
-      "col_fish": "Ryba",
-      "col_water": "Voda",
-      "col_loc": "Lokace",
-      "col_baits": "Návnady",
-      "col_time": "Čas lovu",
-      "col_size": "Délka",
-      "col_price": "Dnešní cena",
-      "col_caught": "Úlovek",
-      "col_rarity": "Rarita",
-      "col_unlock": "Odemčení",
-      "modal_fish_detail": "🐟 Detail ryby & Fish Market",
-      "modal_today_price": "Dnešní výkupní cena",
-      "modal_no_price_today": "Dnes nebyla zadána",
-      "modal_max_price": "Maximální cena",
-      "modal_min_price": "Minimální cena",
-      "modal_price_history": "Historie výkupních cen",
-      "modal_no_history": "Zatím žádná zaznamenaná historie cen.",
-      "modal_add_price_title": "Zadat novou cenu pro dnešek",
-      "modal_save_price_btn": "💾 Uložit cenu",
-      "modal_bulk_btn": "⚡ Hromadný import cen",
-      "modal_close_btn": "Zavřít",
-      "bulk_title": "⚡ Hromadný import cen Fish Marketu",
-      "bulk_date_label": "Datum pro tento import:",
-      "bulk_textarea_label": "Vložit text se seznamem ryb a cen:",
-      "bulk_import_btn": "⚡ Importovat do historie",
-      "bulk_export_btn": "📥 Export JSON (Admin)",
-      "bulk_reset_btn": "↺ Obnovit výchozí ceník (Admin)",
-      "bulk_secure_note": "Data jsou zabezpečená a sdílená v reálném čase.",
-      "time_all_day": "Celý den",
-      "time_active_now": "BERE TEĎ",
-      "time_inactive": "Neaktivní",
-      "toast_login_required": "🔑 Pro tuto akci se musíš nejdříve přihlásit přes Google účet.",
-      "toast_price_saved": "Cena byla úspěšně uložena.",
-      "toast_caught_saved": "Úlovek zaznamenán.",
-      "toast_club_saved": "Klub byl úspěšně aktualizován.",
-      "club_unlocked_label": "🏆 Odemčeno klubem:",
-      "club_next_unlock_loading": "🎯 Načítání postupu...",
-      "coll_filter_missing": "❓ Chybějící",
-      "market_bar_title": "💵 Fish Market:",
-      "market_bar_subtitle": "Výkupní ceník ve fishměně (FB)",
-      "market_btn_import": "📥 Import cen do Marketu",
-      "market_btn_default": "↺ Výchozí ceník (Admin)",
-      "club_gate_title": "Správa Klubu vyžaduje přihlášení",
-      "club_gate_desc": "Přihlas se svým Google účtem, abys mohl zadat svůj klub, sledovat klubové body a odemykání všech 80 klubových ryb.",
-      "sign_in_google": "Přihlásit se přes Google",
-      "club_settings_title": "🏰 Nastavení & Body klubu",
-      "club_name_label": "Název klubu",
-      "club_name_placeholder": "Např. Lovci z Prahy",
-      "club_pts_label": "Aktuální body klubu",
-      "club_quick_add": "Rychlé přidání bodů:",
-      "club_summary_title": "📊 Souhrn klubu & Úlovků",
-      "club_pts_unlocked": "Odemčeno bodových ryb:",
-      "club_fc_monsters": "Ryby za Fishcoins & Monstra:",
-      "club_fc_monsters_count": "15 ryb",
-      "club_fishes_caught": "Klubových ryb chyceno:",
-      "roadmap_title": "🗺️ Cesta odemykání klubových ryb (80 milníků)",
+      "opt_bait_all": "Všechny návnady",
+      "opt_loc_all": "Všechny lokace ({count})",
+      "opt_rating_all": "Všechny",
+      "opt_rating_min3": "Minimálně 3★",
+      "opt_rating_min4": "Minimálně 4★",
+      "opt_sort_avg_asc": "Průměrná délka (od nejmenší)",
+      "opt_sort_avg_desc": "Průměrná délka (od největší)",
+      "opt_sort_default": "Výchozí (pořadí)",
+      "opt_sort_max_asc": "Max délka (od nejmenší)",
+      "opt_sort_max_desc": "Max délka (od největší)",
+      "opt_sort_name_asc": "Název (A → Z)",
+      "opt_sort_name_desc": "Název (Z → A)",
+      "opt_sort_price_asc": "Dnešní cena (od nejnižší)",
+      "opt_sort_price_desc": "Dnešní cena (od nejvyšší)",
+      "opt_sort_rating_asc": "Rating (od nejnižšího 1★)",
+      "opt_sort_rating_desc": "Rating (od nejvyššího 5★)",
+      "opt_time_afternoon": "☀️ Odpoledne (12:00 - 18:00)",
+      "opt_time_all": "Celý den i noc",
+      "opt_time_day": "☀️ Denní ryby",
+      "opt_time_deepnight": "🌌 Hluboká noc (00:00 - 06:00)",
+      "opt_time_evening": "🌇 Večer (18:00 - 24:00)",
+      "opt_time_morning": "🌅 Ráno (06:00 - 12:00)",
+      "opt_time_night": "🌙 Noční ryby",
+      "opt_time_now": "⚡ PRÁVĚ BERE (ŽIVĚ)",
+      "opt_water_all": "Všechny vody",
+      "opt_water_fresh": "🌿 Sladká voda",
+      "opt_water_salt": "🌊 Slaná voda (Moře)",
+      "price_add_btn": "Zadat",
+      "price_cell_add_title": "Klikni pro zadání ceny",
+      "price_cell_detail_title": "Klikni pro detail ryby a Fish Market",
+      "price_delete_admin_title": "Smazat záznam (Admin)",
+      "price_delete_confirm": "Opravdu chceš smazat tento záznam z historie?",
+      "price_delete_locked_title": "Smazat záznam může pouze administrátor",
+      "price_delete_non_admin": "Smazat záznam z historie cen může pouze administrátor.",
+      "price_empty_history": "Zatím žádná zaznamenaná cena pro tuto rybu.",
+      "price_exists_admin_confirm": "Cena pro datum {date} již existuje ({price} FB).\n\nJako administrátor ji chceš přepsat na {newPrice} FB?",
+      "price_exists_non_admin": "Cena pro tuto rybu na datum {date} již v systému existuje ({price} FB).\n\nBěžný uživatel smí nastavit cenu pro daný den pouze jednou. Přepsání nebo úpravu může provést pouze administrátor.",
+      "price_history_count_title": "Záznamů v historii",
+      "price_invalid_input": "Prosím zadej platné datum a kladnou částku ve fishměně (FB).",
+      "price_today_tag": "Dnes",
+      "rating_title": "Rating: {rating} / 5 hvězd",
+      "reset_prices_confirm": "Opravdu chceš vymazat všechny vlastní úpravy a obnovit výchozí ceník pro všechny uživatele?",
+      "reset_prices_done": "Historie cen byla obnovena na výchozí hodnoty (Admin).",
+      "reset_prices_non_admin": "Obnovit výchozí ceník pro všechny hráče může pouze administrátor.",
       "roadmap_desc": "Všechny klubové ryby seřazené podle potřebných bodů. Zelené jsou odemčené, u červených vidíš zbývající body.",
       "roadmap_filter_all": "Všechny (80)",
-      "roadmap_filter_unlocked": "✓ Odemčené",
+      "roadmap_filter_fc": "💎 FC &amp; Monstra",
       "roadmap_filter_locked": "🔒 Zamčené",
-      "roadmap_filter_fc": "💎 FC & Monstra",
-      "coll_gate_title": "Sbírka úlovků vyžaduje přihlášení",
-      "coll_gate_desc": "Osobní sbírka úlovků a sledování dokončení hry jsou vázány na tvůj hráčský účet. Přihlas se přes Google a měj své chycené ryby bezpečně uložené v cloudu na PC i v mobilu.",
-      "modal_market_divider": "💵 Fish Market – Výkupní ceny a historie",
-      "modal_add_record": "+ Přidat nový záznam do historie:",
-      "modal_sale_date": "Datum prodeje",
-      "modal_price_label": "Cena (fishměna / FB)",
-      "modal_price_placeholder": "Např. 152",
-      "modal_login_notice_prefix": "🔒 Pro zadání ceny do Fish Marketu se musíš",
-      "modal_login_notice_link": "přihlásit přes Google",
-      "modal_history_title": "Historie prodejů této ryby:",
-      "modal_th_date": "Datum",
-      "modal_th_price": "Cena (fishměna / FB)",
-      "modal_th_action": "Akce",
-      "bulk_header_title": "💵 Správa a hromadný import cen do Fish Marketu",
-      "bulk_desc": "Zde můžeš vložit seznam denních cen (např. ve formátu jako v souboru prices.txt, tedy Název ryby: cena) a všechny ryby se automaticky přiřadí a uloží do historie ve fishměně (FB).",
-      "bulk_note_secure": "Data jsou zabezpečená a sdílená v reálném čase."
+      "roadmap_filter_unlocked": "✓ Odemčené",
+      "roadmap_title": "🗺️ Cesta odemykání klubových ryb (80 milníků)",
+      "sign_in": "Přihlásit se",
+      "sign_in_google": "Přihlásit se přes Google",
+      "sign_out": "Odhlásit",
+      "status_caught_count": "{caught} / {total} chyceno",
+      "status_fish_count": "{unlocked} / {total} ryb",
+      "sync_error": "Chyba",
+      "sync_live": "Živě",
+      "sync_live_title": "Propojeno s cloudem: Ceny a profily se synchronizují v reálném čase!",
+      "sync_local": "Lokální",
+      "sync_local_title": "Ceny a profil se ukládají pouze v tvém prohlížeči. Pro online sdílení vyplň firebase-config.js.",
+      "sync_offline": "Offline",
+      "table_empty_state": "❌ Žádná ryba neodpovídá zadaným filtrům. Zkus upravit nebo obnovit filtry.",
+      "time_active_now": "⚡ BERE TEĎ",
+      "time_active_now_short": "BERE TEĎ",
+      "time_all_day": "Celý den",
+      "toast_login_required": "🔑 Pro tuto akci se musíš nejdříve přihlásit přes Google účet.",
+      "tz_game_utc": "Herní UTC",
+      "tz_local_btn": "📍 Místní",
+      "tz_local_btn_title": "Automaticky podle tvého zařízení: {tz}",
+      "tz_local_city_default": "Místní čas",
+      "tz_local_short": "Místní",
+      "tz_utc_btn": "🌐 UTC",
+      "unit_pts": "b.",
+      "unlock_club_feeding": "✓ Krmení klubu",
+      "unlock_club_monster": "Klubové monstrum",
+      "unlock_club_short": "Klubové",
+      "unlock_monster": "Monstrum",
+      "unlock_monster_badge": "👾 Monstrum",
+      "unlock_needs_pts": "Chybí ještě {diff} b.",
+      "unlock_needs_pts_short": "🔒 Chybí {diff} b.",
+      "unlock_requires_fc": "Vyžaduje Fishcoins",
+      "unlock_unlocked": "✓ Odemčeno",
+      "user_default": "Uživatel",
+      "user_default_player": "Hráč",
+      "water_fresh_full": "Sladká voda",
+      "water_fresh_short": "Sladká",
+      "water_salt_full": "Slaná voda",
+      "water_salt_short": "Slaná"
 },
       en: {
-      "app_title": "FISHAO",
-      "app_subtitle": "Encyclopedia",
-      "disclaimer_badge": "Fan Project",
-      "disclaimer_text": "This is a non-commercial fan project. The original game is available at",
-      "sync_local": "Local",
-      "sync_live": "Live",
-      "clock_local_label": "Local time",
-      "clock_utc_label": "UTC time",
-      "tz_local_btn": "📍 Local",
-      "tz_utc_btn": "🌐 UTC",
-      "sign_in": "Sign in",
-      "sign_out": "Sign out",
-      "user_default": "User",
       "admin_badge": "🛡️ Admin",
+      "app_desc": "Complete overview of 80 club &amp; 615 standard fish • Live biting times • Fish Market prices • Personal catch collection",
+      "app_subtitle": "Encyclopedia",
+      "app_title": "FISHAO",
+      "auth_need_config": "Please configure firebase-config.js before signing in.",
+      "auth_notice_bulk": "Bulk import into Fish Market requires Google sign-in.",
+      "auth_notice_club": "Sign in with Google to manage your club.",
+      "auth_notice_collection": "Sign in with Google to save catches to your collection.",
+      "auth_notice_default": "You must sign in with a Google account for this action.",
+      "auth_notice_points": "Sign in with Google to set club points.",
+      "auth_notice_price": "Please sign in with Google to submit a Fish Market price.",
+      "auth_signin_failed": "Sign-in failed: {msg}",
+      "auth_unauth_domain": "Domain {domain} is not authorized in Firebase Console -> Authentication -> Settings -> Authorized domains.",
+      "badge_club_fish": "🏆 Club Fish",
+      "badge_locked": "Locked 🔒",
+      "badge_no_club": "No club",
+      "bait_unknown": "Unknown",
+      "btn_catch_short": "+ Catch",
+      "btn_caught_short": "✓ Caught",
+      "bulk_date_label": "Date for this import:",
+      "bulk_desc": "Here you can paste a list of daily prices (e.g. in the format of prices.txt: Fish Name: price) and all fish will be automatically matched and saved to history in Fishcoins (FB).",
+      "bulk_empty_error": "Please paste a list of fish and prices first.",
+      "bulk_export_btn": "📥 Export JSON (Admin)",
+      "bulk_header_title": "💵 Fish Market Management & Bulk Import",
+      "bulk_import_btn": "⚡ Import to history",
+      "bulk_note_secure": "Data is secured and shared in real-time.",
+      "bulk_reset_btn": "↺ Restore default prices (Admin)",
+      "bulk_result_msg": "Processed: {matched} prices for {date}{skippedPart}.",
+      "bulk_result_skipped": " ({skipped} skipped: unknown fish name, or price for this date already exists without admin rights)",
+      "bulk_textarea_label": "Paste list of fish and prices:",
+      "caught_btn_mark_title": "Click to mark as caught",
+      "caught_btn_unmarked_title": "Marked as caught (click to unmark)",
+      "clock_local_label": "Local Time",
+      "clock_local_time": "Local Time",
+      "clock_utc_server": "UTC Time (server)",
+      "club_all_unlocked_hint": "🎉 You have unlocked all points-based club fishes!",
+      "club_bar_edit_btn": "⚙️ Edit Club Points",
+      "club_fc_monsters": "FC / Monsters / Special:",
+      "club_fc_monsters_count": "5 fish",
+      "club_fishes_caught": "Club fish caught:",
+      "club_gate_desc": "To manage your club, customize points and track unlocked milestones, please sign in with your Google account.",
+      "club_gate_title": "🔒 Club Management",
+      "club_hide_locked": "Hide locked",
+      "club_include_fc": "FC & Monsters",
+      "club_locked_count": "({count} locked)",
+      "club_name_label": "Your Club Name:",
+      "club_name_placeholder": "e.g. Fishermen CZ",
+      "club_next_hint": "🎯 Next fish to unlock: <strong>{name}</strong> ({water}, requires {points} pts – <strong>{diff} pts remaining</strong>)",
+      "club_next_unlock_loading": "🎯 Loading progress...",
+      "club_only_uncaught": "Only uncaught",
+      "club_pts_label": "Current Club Points:",
+      "club_pts_unlocked": "Unlocked by club points:",
+      "club_quick_add": "Quick add points:",
+      "club_settings_title": "⚙️ Club Settings & Points",
+      "club_summary_title": "📊 Club & Catches Summary",
+      "club_unlocked_label": "🏆 Club Unlocked:",
+      "col_appearance": "Appearance",
+      "col_baits": "Baits",
+      "col_caught_title": "Mark fishes you have caught",
+      "col_fish": "Fish",
+      "col_loc": "Locations",
+      "col_price": "Today's price",
+      "col_rarity": "Rarity",
+      "col_size": "Length",
+      "col_time": "Time",
+      "col_unlock": "Unlock requirements",
+      "col_water": "Water",
+      "coll_club_label": "Club:",
+      "coll_filter_all": "All fish",
+      "coll_filter_caught": "✅ Only caught",
+      "coll_filter_missing": "❓ Missing",
+      "coll_gate_desc": "To save your personal catches across devices and calculate collection completion, please sign in with your Google account.",
+      "coll_gate_title": "🔒 Catch Collection",
+      "coll_sync_google": "☁️ Synced with Google profile ({user})",
+      "coll_sync_logged_out": "🔒 To save catches to your collection, <a href=\"javascript:window.fishaoApp.signIn()\" style=\"color: #34d399; font-weight: 700; text-decoration: underline;\">sign in with Google</a>",
+      "coll_title": "🎣 Catch Collection:",
+      "coll_total_label": "Total:",
+      "counter_hint": "💡 Click on a fish row to view details and price history in Fish Market.",
+      "counter_showing": "Showing {shown} of {total} fish",
+      "dim_avg": "Avg: {val} cm",
+      "dim_max": "Max: {val} cm",
+      "dim_min": "Min: {val} cm",
+      "disclaimer_badge": "Fan Project",
+      "disclaimer_text": "This is a non-commercial fan project. The official game is available at",
+      "filter_active_wrapper": "[Active: {notes}]",
+      "filter_bait_label": "Bait:",
+      "filter_btn_now": "⚡ Biting now (Live)",
+      "filter_btn_only_price": "💵 With price only",
+      "filter_btn_reset": "Reset filters",
+      "filter_loc_label": "Location:",
+      "filter_note_now": "Biting now at {time}",
+      "filter_note_priced": "With price only",
+      "filter_note_size_max": "Size up to {max} cm",
+      "filter_note_size_min": "Size {min}+ cm",
+      "filter_note_size_range": "Size {min}–{max} cm",
+      "filter_note_uncaught": "Uncaught only",
+      "filter_note_unlocked": "Unlocked only",
+      "filter_rating_label": "Rating:",
+      "filter_search_label": "Search fish:",
+      "filter_search_placeholder": "Search fish by name...",
+      "filter_size_from": "Min (cm):",
+      "filter_size_label": "Fish length:",
+      "filter_size_to": "Max (cm):",
+      "filter_sort_label": "Sort by:",
+      "filter_time_label": "Biting time:",
+      "filter_water_label": "Water:",
+      "loc_unspecified": "Unspecified",
+      "market_bar_subtitle": "Fishcoin (FB) daily buy price list",
+      "market_bar_title": "💵 Fish Market:",
+      "market_btn_default": "↺ Default Prices (Admin)",
+      "market_btn_import": "📥 Import Prices to Market",
+      "market_recorded_prices": "Recorded fish prices: {count}",
+      "milestone_all_congrats": "Congratulations on reaching {pts} pts.",
+      "milestone_all_desc": "Your club has unlocked all points fishes!",
+      "milestone_all_title": "🎉 All Unlocked!",
+      "milestone_next_title": "🎯 Next Unlockable Fish",
+      "milestone_progress_title": "Progress to milestone: {pct}%",
+      "milestone_remaining_pts": "{diff} pts remaining",
+      "modal_add_record": "➕ Add today's buy price",
+      "modal_baits": "🪱 Recommended Baits",
+      "modal_btn_caught_no": "+ Mark as caught",
+      "modal_btn_caught_yes": "✓ Caught (in collection)",
+      "modal_club_unlock": "🏰 Club Unlock Requirements",
+      "modal_dimensions": "📏 Size (Min / Avg / Max)",
+      "modal_fish_detail": "🐟 Fish Detail & Fish Market",
+      "modal_history_title": "Sale history for this fish:",
+      "modal_login_notice_link": "sign in with Google",
+      "modal_login_notice_prefix": "🔒 To submit prices to Fish Market you must",
+      "modal_market_divider": "💵 Fish Market – Buy prices & history",
+      "modal_max_price": "Maximum price",
+      "modal_min_price": "Minimum price",
+      "modal_price_label": "Price in Fishcoins (FB):",
+      "modal_price_placeholder": "e.g. 145",
+      "modal_sale_date": "Sale date:",
+      "modal_save_price_btn": "💾 Save price",
+      "modal_th_action": "Action",
+      "modal_th_date": "Date",
+      "modal_th_price": "Price (fishcoins / FB)",
+      "modal_time": "⏰ Catch Time",
+      "modal_today_price": "Today's price",
+      "modal_water_loc": "🌊 Water & Catch Locations",
       "nav_all": "Encyclopedia",
       "nav_all_pill": "615 fish",
       "nav_club": "Club Fish",
       "nav_club_pill": "80 fish",
-      "nav_manage": "My Club & Milestones",
       "nav_collection": "Catch Collection",
+      "nav_manage": "My Club & Milestones",
       "nav_market": "Fish Market",
       "nav_market_pill": "Prices",
-      "nav_locked": "Locked 🔒",
-      "nav_no_club": "No Club",
-      "club_bar_unlocked": "🏆 Club Unlocked:",
-      "club_bar_hint_loading": "🎯 Loading progress...",
-      "club_bar_edit_btn": "⚙️ Edit Club Points",
-      "club_hide_locked": "Hide Locked",
-      "club_include_fc": "FC & Monsters",
-      "club_only_uncaught": "Only Uncaught",
-      "coll_title": "🎣 Catch Collection:",
-      "coll_club_label": "Club:",
-      "coll_total_label": "Total:",
-      "coll_filter_all": "All fish",
-      "coll_filter_caught": "✅ Only Caught",
-      "coll_filter_uncaught": "⬜ Only Uncaught",
-      "filter_search_placeholder": "Search fish by name...",
-      "filter_water_label": "Water:",
-      "filter_water_all": "All water types",
-      "filter_water_salt": "Saltwater",
-      "filter_water_fresh": "Freshwater",
-      "filter_loc_label": "Location:",
-      "filter_loc_all": "All locations",
-      "filter_bait_label": "Bait:",
-      "filter_bait_all": "All baits",
-      "filter_time_label": "Catch time:",
-      "filter_time_any": "Any time",
-      "filter_time_now": "Biting now",
-      "filter_time_night": "Night only (20:00-06:00)",
-      "filter_time_day": "Day only",
-      "filter_sort_label": "Sort by:",
-      "filter_sort_default": "Default order",
-      "filter_sort_rating": "Rating / Rarity",
-      "filter_sort_price": "Today's price (highest)",
-      "filter_sort_alpha": "Alphabetical (A-Z)",
-      "filter_sort_size": "Fish length",
-      "filter_size_label": "Fish size (cm):",
-      "filter_size_from": "From",
-      "filter_size_to": "To",
-      "filter_btn_now": "⚡ Biting now",
-      "filter_btn_only_price": "💵 With price only",
-      "filter_btn_reset": "↺ Reset filters",
-      "counter_showing": "Showing {count} fish",
-      "counter_hint": "💡 Click on a fish row to see details and price history in Fish Market.",
-      "col_fish": "Fish",
-      "col_water": "Water",
-      "col_loc": "Locations",
-      "col_baits": "Baits",
-      "col_time": "Catch Time",
-      "col_size": "Length",
-      "col_price": "Today's Price",
-      "col_caught": "Caught",
-      "col_rarity": "Rarity",
-      "col_unlock": "Unlock",
-      "modal_fish_detail": "🐟 Fish Detail & Fish Market",
-      "modal_today_price": "Today's Market Price",
-      "modal_no_price_today": "Not recorded today",
-      "modal_max_price": "Maximum Price",
-      "modal_min_price": "Minimum Price",
-      "modal_price_history": "Market Price History",
-      "modal_no_history": "No recorded price history yet.",
-      "modal_add_price_title": "Add new price for today",
-      "modal_save_price_btn": "💾 Save price",
-      "modal_bulk_btn": "⚡ Bulk Price Import",
-      "modal_close_btn": "Close",
-      "bulk_title": "⚡ Bulk Fish Market Price Import",
-      "bulk_date_label": "Date for this import:",
-      "bulk_textarea_label": "Paste text with fish names and prices:",
-      "bulk_import_btn": "⚡ Import into history",
-      "bulk_export_btn": "📥 Export JSON (Admin)",
-      "bulk_reset_btn": "↺ Reset to default prices (Admin)",
-      "bulk_secure_note": "Data is secure and synchronized in real time.",
-      "time_all_day": "All day",
-      "time_active_now": "BITING NOW",
-      "time_inactive": "Inactive",
-      "toast_login_required": "🔑 You must sign in with Google to perform this action.",
-      "toast_price_saved": "Price saved successfully.",
-      "toast_caught_saved": "Catch status updated.",
-      "toast_club_saved": "Club updated successfully.",
-      "club_unlocked_label": "🏆 Club Unlocked:",
-      "club_next_unlock_loading": "🎯 Loading progress...",
-      "coll_filter_missing": "❓ Missing",
-      "market_bar_title": "💵 Fish Market:",
-      "market_bar_subtitle": "Market buy prices in fishbucks (FB)",
-      "market_btn_import": "📥 Import Prices to Market",
-      "market_btn_default": "↺ Default Prices (Admin)",
-      "club_gate_title": "Club Management requires sign in",
-      "club_gate_desc": "Sign in with your Google account to set up your club, track club points and unlock all 80 club fishes.",
-      "sign_in_google": "Sign in with Google",
-      "club_settings_title": "🏰 Club Settings & Points",
-      "club_name_label": "Club Name",
-      "club_name_placeholder": "e.g. Prague Anglers",
-      "club_pts_label": "Current Club Points",
-      "club_quick_add": "Quick Add Points:",
-      "club_summary_title": "📊 Club & Catches Summary",
-      "club_pts_unlocked": "Points fish unlocked:",
-      "club_fc_monsters": "Fishcoins & Monsters fish:",
-      "club_fc_monsters_count": "15 fish",
-      "club_fishes_caught": "Club fish caught:",
-      "roadmap_title": "🗺️ Club Fish Unlock Roadmap (80 milestones)",
-      "roadmap_desc": "All club fishes sorted by required points. Green ones are unlocked, red ones show remaining points needed.",
+      "opt_bait_all": "All baits",
+      "opt_loc_all": "All locations ({count})",
+      "opt_rating_all": "All ratings",
+      "opt_rating_min3": "At least 3★",
+      "opt_rating_min4": "At least 4★",
+      "opt_sort_avg_asc": "Avg length (smallest)",
+      "opt_sort_avg_desc": "Avg length (largest)",
+      "opt_sort_default": "Default order",
+      "opt_sort_max_asc": "Max length (smallest)",
+      "opt_sort_max_desc": "Max length (largest)",
+      "opt_sort_name_asc": "Name (A → Z)",
+      "opt_sort_name_desc": "Name (Z → A)",
+      "opt_sort_price_asc": "Today's price (lowest)",
+      "opt_sort_price_desc": "Today's price (highest)",
+      "opt_sort_rating_asc": "Rating (lowest 1★)",
+      "opt_sort_rating_desc": "Rating (highest 5★)",
+      "opt_time_afternoon": "☀️ Afternoon (12:00 - 18:00)",
+      "opt_time_all": "All day & night",
+      "opt_time_day": "☀️ Day fish only",
+      "opt_time_deepnight": "🌌 Deep night (00:00 - 06:00)",
+      "opt_time_evening": "🌇 Evening (18:00 - 24:00)",
+      "opt_time_morning": "🌅 Morning (06:00 - 12:00)",
+      "opt_time_night": "🌙 Night fish only",
+      "opt_time_now": "⚡ BITING NOW (LIVE)",
+      "opt_water_all": "All water types",
+      "opt_water_fresh": "🌿 Freshwater",
+      "opt_water_salt": "🌊 Saltwater (Sea)",
+      "price_add_btn": "Add",
+      "price_cell_add_title": "Click to enter price",
+      "price_cell_detail_title": "Click for details & history",
+      "price_delete_admin_title": "Delete entry (Admin)",
+      "price_delete_confirm": "Are you sure you want to delete this record from history?",
+      "price_delete_locked_title": "Only an administrator can delete entries",
+      "price_delete_non_admin": "Only an administrator can delete price history records.",
+      "price_empty_history": "No price recorded for this fish yet.",
+      "price_exists_admin_confirm": "A price for {date} already exists ({price} FB).\n\nAs an administrator, do you want to overwrite it with {newPrice} FB?",
+      "price_exists_non_admin": "A price for this fish on {date} already exists ({price} FB).\n\nRegular users can only set a price once per day. Only an administrator can overwrite it.",
+      "price_history_count_title": "Records in history",
+      "price_invalid_input": "Please enter a valid date and a positive amount in Fishbucks (FB).",
+      "price_today_tag": "Today",
+      "rating_title": "Rating: {rating} / 5 stars",
+      "reset_prices_confirm": "Are you sure you want to delete all custom changes and restore the default price list for all users?",
+      "reset_prices_done": "Price history has been restored to default values (Admin).",
+      "reset_prices_non_admin": "Only an administrator can restore default prices for all players.",
+      "roadmap_desc": "Overview of all 80 club fish in unlock order. As you gain club points, fish are unlocked step-by-step.",
       "roadmap_filter_all": "All (80)",
-      "roadmap_filter_unlocked": "✓ Unlocked",
-      "roadmap_filter_locked": "🔒 Locked",
-      "roadmap_filter_fc": "💎 FC & Monsters",
-      "coll_gate_title": "Catch Collection requires sign in",
-      "coll_gate_desc": "Personal catch collection and completion tracking are tied to your player account. Sign in with Google to keep your caught fish safely synced across PC and mobile.",
-      "modal_market_divider": "💵 Fish Market – Buy prices & history",
-      "modal_add_record": "+ Add new entry to history:",
-      "modal_sale_date": "Sale date",
-      "modal_price_label": "Price (fishbucks / FB)",
-      "modal_price_placeholder": "e.g. 152",
-      "modal_login_notice_prefix": "🔒 To submit prices to Fish Market you must",
-      "modal_login_notice_link": "sign in with Google",
-      "modal_history_title": "Sale history for this fish:",
-      "modal_th_date": "Date",
-      "modal_th_price": "Price (fishbucks / FB)",
-      "modal_th_action": "Action",
-      "bulk_header_title": "💵 Fish Market Management & Bulk Import",
-      "bulk_desc": "Paste your daily price list here (e.g. formatted as in prices.txt: Fish name: price) and all fish will be automatically matched and saved into history in fishbucks (FB).",
-      "bulk_note_secure": "Data is secured and synced in real time."
+      "roadmap_filter_fc": "FC & Monsters",
+      "roadmap_filter_locked": "Locked",
+      "roadmap_filter_unlocked": "Unlocked",
+      "roadmap_title": "🗺️ Club Fish Unlock Roadmap (80 milestones)",
+      "sign_in": "Sign in",
+      "sign_in_google": "Sign in with Google",
+      "sign_out": "Sign out",
+      "status_caught_count": "{caught} / {total} caught",
+      "status_fish_count": "{unlocked} / {total} fish",
+      "sync_error": "Error",
+      "sync_live": "Live",
+      "sync_live_title": "Connected to cloud: Prices and profiles sync in real time!",
+      "sync_local": "Local",
+      "sync_local_title": "Prices and profile are saved only in your browser. Fill in firebase-config.js for online sync.",
+      "sync_offline": "Offline",
+      "table_empty_state": "❌ No fish match the selected filters. Try adjusting or resetting filters.",
+      "time_active_now": "⚡ BITING NOW",
+      "time_active_now_short": "BITING NOW",
+      "time_all_day": "All day",
+      "toast_login_required": "🔑 You must sign in with Google to perform this action.",
+      "tz_game_utc": "Game UTC",
+      "tz_local_btn": "📍 Local",
+      "tz_local_btn_title": "Automatically detected from your device: {tz}",
+      "tz_local_city_default": "Local Time",
+      "tz_local_short": "Local",
+      "tz_utc_btn": "🌐 UTC",
+      "unit_pts": "pts",
+      "unlock_club_feeding": "✓ Club feeding",
+      "unlock_club_monster": "Club monster",
+      "unlock_club_short": "Club",
+      "unlock_monster": "Monster",
+      "unlock_monster_badge": "👾 Monster",
+      "unlock_needs_pts": "Needs {diff} pts",
+      "unlock_needs_pts_short": "🔒 Needs {diff} pts",
+      "unlock_requires_fc": "Requires Fishcoins",
+      "unlock_unlocked": "✓ Unlocked",
+      "user_default": "Player",
+      "user_default_player": "Player",
+      "water_fresh_full": "Freshwater",
+      "water_fresh_short": "Freshwater",
+      "water_salt_full": "Saltwater",
+      "water_salt_short": "Saltwater"
 }
     },
-
-    baits: {
-    "Hmyz": {
-        "cs": "Hmyz",
-        "en": "Insects"
-    },
-    "Insects": {
-        "cs": "Hmyz",
-        "en": "Insects"
-    },
-    "Háčky": {
-        "cs": "Háčky",
-        "en": "Hooks"
-    },
-    "Hooks": {
-        "cs": "Háčky",
-        "en": "Hooks"
-    },
-    "Marlíní": {
-        "cs": "Marlíní",
-        "en": "Marlin"
-    },
-    "Marlin": {
-        "cs": "Marlíní",
-        "en": "Marlin"
-    },
-    "Maso": {
-        "cs": "Maso",
-        "en": "Meat"
-    },
-    "Meat": {
-        "cs": "Maso",
-        "en": "Meat"
-    },
-    "Monstrum": {
-        "cs": "Monstrum",
-        "en": "Monster"
-    },
-    "Monster": {
-        "cs": "Monstrum",
-        "en": "Monster"
-    },
-    "Prehistorické": {
-        "cs": "Prehistorické",
-        "en": "Prehistoric"
-    },
-    "Prehistoric": {
-        "cs": "Prehistorické",
-        "en": "Prehistoric"
-    },
-    "Přívlač/Nástrahy": {
-        "cs": "Přívlač/Nástrahy",
-        "en": "Lures"
-    },
-    "Lures": {
-        "cs": "Přívlač/Nástrahy",
-        "en": "Lures"
-    },
-    "Rostlinné": {
-        "cs": "Rostlinné",
-        "en": "Vegetal"
-    },
-    "Vegetal": {
-        "cs": "Rostlinné",
-        "en": "Vegetal"
-    },
-    "Ryby": {
-        "cs": "Ryby",
-        "en": "Fish"
-    },
-    "Fish": {
-        "cs": "Ryby",
-        "en": "Fish"
-    },
-    "Soltýní": {
-        "cs": "Soltýní",
-        "en": "Barracuda"
-    },
-    "Barracuda": {
-        "cs": "Soltýní",
-        "en": "Barracuda"
-    },
-    "Svítivčí": {
-        "cs": "Svítivčí",
-        "en": "Star"
-    },
-    "Star": {
-        "cs": "Svítivčí",
-        "en": "Star"
-    },
-    "Tuňáčí": {
-        "cs": "Tuňáčí",
-        "en": "Tuna"
-    },
-    "Tuna": {
-        "cs": "Tuňáčí",
-        "en": "Tuna"
-    },
-    "Těsta": {
-        "cs": "Těsta",
-        "en": "Dough"
-    },
-    "Dough": {
-        "cs": "Těsta",
-        "en": "Dough"
-    },
-    "Ďasí": {
-        "cs": "Ďasí",
-        "en": "Monkfish"
-    },
-    "Monkfish": {
-        "cs": "Ďasí",
-        "en": "Monkfish"
-    },
-    "Šírotlamčí": {
-        "cs": "Šírotlamčí",
-        "en": "Pelican"
-    },
-    "Pelican": {
-        "cs": "Šírotlamčí",
-        "en": "Pelican"
-    },
-    "Žraločí": {
-        "cs": "Žraločí",
-        "en": "Shark Bait"
-    },
-    "Shark Bait": {
-        "cs": "Žraločí",
-        "en": "Shark Bait"
-    }
-},
-
-    waters: {
-    "Slaná": {
-        "cs": "Slaná",
-        "en": "Saltwater"
-    },
-    "Sladká": {
-        "cs": "Sladká",
-        "en": "Freshwater"
-    },
-    "Neznámá": {
-        "cs": "Neznámá",
-        "en": "Unknown"
-    },
-    "Saltwater": {
-        "cs": "Slaná",
-        "en": "Saltwater"
-    },
-    "Freshwater": {
-        "cs": "Sladká",
-        "en": "Freshwater"
-    }
-},
-
-    locations: {
-    "Laketown": {
-        "cs": "Laketown",
-        "en": "Laketown"
-    },
-    "location_1": {
-        "cs": "Laketown",
-        "en": "Laketown"
-    },
-    "Marshville": {
-        "cs": "Marshville",
-        "en": "Marshville"
-    },
-    "location_10": {
-        "cs": "Marshville",
-        "en": "Marshville"
-    },
-    "Pstruží farma": {
-        "cs": "Pstruží farma",
-        "en": "Trout Farm"
-    },
-    "Trout Farm": {
-        "cs": "Pstruží farma",
-        "en": "Trout Farm"
-    },
-    "location_101": {
-        "cs": "Pstruží farma",
-        "en": "Trout Farm"
-    },
-    "Pyramida": {
-        "cs": "Pyramida",
-        "en": "Pyramid"
-    },
-    "Pyramid": {
-        "cs": "Pyramida",
-        "en": "Pyramid"
-    },
-    "location_104": {
-        "cs": "Pyramida",
-        "en": "Pyramid"
-    },
-    "Lost Valley": {
-        "cs": "Lost Valley",
-        "en": "Lost Valley"
-    },
-    "location_108": {
-        "cs": "Lost Valley",
-        "en": "Lost Valley"
-    },
-    "Tree Cave": {
-        "cs": "Tree Cave",
-        "en": "Tree Cave"
-    },
-    "location_109": {
-        "cs": "Tree Cave",
-        "en": "Tree Cave"
-    },
-    "Palm Island": {
-        "cs": "Palm Island",
-        "en": "Palm island"
-    },
-    "Palm island": {
-        "cs": "Palm Island",
-        "en": "Palm island"
-    },
-    "location_11": {
-        "cs": "Palm Island",
-        "en": "Palm island"
-    },
-    "Little Rio": {
-        "cs": "Little Rio",
-        "en": "Little Rio"
-    },
-    "location_110": {
-        "cs": "Little Rio",
-        "en": "Little Rio"
-    },
-    "Pirate Cave": {
-        "cs": "Pirate Cave",
-        "en": "Pirate Cave"
-    },
-    "location_111": {
-        "cs": "Pirate Cave",
-        "en": "Pirate Cave"
-    },
-    "Klubový revír": {
-        "cs": "Klubový revír",
-        "en": "Club area"
-    },
-    "Club area": {
-        "cs": "Klubový revír",
-        "en": "Club area"
-    },
-    "location_112": {
-        "cs": "Klubový revír",
-        "en": "Club area"
-    },
-    "Továrna na nábytek": {
-        "cs": "Továrna na nábytek",
-        "en": "Furniture Factory"
-    },
-    "Furniture Factory": {
-        "cs": "Továrna na nábytek",
-        "en": "Furniture Factory"
-    },
-    "location_113": {
-        "cs": "Továrna na nábytek",
-        "en": "Furniture Factory"
-    },
-    "Lucky Raft": {
-        "cs": "Lucky Raft",
-        "en": "Lucky Raft"
-    },
-    "location_12": {
-        "cs": "Lucky Raft",
-        "en": "Lucky Raft"
-    },
-    "Rio Tropical": {
-        "cs": "Rio Tropical",
-        "en": "Rio Tropical"
-    },
-    "location_2": {
-        "cs": "Rio Tropical",
-        "en": "Rio Tropical"
-    },
-    "Turnaj Boat On Sea": {
-        "cs": "Turnaj Boat On Sea",
-        "en": "Boat On Sea tournament"
-    },
-    "Boat On Sea tournament": {
-        "cs": "Turnaj Boat On Sea",
-        "en": "Boat On Sea tournament"
-    },
-    "location_201": {
-        "cs": "Turnaj Boat On Sea",
-        "en": "Boat On Sea tournament"
-    },
-    "Turnaj Lake Run": {
-        "cs": "Turnaj Lake Run",
-        "en": "Lake Run tournament"
-    },
-    "Lake Run tournament": {
-        "cs": "Turnaj Lake Run",
-        "en": "Lake Run tournament"
-    },
-    "location_202": {
-        "cs": "Turnaj Lake Run",
-        "en": "Lake Run tournament"
-    },
-    "Turnaj Race": {
-        "cs": "Turnaj Race",
-        "en": "Race tournament"
-    },
-    "Race tournament": {
-        "cs": "Turnaj Race",
-        "en": "Race tournament"
-    },
-    "location_203": {
-        "cs": "Turnaj Race",
-        "en": "Race tournament"
-    },
-    "Turnaj Moray": {
-        "cs": "Turnaj Moray",
-        "en": "Moray tournament"
-    },
-    "Moray tournament": {
-        "cs": "Turnaj Moray",
-        "en": "Moray tournament"
-    },
-    "location_204": {
-        "cs": "Turnaj Moray",
-        "en": "Moray tournament"
-    },
-    "Pinheira Beach": {
-        "cs": "Pinheira Beach",
-        "en": "Pinheira Beach"
-    },
-    "location_3": {
-        "cs": "Pinheira Beach",
-        "en": "Pinheira Beach"
-    },
-    "Za domem": {
-        "cs": "Za domem",
-        "en": "Home backyard"
-    },
-    "Home backyard": {
-        "cs": "Za domem",
-        "en": "Home backyard"
-    },
-    "location_300": {
-        "cs": "Za domem",
-        "en": "Home backyard"
-    },
-    "Cool Mountain": {
-        "cs": "Cool Mountain",
-        "en": "Cool Mountain"
-    },
-    "location_4": {
-        "cs": "Cool Mountain",
-        "en": "Cool Mountain"
-    },
-    "Mystic Desert": {
-        "cs": "Mystic Desert",
-        "en": "Mystic Desert"
-    },
-    "location_5": {
-        "cs": "Mystic Desert",
-        "en": "Mystic Desert"
-    },
-    "Sibiri City": {
-        "cs": "Sibiri City",
-        "en": "Sibiri City"
-    },
-    "location_6": {
-        "cs": "Sibiri City",
-        "en": "Sibiri City"
-    },
-    "Aquayama": {
-        "cs": "Aquayama",
-        "en": "Aquayama"
-    },
-    "location_7": {
-        "cs": "Aquayama",
-        "en": "Aquayama"
-    },
-    "Seagull Harbor": {
-        "cs": "Seagull Harbor",
-        "en": "Seagull Harbor"
-    },
-    "location_8": {
-        "cs": "Seagull Harbor",
-        "en": "Seagull Harbor"
-    },
-    "Thombani Town": {
-        "cs": "Thombani Town",
-        "en": "Thombani Town"
-    },
-    "location_9": {
-        "cs": "Thombani Town",
-        "en": "Thombani Town"
-    }
-},
 
     fishes: {
     "14": {
@@ -3161,16 +2956,37 @@
     }
 },
 
-    t: function (key, fallback) {
+    t: function (key, params, fallback) {
+      if (!key) return '';
       var lang = FISHAO_I18N.currentLang || 'cs';
-      var dict = FISHAO_I18N.ui[lang] || FISHAO_I18N.ui.cs;
-      if (dict && dict[key] !== undefined) {
-        return dict[key];
+      var dict = (FISHAO_I18N.ui && FISHAO_I18N.ui[lang]) || (FISHAO_I18N.ui && FISHAO_I18N.ui.cs) || {};
+      var val = dict[key];
+
+      // Fallback to CS if missing in active language
+      if (val === undefined && FISHAO_I18N.ui && FISHAO_I18N.ui.cs) {
+        val = FISHAO_I18N.ui.cs[key];
       }
-      if (FISHAO_I18N.ui.cs && FISHAO_I18N.ui.cs[key] !== undefined) {
-        return FISHAO_I18N.ui.cs[key];
+
+      // If still missing, check fallback or params as string
+      if (val === undefined) {
+        if (typeof params === 'string') {
+          val = params;
+        } else if (typeof fallback === 'string') {
+          val = fallback;
+        } else {
+          val = key;
+        }
       }
-      return fallback !== undefined ? fallback : key;
+
+      // Parameter interpolation e.g. {count}, {caught}, {total}, {date}
+      var actualParams = (params && typeof params === 'object') ? params : (fallback && typeof fallback === 'object' ? fallback : null);
+      if (actualParams && typeof val === 'string') {
+        Object.keys(actualParams).forEach(function (p) {
+          var re = new RegExp('\{' + p + '\}', 'g');
+          val = val.replace(re, actualParams[p]);
+        });
+      }
+      return val;
     },
 
     getFishName: function (fish, lang) {
