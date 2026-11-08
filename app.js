@@ -117,7 +117,7 @@
     }
   } catch (e) { }
 
-  // Today ISO date for date inputs (local date)
+  // Date utilities for local date inputs
   function getTodayISO() {
     var d = new Date();
     var y = d.getFullYear();
@@ -125,11 +125,33 @@
     var day = String(d.getDate()).padStart(2, '0');
     return y + '-' + m + '-' + day;
   }
+
+  function getYesterdayISO() {
+    var d = new Date();
+    d.setDate(d.getDate() - 1);
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + day;
+  }
+
+  function isDateSunday(isoDate) {
+    if (!isoDate || typeof isoDate !== 'string') return false;
+    var parts = isoDate.split('-');
+    if (parts.length !== 3) return false;
+    var y = parseInt(parts[0], 10);
+    var m = parseInt(parts[1], 10) - 1;
+    var day = parseInt(parts[2], 10);
+    var dt = new Date(y, m, day);
+    return dt.getDay() === 0;
+  }
+
   var todayISO = getTodayISO();
+  var defaultOpenDate = (new Date().getDay() === 0) ? getYesterdayISO() : todayISO;
   var elNewDate = document.getElementById("newPriceDate");
-  if (elNewDate) elNewDate.value = todayISO;
+  if (elNewDate) elNewDate.value = defaultOpenDate;
   var elBulkDate = document.getElementById("bulkImportDate");
-  if (elBulkDate) elBulkDate.value = todayISO;
+  if (elBulkDate) elBulkDate.value = defaultOpenDate;
 
   // -------------------------------------------------------------
   // Timezone and Clock Utilities
@@ -1870,10 +1892,13 @@
       }
     }
 
+    var initialPriceDate = (new Date().getDay() === 0) ? getYesterdayISO() : getTodayISO();
     var elNewDate = document.getElementById("newPriceDate");
-    if (elNewDate) elNewDate.value = getTodayISO();
+    if (elNewDate) elNewDate.value = initialPriceDate;
     var elNewVal = document.getElementById("newPriceValue");
     if (elNewVal) elNewVal.value = "";
+
+    onPriceDateChange(initialPriceDate);
 
     var formBox = document.getElementById("priceAddFormBox");
     var loginNotice = document.getElementById("priceAddLoginNotice");
@@ -1955,6 +1980,26 @@
     }).join('');
   }
 
+  function onPriceDateChange(dateVal) {
+    var isSunday = isDateSunday(dateVal);
+    var notice = document.getElementById("modalPriceSundayNotice");
+    var formBox = document.getElementById("priceAddFormBox");
+    var dateInput = document.getElementById("newPriceDate");
+    var btnSubmit = document.getElementById("btnSubmitPrice");
+
+    if (notice) notice.style.display = isSunday ? "flex" : "none";
+    if (formBox) formBox.classList.toggle("sunday-blocked", isSunday);
+    if (dateInput) dateInput.classList.toggle("is-sunday", isSunday);
+    if (btnSubmit) {
+      btnSubmit.disabled = isSunday;
+      if (isSunday) {
+        btnSubmit.setAttribute("title", t('modal_save_price_sunday_disabled'));
+      } else {
+        btnSubmit.removeAttribute("title");
+      }
+    }
+  }
+
   async function submitNewPrice() {
     if (!selectedModalFishId) return;
 
@@ -1965,6 +2010,11 @@
 
     var d = document.getElementById("newPriceDate").value;
     var p = parseInt(document.getElementById("newPriceValue").value);
+
+    if (isDateSunday(d)) {
+      alert(t('price_sunday_blocked'));
+      return;
+    }
 
     if (!d || isNaN(p) || p <= 0) {
       alert(t('price_invalid_input'));
@@ -2020,15 +2070,33 @@
   // Bulk Import and Export
   // -------------------------------------------------------------
 
+  function onBulkDateChange(dateVal) {
+    var isSunday = isDateSunday(dateVal);
+    var notice = document.getElementById("bulkSundayNotice");
+    var dt = document.getElementById("bulkImportDate");
+    var btn = document.getElementById("btnProcessBulk");
+
+    if (notice) notice.style.display = isSunday ? "flex" : "none";
+    if (dt) dt.classList.toggle("is-sunday", isSunday);
+    if (btn) {
+      btn.disabled = isSunday;
+      if (isSunday) {
+        btn.setAttribute("title", t('bulk_sunday_blocked'));
+      } else {
+        btn.removeAttribute("title");
+      }
+    }
+  }
+
   function openBulkModal() {
     if (!currentUser) {
       showAuthNotice(t('auth_notice_bulk'));
       return;
     }
+    var initialBulkDate = (new Date().getDay() === 0) ? getYesterdayISO() : getTodayISO();
     var dt = document.getElementById("bulkImportDate");
-    if (dt) dt.value = getTodayISO();
-    var bulkSunday = document.getElementById("bulkSundayNotice");
-    if (bulkSunday) bulkSunday.style.display = isMarketClosedToday() ? "flex" : "none";
+    if (dt) dt.value = initialBulkDate;
+    onBulkDateChange(initialBulkDate);
 
     document.getElementById("bulkModalOverlay").classList.add("active");
     document.getElementById("bulkResultMsg").style.display = "none";
@@ -2227,6 +2295,16 @@
     }
   });
 
+  document.addEventListener('click', function (e) {
+    var drop = document.getElementById("bulkFishSuggestions");
+    var input = document.getElementById("bulkFishInput");
+    if (drop && drop.style.display !== "none") {
+      if (!drop.contains(e.target) && e.target !== input) {
+        drop.style.display = "none";
+      }
+    }
+  });
+
   function normStr(s) {
     return (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
   }
@@ -2239,6 +2317,14 @@
     var dateVal = document.getElementById("bulkImportDate").value || todayISO;
     var text = document.getElementById("bulkInputText").value.trim();
     var resEl = document.getElementById("bulkResultMsg");
+
+    if (isDateSunday(dateVal)) {
+      resEl.style.display = "block";
+      resEl.style.background = "rgba(239,68,68,0.2)";
+      resEl.style.color = "#f87171";
+      resEl.innerText = t('bulk_sunday_blocked');
+      return;
+    }
 
     if (!text) {
       resEl.style.display = "block";
@@ -3447,6 +3533,11 @@
     renderRatingBadge: renderRatingBadge,
     toggleCaughtFromModal: toggleCaughtFromModal,
     openFishDetail: openPriceModal,
+    onPriceDateChange: onPriceDateChange,
+    onBulkDateChange: onBulkDateChange,
+    isDateSunday: isDateSunday,
+    getYesterdayISO: getYesterdayISO,
+    getTodayISO: getTodayISO,
     setLanguage: setLanguage,
     isMarketClosedToday: isMarketClosedToday,
     getTodayPrice: getTodayPrice,

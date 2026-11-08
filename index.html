@@ -686,26 +686,40 @@
 
         <!-- Add price form (gated: shown when logged in) -->
         <div id="priceAddFormBox" class="price-form-box" style="display: none;">
-          <div id="modalPriceSundayNotice" style="display: none; font-size: 11px; color: #f59e0b; margin-bottom: 8px; font-weight: 600;" data-i18n="modal_price_sunday_notice">
-            ⚠️ Dnes je neděle – Fish Market ve hře má zavřeno.
+          <div class="price-form-header">
+            <span class="price-form-title" data-i18n="modal_add_record">➕ Přidat záznam o ceně do historie</span>
+            <span class="price-form-badge">Fish Market</span>
           </div>
-          <span style="font-size: 13px; font-weight: 700; color: #e2e8f0;" data-i18n="modal_add_record">+ Přidat nový
-            záznam do historie:</span>
-          <div class="price-form-row">
-            <div style="flex: 1;">
-              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 2px;"
-                data-i18n="modal_sale_date">Datum prodeje</label>
-              <input type="date" id="newPriceDate" class="filter-control" style="width: 100%;">
-            </div>
-            <div style="flex: 1;">
-              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 2px;"
-                data-i18n="modal_price_label">Cena (fishměna / FB)</label>
-              <input type="number" id="newPriceValue" class="filter-control" style="width: 100%;" min="1"
-                placeholder="Např. 152" data-i18n-placeholder="modal_price_placeholder">
+
+          <div id="modalPriceSundayNotice" class="modal-sunday-blocked-notice" style="display: none;">
+            <span class="sunday-icon">🚫</span>
+            <div class="sunday-text-group">
+              <strong data-i18n="modal_price_sunday_blocked_title">V neděli má Fish Market zavřeno</strong>
+              <span data-i18n="modal_price_sunday_blocked_desc">Pro nedělní datum nelze zadat cenu, protože výkup ve hře neprobíhá.</span>
             </div>
           </div>
-          <button class="btn-submit" onclick="window.fishaoApp.submitNewPrice()" data-i18n="modal_save_price_btn">💾
-            Uložit cenu</button>
+
+          <div class="price-form-fields-grid">
+            <div class="price-form-group date-group">
+              <label for="newPriceDate" class="price-form-label" data-i18n="modal_sale_date">Datum prodeje</label>
+              <input type="date" id="newPriceDate" class="filter-control price-date-input" onchange="window.fishaoApp.onPriceDateChange(this.value)" oninput="window.fishaoApp.onPriceDateChange(this.value)">
+            </div>
+            <div class="price-form-group value-group">
+              <label for="newPriceValue" class="price-form-label" data-i18n="modal_price_label">Výkupní cena</label>
+              <div class="price-input-wrapper">
+                <input type="number" id="newPriceValue" class="filter-control price-number-input" min="1" step="1"
+                  placeholder="Např. 152" data-i18n-placeholder="modal_price_placeholder"
+                  onkeydown="if(event.key==='Enter')window.fishaoApp.submitNewPrice()">
+                <span class="price-input-currency">FB</span>
+              </div>
+            </div>
+            <div class="price-form-group btn-group">
+              <button type="button" id="btnSubmitPrice" class="btn-submit-price" onclick="window.fishaoApp.submitNewPrice()">
+                <span class="btn-icon">💾</span>
+                <span data-i18n="modal_save_price_btn">Uložit cenu</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Add price login notice (gated: shown when guest) -->
@@ -750,16 +764,16 @@
           (např. ve formátu jako v souboru <code>prices.txt</code>, tedy <em>Název ryby: cena</em>) a všechny ryby se
           automaticky přiřadí a uloží do historie ve fishměně (FB). </p>
 
-        <div id="bulkSundayNotice" class="modal-market-sunday-alert" style="display: none; margin-bottom: 12px;">
-          <span style="font-size: 18px; line-height: 1;">⚠️</span>
-          <span data-i18n="bulk_sunday_notice">Dnes je neděle – Fish Market má ve hře zavřeno. Zadané ceny budou uloženy do historie.</span>
+        <div id="bulkSundayNotice" class="modal-market-sunday-alert" style="display: none; margin-bottom: 12px; background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.35); color: #fca5a5;">
+          <span style="font-size: 18px; line-height: 1;">🚫</span>
+          <span data-i18n="bulk_sunday_notice">Zvolené datum je neděle – Fish Market má ve hře zavřeno. Pro nedělní datum nelze provést import.</span>
         </div>
 
         <div>
           <label
             style="font-size: 12px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;"
             data-i18n="bulk_date_label"> Datum pro tento import: </label>
-          <input type="date" id="bulkImportDate" class="filter-control" style="width: 180px;">
+          <input type="date" id="bulkImportDate" class="filter-control" style="width: 180px;" onchange="window.fishaoApp.onBulkDateChange(this.value)" oninput="window.fishaoApp.onBulkDateChange(this.value)">
         </div>
 
         <!-- Quick Add with Fish Autocomplete -->
@@ -786,7 +800,7 @@
         </div>
 
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <button class="btn-submit" style="flex: 2;" onclick="window.fishaoApp.processBulkImport()"
+          <button type="button" id="btnProcessBulk" class="btn-submit" style="flex: 2;" onclick="window.fishaoApp.processBulkImport()"
             data-i18n="bulk_import_btn"> ⚡ Importovat do historie </button>
           <button id="btnExportPrices" class="btn-action" style="flex: 1; display: none;"
             onclick="window.fishaoApp.exportPricesJson()" data-i18n="bulk_export_btn"> 📥 Export JSON (Admin) </button>
