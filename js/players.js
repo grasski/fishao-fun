@@ -250,6 +250,7 @@ function populatePlayerFishFilterDropdown() {
     selectTime.innerHTML =
       '<option value="">' + t('opt_time_all', 'Celý den i noc') + '</option>' +
       '<option value="now"' + (curTime === 'now' ? ' selected' : '') + '>' + t('opt_time_now', '⚡ PRÁVĚ BERE (ŽIVĚ)') + '</option>' +
+      '<option value="seasonal"' + (curTime === 'seasonal' ? ' selected' : '') + '>' + t('opt_time_seasonal', '📅 Ryby s datem (sezónní)') + '</option>' +
       '<option value="night"' + (curTime === 'night' ? ' selected' : '') + '>' + t('opt_time_night', '🌙 Noční ryby') + '</option>' +
       '<option value="day"' + (curTime === 'day' ? ' selected' : '') + '>' + t('opt_time_day', '☀️ Denní ryby') + '</option>' +
       '<option value="morning"' + (curTime === 'morning' ? ' selected' : '') + '>' + t('opt_time_morning', '🌅 Ráno (06:00 - 12:00)') + '</option>' +
@@ -516,6 +517,7 @@ function renderPlayersList() {
         var fObj = allFishes.find(function (x) { return x.id === fid; });
         if (!fObj) return false;
         if (effectiveTime === "now") return isFishActiveNow(fObj.raw_times, fObj.raw_dates);
+        if (effectiveTime === "seasonal") return !!(fObj.raw_dates && fObj.raw_dates.length > 0);
         if (effectiveTime === "night") return !!fObj.is_night;
         if (effectiveTime === "day") return !fObj.is_night;
         if (effectiveTime === "morning") return isFishActiveAtLocalHour(fObj.raw_times, 9);

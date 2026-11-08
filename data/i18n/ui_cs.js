@@ -217,6 +217,7 @@
       "opt_time_morning": "🌅 Ráno (06:00 - 12:00)",
       "opt_time_night": "🌙 Noční ryby",
       "opt_time_now": "⚡ PRÁVĚ BERE (ŽIVĚ)",
+      "opt_time_seasonal": "📅 Ryby s datem (sezónní)",
       "opt_water_all": "Všechny vody",
       "opt_water_fresh": "🌿 Sladká voda",
       "opt_water_salt": "🌊 Slaná voda (Moře)",

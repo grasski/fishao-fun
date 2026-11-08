@@ -112,6 +112,8 @@ function applyFilters() {
 
     if (timeVal === "now") {
       if (!isFishActiveNow(f.raw_times, f.raw_dates)) return false;
+    } else if (timeVal === "seasonal") {
+      if (!f.raw_dates || f.raw_dates.length === 0) return false;
     } else if (timeVal === "night") {
       if (!f.is_night) return false;
     } else if (timeVal === "day") {
@@ -345,6 +347,7 @@ function updateTimeFilterOptions() {
   select.innerHTML =
     '<option value="">' + t('opt_time_all') + '</option>' +
     '<option value="now">' + t('opt_time_now') + '</option>' +
+    '<option value="seasonal">' + t('opt_time_seasonal') + '</option>' +
     '<option value="night">' + t('opt_time_night') + '</option>' +
     '<option value="day">' + t('opt_time_day') + '</option>' +
     '<option value="morning">' + t('opt_time_morning') + '</option>' +

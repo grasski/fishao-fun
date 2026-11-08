@@ -6,15 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FISHAO – Encyklopedie a Klubové ryby</title>
   <!-- Modern Modular Stylesheets -->
-  <link rel="stylesheet" href="css/base.css?v=2.6">
-  <link rel="stylesheet" href="css/header.css?v=2.6">
-  <link rel="stylesheet" href="css/nav.css?v=2.6">
-  <link rel="stylesheet" href="css/filters.css?v=2.6">
-  <link rel="stylesheet" href="css/table.css?v=2.6">
-  <link rel="stylesheet" href="css/clubs.css?v=2.6">
-  <link rel="stylesheet" href="css/players.css?v=2.6">
-  <link rel="stylesheet" href="css/modals.css?v=2.6">
-  <link rel="stylesheet" href="css/responsive.css?v=2.6">
+  <link rel="stylesheet" href="css/base.css?v=2.7">
+  <link rel="stylesheet" href="css/header.css?v=2.7">
+  <link rel="stylesheet" href="css/nav.css?v=2.7">
+  <link rel="stylesheet" href="css/filters.css?v=2.7">
+  <link rel="stylesheet" href="css/table.css?v=2.7">
+  <link rel="stylesheet" href="css/clubs.css?v=2.7">
+  <link rel="stylesheet" href="css/players.css?v=2.7">
+  <link rel="stylesheet" href="css/modals.css?v=2.7">
+  <link rel="stylesheet" href="css/responsive.css?v=2.7">
 </head>
 
 <body>
@@ -318,6 +318,7 @@
             onchange="window.fishaoApp.onPlayerTimeFilterChange(this.value)">
             <option value="" data-i18n="opt_time_all">Celý den i noc</option>
             <option value="now" data-i18n="opt_time_now">⚡ PRÁVĚ BERE (ŽIVĚ)</option>
+            <option value="seasonal" data-i18n="opt_time_seasonal">📅 Ryby s datem (sezónní)</option>
             <option value="night" data-i18n="opt_time_night">🌙 Noční ryby</option>
             <option value="day" data-i18n="opt_time_day">☀️ Denní ryby</option>
             <option value="morning" data-i18n="opt_time_morning">🌅 Ráno (06:00 - 12:00)</option>
@@ -707,6 +708,7 @@
             <select id="timeFilter" class="filter-control" onchange="window.fishaoApp.applyFilters()">
               <option value="">Celý den i noc</option>
               <option value="now">⚡ PRÁVĚ BERE (ŽIVĚ)</option>
+              <option value="seasonal" data-i18n="opt_time_seasonal">📅 Ryby s datem (sezónní)</option>
               <option value="night">🌙 Noční ryby</option>
               <option value="day">☀️ Denní ryby</option>
               <option value="morning">🌅 Ráno (06:00 - 12:00)</option>
@@ -1365,23 +1367,23 @@
   <div id="appToast" class="app-toast" style="display: none;"></div>
 
   <!-- Data scripts and localization -->
-  <script src="data/i18n/ui_cs.js?v=2.6"></script>
-  <script src="data/i18n/ui_en.js?v=2.6"></script>
-  <script src="data/i18n/taxonomies.js?v=2.6"></script>
-  <script src="data/i18n/fish_names.js?v=2.6"></script>
-  <script src="data/i18n.js?v=2.6"></script>
-  <script src="data/fishes.js?v=2.6"></script>
-  <script src="data/prices.js?v=2.6"></script>
-  <script src="firebase-config.js?v=2.6"></script>
+  <script src="data/i18n/ui_cs.js?v=2.7"></script>
+  <script src="data/i18n/ui_en.js?v=2.7"></script>
+  <script src="data/i18n/taxonomies.js?v=2.7"></script>
+  <script src="data/i18n/fish_names.js?v=2.7"></script>
+  <script src="data/i18n.js?v=2.7"></script>
+  <script src="data/fishes.js?v=2.7"></script>
+  <script src="data/prices.js?v=2.7"></script>
+  <script src="firebase-config.js?v=2.7"></script>
   <!-- Modular FISHAO Application Logic -->
-  <script src="js/state.js?v=2.6"></script>
-  <script src="js/table.js?v=2.6"></script>
-  <script src="js/clubs.js?v=2.6"></script>
-  <script src="js/market.js?v=2.6"></script>
-  <script src="js/filters.js?v=2.6"></script>
-  <script src="js/auth.js?v=2.6"></script>
-  <script src="js/players.js?v=2.6"></script>
-  <script src="js/main.js?v=2.6"></script>
+  <script src="js/state.js?v=2.7"></script>
+  <script src="js/table.js?v=2.7"></script>
+  <script src="js/clubs.js?v=2.7"></script>
+  <script src="js/market.js?v=2.7"></script>
+  <script src="js/filters.js?v=2.7"></script>
+  <script src="js/auth.js?v=2.7"></script>
+  <script src="js/players.js?v=2.7"></script>
+  <script src="js/main.js?v=2.7"></script>
 
 </body>
 

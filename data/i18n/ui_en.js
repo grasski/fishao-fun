@@ -217,6 +217,7 @@
       "opt_time_morning": "🌅 Morning (06:00 - 12:00)",
       "opt_time_night": "🌙 Night fish only",
       "opt_time_now": "⚡ BITING NOW (LIVE)",
+      "opt_time_seasonal": "📅 Seasonal fish (with dates)",
       "opt_water_all": "All water types",
       "opt_water_fresh": "🌿 Freshwater",
       "opt_water_salt": "🌊 Saltwater (Sea)",
