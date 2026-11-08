@@ -2,6 +2,31 @@
    FISHAO – Players Community & Backyard Styles (css/players.css)
    =================================================================== */
 
+/* --- Community Sub-Header Toolbar --- */
+.players-community-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0 16px 0;
+  flex-wrap: wrap;
+}
+
+.players-community-toolbar .pill-btn.teal {
+  background: linear-gradient(135deg, #0d9488, #0f766e);
+  border-color: #2dd4bf;
+  color: #ffffff;
+  box-shadow: none;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.players-community-toolbar .pill-btn.teal:hover {
+  background: linear-gradient(135deg, #0f766e, #115e59);
+  border-color: #5eead4;
+  transform: translateY(-1px);
+}
+
 /* --- Players Grid & Cards --- */
 .players-grid {
   display: grid;
@@ -73,7 +98,7 @@
   border-color: rgba(245, 158, 11, 0.55);
   color: #fbbf24;
   font-weight: 700;
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+  box-shadow: none;
 }
 
 .player-friend-badge {
@@ -453,7 +478,7 @@
   background: linear-gradient(135deg, rgba(20, 184, 166, 0.35), rgba(16, 185, 129, 0.2));
   color: #2dd4bf;
   border-color: #14b8a6;
-  box-shadow: 0 0 14px rgba(20, 184, 166, 0.35);
+  box-shadow: none;
 }
 
 /* Backyard Owners Box in Fish Detail */
@@ -739,7 +764,7 @@
   background: linear-gradient(135deg, #d97706, #b45309) !important;
   border-color: #fbbf24 !important;
   color: #ffffff !important;
-  box-shadow: 0 0 14px rgba(245, 158, 11, 0.6) !important;
+  box-shadow: none !important;
   font-weight: 800 !important;
 }
 
@@ -747,7 +772,7 @@
   background: linear-gradient(135deg, #0d9488, #0f766e) !important;
   border-color: #2dd4bf !important;
   color: #ffffff !important;
-  box-shadow: 0 0 14px rgba(45, 212, 191, 0.6) !important;
+  box-shadow: none !important;
   font-weight: 800 !important;
 }
 
@@ -755,7 +780,7 @@
   background: linear-gradient(135deg, #059669, #047857) !important;
   border-color: #34d399 !important;
   color: #ffffff !important;
-  box-shadow: 0 0 14px rgba(16, 185, 129, 0.6) !important;
+  box-shadow: none !important;
   font-weight: 800 !important;
 }
 

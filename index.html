@@ -271,12 +271,6 @@
           <span>↺</span> <span data-i18n="players_filter_reset">Resetovat filtry</span>
         </button>
       </div>
-      <div class="action-bar-right">
-        <span id="playersCountBadge" class="status-counter-item" style="color: var(--text-muted); font-size: 13px;">0 hráčů</span>
-        <button type="button" class="pill-btn teal active" onclick="window.fishaoApp.openProfileModal()">
-          <span>🏡</span> <span data-i18n="players_manage_my_backyard">Moje ryby za domem</span>
-        </button>
-      </div>
     </div>
 
     <!-- Section: Community Players & Backyard -->
@@ -299,7 +293,14 @@
 
       <!-- Players Community Content -->
       <div id="playersContent" style="display: none;">
-        <div id="playersActiveFiltersBar" class="active-filters-summary-bar" style="display: none;"></div>
+        <div class="players-community-toolbar">
+          <div class="players-community-count-wrap">
+            <span id="playersCountBadge" class="status-counter-item" style="color: var(--text-muted); font-size: 13px;">0 hráčů</span>
+          </div>
+          <button type="button" class="pill-btn teal" onclick="window.fishaoApp.openProfileModal()" style="height: 36px; padding: 0 16px; font-size: 13px; font-weight: 700;">
+            <span>🏡</span> <span data-i18n="players_manage_my_backyard">Moje ryby za domem</span>
+          </button>
+        </div>
         <div id="playersGrid" class="players-grid"></div>
       </div>
     </section>

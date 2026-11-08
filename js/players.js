@@ -319,7 +319,6 @@ function resetPlayerFilters() {
 }
 
 function renderPlayersActiveFiltersBar() {
-  var bar = document.getElementById("playersActiveFiltersBar");
   var resetBtn = document.getElementById("resetPlayersFiltersBtn");
   var searchWrap = document.getElementById("playerSearchWrap");
   var selectFish = document.getElementById("playerFishFilterSelect");
@@ -331,78 +330,6 @@ function renderPlayersActiveFiltersBar() {
   if (selectBait) selectBait.classList.toggle("has-value", !!filterPlayerBait);
   if (selectRating) selectRating.classList.toggle("has-value", !!filterPlayerRating);
 
-  var chips = [];
-
-  var clearTitle = t('filter_clear_btn_title', 'Vymazat filtr');
-
-  if (filterPlayerSearchText) {
-    chips.push(
-      '<span class="active-filter-chip">' +
-        '🔍 ' + t('filter_active_search', { term: escapeHtml(filterPlayerSearchText) }) +
-        '<button type="button" onclick="window.fishaoApp.clearPlayerSearch()" title="' + escapeHtml(clearTitle) + '">&times;</button>' +
-      '</span>'
-    );
-  }
-
-  if (filterPlayerFriendsOnly) {
-    chips.push(
-      '<span class="active-filter-chip">' +
-        '⭐ ' + t('filter_active_friends', 'Pouze přátelé') +
-        '<button type="button" onclick="window.fishaoApp.togglePlayerFriendsFilter()" title="' + escapeHtml(clearTitle) + '">&times;</button>' +
-      '</span>'
-    );
-  }
-
-  if (filterPlayerBackyardOnly) {
-    chips.push(
-      '<span class="active-filter-chip">' +
-        '🏡 ' + t('filter_active_backyard', 'Pouze za domem') +
-        '<button type="button" onclick="window.fishaoApp.togglePlayerBackyardFilter()" title="' + escapeHtml(clearTitle) + '">&times;</button>' +
-      '</span>'
-    );
-  }
-
-  if (filterPlayerActiveNow) {
-    chips.push(
-      '<span class="active-filter-chip">' +
-        '⚡ ' + t('filter_active_now', 'Bere právě teď') +
-        '<button type="button" onclick="window.fishaoApp.togglePlayerActiveNowFilter()" title="' + escapeHtml(clearTitle) + '">&times;</button>' +
-      '</span>'
-    );
-  }
-
-  if (filterPlayerFishId) {
-    var fObj = allFishes.find(function (x) { return x.id === filterPlayerFishId; });
-    var fName = fObj ? (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name) : ('#' + filterPlayerFishId);
-    chips.push(
-      '<span class="active-filter-chip">' +
-        '🐟 ' + t('filter_active_fish', { name: escapeHtml(fName) }) +
-        '<button type="button" onclick="window.fishaoApp.onPlayerFishFilterChange(\'\')" title="' + escapeHtml(clearTitle) + '">&times;</button>' +
-      '</span>'
-    );
-  }
-
-  if (filterPlayerBait) {
-    var bName = (window.FISHAO_I18N && window.FISHAO_I18N.getBaitName)
-      ? window.FISHAO_I18N.getBaitName(filterPlayerBait)
-      : filterPlayerBait;
-    chips.push(
-      '<span class="active-filter-chip">' +
-        t('filter_active_bait', { bait: escapeHtml(bName) }) +
-        '<button type="button" onclick="window.fishaoApp.onPlayerBaitFilterChange(\'\')" title="' + escapeHtml(clearTitle) + '">&times;</button>' +
-      '</span>'
-    );
-  }
-
-  if (filterPlayerRating) {
-    chips.push(
-      '<span class="active-filter-chip">' +
-        '⭐ ' + t('filter_active_rating', { stars: filterPlayerRating }) +
-        '<button type="button" onclick="window.fishaoApp.onPlayerRatingFilterChange(\'\')" title="' + escapeHtml(clearTitle) + '">&times;</button>' +
-      '</span>'
-    );
-  }
-
   var fFriendsBtn = document.getElementById("filterPlayerFriendsOnlyBtn");
   if (fFriendsBtn) fFriendsBtn.classList.toggle("active", !!filterPlayerFriendsOnly);
   var fBackyardBtn = document.getElementById("filterPlayerBackyardOnlyBtn");
@@ -410,23 +337,24 @@ function renderPlayersActiveFiltersBar() {
   var fActiveBtn = document.getElementById("filterPlayerActiveNowBtn");
   if (fActiveBtn) fActiveBtn.classList.toggle("active", !!filterPlayerActiveNow);
 
-  var hasAnyFilter = (chips.length > 0);
+  var hasAnyFilter = !!(
+    filterPlayerSearchText ||
+    filterPlayerFriendsOnly ||
+    filterPlayerBackyardOnly ||
+    filterPlayerActiveNow ||
+    filterPlayerFishId ||
+    filterPlayerBait ||
+    filterPlayerRating
+  );
+
   if (resetBtn) {
     resetBtn.style.display = hasAnyFilter ? "inline-flex" : "none";
   }
 
+  var bar = document.getElementById("playersActiveFiltersBar");
   if (bar) {
-    if (hasAnyFilter) {
-      bar.style.display = "flex";
-      bar.innerHTML = '<span class="active-filters-title">🎯 ' + t('players_active_filters_title', 'Aktivní filtry:') + '</span>' +
-        chips.join('') +
-        '<button type="button" class="active-filters-clear-all" onclick="window.fishaoApp.resetPlayerFilters()" title="' + escapeHtml(t('filter_reset_all_title', 'Resetovat všechny filtry')) + '">' +
-          t('players_filter_clear_all', 'Vymazat vše ↺') +
-        '</button>';
-    } else {
-      bar.style.display = "none";
-      bar.innerHTML = "";
-    }
+    bar.style.display = "none";
+    bar.innerHTML = "";
   }
 }
 

@@ -350,7 +350,7 @@
       "friend_removed_toast": "Player '{name}' removed from friends.",
       "btn_friend_add": "Add Friend",
       "btn_friend_yes": "Friend",
-      "players_filter_active_now": "⚡ Biting Now",
+      "players_filter_active_now": "Biting now in backyard",
       "players_filter_bait_label": "All baits",
       "players_filter_rating_label": "All ratings",
       "players_filter_reset": "Reset filters",

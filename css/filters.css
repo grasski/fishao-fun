@@ -182,7 +182,7 @@ select.filter-control option {
   background: #0284c7;
   border-color: #38bdf8;
   color: #fff;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+  box-shadow: none;
 }
 
 /* Reset button */

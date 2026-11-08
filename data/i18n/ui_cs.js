@@ -350,7 +350,7 @@
       "friend_removed_toast": "Hráč '{name}' byl odebrán z přátel.",
       "btn_friend_add": "Přidat do přátel",
       "btn_friend_yes": "Přítel",
-      "players_filter_active_now": "⚡ Bere teď za domem",
+      "players_filter_active_now": "Bere teď za domem",
       "players_filter_bait_label": "Všechny návnady",
       "players_filter_rating_label": "Všechny vzácnosti",
       "players_filter_reset": "Resetovat filtry",
