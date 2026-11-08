@@ -51,6 +51,7 @@ function setTimezone(tz) {
   localStorage.setItem('fishao_tz', tz);
   updateTzButtonsUI();
   updateClock();
+  updateMarketTabStatus();
   applyFilters();
 }
 
@@ -184,7 +185,7 @@ function updateStaticTranslations() {
 
   document.querySelectorAll("[data-i18n]").forEach(function (el) {
     // Skip syncStatusText so we don't overwrite live/offline state with default attribute
-    if (el.id === "syncStatusText" || el.id === "tzLocalBtn" || el.id === "clockLabel") return;
+    if (el.id === "syncStatusText" || el.id === "tzLocalBtn" || el.id === "clockLabel" || el.id === "marketSundayNoticeDesc") return;
     var key = el.getAttribute("data-i18n");
     var val = t(key);
     if (val !== undefined && val !== null && val !== key) {
@@ -381,6 +382,7 @@ window.fishaoApp = {
   getTodayISO: getTodayISO,
   setLanguage: setLanguage,
   isMarketClosedToday: isMarketClosedToday,
+  getMarketClosedWindowText: getMarketClosedWindowText,
   getTodayPrice: getTodayPrice,
   updateMarketTabStatus: updateMarketTabStatus,
   t: t

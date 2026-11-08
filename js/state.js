@@ -183,8 +183,8 @@ function isDateSunday(isoDate) {
   var y = parseInt(parts[0], 10);
   var m = parseInt(parts[1], 10) - 1;
   var day = parseInt(parts[2], 10);
-  var dt = new Date(y, m, day);
-  return dt.getDay() === 0;
+  var dt = new Date(Date.UTC(y, m, day));
+  return dt.getUTCDay() === 0;
 }
 
 var todayISO = getTodayISO();

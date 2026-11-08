@@ -142,7 +142,7 @@
       "market_closed_sunday_tooltip": "Každou celou neděli má Fish Market zavřeno",
       "market_closed_tag": "Zavřeno",
       "market_recorded_prices": "Zaznamenáno cen ryb: {count}",
-      "market_sunday_banner_desc": "Každou celou neděli (00:00 – 24:00) je výkup ryb ve hře FISHAO uzavřen. Výkup se znovu otevře v pondělí. Níže jsou zobrazeny poslední známé ceny z předchozích dnů.",
+      "market_sunday_banner_desc": "Výkup ryb ve hře FISHAO je uzavřen každou neděli v čase {window}. Níže jsou zobrazeny poslední známé ceny z předchozích dnů.",
       "market_sunday_banner_title": "V neděli má Fish Market ZAVŘENO",
       "milestone_all_congrats": "Gratulace k dosažení {pts} bodů.",
       "milestone_all_desc": "Váš klub má odemčené všechny bodové ryby!",

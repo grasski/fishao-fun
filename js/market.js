@@ -27,7 +27,48 @@ function getFishPrices(fid) {
 }
 
 function isMarketClosedToday() {
-  return new Date().getDay() === 0; // 0 = Sunday
+  // In FISHAO game mechanics, Sunday market closure is strictly determined by UTC server time
+  // (Sunday 00:00:00 UTC to Monday 00:00:00 UTC).
+  return new Date().getUTCDay() === 0;
+}
+
+function getMarketClosedWindowText() {
+  var lang = (typeof getLang === 'function') ? getLang() : 'cs';
+  var isCz = (lang === 'cz' || lang === 'cs');
+
+  if (typeof userTimezone === 'undefined' || userTimezone === 'utc') {
+    return isCz ? 'neděle 00:00 – 24:00 UTC' : 'Sunday 00:00 – 24:00 UTC';
+  }
+
+  // Calculate Sunday 00:00 UTC to Monday 00:00 UTC converted to user local timezone
+  var now = new Date();
+  var curUtcDay = now.getUTCDay(); // 0 = Sunday
+  var sunUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - curUtcDay, 0, 0, 0, 0));
+  var monUtc = new Date(sunUtc.getTime() + 24 * 60 * 60 * 1000);
+
+  var dayNamesCs = ['neděle', 'pondělí', 'úterý', 'středa', 'čtvrtek', 'pátek', 'sobota'];
+  var dayNamesEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var days = isCz ? dayNamesCs : dayNamesEn;
+
+  var startDay = days[sunUtc.getDay()];
+  var startH = String(sunUtc.getHours()).padStart(2, '0');
+  var startM = String(sunUtc.getMinutes()).padStart(2, '0');
+  var startTime = startH + ':' + startM;
+
+  var endDay = days[monUtc.getDay()];
+  var endH = String(monUtc.getHours()).padStart(2, '0');
+  var endM = String(monUtc.getMinutes()).padStart(2, '0');
+  var endTime = endH + ':' + endM;
+
+  var localRange;
+  if (startDay === endDay) {
+    localRange = startDay + ' ' + startTime + ' – ' + endTime;
+  } else {
+    localRange = startDay + ' ' + startTime + ' – ' + endDay + ' ' + endTime;
+  }
+
+  var gameUtcRef = isCz ? 'herní čas: neděle 00:00 – 24:00 UTC' : 'game server: Sunday 00:00 – 24:00 UTC';
+  return localRange + ' (' + gameUtcRef + ')';
 }
 
 function getTodayPrice(fid) {

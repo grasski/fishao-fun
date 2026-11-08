@@ -142,7 +142,7 @@
       "market_closed_sunday_tooltip": "Fish Market is closed every Sunday",
       "market_closed_tag": "Closed",
       "market_recorded_prices": "Recorded fish prices: {count}",
-      "market_sunday_banner_desc": "Every Sunday (00:00 – 24:00) the Fish Market in FISHAO is closed and fish cannot be sold. It reopens on Monday. Showing last recorded prices from previous days below.",
+      "market_sunday_banner_desc": "Fish Market in FISHAO is closed every Sunday during {window}. Showing last recorded prices from previous days below.",
       "market_sunday_banner_title": "Sunday: Fish Market is CLOSED",
       "milestone_all_congrats": "Congratulations on reaching {pts} pts.",
       "milestone_all_desc": "Your club has unlocked all points fishes!",

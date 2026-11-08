@@ -294,6 +294,12 @@ function updateMarketTabStatus() {
     bannerSunday.style.display = (currentView === "market" && isSunday) ? "flex" : "none";
   }
 
+  var descEl = document.getElementById("marketSundayNoticeDesc");
+  if (descEl) {
+    var windowText = (typeof getMarketClosedWindowText === 'function') ? getMarketClosedWindowText() : 'neděle 00:00 – 24:00 UTC';
+    descEl.innerText = t('market_sunday_banner_desc', { window: windowText });
+  }
+
   var marketSummary = document.getElementById("marketStatsSummary");
   if (marketSummary) {
     var priceCount = Object.keys(priceHistory).length;
