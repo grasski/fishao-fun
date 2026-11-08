@@ -6,15 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FISHAO – Encyklopedie a Klubové ryby</title>
   <!-- Modern Modular Stylesheets -->
-  <link rel="stylesheet" href="css/base.css?v=2.7">
-  <link rel="stylesheet" href="css/header.css?v=2.7">
-  <link rel="stylesheet" href="css/nav.css?v=2.7">
-  <link rel="stylesheet" href="css/filters.css?v=2.7">
-  <link rel="stylesheet" href="css/table.css?v=2.7">
-  <link rel="stylesheet" href="css/clubs.css?v=2.7">
-  <link rel="stylesheet" href="css/players.css?v=2.7">
-  <link rel="stylesheet" href="css/modals.css?v=2.7">
-  <link rel="stylesheet" href="css/responsive.css?v=2.7">
+  <link rel="stylesheet" href="css/base.css?v=2.8">
+  <link rel="stylesheet" href="css/header.css?v=2.8">
+  <link rel="stylesheet" href="css/nav.css?v=2.8">
+  <link rel="stylesheet" href="css/filters.css?v=2.8">
+  <link rel="stylesheet" href="css/table.css?v=2.8">
+  <link rel="stylesheet" href="css/clubs.css?v=2.8">
+  <link rel="stylesheet" href="css/players.css?v=2.8">
+  <link rel="stylesheet" href="css/modals.css?v=2.8">
+  <link rel="stylesheet" href="css/responsive.css?v=2.8">
 </head>
 
 <body>
@@ -1298,14 +1298,8 @@
 
           <div>
             <h4 style="color: #38bdf8; margin: 0 0 6px 0; font-size: 14px;" data-i18n="privacy_sec2_title">2. Jaká data
-              zpracováváme (žádné osobní údaje)</h4>
-            <p style="margin: 0;" data-i18n="privacy_sec2_desc">Při přihlášení přes Google (Firebase Authentication)
-              probíhá bezpečné ověření identity přímo u společnosti Google. Správce ani provozovatel tohoto webu nemá
-              přístup k žádným tvým osobním údajům – nevidíme tvé skutečné jméno, příjmení, e-mailovou adresu, telefonní
-              číslo ani IP adresu. V databázi Firestore se NIKDY neukládá tvůj e-mail (databáze vůbec žádné e-mailové
-              adresy neobsahuje). Ukládá se výhradně anonymní technický identifikátor (Google UID), tvá vlastní zvolená
-              herní přezdívka, avatar (ikona ryby / emoji), členství v klubu a seznam odchycených ryb a ryb za domem.
-              Nikdo (ani správce webu) tak nemůže spojit tvůj herní profil s tvou reálnou identitou ani e-mailem.</p>
+              zpracováváme &amp; ochrana soukromí</h4>
+            <p style="margin: 0;" data-i18n="privacy_sec2_desc">Při přihlášení přes Google probíhá bezpečné ověření identity přímo u společnosti Google (Firebase Authentication). V rámci přihlašovacího systému Firebase je evidována tvá Google e-mailová adresa a UID výhradně pro technické ověření účtu. Správce webu tvůj e-mail k ničemu nepoužívá (neposíláme žádné e-maily, zprávy ani newslettery). Do herní databáze Firestore se tvůj e-mail NIKDY neukládá (databáze žádné e-maily neobsahuje). Ostatní hráči ani návštěvníci webu nemají k tvému e-mailu žádný přístup. V herní databázi se ukládá výhradně anonymní technický identifikátor (Google UID), tvá vlastní zvolená herní přezdívka, avatar (ikona ryby / emoji), členství v klubu a seznam odchycených ryb a ryb za domem. Nikdo z ostatních hráčů tak nemůže zjistit tvůj e-mail ani reálnou identitu.</p>
           </div>
 
           <div>
@@ -1335,8 +1329,9 @@
             <h4 style="color: #38bdf8; margin: 0 0 6px 0; font-size: 14px;" data-i18n="privacy_sec5_title">5. Správa a
               smazání dat</h4>
             <p style="margin: 0;" data-i18n="privacy_sec5_desc">Svůj profil (přezdívku a avatar) můžeš kdykoliv
-              libovolně upravit v nastavení profilu. Svůj herní profil a veškerá herní data můžeš kdykoliv trvale smazat
-              přímo v okně profilu tlačítkem 'Smazat účet a data'.</p>
+              libovolně upravit v nastavení profilu. Svůj herní profil i přihlašovací účet můžeš kdykoliv trvale smazat
+              přímo v okně profilu tlačítkem 'Smazat účet a data' – tím se kompletně a nevratně smažou veškerá herní data
+              z databáze Firestore i samotný účet a e-mail z Firebase Authentication.</p>
           </div>
         </div>
       </div>
@@ -1367,23 +1362,23 @@
   <div id="appToast" class="app-toast" style="display: none;"></div>
 
   <!-- Data scripts and localization -->
-  <script src="data/i18n/ui_cs.js?v=2.7"></script>
-  <script src="data/i18n/ui_en.js?v=2.7"></script>
-  <script src="data/i18n/taxonomies.js?v=2.7"></script>
-  <script src="data/i18n/fish_names.js?v=2.7"></script>
-  <script src="data/i18n.js?v=2.7"></script>
-  <script src="data/fishes.js?v=2.7"></script>
-  <script src="data/prices.js?v=2.7"></script>
-  <script src="firebase-config.js?v=2.7"></script>
+  <script src="data/i18n/ui_cs.js?v=2.8"></script>
+  <script src="data/i18n/ui_en.js?v=2.8"></script>
+  <script src="data/i18n/taxonomies.js?v=2.8"></script>
+  <script src="data/i18n/fish_names.js?v=2.8"></script>
+  <script src="data/i18n.js?v=2.8"></script>
+  <script src="data/fishes.js?v=2.8"></script>
+  <script src="data/prices.js?v=2.8"></script>
+  <script src="firebase-config.js?v=2.8"></script>
   <!-- Modular FISHAO Application Logic -->
-  <script src="js/state.js?v=2.7"></script>
-  <script src="js/table.js?v=2.7"></script>
-  <script src="js/clubs.js?v=2.7"></script>
-  <script src="js/market.js?v=2.7"></script>
-  <script src="js/filters.js?v=2.7"></script>
-  <script src="js/auth.js?v=2.7"></script>
-  <script src="js/players.js?v=2.7"></script>
-  <script src="js/main.js?v=2.7"></script>
+  <script src="js/state.js?v=2.8"></script>
+  <script src="js/table.js?v=2.8"></script>
+  <script src="js/clubs.js?v=2.8"></script>
+  <script src="js/market.js?v=2.8"></script>
+  <script src="js/filters.js?v=2.8"></script>
+  <script src="js/auth.js?v=2.8"></script>
+  <script src="js/players.js?v=2.8"></script>
+  <script src="js/main.js?v=2.8"></script>
 
 </body>
 
