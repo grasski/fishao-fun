@@ -280,6 +280,7 @@
       "water_salt_full": "Saltwater",
       "water_salt_short": "Saltwater",
       "club_join_title": "Join a Club or Create New",
+      "club_join_hint": "Find an existing club in the list or create your own",
       "club_search_label": "Search existing club:",
       "club_search_placeholder": "Search club by name...",
       "club_btn_search": "Search",

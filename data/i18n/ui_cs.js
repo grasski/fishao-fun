@@ -280,6 +280,7 @@
       "water_salt_full": "Slaná voda",
       "water_salt_short": "Slaná",
       "club_join_title": "Připojit se ke klubu nebo založit nový",
+      "club_join_hint": "Najdi existující klub v seznamu nebo si založ vlastní",
       "club_search_label": "Vyhledat existující klub:",
       "club_search_placeholder": "Hledat klub podle názvu...",
       "club_btn_search": "Hledat",
