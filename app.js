@@ -1927,12 +1927,6 @@
     var curTodayIso = getTodayISO();
     var todayEntry = isSunday ? null : list.find(function (x) { return x.date === curTodayIso; });
 
-    var sundayAlert = document.getElementById("modalMarketSundayAlert");
-    if (sundayAlert) sundayAlert.style.display = isSunday ? "flex" : "none";
-
-    var sundayNotice = document.getElementById("modalPriceSundayNotice");
-    if (sundayNotice) sundayNotice.style.display = isSunday ? "block" : "none";
-
     if (isSunday) {
       if (todayPriceEl) {
         todayPriceEl.innerHTML = '<span style="color: #f59e0b; font-size: 13px; font-weight: 700;">🔒 ' + t('market_closed_sunday_short') + '</span>';
@@ -2075,6 +2069,7 @@
     var notice = document.getElementById("bulkSundayNotice");
     var dt = document.getElementById("bulkImportDate");
     var btn = document.getElementById("btnProcessBulk");
+    var btnAdd = document.getElementById("btnBulkAddFish");
 
     if (notice) notice.style.display = isSunday ? "flex" : "none";
     if (dt) dt.classList.toggle("is-sunday", isSunday);
@@ -2084,6 +2079,14 @@
         btn.setAttribute("title", t('bulk_sunday_blocked'));
       } else {
         btn.removeAttribute("title");
+      }
+    }
+    if (btnAdd) {
+      btnAdd.disabled = isSunday;
+      if (isSunday) {
+        btnAdd.setAttribute("title", t('bulk_sunday_blocked'));
+      } else {
+        btnAdd.removeAttribute("title");
       }
     }
   }
@@ -2165,7 +2168,7 @@
     bulkSelectedSuggestionIndex = -1;
 
     if (matches.length === 0) {
-      drop.innerHTML = '<div style="padding: 8px 12px; font-size: 12px; color: var(--text-muted);">Žádná ryba nenalezena</div>';
+      drop.innerHTML = '<div style="padding: 8px 12px; font-size: 12px; color: var(--text-muted);">' + t('bulk_no_fish_found') + '</div>';
       drop.style.display = "block";
       return;
     }
@@ -2237,6 +2240,12 @@
   }
 
   function addFishToBulkList() {
+    var dateVal = document.getElementById("bulkImportDate").value || todayISO;
+    if (isDateSunday(dateVal)) {
+      showToast(t('bulk_sunday_blocked'), "error");
+      return;
+    }
+
     var nameInput = document.getElementById("bulkFishInput");
     var priceInput = document.getElementById("bulkFishPrice");
     var textArea = document.getElementById("bulkInputText");

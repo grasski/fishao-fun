@@ -663,12 +663,6 @@
         <div class="modal-market-divider"> <span data-i18n="modal_market_divider">💵 Fish Market – Výkupní ceny a
             historie</span> </div>
 
-        <!-- Sunday closed alert in modal -->
-        <div id="modalMarketSundayAlert" class="modal-market-sunday-alert" style="display: none;">
-          <span style="font-size: 18px; line-height: 1;">🚫</span>
-          <span data-i18n="modal_market_sunday_alert">Každou celou neděli má Fish Market v FISHAO zavřeno. Dnešní výkup ryb ve hře neprobíhá.</span>
-        </div>
-
         <div class="price-stats-grid">
           <div class="price-stat-card">
             <div class="price-stat-label" data-i18n="modal_today_price">Dnešní cena</div>
@@ -687,16 +681,12 @@
         <!-- Add price form (gated: shown when logged in) -->
         <div id="priceAddFormBox" class="price-form-box" style="display: none;">
           <div class="price-form-header">
-            <span class="price-form-title" data-i18n="modal_add_record">➕ Přidat záznam o ceně do historie</span>
-            <span class="price-form-badge">Fish Market</span>
+            <span class="price-form-title" data-i18n="modal_add_record">Přidat nový záznam do historie</span>
           </div>
 
           <div id="modalPriceSundayNotice" class="modal-sunday-blocked-notice" style="display: none;">
             <span class="sunday-icon">🚫</span>
-            <div class="sunday-text-group">
-              <strong data-i18n="modal_price_sunday_blocked_title">V neděli má Fish Market zavřeno</strong>
-              <span data-i18n="modal_price_sunday_blocked_desc">Pro nedělní datum nelze zadat cenu, protože výkup ve hře neprobíhá.</span>
-            </div>
+            <span class="sunday-text" data-i18n="modal_price_sunday_blocked_title">V neděli má Fish Market zavřeno</span>
           </div>
 
           <div class="price-form-fields-grid">
@@ -778,16 +768,16 @@
 
         <!-- Quick Add with Fish Autocomplete -->
         <div class="bulk-autocomplete-container">
-          <label style="font-size: 12px; font-weight: 700; color: var(--gold); display: block; margin-bottom: 4px;">
+          <label style="font-size: 12px; font-weight: 700; color: var(--gold); display: block; margin-bottom: 4px;" data-i18n="bulk_quick_add_label">
             🔍 Rychlé přidání ryby (našeptávač jmen):
           </label>
           <div class="bulk-quick-add-row">
             <div style="position: relative; flex: 1;">
-              <input type="text" id="bulkFishInput" class="filter-control" placeholder="Začni psát název ryby..." autocomplete="off" oninput="window.fishaoApp.onBulkSearchInput(event)" onkeydown="window.fishaoApp.onBulkInputKeyDown(event)">
+              <input type="text" id="bulkFishInput" class="filter-control" placeholder="Začni psát název ryby..." data-i18n-placeholder="bulk_search_placeholder" autocomplete="off" oninput="window.fishaoApp.onBulkSearchInput(event)" onkeydown="window.fishaoApp.onBulkInputKeyDown(event)">
               <div id="bulkFishSuggestions" class="bulk-suggestions-dropdown" style="display: none;"></div>
             </div>
-            <input type="number" id="bulkFishPrice" class="filter-control" placeholder="Cena (FB)" style="width: 110px;" min="0" step="1" onkeydown="if(event.key==='Enter')window.fishaoApp.addFishToBulkList()">
-            <button class="pill-btn yellow" type="button" onclick="window.fishaoApp.addFishToBulkList()" style="height: 38px; padding: 0 14px; font-weight: 700;">➕ Přidat</button>
+            <input type="number" id="bulkFishPrice" class="filter-control" placeholder="Cena (FB)" data-i18n-placeholder="bulk_price_placeholder" style="width: 110px;" min="0" step="1" onkeydown="if(event.key==='Enter')window.fishaoApp.addFishToBulkList()">
+            <button class="pill-btn yellow" type="button" id="btnBulkAddFish" onclick="window.fishaoApp.addFishToBulkList()" style="height: 38px; padding: 0 14px; font-weight: 700;" data-i18n="bulk_btn_add">➕ Přidat</button>
           </div>
         </div>
 
@@ -796,7 +786,8 @@
             style="font-size: 12px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 4px;"
             data-i18n="bulk_textarea_label"> Vložit text se seznamem ryb a cen: </label>
           <textarea id="bulkInputText" class="bulk-input"
-            placeholder="Havýš rohatý: 152&#10;Pomčík Potterův: 178&#10;Klaun uzdičkatý: 43..."></textarea>
+            placeholder="Havýš rohatý: 152&#10;Pomčík Potterův: 178&#10;Klaun uzdičkatý: 43..."
+            data-i18n-placeholder="bulk_textarea_placeholder"></textarea>
         </div>
 
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
