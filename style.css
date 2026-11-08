@@ -581,12 +581,22 @@ body {
   flex-wrap: wrap;
 }
 
+.action-bar-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 /* UNIFIED CONTROLS IN ACTION BARS (Identical 32px height) */
 .view-action-bar .pill-btn,
 .view-action-bar .toggle-pill,
 .view-action-bar .btn-subtle-link,
 .view-action-bar .btn-action.sm,
-.view-action-bar .btn-reset.sm {
+.view-action-bar .btn-reset.sm,
+.view-action-bar .sign-in-btn.sm {
   height: 32px;
   line-height: 30px;
   padding: 0 12px;

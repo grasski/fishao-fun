@@ -115,12 +115,6 @@
       var el = document.getElementById("hideLockedCheckbox");
       if (el) el.checked = (savedHideLocked === 'true');
     }
-
-    var savedIncludeFc = localStorage.getItem('fishao_include_fc');
-    if (savedIncludeFc !== null) {
-      var el2 = document.getElementById("includeFcCheckbox");
-      if (el2) el2.checked = (savedIncludeFc === 'true');
-    }
   } catch (e) { }
 
   // Today ISO date for date inputs
@@ -1442,10 +1436,19 @@
       }
     }
 
+    var collBannerAuth = document.getElementById("collBannerAuth");
+    var collBannerGuest = document.getElementById("collBannerGuest");
+    if (collBannerAuth && collBannerGuest) {
+      collBannerAuth.style.display = currentUser ? "flex" : "none";
+      collBannerGuest.style.display = currentUser ? "none" : "flex";
+    }
+
     if (!isFirebaseConfigured) {
       if (signInBtn) signInBtn.style.display = "none";
       if (userInfoBar) userInfoBar.style.display = "none";
       if (adminBadge) adminBadge.style.display = "none";
+      if (collBannerAuth) collBannerAuth.style.display = "none";
+      if (collBannerGuest) collBannerGuest.style.display = "none";
       return;
     }
 
@@ -1530,6 +1533,14 @@
       if (collNoticeOff) {
         collNoticeOff.innerHTML = t('coll_sync_logged_out');
       }
+
+      collectionFilterMode = "all";
+      var collAll = document.getElementById("collFilterAll");
+      var collCaught = document.getElementById("collFilterCaught");
+      var collMissing = document.getElementById("collFilterMissing");
+      if (collAll) collAll.classList.add("active");
+      if (collCaught) collCaught.classList.remove("active");
+      if (collMissing) collMissing.classList.remove("active");
 
       if (currentView === "club_manage") {
         if (gateClub) gateClub.style.display = "block";
@@ -2721,7 +2732,6 @@
   function renderTableBody(data) {
     var tbody = document.getElementById("tableBody");
     var total = currentView === "club" ? clubFishes.length : allFishes.length;
-    var includeFc = document.getElementById("includeFcCheckbox").checked;
 
     if (data.length === 0) {
       var colCount = currentView === "club" ? 11 : 10;
@@ -2807,11 +2817,8 @@
   }
 
   function updateClubStats() {
-    var includeFc = document.getElementById("includeFcCheckbox").checked;
     var hideLocked = document.getElementById("hideLockedCheckbox").checked;
-
     localStorage.setItem('fishao_hide_locked', hideLocked);
-    localStorage.setItem('fishao_include_fc', includeFc);
 
     var unlockedCount = 0;
     var nextFish = null;
@@ -2875,7 +2882,6 @@
     var timeVal = document.getElementById("timeFilter").value;
     var sortBy = document.getElementById("sortBy").value;
     var hideLocked = document.getElementById("hideLockedCheckbox").checked;
-    var includeFc = document.getElementById("includeFcCheckbox").checked;
     var filterUncaught = document.getElementById("filterUncaughtCheckbox") ? document.getElementById("filterUncaughtCheckbox").checked : false;
 
     var minEl = document.getElementById("minSizeInput");
@@ -2890,9 +2896,6 @@
 
     var filtered = dataset.filter(function (f) {
       if (currentView === "club") {
-        if (!includeFc && (f.unlock_type === 'fc' || f.unlock_type === 'monster')) {
-          return false;
-        }
         if (hideLocked) {
           var status = getUnlockStatus(f, currentClubPoints);
           if (!status.isUnlocked) return false;
@@ -3067,9 +3070,6 @@
 
     var hideLockedCb = document.getElementById("hideLockedCheckbox");
     if (hideLockedCb) hideLockedCb.checked = false;
-
-    var includeFcCb = document.getElementById("includeFcCheckbox");
-    if (includeFcCb) includeFcCb.checked = true;
 
     collectionFilterMode = "all";
     var collAll = document.getElementById("collFilterAll");
