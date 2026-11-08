@@ -388,7 +388,15 @@
       "filter_search_clear_title": "Clear search",
       "filter_reset_all_title": "Reset all filters",
       "player_modal_edit_profile": "Edit my profile (nickname / avatar)",
-      "profile_edit_tooltip": "Edit player profile"
+      "profile_edit_tooltip": "Edit player profile",
+      "players_btn_refresh": "Refresh",
+      "players_refresh_success": "Player list has been refreshed.",
+      "pagination_prev": "Previous",
+      "pagination_next": "Next",
+      "pagination_page_of": "Page {current} of {total}",
+      "club_btn_kick": "Remove from club",
+      "club_kick_confirm": "Are you sure you want to remove {name} from the club?",
+      "club_member_kicked": "Player was removed from the club."
   };
 
   if (typeof window !== 'undefined') {

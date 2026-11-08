@@ -30,7 +30,8 @@ async function bindClubListener(clubId) {
         renderClubMembers(data.members || {}, data.createdBy);
 
         // Self-heal: ensure current user is registered in members map and stats are synced
-        if (currentUser) {
+        // ONLY IF user actually belongs to this club!
+        if (currentUser && currentClubId === clubId && userProfile && userProfile.clubId === clubId) {
           var myClubCount = 0;
           clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myClubCount++; });
           var curMember = (data.members && data.members[currentUser.uid]) || {};
@@ -512,15 +513,41 @@ async function leaveClub() {
   );
   if (!ok) return;
 
+  var clubToLeave = currentClubId;
+
+  // 1. Unbind club listener FIRST so self-heal snapshot cannot re-register leaving member
+  unbindClubListener();
+  currentClubId = "";
+  currentClubName = "";
+  currentClubPoints = 0;
+  currentClubMemberCount = 1;
+  currentClubUnlockedFcFishIds.clear();
+  currentClubUnlockedMonsterIds.clear();
+  currentClubMembersMap = {};
+  if (userProfile) {
+    userProfile.clubId = "";
+    userProfile.clubName = "";
+  }
+  var myPlayer = allPlayersList.find(function (p) { return p.uid === currentUser.uid; });
+  if (myPlayer) {
+    myPlayer.clubId = "";
+    myPlayer.clubName = "";
+  }
+
   try {
     var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    
+    // 2. Remove member from club document and decrement count
     try {
-      var clubRef = fsModule.doc(db, "clubs", currentClubId);
+      var clubRef = fsModule.doc(db, "clubs", clubToLeave);
       var snap = await fsModule.getDoc(clubRef);
       if (snap.exists()) {
-        var cnt = snap.data().memberCount || 1;
+        var cData = snap.data();
+        var cnt = cData.memberCount || 1;
+        var members = cData.members || {};
+        var wasMember = !!members[currentUser.uid];
         var leaveUpdate = {
-          memberCount: Math.max(0, cnt - 1),
+          memberCount: Math.max(0, wasMember ? (cnt - 1) : cnt),
           updatedAt: new Date().toISOString(),
           lastUpdatedBy: currentUser.uid
         };
@@ -531,18 +558,68 @@ async function leaveClub() {
       console.warn("Could not decrement club:", e);
     }
 
+    // 3. Clear clubId in user profile document
     var userDocRef = fsModule.doc(db, "users", currentUser.uid);
     await fsModule.updateDoc(userDocRef, {
       clubId: "",
       clubName: ""
     });
 
-    unbindClubListener();
+    renderClubMembers({}, "");
+    updateClubStats();
+    renderClubMilestones();
+    renderClubSpecialFishes();
+    updateAuthUI();
+    applyFilters();
+
     showToast(t('club_left_success'), "purple");
     searchClubs("");
   } catch (err) {
     console.error("Failed to leave club:", err);
     showToast("Chyba při opouštění klubu: " + err.message, "error");
+  }
+}
+
+async function kickMemberFromClub(targetUid) {
+  if (!currentUser || !currentClubId || !targetUid || targetUid === currentUser.uid) return;
+  var targetMem = (currentClubMembersMap && currentClubMembersMap[targetUid]) || {};
+  var targetName = targetMem.displayName || "tohoto hráče";
+  var ok = await showConfirmModal(
+    t('club_btn_kick', 'Odebrat z klubu'),
+    t('club_kick_confirm', { name: targetName }, 'Opravdu chceš odebrat hráče ' + targetName + ' z klubu?'),
+    t('club_btn_kick', 'Odebrat'),
+    true
+  );
+  if (!ok) return;
+
+  try {
+    var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var clubRef = fsModule.doc(db, "clubs", currentClubId);
+    var snap = await fsModule.getDoc(clubRef);
+    if (snap.exists()) {
+      var cData = snap.data();
+      var cnt = cData.memberCount || 1;
+      var update = {
+        memberCount: Math.max(0, cnt - 1),
+        updatedAt: new Date().toISOString(),
+        lastUpdatedBy: currentUser.uid
+      };
+      update["members." + targetUid] = fsModule.deleteField();
+      await fsModule.updateDoc(clubRef, update);
+    }
+
+    try {
+      var uRef = fsModule.doc(db, "users", targetUid);
+      await fsModule.updateDoc(uRef, { clubId: "", clubName: "" });
+    } catch (e) {
+      // Ignored if permissions restrict
+    }
+
+    closePlayerModal();
+    showToast(t('club_member_kicked', 'Hráč byl odebrán z klubu.'), "info");
+  } catch (err) {
+    console.error("Failed to kick member:", err);
+    showToast("Chyba při odebírání člena: " + err.message, "error");
   }
 }
 

@@ -60,9 +60,6 @@ service cloud.firestore {
       // Authenticated users can read player profiles (nickname, avatar, club, caught fish)
       allow read: if request.auth != null;
 
-      // Admin has full write access
-      allow write: if isAdmin();
-
       // Profile creation on first sign-in
       allow create: if request.auth != null
         && request.auth.uid == userId
@@ -80,7 +77,8 @@ service cloud.firestore {
         && (!('friendUids' in request.resource.data) || (request.resource.data.friendUids is list && request.resource.data.friendUids.size() <= 300));
 
       // Profile update by owner: forbidden from modifying 'role' or 'createdAt'
-      allow update: if request.auth != null
+      // Note: evaluated with short-circuiting so normal users don't trigger extra isAdmin read!
+      allow update: if (request.auth != null
         && request.auth.uid == userId
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
              'displayName', 'clubId', 'clubName', 'caughtFishIds', 'backyardFishIds', 'friendUids', 'lastLogin', 'avatarUrl'
@@ -91,7 +89,8 @@ service cloud.firestore {
         && request.resource.data.caughtFishIds is list
         && request.resource.data.caughtFishIds.size() <= 1000
         && (!('backyardFishIds' in request.resource.data) || (request.resource.data.backyardFishIds is list && request.resource.data.backyardFishIds.size() <= 300))
-        && (!('friendUids' in request.resource.data) || (request.resource.data.friendUids is list && request.resource.data.friendUids.size() <= 300));
+        && (!('friendUids' in request.resource.data) || (request.resource.data.friendUids is list && request.resource.data.friendUids.size() <= 300)))
+        || isAdmin();
 
       // Only admins can delete user profiles
       allow delete: if isAdmin();

@@ -19,13 +19,39 @@ function isBackyardBreedable(fish) {
   });
 }
 
+var PLAYERS_CACHE_KEY = 'fishao_players_cache_v1';
+var PLAYERS_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+var lastPlayersFetchTime = 0;
+var playerCurrentPage = 1;
+var PLAYERS_PER_PAGE = 24;
+
 /**
- * Load all players from Firestore collection 'users'
+ * Load all players from Firestore collection 'users' (cached for 5 minutes)
  */
 async function loadAllPlayers(force) {
-  if (allPlayersList.length > 0 && !force) {
+  var now = Date.now();
+
+  // If in-memory is valid and not forced, reuse immediately (0 reads)
+  if (!force && allPlayersList.length > 0 && (now - lastPlayersFetchTime < PLAYERS_CACHE_TTL_MS)) {
     renderPlayersList();
     return;
+  }
+
+  // If in-memory is empty (e.g. after F5), try restoring from sessionStorage (0 reads)
+  if (!force && allPlayersList.length === 0) {
+    try {
+      var cachedStr = sessionStorage.getItem(PLAYERS_CACHE_KEY);
+      if (cachedStr) {
+        var cachedObj = JSON.parse(cachedStr);
+        if (cachedObj && cachedObj.timestamp && (now - cachedObj.timestamp < PLAYERS_CACHE_TTL_MS) && Array.isArray(cachedObj.list) && cachedObj.list.length > 0) {
+          allPlayersList = cachedObj.list;
+          lastPlayersFetchTime = cachedObj.timestamp;
+          populatePlayerFishFilterDropdown();
+          renderPlayersList();
+          return;
+        }
+      }
+    } catch (e) {}
   }
 
   if (!currentUser) {
@@ -77,10 +103,34 @@ async function loadAllPlayers(force) {
     });
 
     allPlayersList = list;
+    lastPlayersFetchTime = Date.now();
+    try {
+      sessionStorage.setItem(PLAYERS_CACHE_KEY, JSON.stringify({
+        timestamp: lastPlayersFetchTime,
+        list: allPlayersList
+      }));
+    } catch (e) {}
+
     populatePlayerFishFilterDropdown();
     renderPlayersList();
+    if (force) {
+      showToast(t('players_refresh_success', 'Seznam hráčů byl aktualizován.'), 'info');
+    }
   } catch (err) {
     console.error("Failed to load community players:", err);
+  }
+}
+
+function refreshPlayersList() {
+  loadAllPlayers(true);
+}
+
+function setPlayerPage(page) {
+  playerCurrentPage = page;
+  renderPlayersList();
+  var sec = document.getElementById("sectionPlayers");
+  if (sec) {
+    sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
@@ -275,6 +325,7 @@ function togglePlayerFriendsFilter() {
   filterPlayerFriendsOnly = !filterPlayerFriendsOnly;
   var btn = document.getElementById("filterPlayerFriendsOnlyBtn");
   if (btn) btn.classList.toggle("active", filterPlayerFriendsOnly);
+  playerCurrentPage = 1;
   renderPlayersList();
 }
 
@@ -282,6 +333,7 @@ function togglePlayerBackyardFilter() {
   filterPlayerBackyardOnly = !filterPlayerBackyardOnly;
   var btn = document.getElementById("filterPlayerBackyardOnlyBtn");
   if (btn) btn.classList.toggle("active", filterPlayerBackyardOnly);
+  playerCurrentPage = 1;
   renderPlayersList();
 }
 
@@ -297,6 +349,7 @@ function togglePlayerActiveNowFilter() {
   if (btn) btn.classList.toggle("active", filterPlayerActiveNow);
   var timeSel = document.getElementById("playerTimeFilterSelect");
   if (timeSel) timeSel.value = filterPlayerTime;
+  playerCurrentPage = 1;
   renderPlayersList();
 }
 
@@ -305,26 +358,31 @@ function onPlayerTimeFilterChange(val) {
   filterPlayerActiveNow = (filterPlayerTime === "now");
   var btn = document.getElementById("filterPlayerActiveNowBtn");
   if (btn) btn.classList.toggle("active", filterPlayerActiveNow);
+  playerCurrentPage = 1;
   renderPlayersList();
 }
 
 function onPlayerFishFilterChange(val) {
   filterPlayerFishId = val ? parseInt(val, 10) : null;
+  playerCurrentPage = 1;
   renderPlayersList();
 }
 
 function onPlayerBaitFilterChange(val) {
   filterPlayerBait = val || "";
+  playerCurrentPage = 1;
   renderPlayersList();
 }
 
 function onPlayerRatingFilterChange(val) {
   filterPlayerRating = val || null;
+  playerCurrentPage = 1;
   renderPlayersList();
 }
 
 function onPlayerSearchInput(val) {
   filterPlayerSearchText = (val || "").trim();
+  playerCurrentPage = 1;
   renderPlayersList();
 }
 
@@ -332,6 +390,7 @@ function clearPlayerSearch() {
   var input = document.getElementById("playerSearchInput");
   if (input) input.value = "";
   filterPlayerSearchText = "";
+  playerCurrentPage = 1;
   renderPlayersList();
 }
 
@@ -344,6 +403,7 @@ function resetPlayerFilters() {
   filterPlayerFishId = null;
   filterPlayerBait = "";
   filterPlayerRating = null;
+  playerCurrentPage = 1;
 
   var sInput = document.getElementById("playerSearchInput");
   if (sInput) sInput.value = "";
@@ -527,16 +587,29 @@ function renderPlayersList() {
     clearBtn.style.display = searchNorm ? "flex" : "none";
   }
 
+  var paginationEl = document.getElementById("playersPagination");
+
   if (filtered.length === 0) {
     grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 48px 16px; color: var(--text-muted);">' +
       '<div style="font-size: 36px; margin-bottom: 10px;">👥</div>' +
       '<div>' + t('players_empty_search', 'Nenalezen žádný hráč odpovídající zadaným filtrům.') + '</div>' +
       '</div>';
+    if (paginationEl) {
+      paginationEl.style.display = "none";
+      paginationEl.innerHTML = "";
+    }
     return;
   }
 
+  var totalPages = Math.ceil(filtered.length / PLAYERS_PER_PAGE) || 1;
+  if (playerCurrentPage > totalPages) playerCurrentPage = totalPages;
+  if (playerCurrentPage < 1) playerCurrentPage = 1;
+
+  var startIndex = (playerCurrentPage - 1) * PLAYERS_PER_PAGE;
+  var pageItems = filtered.slice(startIndex, startIndex + PLAYERS_PER_PAGE);
+
   var html = "";
-  filtered.forEach(function (p) {
+  pageItems.forEach(function (p) {
     var isMe = !!(currentUser && p.uid === currentUser.uid);
     var isFriend = friendUids.has(p.uid);
     var av = p.avatarUrl || "🎣";
@@ -653,6 +726,27 @@ function renderPlayersList() {
   });
 
   grid.innerHTML = html;
+
+  if (paginationEl) {
+    if (totalPages > 1) {
+      paginationEl.style.display = "flex";
+      paginationEl.style.justifyContent = "center";
+      paginationEl.style.alignItems = "center";
+      paginationEl.style.gap = "12px";
+
+      var prevDisabled = (playerCurrentPage <= 1) ? ' disabled style="opacity: 0.4; cursor: not-allowed;"' : '';
+      var nextDisabled = (playerCurrentPage >= totalPages) ? ' disabled style="opacity: 0.4; cursor: not-allowed;"' : '';
+
+      var prevBtn = '<button type="button" class="pill-btn"' + prevDisabled + ' onclick="window.fishaoApp.setPlayerPage(' + (playerCurrentPage - 1) + ')">◀ ' + t('pagination_prev', 'Předchozí') + '</button>';
+      var pageText = '<span style="font-size: 13px; color: var(--text-muted); font-weight: 600;">' + t('pagination_page_of', { current: playerCurrentPage, total: totalPages }) + '</span>';
+      var nextBtn = '<button type="button" class="pill-btn"' + nextDisabled + ' onclick="window.fishaoApp.setPlayerPage(' + (playerCurrentPage + 1) + ')">' + t('pagination_next', 'Další') + ' ▶</button>';
+
+      paginationEl.innerHTML = prevBtn + pageText + nextBtn;
+    } else {
+      paginationEl.style.display = "none";
+      paginationEl.innerHTML = "";
+    }
+  }
 }
 
 /**
@@ -687,10 +781,16 @@ async function toggleBackyardFish(fishId) {
     userProfile.backyardFishIds = Array.from(backyardFishIds);
   }
 
-  // Update in allPlayersList
+  // Update in allPlayersList & session cache
   var meInList = allPlayersList.find(function (p) { return p.uid === currentUser.uid; });
   if (meInList) {
     meInList.backyardFishIds = Array.from(backyardFishIds);
+    try {
+      sessionStorage.setItem(PLAYERS_CACHE_KEY, JSON.stringify({
+        timestamp: lastPlayersFetchTime,
+        list: allPlayersList
+      }));
+    } catch (e) {}
   }
 
   // Sync to Firestore
@@ -1131,6 +1231,16 @@ async function openPlayerModal(uid) {
 
   var selfActions = document.getElementById("playerModalSelfActions");
   if (selfActions) selfActions.style.display = isMe ? "block" : "none";
+
+  var creatorActions = document.getElementById("playerModalCreatorActions");
+  var btnKick = document.getElementById("btnPlayerModalKick");
+  var canKick = !!(currentUser && currentClubId && currentClubCreatorId === currentUser.uid && !isMe && clubMem);
+  if (creatorActions) creatorActions.style.display = canKick ? "block" : "none";
+  if (btnKick && canKick) {
+    btnKick.onclick = function () {
+      window.fishaoApp.kickMemberFromClub(uid);
+    };
+  }
 
   var modal = document.getElementById("playerModalOverlay");
   if (modal) modal.classList.add("active");

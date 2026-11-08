@@ -388,7 +388,15 @@
       "filter_search_clear_title": "Vymazat hledání",
       "filter_reset_all_title": "Resetovat všechny filtry",
       "player_modal_edit_profile": "Upravit můj profil (přezdívka / avatar)",
-      "profile_edit_tooltip": "Upravit hráčský profil"
+      "profile_edit_tooltip": "Upravit hráčský profil",
+      "players_btn_refresh": "Aktualizovat",
+      "players_refresh_success": "Seznam hráčů byl aktualizován.",
+      "pagination_prev": "Předchozí",
+      "pagination_next": "Další",
+      "pagination_page_of": "Strana {current} z {total}",
+      "club_btn_kick": "Odebrat z klubu",
+      "club_kick_confirm": "Opravdu chceš odebrat hráče {name} z klubu?",
+      "club_member_kicked": "Hráč byl odebrán z klubu."
   };
 
   if (typeof window !== 'undefined') {

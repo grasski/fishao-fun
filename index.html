@@ -335,11 +335,17 @@
           <div class="players-community-count-wrap">
             <span id="playersCountBadge" class="status-counter-item" style="color: var(--text-muted); font-size: 13px;">0 hráčů</span>
           </div>
-          <button type="button" class="pill-btn teal" onclick="window.fishaoApp.openProfileModal()" style="height: 36px; padding: 0 16px; font-size: 13px; font-weight: 700;">
-            <span>🏡</span> <span data-i18n="players_manage_my_backyard">Moje ryby za domem</span>
-          </button>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button type="button" class="pill-btn" onclick="window.fishaoApp.refreshPlayersList()" title="Aktualizovat hráče z databáze" style="height: 36px; padding: 0 12px; font-size: 13px;">
+              🔄 <span data-i18n="players_btn_refresh">Aktualizovat</span>
+            </button>
+            <button type="button" class="pill-btn teal" onclick="window.fishaoApp.openProfileModal()" style="height: 36px; padding: 0 16px; font-size: 13px; font-weight: 700;">
+              <span>🏡</span> <span data-i18n="players_manage_my_backyard">Moje ryby za domem</span>
+            </button>
+          </div>
         </div>
         <div id="playersGrid" class="players-grid"></div>
+        <div id="playersPagination" class="players-pagination" style="display: none; margin-top: 24px; text-align: center;"></div>
       </div>
     </section>
 
@@ -1090,6 +1096,12 @@
         <div id="playerModalSelfActions" style="margin-top: 16px; display: none;">
           <button class="pill-btn purple" style="width: 100%; height: 38px; font-weight: 700;" onclick="window.fishaoApp.closePlayerModal(); window.fishaoApp.openProfileModal();">
             ✏️ <span data-i18n="player_modal_edit_profile">Upravit můj profil (přezdívka / avatar)</span>
+          </button>
+        </div>
+
+        <div id="playerModalCreatorActions" style="margin-top: 12px; display: none;">
+          <button id="btnPlayerModalKick" class="pill-btn danger" style="width: 100%; height: 38px; font-weight: 700;">
+            🚪 <span data-i18n="club_btn_kick">Odebrat hráče z klubu</span>
           </button>
         </div>
       </div>
