@@ -11,7 +11,7 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
    * Always verify modified or created JavaScript files with `node --check "<filepath>"`.
 3. **Firebase & Firestore Security Rules (`firestore.rules`):**
    * Firestore rules enforce strict key masking (`hasOnly` / `affectedKeys().hasOnly`). Never write undocumented fields to Firestore.
-   * `/users/{userId}` is readable by authenticated users and writable only by the owner or admin.
+   * `/users/{userId}` is readable by authenticated users and writable only by the owner or admin. Allowed keys: `displayName`, `role`, `clubId`, `clubName`, `caughtFishIds`, `backyardFishIds`, `friendUids`, `createdAt`, `lastLogin`, `avatarUrl`.
    * Never store user emails or personal Google data in Firestore (GDPR-free: only store nickname and avatar).
    * Always wrap Firestore operations in `try...catch` and maintain `localStorage` fallback.
 4. **Fish Market Rules:**
@@ -43,12 +43,13 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
 
 7. **Modular JavaScript Architecture (`js/`):**
    * Code is organized into cohesive modules under `js/`: `state.js`, `table.js`, `clubs.js`, `market.js`, `filters.js`, `auth.js`, `players.js`, and `main.js`.
-   * `js/players.js`: Community player list, backyard fish breeding (`backyardFishIds`), universal player modal, reverse fish-to-player lookups.
+   * `js/players.js`: Community player list, friends management (`friendUids`), backyard fish breeding (`backyardFishIds`, strictly the 83 backyard species), universal player modal, reverse fish-to-player lookups.
    * Public browser handlers are exposed on `window.fishaoApp` in `js/main.js`. Do not edit the legacy monolithic `app.js`.
 
 8. **Backyard Fish Breeding ("Za domem") & Community Directory:**
-   * Logged-in players can specify which fish they breed in their backyard pond (`backyardFishIds`).
+   * Logged-in players can specify which fish they breed in their backyard pond (`backyardFishIds`). Strictly limited to the 83 species that have location `Za domem` in the game.
    * The community tab allows browsing all registered players, their catch progress, club affiliation, and bred fish.
    * In the fish detail modal, players can see who currently has that fish bred ("Kdo má tuto rybu za domem").
+   * Friends system (`friendUids`): players can add friends (⭐), filter exclusively by friends, and have friends pinned at the top of the community list and reverse lookups.
 
 For detailed documentation, refer to the Antigravity Skill at `.agents/skills/fishao/SKILL.md`.

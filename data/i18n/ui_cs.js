@@ -323,6 +323,7 @@
       "players_gate_desc": "Pro zobrazení seznamu hráčů, jejich úlovků, klubů a odchovaných ryb za domem se prosím přihlas přes Google.",
       "players_search_placeholder": "Hledat hráče, klub nebo rybu...",
       "players_filter_backyard_only": "Pouze s rybou za domem",
+      "players_filter_friends_only": "Pouze přátelé",
       "players_filter_all_fishes": "Všechny odchované ryby",
       "players_count_stat": "{count} hráčů",
       "players_manage_my_backyard": "Moje ryby za domem",
@@ -337,12 +338,18 @@
       "profile_backyard_label": "🏡 Moje ryby za domem (odchované v jezírku):",
       "profile_backyard_search_placeholder": "Přidat rybu za dům (začni psát název)...",
       "profile_backyard_empty_hint": "Zatím nemáš vybrané žádné ryby. Můžeš je přidat vyhledáním níže nebo přímo v detailu ryby.",
+      "profile_backyard_notice_83": "Lze vybrat pouze z 83 druhů ryb určených pro chov za domem.",
+      "backyard_not_breedable": "Tato ryba není určena pro chov za domem.",
       "modal_btn_backyard_yes": "🏡 Za domem ✓",
       "modal_btn_backyard_no": "🏡 Za domem",
       "modal_backyard_owners_title": "🏡 Kdo má tuto rybu za domem:",
       "modal_backyard_owners_none": "Tuto rybu zatím nikdo nemá za domem.",
       "backyard_added_toast": "Ryba '{name}' byla přidána za dům!",
-      "backyard_removed_toast": "Ryba '{name}' byla odebrána ze zahrady."
+      "backyard_removed_toast": "Ryba '{name}' byla odebrána ze zahrady.",
+      "friend_added_toast": "Hráč '{name}' byl přidán do přátel ⭐",
+      "friend_removed_toast": "Hráč '{name}' byl odebrán z přátel.",
+      "btn_friend_add": "☆ Přidat do přátel",
+      "btn_friend_yes": "⭐ Přítel"
   };
 
   if (typeof window !== 'undefined') {

@@ -35,6 +35,7 @@ async function initFirebaseSync() {
         isAdmin = false;
         caughtFishIds = new Set();
         backyardFishIds = new Set();
+        friendUids = new Set();
         if (clubUnsubscribe) {
           clubUnsubscribe();
           clubUnsubscribe = null;
@@ -132,6 +133,7 @@ async function loadUserProfile(user) {
         clubName: "",
         caughtFishIds: Array.from(caughtFishIds),
         backyardFishIds: Array.from(backyardFishIds),
+        friendUids: Array.from(friendUids),
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString()
       };
@@ -144,6 +146,9 @@ async function loadUserProfile(user) {
     }
     if (userProfile.backyardFishIds && Array.isArray(userProfile.backyardFishIds)) {
       backyardFishIds = new Set(userProfile.backyardFishIds);
+    }
+    if (userProfile.friendUids && Array.isArray(userProfile.friendUids)) {
+      friendUids = new Set(userProfile.friendUids);
     }
 
     if (userProfile.clubId) {
@@ -163,6 +168,9 @@ async function loadUserProfile(user) {
         }
         if (userProfile.backyardFishIds && Array.isArray(userProfile.backyardFishIds)) {
           backyardFishIds = new Set(userProfile.backyardFishIds);
+        }
+        if (userProfile.friendUids && Array.isArray(userProfile.friendUids)) {
+          friendUids = new Set(userProfile.friendUids);
         }
         if (userProfile.clubId !== oldClubId) {
           if (userProfile.clubId) {

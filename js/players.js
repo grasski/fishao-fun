@@ -1,14 +1,23 @@
 /**
- * FISHAO – Community Players & Backyard Management (js/players.js)
- * -------------------------------------------------------------
- * Handles the community player directory, backyard (za domem) fish breeding,
+ * FISHAO – Community Players, Friends & Backyard Management (js/players.js)
+ * --------------------------------------------------------------------------
+ * Handles the community player directory, friend management, backyard
+ * (Za domem) fish breeding (strictly for the 83 backyard species),
  * universal player detail modal, and reverse fish-to-player lookups.
  */
 
-var allPlayersList = [];
-var filterPlayerBackyardOnly = false;
-var filterPlayerFishId = null;
-var filterPlayerSearchText = "";
+/**
+ * Check whether a fish is breedable "Za domem" according to game data
+ * (strictly the 83 fishes located in 'Za domem' / 'Home backyard' / location_300)
+ */
+function isBackyardBreedable(fish) {
+  if (!fish) return false;
+  var fObj = (typeof fish === 'object') ? fish : allFishes.find(function (x) { return x.id === fish; });
+  if (!fObj || !fObj.locations || !Array.isArray(fObj.locations)) return false;
+  return fObj.locations.some(function (l) {
+    return l === 'Za domem' || l === 'Home backyard' || l === 'location_300' || (typeof l === 'string' && l.toLowerCase().indexOf('za dom') !== -1);
+  });
+}
 
 /**
  * Load all players from Firestore collection 'users'
@@ -76,7 +85,7 @@ async function loadAllPlayers(force) {
 }
 
 /**
- * Populate the select dropdown with fish that are currently bred by at least one player
+ * Populate select dropdown with fish that are bred by at least one player
  */
 function populatePlayerFishFilterDropdown() {
   var select = document.getElementById("playerFishFilterSelect");
@@ -86,7 +95,9 @@ function populatePlayerFishFilterDropdown() {
   var bredFishIdSet = new Set();
   allPlayersList.forEach(function (p) {
     if (p.backyardFishIds && Array.isArray(p.backyardFishIds)) {
-      p.backyardFishIds.forEach(function (fid) { bredFishIdSet.add(fid); });
+      p.backyardFishIds.forEach(function (fid) {
+        if (isBackyardBreedable(fid)) bredFishIdSet.add(fid);
+      });
     }
   });
 
@@ -112,6 +123,80 @@ function populatePlayerFishFilterDropdown() {
 }
 
 /**
+ * Toggle friend status for a player
+ */
+async function toggleFriend(uid, event) {
+  if (event) {
+    event.stopPropagation();
+  }
+
+  if (!currentUser) {
+    showAuthNotice(t('auth_notice_default', 'Pro tuto akci se musíš nejdříve přihlásit přes Google účet.'));
+    return;
+  }
+
+  if (uid === currentUser.uid) return;
+
+  var isFriend = friendUids.has(uid);
+  if (isFriend) {
+    friendUids.delete(uid);
+  } else {
+    friendUids.add(uid);
+  }
+
+  // Persist locally
+  try {
+    localStorage.setItem('fishao_friends_uids', JSON.stringify(Array.from(friendUids)));
+  } catch (e) {}
+
+  if (userProfile) {
+    userProfile.friendUids = Array.from(friendUids);
+  }
+
+  // Sync to Firestore
+  if (currentUser && db) {
+    try {
+      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      var userRef = fsModule.doc(db, "users", currentUser.uid);
+      await fsModule.updateDoc(userRef, {
+        friendUids: Array.from(friendUids)
+      });
+    } catch (err) {
+      console.warn("Failed to sync friends to Firestore:", err);
+    }
+  }
+
+  var targetPlayer = allPlayersList.find(function (p) { return p.uid === uid; });
+  var targetName = targetPlayer ? targetPlayer.displayName : 'Hráč';
+
+  if (isFriend) {
+    showToast(t('friend_removed_toast', { name: targetName }), "info");
+  } else {
+    showToast(t('friend_added_toast', { name: targetName }), "success");
+  }
+
+  renderPlayersList();
+
+  // If player modal is open for this player, update modal friend button
+  var modalNameEl = document.getElementById("playerModalName");
+  if (modalNameEl && modalNameEl.dataset.currentUid === uid) {
+    updateModalFriendBtn(uid);
+  }
+
+  // If fish detail modal is open, re-render owners box so friends are highlighted
+  if (selectedModalFishId) {
+    renderModalBackyardOwners(selectedModalFishId);
+  }
+}
+
+function togglePlayerFriendsFilter() {
+  filterPlayerFriendsOnly = !filterPlayerFriendsOnly;
+  var btn = document.getElementById("filterPlayerFriendsOnlyBtn");
+  if (btn) btn.classList.toggle("active", filterPlayerFriendsOnly);
+  renderPlayersList();
+}
+
+/**
  * Render player cards in the community grid
  */
 function renderPlayersList() {
@@ -123,6 +208,9 @@ function renderPlayersList() {
   var searchNorm = normStr(filterPlayerSearchText);
 
   var filtered = allPlayersList.filter(function (p) {
+    if (filterPlayerFriendsOnly && !friendUids.has(p.uid)) {
+      return false;
+    }
     if (filterPlayerBackyardOnly && (!p.backyardFishIds || p.backyardFishIds.length === 0)) {
       return false;
     }
@@ -146,13 +234,23 @@ function renderPlayersList() {
     return true;
   });
 
-  // Sort: current user first, then players with most backyard fish, then most catches
+  // Sort order:
+  // 1. Current user (isMe)
+  // 2. Friends (friendUids)
+  // 3. Most backyard fish
+  // 4. Most catches
   filtered.sort(function (a, b) {
     if (a.uid === myUid) return -1;
     if (b.uid === myUid) return 1;
+
+    var isFriendA = friendUids.has(a.uid) ? 1 : 0;
+    var isFriendB = friendUids.has(b.uid) ? 1 : 0;
+    if (isFriendB !== isFriendA) return isFriendB - isFriendA;
+
     var bCountA = (a.backyardFishIds && a.backyardFishIds.length) || 0;
     var bCountB = (b.backyardFishIds && b.backyardFishIds.length) || 0;
     if (bCountB !== bCountA) return bCountB - bCountA;
+
     var cCountA = (a.caughtFishIds && a.caughtFishIds.length) || 0;
     var cCountB = (b.caughtFishIds && b.caughtFishIds.length) || 0;
     return cCountB - cCountA;
@@ -160,6 +258,12 @@ function renderPlayersList() {
 
   if (countBadge) {
     countBadge.innerText = t('players_count_stat', { count: filtered.length });
+  }
+
+  // Update clear button in search input
+  var clearBtn = document.getElementById("playerSearchClearBtn");
+  if (clearBtn) {
+    clearBtn.style.display = searchNorm ? "flex" : "none";
   }
 
   if (filtered.length === 0) {
@@ -173,6 +277,7 @@ function renderPlayersList() {
   var html = "";
   filtered.forEach(function (p) {
     var isMe = (p.uid === myUid);
+    var isFriend = friendUids.has(p.uid);
     var av = p.avatarUrl || "🎣";
     var avatarHtml = "";
     if (av.startsWith("http://") || av.startsWith("https://")) {
@@ -199,8 +304,8 @@ function renderPlayersList() {
       });
     }
 
-    // Backyard fish preview chips
-    var bFishes = p.backyardFishIds || [];
+    // Backyard fish preview chips (strictly backyard species)
+    var bFishes = (p.backyardFishIds || []).filter(isBackyardBreedable);
     var backyardChipsHtml = "";
     if (bFishes.length > 0) {
       var maxPreview = 4;
@@ -220,7 +325,14 @@ function renderPlayersList() {
       backyardChipsHtml = '<div class="player-card-empty-backyard">' + t('player_card_backyard_empty', 'Žádné ryby za domem') + '</div>';
     }
 
-    html += '<div class="player-card' + (isMe ? ' is-me' : '') + '">' +
+    var friendBtnHtml = "";
+    if (!isMe && currentUser) {
+      friendBtnHtml = '<button type="button" class="player-friend-star-btn ' + (isFriend ? 'active' : '') + '" onclick="window.fishaoApp.toggleFriend(\'' + p.uid + '\', event)" title="' + (isFriend ? 'Odebrat z přátel' : 'Přidat do přátel') + '">' +
+        (isFriend ? '⭐ ' + t('btn_friend_yes', 'Přítel') : '☆ ' + t('btn_friend_add', 'Přidat do přátel')) +
+        '</button>';
+    }
+
+    html += '<div class="player-card' + (isMe ? ' is-me' : '') + (isFriend ? ' is-friend' : '') + '">' +
       '<div>' +
         '<div class="player-card-header">' +
           avatarHtml +
@@ -229,9 +341,11 @@ function renderPlayersList() {
               '<span class="player-card-name">' + escapeHtml(p.displayName) + '</span>' +
               (isMe ? '<span class="player-card-me-tag">(Ty)</span>' : '') +
               roleBadge +
+              (isFriend ? '<span class="player-friend-badge" title="Tento hráč je v tvých přátelích">⭐ Přítel</span>' : '') +
             '</div>' +
             '<div class="player-card-club-row">' + clubInfo + '</div>' +
           '</div>' +
+          friendBtnHtml +
         '</div>' +
 
         '<div class="player-card-stats">' +
@@ -265,10 +379,17 @@ function renderPlayersList() {
 }
 
 /**
- * Filter handlers for community view
+ * Filter and search handlers for community view
  */
 function onPlayerSearchInput(val) {
   filterPlayerSearchText = (val || "").trim();
+  renderPlayersList();
+}
+
+function clearPlayerSearch() {
+  var input = document.getElementById("playerSearchInput");
+  if (input) input.value = "";
+  filterPlayerSearchText = "";
   renderPlayersList();
 }
 
@@ -291,6 +412,12 @@ async function toggleBackyardFish(fishId) {
   if (!fishId) return;
   if (!currentUser) {
     showAuthNotice(t('auth_notice_default', 'Pro tuto akci se musíš nejdříve přihlásit přes Google účet.'));
+    return;
+  }
+
+  // Enforce backyard breeding restriction: only the 83 specific fish are allowed
+  if (!isBackyardBreedable(fishId)) {
+    showToast(t('backyard_not_breedable', 'Tato ryba není určena pro chov za domem.'), "error");
     return;
   }
 
@@ -370,6 +497,14 @@ function removeBackyardFish(fishId) {
 function updateModalBackyardBtn(fishId) {
   var btn = document.getElementById("modalBtnBackyard");
   if (!btn) return;
+
+  // If this fish is NOT breedable in backyard, hide the button completely
+  if (!isBackyardBreedable(fishId)) {
+    btn.style.display = "none";
+    return;
+  }
+
+  btn.style.display = "inline-flex";
   var isBred = backyardFishIds.has(fishId);
   btn.className = "btn-backyard-pill " + (isBred ? "active" : "");
   btn.innerHTML = isBred ? t('modal_btn_backyard_yes', '🏡 Za domem ✓') : t('modal_btn_backyard_no', '🏡 Za domem');
@@ -382,8 +517,24 @@ function renderModalBackyardOwners(fishId) {
   var box = document.getElementById("modalBackyardOwnersBox");
   if (!box) return;
 
+  // Only show this box for actual backyard-breedable fish
+  if (!isBackyardBreedable(fishId)) {
+    box.style.display = "none";
+    return;
+  }
+
+  box.style.display = "block";
+
   var owners = allPlayersList.filter(function (p) {
     return p.backyardFishIds && p.backyardFishIds.indexOf(fishId) !== -1;
+  });
+
+  // Sort owners: friends first, then current user, then alphabetical
+  owners.sort(function (a, b) {
+    var isFriendA = friendUids.has(a.uid) ? 1 : 0;
+    var isFriendB = friendUids.has(b.uid) ? 1 : 0;
+    if (isFriendB !== isFriendA) return isFriendB - isFriendA;
+    return a.displayName.localeCompare(b.displayName);
   });
 
   if (owners.length === 0) {
@@ -394,10 +545,11 @@ function renderModalBackyardOwners(fishId) {
 
   var pillsHtml = "";
   owners.forEach(function (p) {
+    var isFriend = friendUids.has(p.uid);
     var av = p.avatarUrl || "🎣";
     var avIcon = (av.startsWith("http://") || av.startsWith("https://")) ? "🎣" : av;
-    pillsHtml += '<span class="modal-backyard-owner-pill" onclick="window.fishaoApp.openPlayerModal(\'' + p.uid + '\')" title="' + escapeHtml(p.displayName) + '">' +
-      avIcon + ' ' + escapeHtml(p.displayName) +
+    pillsHtml += '<span class="modal-backyard-owner-pill' + (isFriend ? ' is-friend' : '') + '" onclick="window.fishaoApp.openPlayerModal(\'' + p.uid + '\')" title="' + escapeHtml(p.displayName) + (isFriend ? ' (Přítel)' : '') + '">' +
+      (isFriend ? '⭐ ' : '') + avIcon + ' ' + escapeHtml(p.displayName) +
       '</span>';
   });
 
@@ -413,8 +565,8 @@ function renderBackyardProfilePicker() {
   var countEl = document.getElementById("profileBackyardCount");
   if (!container) return;
 
-  var ids = Array.from(backyardFishIds);
-  if (countEl) countEl.innerText = ids.length + " ryb";
+  var ids = Array.from(backyardFishIds).filter(isBackyardBreedable);
+  if (countEl) countEl.innerText = ids.length + " / 83 ryb";
 
   if (ids.length === 0) {
     container.innerHTML = '<span style="font-size: 11.5px; color: var(--text-muted);">' +
@@ -439,6 +591,7 @@ function renderBackyardProfilePicker() {
 
 /**
  * Live search suggestions for adding backyard fish in profile modal
+ * (strictly filtered to the 83 backyard breedable fishes)
  */
 function onBackyardSearchInput(val) {
   var popup = document.getElementById("backyardSearchSuggestions");
@@ -451,10 +604,11 @@ function onBackyardSearchInput(val) {
   }
 
   var matches = allFishes.filter(function (f) {
+    if (!isBackyardBreedable(f)) return false;
     if (backyardFishIds.has(f.id)) return false;
     var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
     return normStr(fName).indexOf(q) !== -1 || String(f.id) === q;
-  }).slice(0, 8);
+  }).slice(0, 10);
 
   if (matches.length === 0) {
     popup.innerHTML = '<div style="padding: 8px 12px; font-size: 12px; color: var(--text-muted);">' + t('bulk_no_fish_found', 'Žádná ryba nenalezena') + '</div>';
@@ -468,7 +622,7 @@ function onBackyardSearchInput(val) {
     html += '<div class="profile-backyard-sugg-item" onclick="window.fishaoApp.selectBackyardSearchResult(' + f.id + ')">' +
       '<img src="images/fish_' + f.id + '.png" alt="" onerror="this.src=\'images/fish_icon.png\'">' +
       '<span style="font-weight: 600;">' + escapeHtml(fName) + '</span>' +
-      '<span style="font-size: 11px; color: var(--text-muted); margin-left: auto;">#' + f.id + '</span>' +
+      '<span style="font-size: 11px; color: #2dd4bf; margin-left: auto;">🏡 Za domem</span>' +
       '</div>';
   });
 
@@ -482,6 +636,23 @@ function selectBackyardSearchResult(fishId) {
   if (input) input.value = "";
   if (popup) popup.style.display = "none";
   addBackyardFish(fishId);
+}
+
+/**
+ * Update friend toggle button inside player modal
+ */
+function updateModalFriendBtn(uid) {
+  var btn = document.getElementById("playerModalFriendBtn");
+  if (!btn) return;
+  var isMe = !!(currentUser && uid === currentUser.uid);
+  if (isMe || !currentUser) {
+    btn.style.display = "none";
+    return;
+  }
+  btn.style.display = "inline-flex";
+  var isFriend = friendUids.has(uid);
+  btn.className = "pill-btn " + (isFriend ? "gold active" : "");
+  btn.innerHTML = isFriend ? '⭐ ' + t('btn_friend_yes', 'Přítel') : '☆ ' + t('btn_friend_add', 'Přidat do přátel');
 }
 
 /**
@@ -543,10 +714,10 @@ async function openPlayerModal(uid) {
     cClub = clubMem.caughtClubCount;
   }
 
-  // Backyard fish list
-  var bFishes = isMe
+  // Backyard fish list (strictly valid backyard species)
+  var bFishes = (isMe
     ? Array.from(backyardFishIds)
-    : ((player && player.backyardFishIds) || []);
+    : ((player && player.backyardFishIds) || [])).filter(isBackyardBreedable);
 
   // Avatar rendering
   var avatarWrap = document.getElementById("playerModalAvatarWrap");
@@ -577,6 +748,8 @@ async function openPlayerModal(uid) {
     }
     roleEl.innerHTML = badges.join(' ');
   }
+
+  updateModalFriendBtn(uid);
 
   var clubCountEl = document.getElementById("playerModalClubCount");
   var clubFillEl = document.getElementById("playerModalClubFill");

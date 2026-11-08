@@ -68,7 +68,7 @@ service cloud.firestore {
         && request.auth.uid == userId
         && request.resource.data.keys().hasOnly([
              'displayName', 'role', 'clubId', 'clubName', 
-             'caughtFishIds', 'backyardFishIds', 'createdAt', 'lastLogin', 'avatarUrl'
+             'caughtFishIds', 'backyardFishIds', 'friendUids', 'createdAt', 'lastLogin', 'avatarUrl'
            ])
         && request.resource.data.role == 'member'
         && request.resource.data.displayName is string
@@ -76,20 +76,22 @@ service cloud.firestore {
         && (!('avatarUrl' in request.resource.data) || (request.resource.data.avatarUrl is string && request.resource.data.avatarUrl.size() <= 500))
         && request.resource.data.caughtFishIds is list
         && request.resource.data.caughtFishIds.size() <= 1000
-        && (!('backyardFishIds' in request.resource.data) || (request.resource.data.backyardFishIds is list && request.resource.data.backyardFishIds.size() <= 300));
+        && (!('backyardFishIds' in request.resource.data) || (request.resource.data.backyardFishIds is list && request.resource.data.backyardFishIds.size() <= 300))
+        && (!('friendUids' in request.resource.data) || (request.resource.data.friendUids is list && request.resource.data.friendUids.size() <= 300));
 
       // Profile update by owner: forbidden from modifying 'role' or 'createdAt'
       allow update: if request.auth != null
         && request.auth.uid == userId
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-             'displayName', 'clubId', 'clubName', 'caughtFishIds', 'backyardFishIds', 'lastLogin', 'avatarUrl'
+             'displayName', 'clubId', 'clubName', 'caughtFishIds', 'backyardFishIds', 'friendUids', 'lastLogin', 'avatarUrl'
            ])
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() <= 40
         && (!('avatarUrl' in request.resource.data) || (request.resource.data.avatarUrl is string && request.resource.data.avatarUrl.size() <= 500))
         && request.resource.data.caughtFishIds is list
         && request.resource.data.caughtFishIds.size() <= 1000
-        && (!('backyardFishIds' in request.resource.data) || (request.resource.data.backyardFishIds is list && request.resource.data.backyardFishIds.size() <= 300));
+        && (!('backyardFishIds' in request.resource.data) || (request.resource.data.backyardFishIds is list && request.resource.data.backyardFishIds.size() <= 300))
+        && (!('friendUids' in request.resource.data) || (request.resource.data.friendUids is list && request.resource.data.friendUids.size() <= 300));
 
       // Only admins can delete user profiles
       allow delete: if isAdmin();

@@ -49,6 +49,14 @@ try {
   }
 } catch (e) {}
 var allPlayersList = [];
+var friendUids = new Set();
+try {
+  var localFriends = localStorage.getItem('fishao_friends_uids');
+  if (localFriends) {
+    friendUids = new Set(JSON.parse(localFriends));
+  }
+} catch (e) {}
+var filterPlayerFriendsOnly = false;
 var filterPlayerBackyardOnly = false;
 var filterPlayerFishId = null;
 var filterPlayerSearchText = "";

@@ -323,6 +323,7 @@
       "players_gate_desc": "Please sign in with Google to view the community of players, their catches, clubs, and backyard bred fish.",
       "players_search_placeholder": "Search player, club, or fish...",
       "players_filter_backyard_only": "Only with backyard fish",
+      "players_filter_friends_only": "Only friends",
       "players_filter_all_fishes": "All bred fish",
       "players_count_stat": "{count} players",
       "players_manage_my_backyard": "My Backyard Fish",
@@ -337,12 +338,18 @@
       "profile_backyard_label": "🏡 My backyard fish (bred in pond):",
       "profile_backyard_search_placeholder": "Add backyard fish (start typing name)...",
       "profile_backyard_empty_hint": "No fish selected yet. You can add them below or directly in the fish detail modal.",
+      "profile_backyard_notice_83": "Only the 83 fish species breedable in backyard pond can be selected.",
+      "backyard_not_breedable": "This fish cannot be bred in the backyard pond.",
       "modal_btn_backyard_yes": "🏡 In Backyard ✓",
       "modal_btn_backyard_no": "🏡 Backyard",
       "modal_backyard_owners_title": "🏡 Players with this fish in backyard:",
       "modal_backyard_owners_none": "Nobody has this fish in their backyard yet.",
       "backyard_added_toast": "Fish '{name}' added to backyard!",
-      "backyard_removed_toast": "Fish '{name}' removed from backyard."
+      "backyard_removed_toast": "Fish '{name}' removed from backyard.",
+      "friend_added_toast": "Player '{name}' added to friends ⭐",
+      "friend_removed_toast": "Player '{name}' removed from friends.",
+      "btn_friend_add": "☆ Add Friend",
+      "btn_friend_yes": "⭐ Friend"
   };
 
   if (typeof window !== 'undefined') {

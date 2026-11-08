@@ -1,4 +1,4 @@
----
+<!--  -->---
 name: fishao
 description: >-
   Comprehensive guide, data schemas, Firestore models, and code architecture for
@@ -99,7 +99,8 @@ Prices are stored as a map from `fishId` (as string) to an array of price entrie
   * `clubId`: String | null.
   * `clubName`: String | null.
   * `caughtFishIds`: Array<Number> (List of caught fish IDs, max 1000).
-  * `backyardFishIds`: Array<Number> (List of backyard bred fish IDs, max 300).
+  * `backyardFishIds`: Array<Number> (List of backyard bred fish IDs, max 300; strictly the 83 backyard breedable species).
+  * `friendUids`: Array<String> (List of favorited/friend player UIDs, max 300).
   * `createdAt`, `lastLogin`.
 
 ### 2.4 Firebase Security Rules & Communication Best Practices (`firestore.rules`)

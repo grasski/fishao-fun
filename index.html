@@ -232,10 +232,15 @@
 
     <!-- Compact Sub-Toolbar: Players & Backyard View (Teal Theme) -->
     <div class="view-action-bar teal" id="bannerPlayers" style="display: none;">
-      <div class="action-bar-left">
-        <div class="search-input-wrap" style="min-width: 240px;">
-          <input type="text" id="playerSearchInput" class="dash-input" placeholder="Hledat hráče, klub nebo rybu..." data-i18n-placeholder="players_search_placeholder" oninput="window.fishaoApp.onPlayerSearchInput(this.value)">
+      <div class="action-bar-left" style="flex: 1;">
+        <div class="search-input-wrap lg">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="playerSearchInput" class="search-input-lg" placeholder="Hledat hráče, klub nebo rybu..." data-i18n-placeholder="players_search_placeholder" oninput="window.fishaoApp.onPlayerSearchInput(this.value)">
+          <button type="button" class="search-clear-btn" id="playerSearchClearBtn" onclick="window.fishaoApp.clearPlayerSearch()" title="Vymazat hledání">&times;</button>
         </div>
+        <button type="button" class="toggle-pill" id="filterPlayerFriendsOnlyBtn" onclick="window.fishaoApp.togglePlayerFriendsFilter()">
+          ⭐ <span data-i18n="players_filter_friends_only">Pouze přátelé</span>
+        </button>
         <button type="button" class="toggle-pill" id="filterPlayerBackyardOnlyBtn" onclick="window.fishaoApp.togglePlayerBackyardFilter()">
           🏡 <span data-i18n="players_filter_backyard_only">Pouze s rybou za domem</span>
         </button>
@@ -936,6 +941,9 @@
             <input type="text" id="inputBackyardSearch" class="dash-input" placeholder="Přidat rybu za dům (začni psát název)..." data-i18n-placeholder="profile_backyard_search_placeholder" oninput="window.fishaoApp.onBackyardSearchInput(this.value)">
             <div id="backyardSearchSuggestions" class="profile-backyard-suggestions" style="display: none;"></div>
           </div>
+          <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;" data-i18n="profile_backyard_notice_83">
+            Lze vybrat pouze z 83 druhů ryb určených pro chov za domem.
+          </div>
         </div>
 
         <!-- Action buttons -->
@@ -978,7 +986,12 @@
           <!-- Large Avatar -->
         </div>
         <h3 id="playerModalName" style="margin: 10px 0 4px 0; font-size: 20px; color: var(--text-main);"></h3>
-        <div id="playerModalRole" style="margin-bottom: 16px;"></div>
+        <div id="playerModalRole" style="margin-bottom: 10px;"></div>
+        <div style="margin-bottom: 16px;">
+          <button type="button" id="playerModalFriendBtn" class="pill-btn" style="display: none; padding: 4px 14px; font-size: 12px; font-weight: 700;" onclick="window.fishaoApp.toggleFriend(document.getElementById('playerModalName').dataset.currentUid)">
+            ⭐ Přidat do přátel
+          </button>
+        </div>
 
         <div class="player-modal-stats-box">
           <!-- Club catches -->
