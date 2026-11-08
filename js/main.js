@@ -445,6 +445,8 @@ window.fishaoApp = {
   refreshPlayersList: refreshPlayersList,
   setPlayerPage: setPlayerPage,
   kickMemberFromClub: kickMemberFromClub,
+  deleteAccount: deleteAccount,
+  unbindClubListener: unbindClubListener,
   triggerManualDataRefresh: triggerManualDataRefresh,
   updateSyncCountdown: updateSyncCountdown,
   openFishDetail: openPriceModal,

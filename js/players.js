@@ -1113,6 +1113,54 @@ async function openPlayerModal(uid) {
     }
   }
 
+  // If clicking on another player in the active club, verify that their user doc still exists
+  if (!isMe && clubMem && db) {
+    try {
+      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      var snap = await fsModule.getDoc(fsModule.doc(db, "users", uid));
+      if (!snap.exists()) {
+        // Player has deleted their account: auto-clean ghost member from club!
+        if (currentClubId) {
+          try {
+            var cRef = fsModule.doc(db, "clubs", currentClubId);
+            var cSnap = await fsModule.getDoc(cRef);
+            if (cSnap.exists()) {
+              var cData = cSnap.data();
+              var cnt = cData.memberCount || 1;
+              var delPatch = {
+                memberCount: Math.max(0, cnt - 1),
+                updatedAt: new Date().toISOString(),
+                lastUpdatedBy: currentUser.uid
+              };
+              delPatch["members." + uid] = fsModule.deleteField();
+              await fsModule.updateDoc(cRef, delPatch);
+            }
+          } catch (e) {
+            console.warn("Could not clean up ghost member:", e);
+          }
+        }
+        showToast(t('club_ghost_cleaned', 'Tento hráč již smazal svůj účet a byl automaticky odebrán z klubu.'), "info");
+        closePlayerModal();
+        return;
+      } else {
+        var d = snap.data();
+        player = {
+          uid: uid,
+          displayName: d.displayName || t('user_default_player'),
+          avatarUrl: d.avatarUrl || "🎣",
+          role: d.role || "member",
+          clubId: d.clubId || "",
+          clubName: d.clubName || "",
+          caughtFishIds: Array.isArray(d.caughtFishIds) ? d.caughtFishIds : [],
+          backyardFishIds: Array.isArray(d.backyardFishIds) ? d.backyardFishIds : [],
+          createdAt: d.createdAt || ""
+        };
+      }
+    } catch (e) {
+      console.warn("Could not verify user doc for modal:", e);
+    }
+  }
+
   var defaultFisher = t('user_default_fisher', 'Rybář');
   var dName = isMe
     ? ((userProfile && userProfile.displayName) ? userProfile.displayName : ((player && player.displayName) || defaultFisher))
@@ -1234,7 +1282,9 @@ async function openPlayerModal(uid) {
 
   var creatorActions = document.getElementById("playerModalCreatorActions");
   var btnKick = document.getElementById("btnPlayerModalKick");
-  var canKick = !!(currentUser && currentClubId && currentClubCreatorId === currentUser.uid && !isMe && clubMem);
+  var myMember = (currentClubMembersMap && currentUser) ? currentClubMembersMap[currentUser.uid] : null;
+  var isLeader = !!(currentClubCreatorId === (currentUser && currentUser.uid) || (myMember && myMember.isCreator));
+  var canKick = !!(currentUser && currentClubId && isLeader && !isMe && clubMem);
   if (creatorActions) creatorActions.style.display = canKick ? "block" : "none";
   if (btnKick && canKick) {
     btnKick.onclick = function () {

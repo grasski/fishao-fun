@@ -22,34 +22,55 @@ async function bindClubListener(clubId) {
     clubUnsubscribe = fsModule.onSnapshot(clubDocRef, function (snap) {
       if (snap.exists()) {
         var data = snap.data();
+        var members = data.members || {};
+
+        // If current user is supposedly in this club, verify if still registered as member
+        if (currentUser && currentClubId === clubId) {
+          if (!members[currentUser.uid]) {
+            // User was removed / kicked or left this club: cleanly detach and do NOT resurrect!
+            console.info("Current user " + currentUser.uid + " is no longer a member of club " + clubId + ", detaching listener.");
+            if (userProfile && userProfile.clubId === clubId) {
+              userProfile.clubId = "";
+              userProfile.clubName = "";
+              try {
+                var uRef = fsModule.doc(db, "users", currentUser.uid);
+                fsModule.updateDoc(uRef, { clubId: "", clubName: "" });
+              } catch (e) {}
+            }
+            unbindClubListener();
+            showToast(t('club_you_were_removed', 'Byl jsi odebrán z klubu.'), "info");
+            return;
+          }
+        }
+
         currentClubName = data.name || "";
         currentClubPoints = typeof data.points === 'number' ? data.points : 0;
         currentClubMemberCount = typeof data.memberCount === 'number' ? data.memberCount : 1;
         currentClubUnlockedFcFishIds = new Set(data.unlockedFcFishIds || []);
         currentClubUnlockedMonsterIds = new Set(data.unlockedMonsterIds || []);
-        renderClubMembers(data.members || {}, data.createdBy);
+        renderClubMembers(members, data.createdBy);
 
-        // Self-heal: ensure current user is registered in members map and stats are synced
-        // ONLY IF user actually belongs to this club!
+        // Sync stats if current user belongs to this club and stats have changed
         if (currentUser && currentClubId === clubId && userProfile && userProfile.clubId === clubId) {
-          var myClubCount = 0;
-          clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myClubCount++; });
-          var curMember = (data.members && data.members[currentUser.uid]) || {};
-          if (!data.members || !data.members[currentUser.uid] || curMember.caughtCount !== caughtFishIds.size || curMember.caughtClubCount !== myClubCount) {
-            try {
-              var mObj = {
-                displayName: (userProfile && userProfile.displayName) ? userProfile.displayName : (curMember.displayName || "Rybář"),
-                avatarUrl: (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : (curMember.avatarUrl || "🎣"),
-                isCreator: (data.createdBy === currentUser.uid || curMember.isCreator || false),
-                joinedAt: curMember.joinedAt || new Date().toISOString(),
-                caughtCount: caughtFishIds.size,
-                caughtClubCount: myClubCount
-              };
-              var upM = {};
-              upM["members." + currentUser.uid] = mObj;
-              fsModule.updateDoc(clubDocRef, upM);
-            } catch (e) {
-              console.warn("Could not auto-register member in club:", e);
+          var curMember = members[currentUser.uid];
+          if (curMember) {
+            var myClubCount = 0;
+            clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myClubCount++; });
+            var needsSync = (curMember.caughtCount !== caughtFishIds.size ||
+                             curMember.caughtClubCount !== myClubCount ||
+                             (userProfile.displayName && curMember.displayName !== userProfile.displayName) ||
+                             (userProfile.avatarUrl && curMember.avatarUrl !== userProfile.avatarUrl));
+            if (needsSync) {
+              try {
+                var upM = {};
+                upM["members." + currentUser.uid + ".caughtCount"] = caughtFishIds.size;
+                upM["members." + currentUser.uid + ".caughtClubCount"] = myClubCount;
+                if (userProfile.displayName) upM["members." + currentUser.uid + ".displayName"] = userProfile.displayName;
+                if (userProfile.avatarUrl) upM["members." + currentUser.uid + ".avatarUrl"] = userProfile.avatarUrl;
+                fsModule.updateDoc(clubDocRef, upM);
+              } catch (e) {
+                console.warn("Could not sync member stats in club:", e);
+              }
             }
           }
         }
@@ -82,6 +103,31 @@ async function fetchAndSyncMemberStats(uid) {
   try {
     var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
     var uSnap = await fsModule.getDoc(fsModule.doc(db, "users", uid));
+    if (!uSnap.exists()) {
+      // User document does not exist (account deleted)!
+      // Clean up orphaned member from club document so ghost members disappear automatically
+      if (currentClubId) {
+        try {
+          var cRef = fsModule.doc(db, "clubs", currentClubId);
+          var cSnap = await fsModule.getDoc(cRef);
+          if (cSnap.exists()) {
+            var cData = cSnap.data();
+            var cnt = cData.memberCount || 1;
+            var delPatch = {
+              memberCount: Math.max(0, cnt - 1),
+              updatedAt: new Date().toISOString(),
+              lastUpdatedBy: currentUser.uid
+            };
+            delPatch["members." + uid] = fsModule.deleteField();
+            await fsModule.updateDoc(cRef, delPatch);
+            console.info("Cleaned up orphaned deleted member " + uid + " from club " + currentClubId);
+          }
+        } catch (e) {
+          console.warn("Could not clean up deleted member from club:", e);
+        }
+      }
+      return;
+    }
     if (uSnap.exists()) {
       var uData = uSnap.data();
       var uCaught = Array.isArray(uData.caughtFishIds) ? uData.caughtFishIds : [];
@@ -273,6 +319,7 @@ function unbindClubListener() {
   currentClubMemberCount = 1;
   currentClubUnlockedFcFishIds.clear();
   currentClubUnlockedMonsterIds.clear();
+  currentClubMembersMap = {};
   renderClubMembers({}, "");
   updateClubStats();
   renderClubMilestones();
@@ -552,6 +599,20 @@ async function leaveClub() {
           lastUpdatedBy: currentUser.uid
         };
         leaveUpdate["members." + currentUser.uid] = fsModule.deleteField();
+
+        // If creator left and other members remain, promote the oldest member
+        if (cData.createdBy === currentUser.uid || (members[currentUser.uid] && members[currentUser.uid].isCreator)) {
+          var remainingUids = Object.keys(members).filter(function (k) { return k !== currentUser.uid; });
+          if (remainingUids.length > 0) {
+            remainingUids.sort(function (a, b) {
+              var ja = (members[a] && members[a].joinedAt) || "";
+              var jb = (members[b] && members[b].joinedAt) || "";
+              return ja.localeCompare(jb);
+            });
+            leaveUpdate["members." + remainingUids[0] + ".isCreator"] = true;
+          }
+        }
+
         await fsModule.updateDoc(clubRef, leaveUpdate);
       }
     } catch (e) {
@@ -599,8 +660,10 @@ async function kickMemberFromClub(targetUid) {
     if (snap.exists()) {
       var cData = snap.data();
       var cnt = cData.memberCount || 1;
+      var members = cData.members || {};
+      var wasMember = !!members[targetUid];
       var update = {
-        memberCount: Math.max(0, cnt - 1),
+        memberCount: Math.max(0, wasMember ? (cnt - 1) : cnt),
         updatedAt: new Date().toISOString(),
         lastUpdatedBy: currentUser.uid
       };

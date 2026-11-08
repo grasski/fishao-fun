@@ -397,6 +397,8 @@
       "club_btn_kick": "Remove from club",
       "club_kick_confirm": "Are you sure you want to remove {name} from the club?",
       "club_member_kicked": "Player was removed from the club.",
+      "club_you_were_removed": "You have been removed from the club.",
+      "club_ghost_cleaned": "This player has deleted their account and was automatically removed from the club.",
       "sync_timer_tooltip": "Time until automatic data refresh: {time}",
       "sync_refresh_btn_title": "Refresh data now",
       "sync_manual_refreshed": "Data has been successfully refreshed.",

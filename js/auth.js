@@ -532,11 +532,25 @@ async function deleteAccount() {
   try {
     var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
     var uid = currentUser.uid;
+    var clubIdToLeave = (userProfile && userProfile.clubId) || currentClubId;
 
-    // 1. If user is in a club, clean up member entry from club document
-    if (userProfile && userProfile.clubId) {
+    // 1. Immediately detach club real-time listener and clear local club state
+    // This CRITICALLY prevents the onSnapshot listener from executing any self-heal re-registration
+    if (typeof unbindClubListener === 'function') {
+      unbindClubListener();
+    }
+    currentClubId = "";
+    currentClubName = "";
+    currentClubMembersMap = {};
+    if (userProfile) {
+      userProfile.clubId = "";
+      userProfile.clubName = "";
+    }
+
+    // 2. If user was in a club, clean up member entry from club document
+    if (clubIdToLeave) {
       try {
-        var clubRef = fsModule.doc(db, "clubs", userProfile.clubId);
+        var clubRef = fsModule.doc(db, "clubs", clubIdToLeave);
         var snap = await fsModule.getDoc(clubRef);
         if (snap.exists()) {
           var cData = snap.data();
@@ -549,6 +563,20 @@ async function deleteAccount() {
             lastUpdatedBy: uid
           };
           leaveUpdate["members." + uid] = fsModule.deleteField();
+
+          // If deleting user was the creator and there are other members, promote the oldest member
+          if (cData.createdBy === uid || (members[uid] && members[uid].isCreator)) {
+            var remainingUids = Object.keys(members).filter(function (k) { return k !== uid; });
+            if (remainingUids.length > 0) {
+              remainingUids.sort(function (a, b) {
+                var ja = (members[a] && members[a].joinedAt) || "";
+                var jb = (members[b] && members[b].joinedAt) || "";
+                return ja.localeCompare(jb);
+              });
+              leaveUpdate["members." + remainingUids[0] + ".isCreator"] = true;
+            }
+          }
+
           await fsModule.updateDoc(clubRef, leaveUpdate);
         }
       } catch (e) {
@@ -556,11 +584,11 @@ async function deleteAccount() {
       }
     }
 
-    // 2. Delete user profile document from Firestore
+    // 3. Delete user profile document from Firestore
     var userDocRef = fsModule.doc(db, "users", uid);
     await fsModule.deleteDoc(userDocRef);
 
-    // 3. Clear local storage and caches
+    // 4. Clear local storage and caches
     try {
       localStorage.removeItem('fishao_backyard_fish_ids');
       localStorage.removeItem('fishao_friends_uids');
@@ -568,7 +596,7 @@ async function deleteAccount() {
       sessionStorage.removeItem('fishao_players_cache_v1');
     } catch (e) {}
 
-    // 4. Remove from in-memory allPlayersList
+    // 5. Remove from in-memory allPlayersList
     if (typeof allPlayersList !== 'undefined' && Array.isArray(allPlayersList)) {
       allPlayersList = allPlayersList.filter(function (p) { return p.uid !== uid; });
     }
@@ -581,7 +609,7 @@ async function deleteAccount() {
     currentClubName = "";
     isAdmin = false;
 
-    // 5. Delete Firebase Auth user if supported, or sign out
+    // 6. Delete Firebase Auth user if supported, or sign out
     try {
       if (typeof currentUser.delete === 'function') {
         await currentUser.delete();

@@ -397,6 +397,8 @@
       "club_btn_kick": "Odebrat z klubu",
       "club_kick_confirm": "Opravdu chceš odebrat hráče {name} z klubu?",
       "club_member_kicked": "Hráč byl odebrán z klubu.",
+      "club_you_were_removed": "Byl jsi odebrán z klubu.",
+      "club_ghost_cleaned": "Tento hráč již smazal svůj účet a byl automaticky odebrán z klubu.",
       "sync_timer_tooltip": "Čas do automatického obnovení dat: {time}",
       "sync_refresh_btn_title": "Okamžitě aktualizovat data",
       "sync_manual_refreshed": "Data byla úspěšně aktualizována.",
