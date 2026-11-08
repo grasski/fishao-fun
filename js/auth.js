@@ -5,11 +5,15 @@
  * profile modal interactions, and auth state changes.
  */
 
+var firebaseAnalytics = null;
+var analyticsModuleRef = null;
+
 async function initFirebaseSync() {
   if (!isFirebaseConfigured) {
     currentSyncState = "local";
     updateSyncBadgeUI();
     updateAuthUI();
+    checkCookieConsentBanner();
     return;
   }
 
@@ -25,6 +29,11 @@ async function initFirebaseSync() {
 
     currentSyncState = "live";
     updateSyncBadgeUI();
+
+    checkCookieConsentBanner();
+    if (localStorage.getItem("fishao_cookie_consent") === "granted") {
+      initFirebaseAnalytics();
+    }
 
     authModule.onAuthStateChanged(auth, function (user) {
       currentUser = user;
@@ -77,6 +86,127 @@ async function initFirebaseSync() {
     currentSyncState = "error";
     updateSyncBadgeUI();
     updateAuthUI();
+    checkCookieConsentBanner();
+  }
+}
+
+/**
+ * Firebase Analytics & Cookie Consent Management
+ * Strictly opt-in: Analytics is NOT initialized unless user explicitly accepts.
+ */
+async function initFirebaseAnalytics() {
+  if (firebaseAnalytics) return firebaseAnalytics;
+  if (localStorage.getItem("fishao_cookie_consent") !== "granted") return null;
+  if (!firebaseApp || !firebaseConfig || !firebaseConfig.measurementId) return null;
+
+  try {
+    var analyticsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js");
+    var supported = await analyticsModule.isSupported();
+    if (!supported) return null;
+
+    analyticsModuleRef = analyticsModule;
+    firebaseAnalytics = analyticsModule.getAnalytics(firebaseApp);
+    analyticsModule.logEvent(firebaseAnalytics, "app_open");
+    return firebaseAnalytics;
+  } catch (err) {
+    console.warn("Firebase Analytics skipped or unavailable:", err);
+    return null;
+  }
+}
+
+function logAnalyticsEvent(eventName, eventParams) {
+  if (!firebaseAnalytics || !analyticsModuleRef) return;
+  try {
+    analyticsModuleRef.logEvent(firebaseAnalytics, eventName, eventParams || {});
+  } catch (e) {
+    console.debug("Analytics event failed:", e);
+  }
+}
+
+function checkCookieConsentBanner() {
+  var consent = localStorage.getItem("fishao_cookie_consent");
+  var banner = document.getElementById("cookieConsentBanner");
+  if (!banner) return;
+
+  if (!consent) {
+    banner.style.display = "flex";
+  } else {
+    banner.style.display = "none";
+  }
+}
+
+function acceptCookieConsent(fromPrivacyModal) {
+  localStorage.setItem("fishao_cookie_consent", "granted");
+  var banner = document.getElementById("cookieConsentBanner");
+  if (banner) banner.style.display = "none";
+
+  if (firebaseApp) {
+    initFirebaseAnalytics();
+  }
+  updatePrivacyConsentStatusUI();
+  if (typeof showToast === "function") {
+    showToast(t("cookies_accepted_toast") || "Analytické cookies byly povoleny. Děkujeme!", "success");
+  }
+}
+
+function declineCookieConsent(fromPrivacyModal) {
+  localStorage.setItem("fishao_cookie_consent", "denied");
+  var banner = document.getElementById("cookieConsentBanner");
+  if (banner) banner.style.display = "none";
+
+  firebaseAnalytics = null;
+  clearAnalyticsCookies();
+  updatePrivacyConsentStatusUI();
+  if (typeof showToast === "function") {
+    showToast(t("cookies_declined_toast") || "Analytické cookies byly odmítnuty.", "info");
+  }
+}
+
+function clearAnalyticsCookies() {
+  try {
+    var cookies = document.cookie.split(";");
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = cookies[i].trim();
+      var eqPos = cookie.indexOf("=");
+      var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      if (name.indexOf("_ga") === 0) {
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" + window.location.hostname;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+      }
+    }
+  } catch (e) {
+    console.debug("Could not clear analytics cookies:", e);
+  }
+}
+
+function updatePrivacyConsentStatusUI() {
+  var badge = document.getElementById("privacyConsentStatusBadge");
+  var btnAccept = document.getElementById("privacyBtnAccept");
+  var btnDecline = document.getElementById("privacyBtnDecline");
+  if (!badge) return;
+
+  var consent = localStorage.getItem("fishao_cookie_consent");
+  if (consent === "granted") {
+    badge.textContent = t("cookie_status_granted") || "Povoleno (aktivní)";
+    badge.style.background = "rgba(16, 185, 129, 0.2)";
+    badge.style.color = "#34d399";
+    badge.style.border = "1px solid rgba(16, 185, 129, 0.4)";
+    if (btnAccept) btnAccept.style.display = "none";
+    if (btnDecline) btnDecline.style.display = "inline-flex";
+  } else if (consent === "denied") {
+    badge.textContent = t("cookie_status_denied") || "Odmítnuto (vypnuto)";
+    badge.style.background = "rgba(239, 68, 68, 0.15)";
+    badge.style.color = "#f87171";
+    badge.style.border = "1px solid rgba(239, 68, 68, 0.3)";
+    if (btnAccept) btnAccept.style.display = "inline-flex";
+    if (btnDecline) btnDecline.style.display = "none";
+  } else {
+    badge.textContent = t("cookie_status_undecided") || "Zatím nenastaveno (vypnuto)";
+    badge.style.background = "rgba(148, 163, 184, 0.15)";
+    badge.style.color = "#94a3b8";
+    badge.style.border = "1px solid rgba(148, 163, 184, 0.3)";
+    if (btnAccept) btnAccept.style.display = "inline-flex";
+    if (btnDecline) btnDecline.style.display = "inline-flex";
   }
 }
 

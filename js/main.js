@@ -139,6 +139,10 @@ function switchView(view) {
   }
   currentView = view;
 
+  if (typeof logAnalyticsEvent === "function") {
+    logAnalyticsEvent("screen_view", { screen_name: view });
+  }
+
   var tabs = ["tabClub", "tabAll", "tabClubManage", "tabMarket", "tabPlayers"];
   var tabMap = {
     "club": "tabClub",
@@ -319,9 +323,16 @@ function setLanguage(lang) {
       openPriceModal(selectedModalFishId);
     }
   }
+
+  if (typeof updatePrivacyConsentStatusUI === 'function') {
+    updatePrivacyConsentStatusUI();
+  }
 }
 
 function openPrivacyModal() {
+  if (typeof updatePrivacyConsentStatusUI === 'function') {
+    updatePrivacyConsentStatusUI();
+  }
   var modal = document.getElementById("privacyModalOverlay");
   if (modal) modal.classList.add("active");
 }
@@ -402,6 +413,10 @@ window.fishaoApp = {
   closePlayerModal: closePlayerModal,
   openPrivacyModal: openPrivacyModal,
   closePrivacyModal: closePrivacyModal,
+  acceptCookieConsent: acceptCookieConsent,
+  declineCookieConsent: declineCookieConsent,
+  updatePrivacyConsentStatusUI: updatePrivacyConsentStatusUI,
+  logAnalyticsEvent: logAnalyticsEvent,
   selectPresetAvatar: selectPresetAvatar,
   onAvatarUrlInput: onAvatarUrlInput,
   saveProfile: saveProfile,

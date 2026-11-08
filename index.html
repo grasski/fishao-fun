@@ -6,15 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FISHAO – Encyklopedie a Klubové ryby</title>
   <!-- Modern Modular Stylesheets -->
-  <link rel="stylesheet" href="css/base.css?v=2.3">
-  <link rel="stylesheet" href="css/header.css?v=2.3">
-  <link rel="stylesheet" href="css/nav.css?v=2.3">
-  <link rel="stylesheet" href="css/filters.css?v=2.3">
-  <link rel="stylesheet" href="css/table.css?v=2.3">
-  <link rel="stylesheet" href="css/clubs.css?v=2.3">
-  <link rel="stylesheet" href="css/players.css?v=2.3">
-  <link rel="stylesheet" href="css/modals.css?v=2.3">
-  <link rel="stylesheet" href="css/responsive.css?v=2.3">
+  <link rel="stylesheet" href="css/base.css?v=2.4">
+  <link rel="stylesheet" href="css/header.css?v=2.4">
+  <link rel="stylesheet" href="css/nav.css?v=2.4">
+  <link rel="stylesheet" href="css/filters.css?v=2.4">
+  <link rel="stylesheet" href="css/table.css?v=2.4">
+  <link rel="stylesheet" href="css/clubs.css?v=2.4">
+  <link rel="stylesheet" href="css/players.css?v=2.4">
+  <link rel="stylesheet" href="css/modals.css?v=2.4">
+  <link rel="stylesheet" href="css/responsive.css?v=2.4">
 </head>
 
 <body>
@@ -1303,12 +1303,18 @@
           </div>
 
           <div>
-            <h4 style="color: #38bdf8; margin: 0 0 6px 0; font-size: 14px;" data-i18n="privacy_sec3_title">3. Žádné
-              sledování ani cookies třetích stran</h4>
-            <p style="margin: 0;" data-i18n="privacy_sec3_desc">Web nepoužívá Google Analytics, reklamní trackery,
-              Facebook Pixel ani žádné jiné sledovací skripty třetích stran. Do lokálního úložiště prohlížeče
-              (localStorage/sessionStorage) se ukládají výhradně technická nastavení nezbytná pro fungování webu
-              (zvolený jazyk, časové pásmo, mezipaměť cen a hráčů pro snížení přenosu dat).</p>
+            <h4 style="color: #38bdf8; margin: 0 0 6px 0; font-size: 14px;" data-i18n="privacy_sec3_title">3. Volitelná analytika &amp; Cookies</h4>
+            <p style="margin: 0 0 10px 0;" data-i18n="privacy_sec3_desc">Web standardně neukládá žádné sledovací cookies třetích stran a funguje plně bez nich. Pokud v dolní liště udělíš souhlas s analytikou, spustí se volitelná anonymní služba Google Firebase Analytics (výhradně pro zjištění celkové návštěvnosti, oblíbených ryb a typů zařízení). Pokud souhlas odmítneš nebo neudělíš, analytika se vůbec nenačte a žádná data se neodesílají. Do technického úložiště prohlížeče (localStorage/sessionStorage) se ukládají pouze funkční nastavení webu (zvolený jazyk, časové pásmo, mezipaměť dat). Svůj souhlas s analytikou můžeš kdykoliv změnit níže.</p>
+            <div id="privacyConsentStatusWrap" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+              <div style="font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                <span data-i18n="cookie_privacy_status_label">Stav analytických cookies:</span>
+                <span id="privacyConsentStatusBadge" style="font-weight: 700; padding: 2px 8px; border-radius: 4px; font-size: 11px;"></span>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" id="privacyBtnDecline" class="pill-btn danger" style="padding: 4px 10px; font-size: 11.5px;" onclick="window.fishaoApp.declineCookieConsent(true)" data-i18n="cookie_privacy_btn_decline">Odmítnout a vypnout</button>
+                <button type="button" id="privacyBtnAccept" class="pill-btn primary" style="padding: 4px 10px; font-size: 11.5px;" onclick="window.fishaoApp.acceptCookieConsent(true)" data-i18n="cookie_privacy_btn_accept">Povolit analytiku</button>
+              </div>
+            </div>
           </div>
 
           <div>
@@ -1336,27 +1342,42 @@
     </div>
   </div>
 
+  <!-- Discreet Bottom Cookie Consent Banner (Firebase Analytics Opt-in) -->
+  <div id="cookieConsentBanner" class="cookie-consent-banner" style="display: none;">
+    <div class="cookie-content">
+      <span class="cookie-icon">🍪</span>
+      <span>
+        <span data-i18n="cookie_banner_text">Tento web používá volitelné anonymní analytické cookies (Firebase Analytics) pro měření návštěvnosti. Bez tvého souhlasu jsou zcela vypnuté.</span>
+        <a class="cookie-link" onclick="window.fishaoApp.openPrivacyModal();" data-i18n="cookie_banner_learn_more">Více informací</a>
+      </span>
+    </div>
+    <div class="cookie-actions">
+      <button type="button" class="cookie-btn decline" onclick="window.fishaoApp.declineCookieConsent()" data-i18n="cookie_btn_decline">Odmítnout</button>
+      <button type="button" class="cookie-btn accept" onclick="window.fishaoApp.acceptCookieConsent()" data-i18n="cookie_btn_accept">Povolit analytiku</button>
+    </div>
+  </div>
+
   <!-- App Floating Toast Notification -->
   <div id="appToast" class="app-toast" style="display: none;"></div>
 
   <!-- Data scripts and localization -->
-  <script src="data/i18n/ui_cs.js?v=2.3"></script>
-  <script src="data/i18n/ui_en.js?v=2.3"></script>
-  <script src="data/i18n/taxonomies.js?v=2.3"></script>
-  <script src="data/i18n/fish_names.js?v=2.3"></script>
-  <script src="data/i18n.js?v=2.3"></script>
-  <script src="data/fishes.js?v=2.3"></script>
-  <script src="data/prices.js?v=2.3"></script>
-  <script src="firebase-config.js?v=2.3"></script>
+  <script src="data/i18n/ui_cs.js?v=2.4"></script>
+  <script src="data/i18n/ui_en.js?v=2.4"></script>
+  <script src="data/i18n/taxonomies.js?v=2.4"></script>
+  <script src="data/i18n/fish_names.js?v=2.4"></script>
+  <script src="data/i18n.js?v=2.4"></script>
+  <script src="data/fishes.js?v=2.4"></script>
+  <script src="data/prices.js?v=2.4"></script>
+  <script src="firebase-config.js?v=2.4"></script>
   <!-- Modular FISHAO Application Logic -->
-  <script src="js/state.js?v=2.3"></script>
-  <script src="js/table.js?v=2.3"></script>
-  <script src="js/clubs.js?v=2.3"></script>
-  <script src="js/market.js?v=2.3"></script>
-  <script src="js/filters.js?v=2.3"></script>
-  <script src="js/auth.js?v=2.3"></script>
-  <script src="js/players.js?v=2.3"></script>
-  <script src="js/main.js?v=2.3"></script>
+  <script src="js/state.js?v=2.4"></script>
+  <script src="js/table.js?v=2.4"></script>
+  <script src="js/clubs.js?v=2.4"></script>
+  <script src="js/market.js?v=2.4"></script>
+  <script src="js/filters.js?v=2.4"></script>
+  <script src="js/auth.js?v=2.4"></script>
+  <script src="js/players.js?v=2.4"></script>
+  <script src="js/main.js?v=2.4"></script>
 
 </body>
 
