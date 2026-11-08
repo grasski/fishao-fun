@@ -1,0 +1,432 @@
+/**
+ * FISHAO - Table & Display Rendering (js/table.js)
+ * -------------------------------------------------------------
+ * Fish table rendering (Club / All / Market / Collection),
+ * time formatting (UTC / Local), price cells, rating badges,
+ * and caught collection toggling.
+ */
+
+function utcToLocalStr(utcH, utcM) {
+  var d = new Date();
+  d.setUTCHours(utcH, utcM || 0, 0, 0);
+  return d.getHours().toString().padStart(2, '0') + ":" + d.getMinutes().toString().padStart(2, '0');
+}
+
+function formatCatchTime(rawTimes) {
+  if (!rawTimes || rawTimes.length === 0) return { primary: t('time_all_day'), sub: "" };
+  if (userTimezone === "utc") {
+    return { primary: rawTimes.join(', ') + " UTC", sub: "" };
+  }
+  var converted = rawTimes.map(function (part) {
+    var clean = part.trim();
+    if (!clean.includes('-')) return clean;
+    var parts = clean.split('-');
+    var sParts = parts[0].split(':').map(Number);
+    var eParts = parts[1].split(':').map(Number);
+    var sLocal = utcToLocalStr(sParts[0], sParts[1] || 0);
+    var eLocal = utcToLocalStr(eParts[0], eParts[1] || 0);
+    return sLocal + " - " + eLocal;
+  });
+  return {
+    primary: converted.join(', '),
+    sub: "(UTC: " + rawTimes.join(', ') + ")"
+  };
+}
+
+function isFishActiveNow(rawTimes) {
+  if (!rawTimes || rawTimes.length === 0) return true;
+  var now = new Date();
+  var curUtcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+
+  for (var i = 0; i < rawTimes.length; i++) {
+    var clean = rawTimes[i].trim();
+    if (!clean.includes('-')) continue;
+    var parts = clean.split('-');
+    var sParts = parts[0].split(':').map(Number);
+    var eParts = parts[1].split(':').map(Number);
+    var st = sParts[0] * 60 + (sParts[1] || 0);
+    var et = eParts[0] * 60 + (eParts[1] || 0);
+    if (et === 0) et = 24 * 60;
+
+    if (et <= st) {
+      if (curUtcMinutes >= st || curUtcMinutes <= et) return true;
+    } else {
+      if (curUtcMinutes >= st && curUtcMinutes <= et) return true;
+    }
+  }
+  return false;
+}
+
+function isFishActiveAtLocalHour(rawTimes, testLocalHour) {
+  var d = new Date();
+  d.setHours(testLocalHour, 0, 0, 0);
+  var testUtcHour = d.getUTCHours();
+  return isFishActiveAtUTCHour(rawTimes, testUtcHour);
+}
+
+function isFishActiveAtUTCHour(rawTimes, testUtcHour) {
+  if (!rawTimes || rawTimes.length === 0) return true;
+  for (var i = 0; i < rawTimes.length; i++) {
+    var clean = rawTimes[i].trim();
+    if (!clean.includes('-')) continue;
+    var parts = clean.split('-');
+    var sParts = parts[0].split(':').map(Number);
+    var eParts = parts[1].split(':').map(Number);
+    var st = sParts[0] * 60 + (sParts[1] || 0);
+    var et = eParts[0] * 60 + (eParts[1] || 0);
+    if (et === 0) et = 24 * 60;
+    var cur = testUtcHour * 60;
+    if (et <= st) {
+      if (cur >= st || cur <= et) return true;
+    } else {
+      if (cur >= st && cur <= et) return true;
+    }
+  }
+  return false;
+}
+
+function renderRatingBadge(r) {
+  var ratingNum = Math.max(1, Math.min(5, parseInt(r) || 1));
+  var filledStars = "★".repeat(ratingNum);
+  var emptyStars = "★".repeat(5 - ratingNum);
+  return '<span class="rating-badge rate-' + ratingNum + '" title="' + t('rating_title', { rating: ratingNum }) + '">' +
+    '<span class="rating-num">' + ratingNum + '★</span>' +
+    '<span class="rating-stars-track">' +
+    '<span class="stars-active">' + filledStars + '</span>' +
+    '<span class="stars-inactive">' + emptyStars + '</span>' +
+    '</span>' +
+    '</span>';
+}
+
+function renderPriceCell(fid) {
+  var isSunday = isMarketClosedToday();
+  var todayEntry = getTodayPrice(fid);
+  var latest = getLatestPrice(fid);
+  var list = getFishPrices(fid);
+  var locale = getLocale();
+  var histCount = list.length > 1 ? '<span class="price-history-count" title="' + t('price_history_count_title') + '">' + list.length + 'x</span>' : "";
+
+  if (isSunday) {
+    if (latest) {
+      var dateFormatted = formatPriceDate(latest.date);
+      var titleText = t('price_cell_sunday_title', { price: latest.price.toLocaleString(locale), date: dateFormatted });
+      return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + titleText + '">' +
+        '<span class="price-badge price-closed"><span class="price-closed-icon">🔒</span> ' +
+        '<span class="price-closed-label">' + t('market_closed_tag') + '</span> ' +
+        '<span class="price-past-sub">(' + t('price_last_prefix') + ' ' + latest.price.toLocaleString(locale) + ' FB)</span>' +
+        histCount + '</span></div>';
+    } else {
+      return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + t('market_closed_notice') + '">' +
+        '<span class="price-empty price-closed-empty"><span class="price-closed-icon">🔒</span> ' + t('market_closed_tag') + '</span></div>';
+    }
+  }
+
+  if (todayEntry) {
+    var todayTitle = t('price_cell_today_active_title', { price: todayEntry.price.toLocaleString(locale) });
+    return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + todayTitle + '">' +
+      '<span class="price-badge price-today"><span class="cash-icon">💵</span> ' +
+      todayEntry.price.toLocaleString(locale) + ' FB ' +
+      '<span class="badge-today-pill">' + t('price_today_tag') + '</span>' +
+      histCount + '</span></div>';
+  } else if (latest) {
+    var dateFormatted = formatPriceDate(latest.date);
+    var pastTitle = t('price_cell_past_title', { price: latest.price.toLocaleString(locale), date: dateFormatted });
+    return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + pastTitle + '">' +
+      '<span class="price-badge price-past"><span class="price-past-dash">--</span> ' +
+      '<span class="price-past-sub">(' + t('price_last_prefix') + ' ' + latest.price.toLocaleString(locale) + ' FB)</span>' +
+      histCount + '</span></div>';
+  } else {
+    return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + t('price_cell_add_title') + '">' +
+      '<span class="price-empty">+ ' + t('price_add_btn') + '</span></div>';
+  }
+}
+
+function renderCaughtBtn(fishId) {
+  var isCaught = caughtFishIds.has(fishId);
+  var title = !currentUser
+    ? t('auth_notice_collection')
+    : (isCaught ? t('caught_btn_unmarked_title') : t('caught_btn_mark_title'));
+  return '<button class="caught-btn' + (isCaught ? ' caught' : '') + '" onclick="event.stopPropagation(); window.fishaoApp.toggleCaughtFish(' + fishId + ')" title="' + title + '">' +
+    (isCaught ? '✓' : '') + '</button>';
+}
+
+function updateModalCaughtBtn(fid) {
+  var btn = document.getElementById("modalBtnCaught");
+  if (!btn) return;
+  var isCaught = caughtFishIds.has(fid);
+  btn.className = "btn-caught-pill " + (isCaught ? "caught" : "");
+  btn.innerHTML = isCaught ? t('modal_btn_caught_yes') : t('modal_btn_caught_no');
+}
+
+function toggleCaughtFromModal() {
+  if (!selectedModalFishId) return;
+  toggleCaughtFish(selectedModalFishId);
+  updateModalCaughtBtn(selectedModalFishId);
+}
+
+async function toggleCaughtFish(fishId) {
+  if (!currentUser) {
+    showAuthNotice(t('auth_notice_collection'));
+    return;
+  }
+
+  if (caughtFishIds.has(fishId)) {
+    caughtFishIds.delete(fishId);
+  } else {
+    caughtFishIds.add(fishId);
+  }
+
+  if (currentUser && db) {
+    try {
+      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      var userDocRef = fsModule.doc(db, "users", currentUser.uid);
+      await fsModule.updateDoc(userDocRef, {
+        caughtFishIds: Array.from(caughtFishIds)
+      });
+
+      if (currentClubId) {
+        try {
+          var myClubCount = 0;
+          clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myClubCount++; });
+          var clubDocRef = fsModule.doc(db, "clubs", currentClubId);
+          var mSync = {};
+          mSync["members." + currentUser.uid + ".caughtCount"] = caughtFishIds.size;
+          mSync["members." + currentUser.uid + ".caughtClubCount"] = myClubCount;
+          await fsModule.updateDoc(clubDocRef, mSync);
+        } catch (e) {
+          console.warn("Could not sync member catch counts to club:", e);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to update caught fish:", err);
+    }
+  }
+
+  updateCaughtStats();
+  if (currentView === 'club_manage') {
+    renderClubMilestones();
+  } else {
+    applyFilters();
+  }
+}
+
+function updateCaughtStats() {
+  var clubCount = 0;
+  var allCount = 0;
+
+  clubFishes.forEach(function (f) {
+    if (caughtFishIds.has(f.id)) clubCount++;
+  });
+  allFishes.forEach(function (f) {
+    if (caughtFishIds.has(f.id)) allCount++;
+  });
+
+  var clubCountEl = document.getElementById("caughtClubCount");
+  var allCountEl = document.getElementById("caughtAllCount");
+  var progressEl = document.getElementById("caughtProgressFill");
+  var pctTextEl = document.getElementById("caughtPctText");
+  var navBadge = document.getElementById("navCaughtBadge");
+
+  if (clubCountEl) clubCountEl.innerText = clubCount;
+  if (allCountEl) allCountEl.innerText = allCount;
+
+  var pct = allFishes.length > 0 ? (allCount / allFishes.length * 100) : 0;
+  if (currentView === "club") {
+    pct = clubFishes.length > 0 ? (clubCount / clubFishes.length * 100) : 0;
+  }
+
+  if (progressEl) progressEl.style.width = pct.toFixed(1) + "%";
+  if (pctTextEl) pctTextEl.innerText = pct.toFixed(0) + "%";
+
+  if (navBadge) {
+    if (!currentUser) {
+      navBadge.innerText = t('badge_locked');
+    } else {
+      navBadge.innerText = (currentView === "club" ? clubCount + " / 80" : allCount + " / 615");
+    }
+  }
+
+  var clubPtsBadge = document.getElementById("navClubPtsBadge");
+  if (clubPtsBadge) {
+    if (!currentUser) {
+      clubPtsBadge.innerText = t('badge_locked');
+    } else if (currentClubName) {
+      clubPtsBadge.innerText = currentClubPoints.toLocaleString(getLocale()) + " " + t('unit_pts');
+    } else {
+      clubPtsBadge.innerText = t('badge_no_club');
+    }
+  }
+
+  var manageCaught = document.getElementById("manageCaughtClub");
+  if (manageCaught) {
+    manageCaught.innerText = t('status_caught_count', { caught: clubCount, total: clubFishes.length });
+  }
+  var manageFill = document.getElementById("manageProgressFill");
+  if (manageFill) {
+    var clubPct = clubFishes.length > 0 ? (clubCount / clubFishes.length * 100) : 0;
+    manageFill.style.width = clubPct.toFixed(1) + "%";
+  }
+
+  var marketSummary = document.getElementById("marketStatsSummary");
+  if (marketSummary) {
+    var priceCount = Object.keys(priceHistory).length;
+    marketSummary.innerText = t('market_recorded_prices', { count: priceCount });
+  }
+}
+
+function updateMarketTabStatus() {
+  var pill = document.getElementById("tabMarketPill");
+  var isSunday = isMarketClosedToday();
+  if (pill) {
+    if (isSunday) {
+      pill.innerHTML = '🔒 ' + t('market_closed_tag');
+      pill.classList.add("pill-closed");
+      pill.setAttribute("title", t('market_closed_sunday_tooltip'));
+    } else {
+      pill.innerText = t('nav_market_pill');
+      pill.classList.remove("pill-closed");
+      pill.removeAttribute("title");
+    }
+  }
+
+  var bannerSunday = document.getElementById("bannerMarketSunday");
+  if (bannerSunday) {
+    bannerSunday.style.display = (currentView === "market" && isSunday) ? "flex" : "none";
+  }
+
+  var marketSummary = document.getElementById("marketStatsSummary");
+  if (marketSummary) {
+    var priceCount = Object.keys(priceHistory).length;
+    var summaryText = t('market_recorded_prices', { count: priceCount });
+    if (isSunday) {
+      summaryText += ' • ' + t('market_closed_sunday_short');
+    }
+    marketSummary.innerText = summaryText;
+  }
+}
+
+function renderTableHead() {
+  var thead = document.getElementById("tableHead");
+  if (!thead) return;
+  var caughtCol = '<th style="width: 44px; text-align: center;" title="' + t('col_caught_title') + '">✓</th>';
+  var isSunday = isMarketClosedToday();
+  var priceColHtml = '<th>' + t('col_price') + (isSunday ? ' <span class="th-sunday-closed-pill" title="' + t('market_closed_sunday_tooltip') + '">🔒 ' + t('market_closed_tag') + '</span>' : '') + '</th>';
+
+  if (currentView === "club") {
+    thead.innerHTML =
+      '<tr>' +
+      '<th style="width: 48px;">#</th>' +
+      caughtCol +
+      '<th style="width: 95px;">' + t('col_appearance') + '</th>' +
+      '<th>' + t('col_water') + '</th>' +
+      '<th>' + t('col_fish') + '</th>' +
+      '<th>' + t('col_rarity') + '</th>' +
+      priceColHtml +
+      '<th>' + t('col_baits') + '</th>' +
+      '<th>' + t('col_time') + '</th>' +
+      '<th>' + t('col_size') + '</th>' +
+      '<th style="min-width: 140px;">' + t('col_unlock') + '</th>' +
+      '</tr>';
+  } else {
+    thead.innerHTML =
+      '<tr>' +
+      '<th style="width: 48px;">#</th>' +
+      caughtCol +
+      '<th style="width: 95px;">' + t('col_appearance') + '</th>' +
+      '<th>' + t('col_fish') + '</th>' +
+      '<th>' + t('col_rarity') + '</th>' +
+      priceColHtml +
+      '<th>' + t('col_loc') + '</th>' +
+      '<th>' + t('col_baits') + '</th>' +
+      '<th>' + t('col_time') + '</th>' +
+      '<th>' + t('col_size') + '</th>' +
+      '</tr>';
+  }
+}
+
+function renderTableBody(data) {
+  var tbody = document.getElementById("tableBody");
+  var total = currentView === "club" ? clubFishes.length : allFishes.length;
+
+  if (data.length === 0) {
+    var colCount = currentView === "club" ? 11 : 10;
+    tbody.innerHTML = '<tr><td colspan="' + colCount + '" class="empty-state">' + t('table_empty_state') + '</td></tr>';
+    document.getElementById("counter").innerText = t('counter_showing', { shown: 0, total: total });
+    return;
+  }
+
+  var rowClickTitle = t('price_cell_detail_title');
+  var activeNowLabel = t('time_active_now_short');
+
+  if (currentView === "club") {
+    tbody.innerHTML = data.map(function (f) {
+      var isNow = isFishActiveNow(f.raw_times);
+      var timeInfo = formatCatchTime(f.raw_times);
+      var unlock = getUnlockStatus(f, currentClubPoints);
+      var rowClass = [];
+      if (!unlock.isUnlocked) rowClass.push("row-locked");
+      if (caughtFishIds.has(f.id)) rowClass.push("row-caught");
+
+      var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
+      var waterLabel = f.water === 'Slaná' ? ('🌊 ' + t('water_salt_short')) : ('🌿 ' + t('water_fresh_short'));
+
+      return '<tr class="' + rowClass.join(' ') + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + rowClickTitle + '">' +
+        '<td style="color: var(--text-muted); font-weight: 600;">' + f.order + '</td>' +
+        '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
+        '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + fishName + '" class="fish-img" onerror="this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'"></div></td>' +
+        '<td><span class="badge ' + (f.water === 'Slaná' ? 'badge-salt' : 'badge-fresh') + '">' + waterLabel + '</span></td>' +
+        '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + fishName + '</div></td>' +
+        '<td>' + renderRatingBadge(f.rating) + '</td>' +
+        '<td>' + renderPriceCell(f.id) + '</td>' +
+        '<td>' + f.baits.map(function (b) {
+          var bName = window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(b) : b;
+          return '<span class="bait-tag">' + bName + '</span>';
+        }).join('') + '</td>' +
+        '<td><div class="time-cell"><span class="time-badge ' + (f.is_night ? 'time-night' : '') + '">' +
+        (f.is_night ? '🌙 ' : '☀️ ') + timeInfo.primary +
+        (isNow ? '<span class="time-now-active">' + activeNowLabel + '</span>' : '') +
+        '</span>' + (timeInfo.sub ? '<span class="time-subtext">' + timeInfo.sub + '</span>' : '') + '</div></td>' +
+        '<td class="len-box"><span class="len-dim">' + f.min_l + '</span> / <strong class="len-avg">' + f.avg_l + ' cm</strong> / <span class="len-dim">' + f.max_l + ' cm</span></td>' +
+        '<td><div class="' + (unlock.isUnlocked ? 'status-unlocked' : 'status-locked') + '"><span class="status-cost">' + unlock.costText + '</span><span class="status-desc">' + unlock.desc + '</span></div></td>' +
+        '</tr>';
+    }).join('');
+  } else {
+    var clubTagText = t('badge_club_fish');
+    var unspecText = t('loc_unspecified');
+
+    tbody.innerHTML = data.map(function (f, idx) {
+      var isNow = isFishActiveNow(f.raw_times);
+      var timeInfo = formatCatchTime(f.raw_times);
+      var rowClass = caughtFishIds.has(f.id) ? "row-caught" : "";
+      var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
+
+      return '<tr class="' + rowClass + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + rowClickTitle + '">' +
+        '<td style="color: var(--text-muted); font-weight: 600;">' + (idx + 1) + '</td>' +
+        '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
+        '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + fishName + '" class="fish-img" onerror="this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'"></div></td>' +
+        '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + fishName +
+        (f.is_club ? '<span class="badge-club-tag">' + clubTagText + '</span>' : '') +
+        '</div></td>' +
+        '<td>' + renderRatingBadge(f.rating) + '</td>' +
+        '<td>' + renderPriceCell(f.id) + '</td>' +
+        '<td style="max-width: 250px;">' +
+        (f.locations.length ? f.locations.map(function (loc) {
+          var locName = window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(loc) : loc;
+          return '<span class="loc-tag">' + locName + '</span>';
+        }).join('') : '<span style="color:var(--text-muted); font-size:12px;">' + unspecText + '</span>') +
+        '</td>' +
+        '<td>' + f.baits.map(function (b) {
+          var bName = window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(b) : b;
+          return '<span class="bait-tag">' + bName + '</span>';
+        }).join('') + '</td>' +
+        '<td><div class="time-cell"><span class="time-badge ' + (f.is_night ? 'time-night' : '') + '">' +
+        (f.is_night ? '🌙 ' : '☀️ ') + timeInfo.primary +
+        (isNow ? '<span class="time-now-active">' + activeNowLabel + '</span>' : '') +
+        '</span>' + (timeInfo.sub ? '<span class="time-subtext">' + timeInfo.sub + '</span>' : '') + '</div></td>' +
+        '<td class="len-box"><span class="len-dim">' + f.min_l + '</span> / <strong class="len-avg">' + f.avg_l + ' cm</strong> / <span class="len-dim">' + f.max_l + ' cm</span></td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  document.getElementById("counter").innerText = t('counter_showing', { shown: data.length, total: total });
+}

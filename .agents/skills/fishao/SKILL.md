@@ -79,20 +79,55 @@ Prices are stored as a map from `fishId` (as string) to an array of price entrie
 
 ### 2.3 Cloud Firestore Collections
 
-* `/prices/history`:
-  * Document `data`: Contains `{ prices: { [fishId]: [ { date, price } ] } }`.
+* `/fishao_market/prices_history`:
+  * Document `prices_history`: Contains `{ prices: { [fishId]: [ { date, price } ] }, lastUpdated: Timestamp }`.
+  * Readable by everyone. Writable only by authenticated users.
 * `/clubs/{clubId}`:
-  * `name`: String (Club name).
-  * `points`: Number (Current accumulated club points).
-  * `creatorId`: String (Firebase UID of the creator).
-  * `specialUnlocked`: Array<Number> (List of unlocked FC/Monster fish IDs).
+  * `name`: String (Club name, 2–40 chars).
+  * `name_lower`: String (Lowercase name for search indexing).
+  * `points`: Number (Current accumulated club points >= 0).
+  * `createdBy`: String (Firebase UID of the creator).
+  * `unlockedFcFishIds`: Array<Number> (List of unlocked FC fish IDs).
+  * `unlockedMonsterIds`: Array<Number> (List of unlocked Monster fish IDs).
+  * `memberCount`: Number (Current member count).
   * `members`: Map<UID, { displayName, avatarUrl, joinedAt, caughtCount, caughtClubCount }>.
-* `/users/{uid}`:
-  * `displayName`: String (Player game nickname).
-  * `avatarUrl`: String (URL or emoji icon).
+  * `createdAt`, `updatedAt`, `lastUpdatedBy`.
+* `/users/{userId}`:
+  * `displayName`: String (Player game nickname, max 40 chars).
+  * `avatarUrl`: String (URL or emoji icon, max 500 chars).
+  * `role`: String ('member' | 'admin').
   * `clubId`: String | null.
-  * `caughtFish`: Array<Number> (IDs of all fish the player has caught).
-  * `lastUpdated`: Timestamp.
+  * `clubName`: String | null.
+  * `caughtFishIds`: Array<Number> (List of caught fish IDs, max 1000).
+  * `createdAt`, `lastLogin`.
+
+### 2.4 Firebase Security Rules & Communication Best Practices (`firestore.rules`)
+
+1. **Strict Key Masking (Strict Schemas):**
+   * `firestore.rules` enforces `.hasOnly([...])` on creates and `.affectedKeys().hasOnly([...])` on updates.
+   * **Rule for agents:** Never add arbitrary fields to Firestore documents without updating `firestore.rules`. Any extraneous field triggers an immediate `permission-denied` error from Firebase.
+2. **Read vs Write Permissions:**
+   * `/users/{userId}`: Readable by any authenticated user (`request.auth != null`) so club member catch stats can be rendered. Writeable ONLY by document owner (`request.auth.uid == userId`) or admin (`isAdmin()`).
+   * `/clubs/{clubId}`: Publicly readable (`allow read: if true`). Updates allowed only by authenticated users for valid club fields.
+   * `/fishao_market/prices_history`: Publicly readable (`allow read: if true`). Create/update allowed for authenticated users. Delete strictly reserved for admins.
+3. **GDPR-free Storage:**
+   * Never store a player's Google email, full name, or private tokens in Firestore. Only store the user-chosen `displayName`, `avatarUrl`, and game state.
+4. **Google Identity Auth Handler & Referrer Rules:**
+   * The Firebase web API key in Google Cloud Console must NOT use HTTP referrer restrictions ("Websites"), because the Firebase OAuth popup (`fishao-fun.firebaseapp.com/__/auth/handler`) sets `<meta name="referrer" content="no-referrer">`. Use "None" (API keys are public client identifiers; Firestore security rules guard the data).
+5. **Safe Error Handling & Offline Fallback:**
+   * Always wrap Firestore writes and reads in `try / catch`. If a user is offline or Firebase is blocked, gracefully fall back to local `localStorage` so the UI never crashes.
+
+
+### 2.5 Modular JavaScript Architecture (`js/`)
+
+The monolithic `app.js` was refactored into modular, cohesive files loaded directly without bundlers:
+1. `js/state.js`: Global state variables, localization helper `t()`, date and string utilities (`getTodayISO`, `getYesterdayISO`, `isDateSunday`, `normStr`, `escapeHtml`), toast notification (`showToast`), and confirmation dialog (`showConfirmModal`, `resolveConfirmModal`).
+2. `js/table.js`: Fish table rendering (`renderTableHead`, `renderTableBody`), UTC-to-local time formatting (`formatCatchTime`, `isFishActiveNow`), rating badges (`renderRatingBadge`), price cells (`renderPriceCell`), and caught fish collection toggles (`toggleCaughtFish`, `updateCaughtStats`).
+3. `js/clubs.js`: Real-time club synchronization via Firestore (`bindClubListener`), deterministic member roster rendering (`renderClubMembers`), member profile modal (`openPlayerModal`), club search, creation, joining, and leaving, club points management, milestones roadmap (`renderClubMilestones`), and FC / Monster special fish unlocks.
+4. `js/market.js`: Fish market price history persistence (`persistPriceHistory`), Sunday detection, single price submission/deletion (`submitNewPrice`, `deletePriceEntry`), modal price history rendering (`renderModalHistory`), bulk price import with autocomplete suggestions (`processBulkImport`), and JSON export (`exportPricesJson`).
+5. `js/filters.js`: Multi-criteria fish filtering engine (`applyFilters`, `resetFilters`), mission size handlers (`setSizeFilter`, `onRangeSizeInput`), collection filters, and dropdown options initializers.
+6. `js/auth.js`: Firebase authentication (`signIn`, `signOut`), GDPR-compliant profile synchronization (`loadUserProfile`, `saveProfile`), and UI state synchronization (`updateAuthUI`).
+7. `js/main.js`: Live clock and timezone switching (`setTimezone`, `updateClock`), view routing (`switchView`), static DOM translations (`setLanguage`, `updateStaticTranslations`), modal listeners, `window.fishaoApp` exports, and application boot.
 
 ---
 
@@ -128,3 +163,4 @@ View Key        | Tab Button       | Main Header Sub-Toolbar
 3. **Always syntax-check:** Validate any edited or created JavaScript files with `node --check "<filepath>"`.
 4. **Bilingual integrity:** When introducing new UI labels or messages, always provide both Czech (`cs`) and English (`en`) keys in `data/i18n.js`.
 5. **Enforce Sunday market rules:** Fish Market prices can never be submitted or imported for Sunday dates.
+
