@@ -120,6 +120,7 @@ async function loadUserProfile(user) {
     var userDocRef = fsModule.doc(db, "users", user.uid);
     var docSnap = await fsModule.getDoc(userDocRef);
 
+    var isNewUser = !docSnap.exists();
     if (docSnap.exists()) {
       userProfile = docSnap.data();
       fsModule.updateDoc(userDocRef, { lastLogin: new Date().toISOString() });
@@ -155,6 +156,30 @@ async function loadUserProfile(user) {
       bindClubListener(userProfile.clubId);
     } else {
       unbindClubListener();
+    }
+
+    updateAuthUI();
+    updateCaughtStats();
+    applyFilters();
+
+    // Automatically prompt new users to set their custom nickname and avatar
+    var nickStorageKey = 'fishao_nick_prompted_' + user.uid;
+    var hasDefaultNick = userProfile && userProfile.displayName && (
+      userProfile.displayName.startsWith(t('user_default_player')) ||
+      userProfile.displayName.startsWith("Rybář #") ||
+      userProfile.displayName.startsWith("Angler #")
+    );
+    if (isNewUser || (hasDefaultNick && localStorage.getItem(nickStorageKey) !== '1')) {
+      localStorage.setItem(nickStorageKey, '1');
+      setTimeout(function () {
+        openProfileModal();
+        var nickInput = document.getElementById("inputProfileNickname");
+        if (nickInput) {
+          nickInput.focus();
+          nickInput.select();
+        }
+        showToast(t('auth_welcome_new_user', 'Vítej ve FISHAO! Nastav si prosím svou herní přezdívku a avatar.'), 'info');
+      }, 450);
     }
 
     fsModule.onSnapshot(userDocRef, function (snap) {
@@ -479,6 +504,10 @@ async function saveProfile() {
         console.warn("Could not sync member profile to club doc:", e);
       }
     }
+
+    try {
+      localStorage.setItem('fishao_nick_prompted_' + currentUser.uid, '1');
+    } catch (e) {}
 
     closeProfileModal();
     updateAuthUI();

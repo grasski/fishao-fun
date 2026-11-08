@@ -18,6 +18,7 @@
       "auth_notice_price": "Pro zadání ceny do Fish Marketu se prosím přihlas přes Google.",
       "auth_signin_failed": "Přihlášení se nezdařilo: {msg}",
       "auth_unauth_domain": "Doména {domain} není povolena ve Firebase Console -> Authentication -> Settings -> Authorized domains.",
+      "auth_welcome_new_user": "Vítej ve FISHAO! Nastav si prosím svou herní přezdívku a avatar.",
       "badge_club_fish": "🏆 Klubová",
       "badge_locked": "Zamčeno 🔒",
       "badge_no_club": "Bez klubu",

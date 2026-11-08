@@ -18,6 +18,7 @@
       "auth_notice_price": "Please sign in with Google to submit a Fish Market price.",
       "auth_signin_failed": "Sign-in failed: {msg}",
       "auth_unauth_domain": "Domain {domain} is not authorized in Firebase Console -> Authentication -> Settings -> Authorized domains.",
+      "auth_welcome_new_user": "Welcome to FISHAO! Please set your player nickname and avatar.",
       "badge_club_fish": "🏆 Club Fish",
       "badge_locked": "Locked 🔒",
       "badge_no_club": "No club",
