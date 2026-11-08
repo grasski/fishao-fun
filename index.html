@@ -114,7 +114,7 @@
       <button class="nav-tab yellow" id="tabMarket" onclick="window.fishaoApp.switchView('market')">
         <span class="tab-icon">💵</span>
         <span class="tab-title" data-i18n="nav_market">Fish Market</span>
-        <span class="tab-pill" data-i18n="nav_market_pill">Výkup</span>
+        <span class="tab-pill" id="tabMarketPill" data-i18n="nav_market_pill">Výkup</span>
       </button>
     </nav>
 
@@ -204,6 +204,15 @@
         <button class="btn-action sm" onclick="window.fishaoApp.openBulkModal()"
           title="Hromadný import cen do Fish Marketu" data-i18n="market_btn_import" data-i18n-title="market_btn_import">
           📥 Import cen do Marketu </button>
+      </div>
+    </div>
+
+    <!-- Sunday Market Closed Banner (shown on Sundays in Market view) -->
+    <div class="market-sunday-notice-bar" id="bannerMarketSunday" style="display: none;">
+      <div class="sunday-notice-icon">🚫</div>
+      <div class="sunday-notice-content">
+        <div class="sunday-notice-title" data-i18n="market_sunday_banner_title">Fish Market má každou neděli ZAVŘENO</div>
+        <div class="sunday-notice-desc" data-i18n="market_sunday_banner_desc">Každou celou neděli (00:00 – 24:00) je výkup ryb ve hře FISHAO uzavřen. Výkup se znovu otevře v pondělí. Níže jsou zobrazeny poslední známé ceny z předchozích dnů.</div>
       </div>
     </div>
 
@@ -654,6 +663,12 @@
         <div class="modal-market-divider"> <span data-i18n="modal_market_divider">💵 Fish Market – Výkupní ceny a
             historie</span> </div>
 
+        <!-- Sunday closed alert in modal -->
+        <div id="modalMarketSundayAlert" class="modal-market-sunday-alert" style="display: none;">
+          <span style="font-size: 18px; line-height: 1;">🚫</span>
+          <span data-i18n="modal_market_sunday_alert">Každou celou neděli má Fish Market v FISHAO zavřeno. Dnešní výkup ryb ve hře neprobíhá.</span>
+        </div>
+
         <div class="price-stats-grid">
           <div class="price-stat-card">
             <div class="price-stat-label" data-i18n="modal_today_price">Dnešní cena</div>
@@ -671,6 +686,9 @@
 
         <!-- Add price form (gated: shown when logged in) -->
         <div id="priceAddFormBox" class="price-form-box" style="display: none;">
+          <div id="modalPriceSundayNotice" style="display: none; font-size: 11px; color: #f59e0b; margin-bottom: 8px; font-weight: 600;" data-i18n="modal_price_sunday_notice">
+            ⚠️ Dnes je neděle – Fish Market ve hře má zavřeno.
+          </div>
           <span style="font-size: 13px; font-weight: 700; color: #e2e8f0;" data-i18n="modal_add_record">+ Přidat nový
             záznam do historie:</span>
           <div class="price-form-row">
@@ -731,6 +749,11 @@
         <p style="font-size: 13px; color: var(--text-muted);" data-i18n="bulk_desc"> Zde můžeš vložit seznam denních cen
           (např. ve formátu jako v souboru <code>prices.txt</code>, tedy <em>Název ryby: cena</em>) a všechny ryby se
           automaticky přiřadí a uloží do historie ve fishměně (FB). </p>
+
+        <div id="bulkSundayNotice" class="modal-market-sunday-alert" style="display: none; margin-bottom: 12px;">
+          <span style="font-size: 18px; line-height: 1;">⚠️</span>
+          <span data-i18n="bulk_sunday_notice">Dnes je neděle – Fish Market má ve hře zavřeno. Zadané ceny budou uloženy do historie.</span>
+        </div>
 
         <div>
           <label

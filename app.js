@@ -117,8 +117,15 @@
     }
   } catch (e) { }
 
-  // Today ISO date for date inputs
-  var todayISO = new Date().toISOString().split('T')[0];
+  // Today ISO date for date inputs (local date)
+  function getTodayISO() {
+    var d = new Date();
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + day;
+  }
+  var todayISO = getTodayISO();
   var elNewDate = document.getElementById("newPriceDate");
   if (elNewDate) elNewDate.value = todayISO;
   var elBulkDate = document.getElementById("bulkImportDate");
@@ -1727,6 +1734,29 @@
     return priceHistory[fid.toString()] || [];
   }
 
+  function isMarketClosedToday() {
+    return new Date().getDay() === 0; // 0 = Sunday
+  }
+
+  function getTodayPrice(fid) {
+    if (isMarketClosedToday()) return null;
+    var list = getFishPrices(fid);
+    if (!list || list.length === 0) return null;
+    var tIso = getTodayISO();
+    return list.find(function (x) { return x.date === tIso; }) || null;
+  }
+
+  function formatPriceDate(isoDate) {
+    if (!isoDate) return "";
+    var parts = isoDate.split("-");
+    if (parts.length !== 3) return isoDate;
+    if (getLang() === "cz" || getLang() === "cs") {
+      return parseInt(parts[2], 10) + ". " + parseInt(parts[1], 10) + ". " + parts[0];
+    } else {
+      return isoDate;
+    }
+  }
+
   function getLatestPrice(fid) {
     var list = getFishPrices(fid);
     if (!list || list.length === 0) return null;
@@ -1841,7 +1871,7 @@
     }
 
     var elNewDate = document.getElementById("newPriceDate");
-    if (elNewDate) elNewDate.value = todayISO;
+    if (elNewDate) elNewDate.value = getTodayISO();
     var elNewVal = document.getElementById("newPriceValue");
     if (elNewVal) elNewVal.value = "";
 
@@ -1868,11 +1898,24 @@
     var minPriceEl = document.getElementById("statMinPrice");
     var maxPriceEl = document.getElementById("statMaxPrice");
 
-    var todayEntry = list.find(function (x) { return x.date === todayISO; });
-    if (todayEntry) {
+    var isSunday = isMarketClosedToday();
+    var curTodayIso = getTodayISO();
+    var todayEntry = isSunday ? null : list.find(function (x) { return x.date === curTodayIso; });
+
+    var sundayAlert = document.getElementById("modalMarketSundayAlert");
+    if (sundayAlert) sundayAlert.style.display = isSunday ? "flex" : "none";
+
+    var sundayNotice = document.getElementById("modalPriceSundayNotice");
+    if (sundayNotice) sundayNotice.style.display = isSunday ? "block" : "none";
+
+    if (isSunday) {
+      if (todayPriceEl) {
+        todayPriceEl.innerHTML = '<span style="color: #f59e0b; font-size: 13px; font-weight: 700;">🔒 ' + t('market_closed_sunday_short') + '</span>';
+      }
+    } else if (todayEntry) {
       if (todayPriceEl) {
         todayPriceEl.innerText = todayEntry.price.toLocaleString(locale) + " FB";
-        todayPriceEl.style.color = "#38bdf8";
+        todayPriceEl.style.color = "#34d399";
       }
     } else {
       if (todayPriceEl) {
@@ -1900,12 +1943,12 @@
         ? '<button class="btn-delete-price" title="' + t('price_delete_admin_title') + '" onclick="window.fishaoApp.deletePriceEntry(' + fid + ', ' + idx + ')">🗑️</button>'
         : '<span title="' + t('price_delete_locked_title') + '" style="color: var(--text-muted); font-size: 13px; cursor: default;">🔒</span>';
 
-      var isToday = (item.date === todayISO);
+      var isToday = (!isSunday && item.date === curTodayIso);
       var rowStyle = isToday ? 'background: rgba(56, 189, 248, 0.08);' : '';
       var todayTag = isToday ? ' <span style="font-size: 10px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 1px 5px; border-radius: 4px; font-weight: 700;">' + t('price_today_tag') + '</span>' : '';
 
       return '<tr style="' + rowStyle + '">' +
-        '<td style="color: #cbd5e1; font-weight: 600;">' + item.date + todayTag + '</td>' +
+        '<td style="color: #cbd5e1; font-weight: 600;">' + formatPriceDate(item.date) + todayTag + '</td>' +
         '<td style="color: #34d399; font-weight: 800;"><span class="cash-icon">💵</span> ' + item.price.toLocaleString(locale) + ' FB</td>' +
         '<td style="text-align: center;">' + actionHtml + '</td>' +
         '</tr>';
@@ -1982,6 +2025,11 @@
       showAuthNotice(t('auth_notice_bulk'));
       return;
     }
+    var dt = document.getElementById("bulkImportDate");
+    if (dt) dt.value = getTodayISO();
+    var bulkSunday = document.getElementById("bulkSundayNotice");
+    if (bulkSunday) bulkSunday.style.display = isMarketClosedToday() ? "flex" : "none";
+
     document.getElementById("bulkModalOverlay").classList.add("active");
     document.getElementById("bulkResultMsg").style.display = "none";
     var fishInp = document.getElementById("bulkFishInput");
@@ -2634,6 +2682,8 @@
     if (bCollection) bCollection.style.display = (view === "all") ? "flex" : "none";
     if (bMarket) bMarket.style.display = (view === "market") ? "flex" : "none";
 
+    updateMarketTabStatus();
+
     if (view === "club_manage") {
       if (secManage) secManage.style.display = "block";
       if (secTable) secTable.style.display = "none";
@@ -2669,10 +2719,43 @@
     updateCaughtStats();
   }
 
+  function updateMarketTabStatus() {
+    var pill = document.getElementById("tabMarketPill");
+    var isSunday = isMarketClosedToday();
+    if (pill) {
+      if (isSunday) {
+        pill.innerHTML = '🔒 ' + t('market_closed_tag');
+        pill.classList.add("pill-closed");
+        pill.setAttribute("title", t('market_closed_sunday_tooltip'));
+      } else {
+        pill.innerText = t('nav_market_pill');
+        pill.classList.remove("pill-closed");
+        pill.removeAttribute("title");
+      }
+    }
+
+    var bannerSunday = document.getElementById("bannerMarketSunday");
+    if (bannerSunday) {
+      bannerSunday.style.display = (currentView === "market" && isSunday) ? "flex" : "none";
+    }
+
+    var marketSummary = document.getElementById("marketStatsSummary");
+    if (marketSummary) {
+      var priceCount = Object.keys(priceHistory).length;
+      var summaryText = t('market_recorded_prices', { count: priceCount });
+      if (isSunday) {
+        summaryText += ' • ' + t('market_closed_sunday_short');
+      }
+      marketSummary.innerText = summaryText;
+    }
+  }
+
   function renderTableHead() {
     var thead = document.getElementById("tableHead");
     if (!thead) return;
     var caughtCol = '<th style="width: 44px; text-align: center;" title="' + t('col_caught_title') + '">✓</th>';
+    var isSunday = isMarketClosedToday();
+    var priceColHtml = '<th>' + t('col_price') + (isSunday ? ' <span class="th-sunday-closed-pill" title="' + t('market_closed_sunday_tooltip') + '">🔒 ' + t('market_closed_tag') + '</span>' : '') + '</th>';
 
     if (currentView === "club") {
       thead.innerHTML =
@@ -2683,7 +2766,7 @@
         '<th>' + t('col_water') + '</th>' +
         '<th>' + t('col_fish') + '</th>' +
         '<th>' + t('col_rarity') + '</th>' +
-        '<th>' + t('col_price') + '</th>' +
+        priceColHtml +
         '<th>' + t('col_baits') + '</th>' +
         '<th>' + t('col_time') + '</th>' +
         '<th>' + t('col_size') + '</th>' +
@@ -2697,7 +2780,7 @@
         '<th style="width: 95px;">' + t('col_appearance') + '</th>' +
         '<th>' + t('col_fish') + '</th>' +
         '<th>' + t('col_rarity') + '</th>' +
-        '<th>' + t('col_price') + '</th>' +
+        priceColHtml +
         '<th>' + t('col_loc') + '</th>' +
         '<th>' + t('col_baits') + '</th>' +
         '<th>' + t('col_time') + '</th>' +
@@ -2707,13 +2790,42 @@
   }
 
   function renderPriceCell(fid) {
+    var isSunday = isMarketClosedToday();
+    var todayEntry = getTodayPrice(fid);
     var latest = getLatestPrice(fid);
     var list = getFishPrices(fid);
+    var locale = getLocale();
     var histCount = list.length > 1 ? '<span class="price-history-count" title="' + t('price_history_count_title') + '">' + list.length + 'x</span>' : "";
 
-    if (latest) {
-      return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + t('price_cell_detail_title') + '">' +
-        '<span class="price-badge"><span class="cash-icon">💵</span> ' + latest.price.toLocaleString(getLocale()) + ' FB' + histCount + '</span></div>';
+    if (isSunday) {
+      if (latest) {
+        var dateFormatted = formatPriceDate(latest.date);
+        var titleText = t('price_cell_sunday_title', { price: latest.price.toLocaleString(locale), date: dateFormatted });
+        return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + titleText + '">' +
+          '<span class="price-badge price-closed"><span class="price-closed-icon">🔒</span> ' +
+          '<span class="price-closed-label">' + t('market_closed_tag') + '</span> ' +
+          '<span class="price-past-sub">(' + t('price_last_prefix') + ' ' + latest.price.toLocaleString(locale) + ' FB)</span>' +
+          histCount + '</span></div>';
+      } else {
+        return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + t('market_closed_notice') + '">' +
+          '<span class="price-empty price-closed-empty"><span class="price-closed-icon">🔒</span> ' + t('market_closed_tag') + '</span></div>';
+      }
+    }
+
+    if (todayEntry) {
+      var todayTitle = t('price_cell_today_active_title', { price: todayEntry.price.toLocaleString(locale) });
+      return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + todayTitle + '">' +
+        '<span class="price-badge price-today"><span class="cash-icon">💵</span> ' +
+        todayEntry.price.toLocaleString(locale) + ' FB ' +
+        '<span class="badge-today-pill">' + t('price_today_tag') + '</span>' +
+        histCount + '</span></div>';
+    } else if (latest) {
+      var dateFormatted = formatPriceDate(latest.date);
+      var pastTitle = t('price_cell_past_title', { price: latest.price.toLocaleString(locale), date: dateFormatted });
+      return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + pastTitle + '">' +
+        '<span class="price-badge price-past"><span class="price-past-dash">--</span> ' +
+        '<span class="price-past-sub">(' + t('price_last_prefix') + ' ' + latest.price.toLocaleString(locale) + ' FB)</span>' +
+        histCount + '</span></div>';
     } else {
       return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + t('price_cell_add_title') + '">' +
         '<span class="price-empty">+ ' + t('price_add_btn') + '</span></div>';
@@ -2952,7 +3064,13 @@
 
     // Sorting (fixed option keys alignment)
     var curLang = getLang();
-    if (sortBy === "price_desc") {
+    if (sortBy === "today_price_desc") {
+      filtered.sort(function (a, b) {
+        var pa = (getTodayPrice(a.id) || {}).price || 0;
+        var pb = (getTodayPrice(b.id) || {}).price || 0;
+        return pb - pa || b.rating - a.rating;
+      });
+    } else if (sortBy === "price_desc") {
       filtered.sort(function (a, b) {
         var pa = (getLatestPrice(a.id) || {}).price || 0;
         var pb = (getLatestPrice(b.id) || {}).price || 0;
@@ -3003,7 +3121,13 @@
     // Localized active filter summary
     var filterNotes = [];
     if (currentView === "club" && hideLocked) filterNotes.push(t('filter_note_unlocked'));
-    if (filterOnlyPrice) filterNotes.push(t('filter_note_priced'));
+    if (filterOnlyPrice) {
+      if (isMarketClosedToday()) {
+        filterNotes.push(t('filter_note_priced_sunday'));
+      } else {
+        filterNotes.push(t('filter_note_priced'));
+      }
+    }
     if (filterUncaught) filterNotes.push(t('filter_note_uncaught'));
 
     if (!isNaN(minSize) && !isNaN(maxSize)) {
@@ -3122,6 +3246,8 @@
       var val = t(key);
       if (val && val !== key) el.title = val;
     });
+
+    updateMarketTabStatus();
   }
 
   function updateWaterFilterOptions() {
@@ -3191,9 +3317,15 @@
     var select = document.getElementById("sortBy");
     if (!select) return;
     var curVal = select.value;
+    var isSunday = isMarketClosedToday();
+    var todaySortHtml = !isSunday
+      ? '<option value="today_price_desc">' + t('opt_sort_today_price_desc') + '</option>'
+      : '';
+
     select.innerHTML =
       '<option value="name_asc">' + t('opt_sort_name_asc') + '</option>' +
       '<option value="name_desc">' + t('opt_sort_name_desc') + '</option>' +
+      todaySortHtml +
       '<option value="price_desc">' + t('opt_sort_price_desc') + '</option>' +
       '<option value="price_asc">' + t('opt_sort_price_asc') + '</option>' +
       '<option value="rating_desc">' + t('opt_sort_rating_desc') + '</option>' +
@@ -3316,6 +3448,9 @@
     toggleCaughtFromModal: toggleCaughtFromModal,
     openFishDetail: openPriceModal,
     setLanguage: setLanguage,
+    isMarketClosedToday: isMarketClosedToday,
+    getTodayPrice: getTodayPrice,
+    updateMarketTabStatus: updateMarketTabStatus,
     t: t
   };
 

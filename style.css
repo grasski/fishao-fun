@@ -1257,12 +1257,6 @@ tbody tr:hover .fish-img {
   cursor: pointer;
   transition: all 0.2s;
 }
-.price-cell:hover .price-badge {
-  border-color: #34d399;
-  background: rgba(16, 185, 129, 0.25);
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
-  transform: translateY(-1px);
-}
 .price-badge {
   display: inline-flex;
   align-items: center;
@@ -1281,6 +1275,90 @@ tbody tr:hover .fish-img {
   font-size: 13px;
   line-height: 1;
 }
+
+/* Today Active Price Badge */
+.price-badge.price-today {
+  background: rgba(16, 185, 129, 0.16);
+  border-color: rgba(16, 185, 129, 0.55);
+  color: #34d399;
+}
+.price-cell:hover .price-badge.price-today {
+  border-color: #34d399;
+  background: rgba(16, 185, 129, 0.28);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.35);
+  transform: translateY(-1px);
+}
+.badge-today-pill {
+  font-size: 9px;
+  background: rgba(16, 185, 129, 0.25);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  color: #a7f3d0;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 800;
+  margin-left: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Past / Historical Price Badge (not active today) */
+.price-badge.price-past {
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #94a3b8;
+  font-weight: 600;
+}
+.price-cell:hover .price-badge.price-past {
+  border-color: #94a3b8;
+  background: rgba(148, 163, 184, 0.16);
+  color: #cbd5e1;
+  transform: translateY(-1px);
+}
+.price-past-dash {
+  color: #64748b;
+  font-weight: 800;
+  font-size: 12px;
+}
+.price-past-sub {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* Sunday Closed Price Badge */
+.price-badge.price-closed {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+  font-weight: 600;
+}
+.price-cell:hover .price-badge.price-closed {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.2);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
+  transform: translateY(-1px);
+}
+.price-closed-icon {
+  font-size: 11px;
+  line-height: 1;
+}
+.price-closed-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #f59e0b;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.price-empty.price-closed-empty {
+  color: #f59e0b;
+  border: 1px dashed rgba(245, 158, 11, 0.4);
+}
+.price-empty.price-closed-empty:hover {
+  border-color: #f59e0b;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.08);
+}
+
 .price-empty {
   display: inline-flex;
   align-items: center;
@@ -1301,6 +1379,80 @@ tbody tr:hover .fish-img {
   padding: 1px 4px;
   border-radius: 3px;
   margin-left: 2px;
+}
+
+/* Table header sunday closed badge */
+.th-sunday-closed-pill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  color: #fca5a5;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-left: 4px;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* Nav Tab Closed Pill */
+.tab-pill.pill-closed {
+  background: rgba(239, 68, 68, 0.2) !important;
+  color: #fca5a5 !important;
+  border: 1px solid rgba(239, 68, 68, 0.45) !important;
+}
+
+/* Sunday Market Notice Banners */
+.market-sunday-notice-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.16) 0%, rgba(245, 158, 11, 0.12) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  border-radius: 10px;
+  padding: 12px 18px;
+  margin-bottom: 14px;
+  color: #fecaca;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+.sunday-notice-icon {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.sunday-notice-content {
+  flex: 1;
+}
+.sunday-notice-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #f87171;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.sunday-notice-desc {
+  font-size: 12px;
+  color: #e2e8f0;
+  line-height: 1.45;
+}
+
+.modal-market-sunday-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 10px 0 14px 0;
+  font-size: 12px;
+  color: #fde68a;
+}
+.modal-market-sunday-alert strong {
+  color: #fbbf24;
 }
 
 /* UNLOCK STATUS */
