@@ -96,13 +96,23 @@ async function initFirebaseSync() {
  */
 async function initFirebaseAnalytics() {
   if (firebaseAnalytics) return firebaseAnalytics;
-  if (localStorage.getItem("fishao_cookie_consent") !== "granted") return null;
-  if (!firebaseApp || !firebaseConfig || !firebaseConfig.measurementId) return null;
+  var consent = localStorage.getItem("fishao_cookie_consent");
+  if (consent !== "granted") {
+    console.log("[FISHAO Analytics] Waiting for consent (status: " + consent + ")");
+    return null;
+  }
+  if (!firebaseApp || !firebaseConfig || !firebaseConfig.measurementId) {
+    console.warn("[FISHAO Analytics] Missing firebaseApp or measurementId");
+    return null;
+  }
 
   try {
     var analyticsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js");
     var supported = await analyticsModule.isSupported();
-    if (!supported) return null;
+    if (!supported) {
+      console.warn("[FISHAO Analytics] isSupported() returned false (cookies/IndexedDB may be blocked by browser or adblock)");
+      return null;
+    }
 
     analyticsModuleRef = analyticsModule;
     firebaseAnalytics = analyticsModule.getAnalytics(firebaseApp);
@@ -113,9 +123,10 @@ async function initFirebaseAnalytics() {
       page_location: window.location.href
     });
 
+    console.log("[FISHAO Analytics] Active & tracking:", firebaseConfig.measurementId);
     return firebaseAnalytics;
   } catch (err) {
-    console.warn("Analytics initialization skipped or failed:", err);
+    console.warn("[FISHAO Analytics] Failed to initialize:", err);
     return null;
   }
 }
