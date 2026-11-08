@@ -58,8 +58,13 @@ try {
 } catch (e) {}
 var filterPlayerFriendsOnly = false;
 var filterPlayerBackyardOnly = false;
+var filterPlayerActiveNow = false;
 var filterPlayerFishId = null;
+var filterPlayerBait = "";
+var filterPlayerRating = null;
 var filterPlayerSearchText = "";
+var expandedPlayerBackyardCards = new Set();
+var isProfileBackyardCatalogOpen = false;
 var isAdmin = false;
 
 // Firebase service instances

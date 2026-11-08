@@ -232,11 +232,11 @@
 
     <!-- Compact Sub-Toolbar: Players & Backyard View (Teal Theme) -->
     <div class="view-action-bar teal" id="bannerPlayers" style="display: none;">
-      <div class="action-bar-left" style="flex: 1;">
-        <div class="search-input-wrap lg">
+      <div class="action-bar-left" style="flex: 1; flex-wrap: wrap; gap: 8px;">
+        <div class="search-input-wrap lg" id="playerSearchWrap">
           <span class="search-icon">🔍</span>
           <input type="text" id="playerSearchInput" class="search-input-lg" placeholder="Hledat hráče, klub nebo rybu..." data-i18n-placeholder="players_search_placeholder" oninput="window.fishaoApp.onPlayerSearchInput(this.value)">
-          <button type="button" class="search-clear-btn" id="playerSearchClearBtn" onclick="window.fishaoApp.clearPlayerSearch()" title="Vymazat hledání">&times;</button>
+          <button type="button" class="search-clear-btn" id="playerSearchClearBtn" onclick="window.fishaoApp.clearPlayerSearch()" title="Vymazat hledání" style="display: none;">&times;</button>
         </div>
         <button type="button" class="toggle-pill" id="filterPlayerFriendsOnlyBtn" onclick="window.fishaoApp.togglePlayerFriendsFilter()">
           ⭐ <span data-i18n="players_filter_friends_only">Pouze přátelé</span>
@@ -244,11 +244,32 @@
         <button type="button" class="toggle-pill" id="filterPlayerBackyardOnlyBtn" onclick="window.fishaoApp.togglePlayerBackyardFilter()">
           🏡 <span data-i18n="players_filter_backyard_only">Pouze s rybou za domem</span>
         </button>
-        <div class="search-input-wrap" style="min-width: 200px;">
+        <button type="button" class="toggle-pill" id="filterPlayerActiveNowBtn" onclick="window.fishaoApp.togglePlayerActiveNowFilter()">
+          ⚡ <span data-i18n="players_filter_active_now">Bere teď za domem</span>
+        </button>
+        <div class="search-input-wrap" style="min-width: 180px;">
           <select id="playerFishFilterSelect" class="dash-input select-clean" onchange="window.fishaoApp.onPlayerFishFilterChange(this.value)">
             <option value="" data-i18n="players_filter_all_fishes">Všechny odchované ryby</option>
           </select>
         </div>
+        <div class="search-input-wrap" style="min-width: 150px;">
+          <select id="playerBaitFilterSelect" class="dash-input select-clean" onchange="window.fishaoApp.onPlayerBaitFilterChange(this.value)">
+            <option value="" data-i18n="players_filter_bait_label">Všechny návnady</option>
+          </select>
+        </div>
+        <div class="search-input-wrap" style="min-width: 140px;">
+          <select id="playerRatingFilterSelect" class="dash-input select-clean" onchange="window.fishaoApp.onPlayerRatingFilterChange(this.value)">
+            <option value="" data-i18n="players_filter_rating_label">Všechny vzácnosti</option>
+            <option value="5">★★★★★ (5★)</option>
+            <option value="4">★★★★☆ (4★)</option>
+            <option value="3">★★★☆☆ (3★)</option>
+            <option value="2">★★☆☆☆ (2★)</option>
+            <option value="1">★☆☆☆☆ (1★)</option>
+          </select>
+        </div>
+        <button type="button" class="pill-btn danger" id="resetPlayersFiltersBtn" onclick="window.fishaoApp.resetPlayerFilters()" style="display: none; height: 34px; padding: 0 12px; font-size: 12px;" title="Resetovat filtry">
+          <span>↺</span> <span data-i18n="players_filter_reset">Resetovat filtry</span>
+        </button>
       </div>
       <div class="action-bar-right">
         <span id="playersCountBadge" class="status-counter-item" style="color: var(--text-muted); font-size: 13px;">0 hráčů</span>
@@ -278,6 +299,7 @@
 
       <!-- Players Community Content -->
       <div id="playersContent" style="display: none;">
+        <div id="playersActiveFiltersBar" class="active-filters-summary-bar" style="display: none;"></div>
         <div id="playersGrid" class="players-grid"></div>
       </div>
     </section>
@@ -937,11 +959,15 @@
             <span id="profileBackyardCount" style="font-size: 11px; color: #2dd4bf; font-weight: 700;">0 ryb</span>
           </div>
           <div id="profileBackyardChips" class="profile-backyard-chips-wrap"></div>
-          <div style="position: relative; margin-top: 8px;">
+          <div style="position: relative; margin-top: 10px;">
             <input type="text" id="inputBackyardSearch" class="dash-input" placeholder="Přidat rybu za dům (začni psát název)..." data-i18n-placeholder="profile_backyard_search_placeholder" oninput="window.fishaoApp.onBackyardSearchInput(this.value)">
             <div id="backyardSearchSuggestions" class="profile-backyard-suggestions" style="display: none;"></div>
           </div>
-          <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;" data-i18n="profile_backyard_notice_83">
+          <button type="button" class="profile-catalog-toggle-btn" id="btnToggleAllBackyardGrid" onclick="window.fishaoApp.toggleBackyardAllGrid()">
+            <span id="btnToggleAllBackyardGridText" data-i18n="profile_btn_catalog_show">📋 Procházet všech 83 ryb k odchovu ▾</span>
+          </button>
+          <div id="profileAllBackyardCatalog" class="profile-all-backyard-catalog" style="display: none;"></div>
+          <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;" data-i18n="profile_backyard_notice_83">
             Lze vybrat pouze z 83 druhů ryb určených pro chov za domem.
           </div>
         </div>

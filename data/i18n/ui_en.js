@@ -349,7 +349,25 @@
       "friend_added_toast": "Player '{name}' added to friends ⭐",
       "friend_removed_toast": "Player '{name}' removed from friends.",
       "btn_friend_add": "☆ Add Friend",
-      "btn_friend_yes": "⭐ Friend"
+      "btn_friend_yes": "⭐ Friend",
+      "players_filter_active_now": "⚡ Biting Now",
+      "players_filter_bait_label": "All baits",
+      "players_filter_rating_label": "All ratings",
+      "players_filter_reset": "Reset filters",
+      "players_active_filters_title": "Active filters:",
+      "players_filter_clear_all": "Clear all ↺",
+      "filter_active_friends": "Friends only",
+      "filter_active_backyard": "Backyard only",
+      "filter_active_now": "Biting right now",
+      "filter_active_search": "Search: '{term}'",
+      "filter_active_fish": "Fish: {name}",
+      "filter_active_bait": "Bait: {bait}",
+      "filter_active_rating": "Rating: {stars}★",
+      "profile_btn_catalog_show": "📋 Browse all 83 breedable fish ▾",
+      "profile_btn_catalog_hide": "📋 Hide fish catalog ▴",
+      "backyard_show_all": "Show all {count} fish ▾",
+      "backyard_collapse": "Less ▴",
+      "time_all_day": "All day (24h)"
   };
 
   if (typeof window !== 'undefined') {

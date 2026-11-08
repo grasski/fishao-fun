@@ -186,7 +186,7 @@
   font-weight: 700;
 }
 
-/* Backyard preview inside card */
+/* Backyard preview inside card - Rich Informative Cards */
 .player-card-backyard {
   margin-bottom: 14px;
   flex: 1;
@@ -196,49 +196,141 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 700;
   color: #2dd4bf;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
-.player-card-backyard-chips {
+.player-backyard-list {
   display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.backyard-mini-chip {
+.player-backyard-fish-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 6px 9px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.player-backyard-fish-card:hover {
+  background: rgba(20, 184, 166, 0.12);
+  border-color: rgba(20, 184, 166, 0.4);
+  transform: translateX(2px);
+}
+
+.pbfc-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pbfc-img {
+  width: 36px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.pbfc-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pbfc-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pbfc-stars {
+  font-size: 11px;
+  color: #fbbf24;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.pbfc-active-pill {
+  font-size: 10px;
+  font-weight: 800;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 4px;
+  padding: 1px 5px;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 3px 8px;
-  border-radius: 7px;
-  background: rgba(20, 184, 166, 0.12);
-  border: 1px solid rgba(20, 184, 166, 0.3);
+  gap: 2px;
+  margin-left: auto;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.25);
+}
+
+.pbfc-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   font-size: 11px;
-  color: #e0f2fe;
-  max-width: 100%;
-}
-
-.backyard-mini-chip img {
-  width: 22px;
-  height: 13px;
-  object-fit: contain;
-}
-
-.backyard-mini-chip.more {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--border);
   color: var(--text-muted);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  padding-top: 3px;
+}
+
+.pbfc-time {
+  color: #cbd5e1;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.pbfc-baits {
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-backyard-expand-btn {
+  background: none;
+  border: none;
+  color: #2dd4bf;
+  font-size: 11.5px;
   font-weight: 700;
+  cursor: pointer;
+  padding: 4px 2px;
+  margin-top: 3px;
+  text-align: left;
+  transition: color 0.15s;
+}
+
+.player-backyard-expand-btn:hover {
+  color: #5eead4;
+  text-decoration: underline;
 }
 
 .player-card-empty-backyard {
   font-size: 11.5px;
   color: var(--text-muted);
   font-style: italic;
-  padding: 4px 0;
+  padding: 6px 0;
 }
 
 .player-card-btn {
@@ -358,7 +450,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  min-width: 320px;
+  min-width: 280px;
   flex: 1;
   max-width: 440px;
 }
@@ -389,6 +481,20 @@
   outline: none;
 }
 
+.search-input-wrap.has-value .search-input-lg,
+.search-input-wrap.has-value .dash-input {
+  border-color: #14b8a6;
+  background: rgba(20, 184, 166, 0.08);
+}
+
+.dash-input.select-clean.has-value {
+  background: rgba(20, 184, 166, 0.15);
+  border-color: #14b8a6;
+  color: #2dd4bf;
+  box-shadow: 0 0 10px rgba(20, 184, 166, 0.25);
+  font-weight: 700;
+}
+
 .search-clear-btn {
   position: absolute;
   right: 10px;
@@ -411,6 +517,83 @@
   background: rgba(255, 255, 255, 0.15);
 }
 
+/* --- Active Filters Summary Bar --- */
+.active-filters-summary-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(20, 184, 166, 0.09);
+  border: 1px solid rgba(20, 184, 166, 0.3);
+  border-radius: 10px;
+  margin: 10px 0 16px 0;
+  font-size: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.active-filters-title {
+  color: #2dd4bf;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.active-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(20, 184, 166, 0.22);
+  border: 1px solid rgba(20, 184, 166, 0.5);
+  color: #f0fdfa;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  animation: fadeIn 0.15s ease;
+}
+
+.active-filter-chip button {
+  background: none;
+  border: none;
+  color: #99f6e4;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0 1px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.active-filter-chip button:hover {
+  color: #ef4444;
+}
+
+.active-filters-clear-all {
+  margin-left: auto;
+  color: #f87171;
+  background: none;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 6px;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.active-filters-clear-all:hover {
+  color: #fff;
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+}
+
 /* --- Universal Player Modal Backyard Section --- */
 .player-modal-backyard-section {
   margin-top: 14px;
@@ -426,113 +609,211 @@
   font-size: 13px;
   font-weight: 700;
   color: #2dd4bf;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .player-modal-backyard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
   gap: 8px;
-  max-height: 220px;
+  max-height: 300px;
   overflow-y: auto;
   padding-right: 4px;
 }
 
 .player-modal-backyard-card {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
-  padding: 8px 6px;
-  text-align: center;
+  padding: 8px 10px;
+  text-align: left;
   cursor: pointer;
   transition: all 0.18s;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  gap: 4px;
 }
 
 .player-modal-backyard-card:hover {
-  background: rgba(20, 184, 166, 0.15);
-  border-color: rgba(20, 184, 166, 0.45);
-  transform: scale(1.02);
+  background: rgba(20, 184, 166, 0.16);
+  border-color: rgba(20, 184, 166, 0.5);
+  transform: translateY(-1px);
 }
 
-.player-modal-backyard-card img {
-  width: 50px;
-  height: 28px;
-  object-fit: contain;
-  margin-bottom: 4px;
+/* --- Profile Modal Enlarged & Visual Catalog --- */
+#profileModalOverlay .modal-box {
+  max-width: 620px;
 }
 
-.player-modal-backyard-card-name {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-main);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-
-.player-modal-backyard-card-stars {
-  font-size: 10px;
-  color: #fbbf24;
-  margin-top: 2px;
-}
-
-/* --- Profile Modal Backyard Section --- */
 .profile-backyard-section {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 12px;
+  padding: 14px;
 }
 
 .profile-backyard-chips-wrap {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  min-height: 40px;
-  padding: 8px;
-  background: rgba(0, 0, 0, 0.25);
+  gap: 7px;
+  min-height: 48px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.28);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  max-height: 140px;
+  border-radius: 10px;
+  max-height: 180px;
   overflow-y: auto;
 }
 
 .profile-backyard-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 8px;
-  border-radius: 6px;
-  background: rgba(20, 184, 166, 0.18);
-  border: 1px solid rgba(20, 184, 166, 0.4);
+  gap: 7px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(20, 184, 166, 0.2);
+  border: 1px solid rgba(20, 184, 166, 0.45);
   font-size: 12px;
   color: #f0fdfa;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 .profile-backyard-chip img {
-  width: 26px;
-  height: 15px;
+  width: 30px;
+  height: 17px;
   object-fit: contain;
+}
+
+.profile-backyard-chip .chip-stars {
+  font-size: 10px;
+  color: #fbbf24;
+  letter-spacing: 0.5px;
 }
 
 .profile-backyard-chip-remove {
   background: none;
   border: none;
   color: #f87171;
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
-  padding: 0 2px;
+  padding: 0 3px;
   font-weight: bold;
   line-height: 1;
+  border-radius: 4px;
+  transition: all 0.15s;
 }
 
 .profile-backyard-chip-remove:hover {
-  color: #ef4444;
+  color: #fff;
+  background: rgba(239, 68, 68, 0.5);
+}
+
+.profile-catalog-toggle-btn {
+  width: 100%;
+  padding: 9px 14px;
+  background: rgba(20, 184, 166, 0.12);
+  border: 1px dashed rgba(20, 184, 166, 0.45);
+  border-radius: 8px;
+  color: #2dd4bf;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.profile-catalog-toggle-btn:hover {
+  background: rgba(20, 184, 166, 0.22);
+  border-color: #14b8a6;
+  color: #5eead4;
+}
+
+.profile-all-backyard-catalog {
+  margin-top: 10px;
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  max-height: 290px;
+  overflow-y: auto;
+}
+
+.profile-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.catalog-fish-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 6px;
+  cursor: pointer;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+
+.catalog-fish-card:hover {
+  background: rgba(20, 184, 166, 0.15);
+  border-color: rgba(20, 184, 166, 0.5);
+  transform: translateY(-2px);
+}
+
+.catalog-fish-card.selected {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.28), rgba(16, 185, 129, 0.18));
+  border-color: #14b8a6;
+  box-shadow: 0 0 10px rgba(20, 184, 166, 0.35);
+}
+
+.catalog-fish-card img {
+  width: 44px;
+  height: 24px;
+  object-fit: contain;
+  margin-bottom: 4px;
+}
+
+.catalog-fish-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.catalog-fish-stars {
+  font-size: 10px;
+  color: #fbbf24;
+  margin-top: 2px;
+}
+
+.catalog-fish-check {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 10px;
+  color: #34d399;
+  font-weight: 900;
+  background: rgba(16, 185, 129, 0.3);
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-backyard-suggestions {
@@ -540,7 +821,7 @@
   top: 100%;
   left: 0;
   right: 0;
-  max-height: 180px;
+  max-height: 200px;
   overflow-y: auto;
   background: #111a2e;
   border: 1px solid var(--border-strong);
@@ -554,7 +835,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 10px;
+  padding: 8px 12px;
   cursor: pointer;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   font-size: 12.5px;
@@ -567,13 +848,16 @@
 }
 
 .profile-backyard-sugg-item img {
-  width: 32px;
-  height: 18px;
+  width: 34px;
+  height: 19px;
   object-fit: contain;
 }
 
 @media (max-width: 640px) {
   .players-grid {
+    grid-template-columns: 1fr;
+  }
+  .player-modal-backyard-grid {
     grid-template-columns: 1fr;
   }
 }

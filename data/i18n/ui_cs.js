@@ -349,7 +349,25 @@
       "friend_added_toast": "Hráč '{name}' byl přidán do přátel ⭐",
       "friend_removed_toast": "Hráč '{name}' byl odebrán z přátel.",
       "btn_friend_add": "☆ Přidat do přátel",
-      "btn_friend_yes": "⭐ Přítel"
+      "btn_friend_yes": "⭐ Přítel",
+      "players_filter_active_now": "⚡ Bere teď za domem",
+      "players_filter_bait_label": "Všechny návnady",
+      "players_filter_rating_label": "Všechny vzácnosti",
+      "players_filter_reset": "Resetovat filtry",
+      "players_active_filters_title": "Aktivní filtry:",
+      "players_filter_clear_all": "Vymazat vše ↺",
+      "filter_active_friends": "Pouze přátelé",
+      "filter_active_backyard": "Pouze za domem",
+      "filter_active_now": "Bere právě teď",
+      "filter_active_search": "Hledání: '{term}'",
+      "filter_active_fish": "Ryba: {name}",
+      "filter_active_bait": "Návnada: {bait}",
+      "filter_active_rating": "Vzácnost: {stars}★",
+      "profile_btn_catalog_show": "📋 Procházet všech 83 ryb k odchovu ▾",
+      "profile_btn_catalog_hide": "📋 Skrýt katalog ryb ▴",
+      "backyard_show_all": "Zobrazit všech {count} ryb ▾",
+      "backyard_collapse": "Méně ▴",
+      "time_all_day": "Celý den (24h)"
   };
 
   if (typeof window !== 'undefined') {

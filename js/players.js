@@ -85,41 +85,95 @@ async function loadAllPlayers(force) {
 }
 
 /**
- * Populate select dropdown with fish that are bred by at least one player
+ * Helper to build a rich backyard fish card
+ */
+function createRichBackyardFishCard(fObj, extraClass, isModal) {
+  if (!fObj) return '';
+  var fid = fObj.id;
+  var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name;
+  var stars = '★'.repeat(fObj.rating || 1);
+  var isNow = isFishActiveNow(fObj.raw_times);
+  var timeInfo = formatCatchTime(fObj.raw_times);
+  var timeDisplay = (fObj.raw_times && fObj.raw_times.length > 0)
+    ? timeInfo.primary
+    : t('time_all_day', 'Celý den (24h)');
+  var baitsDisplay = (fObj.baits && fObj.baits.length > 0)
+    ? fObj.baits.map(function (b) {
+        return (window.FISHAO_I18N && window.FISHAO_I18N.getBaitName)
+          ? window.FISHAO_I18N.getBaitName(b)
+          : b;
+      }).join(', ')
+    : '-';
+
+  var clickAction = isModal
+    ? 'window.fishaoApp.closePlayerModal(); window.fishaoApp.openFishDetail(' + fid + ');'
+    : 'window.fishaoApp.openFishDetail(' + fid + ');';
+
+  return '<div class="player-backyard-fish-card ' + (extraClass || '') + '" onclick="' + clickAction + '" title="' + escapeHtml(fName) + ' (klikni pro detail)">' +
+    '<div class="pbfc-top">' +
+      '<img class="pbfc-img" src="images/fish_' + fid + '.png" alt="" onerror="this.src=\'images/fish_icon.png\'">' +
+      '<div class="pbfc-info">' +
+        '<span class="pbfc-name">' + escapeHtml(fName) + '</span>' +
+        '<span class="pbfc-stars">' + stars + '</span>' +
+      '</div>' +
+      (isNow ? '<span class="pbfc-active-pill">⚡ ' + t('time_active_now_short', 'Bere teď') + '</span>' : '') +
+    '</div>' +
+    '<div class="pbfc-meta">' +
+      '<span class="pbfc-time" title="' + escapeHtml(timeInfo.sub || timeDisplay) + '">⏰ ' + escapeHtml(timeDisplay) + '</span>' +
+      '<span class="pbfc-baits" title="' + escapeHtml(baitsDisplay) + '">🪱 ' + escapeHtml(baitsDisplay) + '</span>' +
+    '</div>' +
+  '</div>';
+}
+
+/**
+ * Populate select dropdowns for player filtering (fishes & baits)
  */
 function populatePlayerFishFilterDropdown() {
-  var select = document.getElementById("playerFishFilterSelect");
-  if (!select) return;
+  var selectFish = document.getElementById("playerFishFilterSelect");
+  if (selectFish) {
+    var currentVal = selectFish.value;
+    var bredFishIdSet = new Set();
+    allPlayersList.forEach(function (p) {
+      if (p.backyardFishIds && Array.isArray(p.backyardFishIds)) {
+        p.backyardFishIds.forEach(function (fid) {
+          if (isBackyardBreedable(fid)) bredFishIdSet.add(fid);
+        });
+      }
+    });
 
-  var currentVal = select.value;
-  var bredFishIdSet = new Set();
-  allPlayersList.forEach(function (p) {
-    if (p.backyardFishIds && Array.isArray(p.backyardFishIds)) {
-      p.backyardFishIds.forEach(function (fid) {
-        if (isBackyardBreedable(fid)) bredFishIdSet.add(fid);
-      });
-    }
-  });
+    var bredFishes = [];
+    bredFishIdSet.forEach(function (fid) {
+      var f = allFishes.find(function (x) { return x.id === fid; });
+      if (f) bredFishes.push(f);
+    });
 
-  var bredFishes = [];
-  bredFishIdSet.forEach(function (fid) {
-    var f = allFishes.find(function (x) { return x.id === fid; });
-    if (f) bredFishes.push(f);
-  });
+    bredFishes.sort(function (a, b) {
+      var nameA = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(a) : a.name;
+      var nameB = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(b) : b.name;
+      return nameA.localeCompare(nameB);
+    });
 
-  bredFishes.sort(function (a, b) {
-    var nameA = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(a) : a.name;
-    var nameB = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(b) : b.name;
-    return nameA.localeCompare(nameB);
-  });
+    var htmlFish = '<option value="">' + t('players_filter_all_fishes', 'Všechny odchované ryby') + ' (' + bredFishes.length + ')</option>';
+    bredFishes.forEach(function (f) {
+      var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
+      htmlFish += '<option value="' + f.id + '"' + (String(f.id) === String(currentVal) ? ' selected' : '') + '>' + escapeHtml(fName) + ' (#' + f.id + ')</option>';
+    });
+    selectFish.innerHTML = htmlFish;
+  }
 
-  var html = '<option value="">' + t('players_filter_all_fishes', 'Všechny odchované ryby') + ' (' + bredFishes.length + ')</option>';
-  bredFishes.forEach(function (f) {
-    var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
-    html += '<option value="' + f.id + '"' + (String(f.id) === String(currentVal) ? ' selected' : '') + '>' + escapeHtml(fName) + ' (#' + f.id + ')</option>';
-  });
-
-  select.innerHTML = html;
+  var selectBait = document.getElementById("playerBaitFilterSelect");
+  if (selectBait) {
+    var currentBaitVal = selectBait.value || filterPlayerBait || "";
+    var backyardBaits = ['Ryby', 'Maso', 'Rostlinné', 'Hmyz', 'Těsta', 'Přívlač/Nástrahy', 'Žraločí', 'Háčky'];
+    var htmlBait = '<option value="">' + t('players_filter_bait_label', 'Všechny návnady') + '</option>';
+    backyardBaits.forEach(function (b) {
+      var bName = (window.FISHAO_I18N && window.FISHAO_I18N.getBaitName)
+        ? window.FISHAO_I18N.getBaitName(b)
+        : b;
+      htmlBait += '<option value="' + b + '"' + (b === currentBaitVal ? ' selected' : '') + '>' + escapeHtml(bName) + '</option>';
+    });
+    selectBait.innerHTML = htmlBait;
+  }
 }
 
 /**
@@ -196,6 +250,189 @@ function togglePlayerFriendsFilter() {
   renderPlayersList();
 }
 
+function togglePlayerBackyardFilter() {
+  filterPlayerBackyardOnly = !filterPlayerBackyardOnly;
+  var btn = document.getElementById("filterPlayerBackyardOnlyBtn");
+  if (btn) btn.classList.toggle("active", filterPlayerBackyardOnly);
+  renderPlayersList();
+}
+
+function togglePlayerActiveNowFilter() {
+  filterPlayerActiveNow = !filterPlayerActiveNow;
+  var btn = document.getElementById("filterPlayerActiveNowBtn");
+  if (btn) btn.classList.toggle("active", filterPlayerActiveNow);
+  renderPlayersList();
+}
+
+function onPlayerFishFilterChange(val) {
+  filterPlayerFishId = val ? parseInt(val, 10) : null;
+  renderPlayersList();
+}
+
+function onPlayerBaitFilterChange(val) {
+  filterPlayerBait = val || "";
+  renderPlayersList();
+}
+
+function onPlayerRatingFilterChange(val) {
+  filterPlayerRating = val ? parseInt(val, 10) : null;
+  renderPlayersList();
+}
+
+function onPlayerSearchInput(val) {
+  filterPlayerSearchText = (val || "").trim();
+  renderPlayersList();
+}
+
+function clearPlayerSearch() {
+  var input = document.getElementById("playerSearchInput");
+  if (input) input.value = "";
+  filterPlayerSearchText = "";
+  renderPlayersList();
+}
+
+function resetPlayerFilters() {
+  filterPlayerSearchText = "";
+  filterPlayerFriendsOnly = false;
+  filterPlayerBackyardOnly = false;
+  filterPlayerActiveNow = false;
+  filterPlayerFishId = null;
+  filterPlayerBait = "";
+  filterPlayerRating = null;
+
+  var sInput = document.getElementById("playerSearchInput");
+  if (sInput) sInput.value = "";
+  var fFriendsBtn = document.getElementById("filterPlayerFriendsOnlyBtn");
+  if (fFriendsBtn) fFriendsBtn.classList.remove("active");
+  var fBackyardBtn = document.getElementById("filterPlayerBackyardOnlyBtn");
+  if (fBackyardBtn) fBackyardBtn.classList.remove("active");
+  var fActiveBtn = document.getElementById("filterPlayerActiveNowBtn");
+  if (fActiveBtn) fActiveBtn.classList.remove("active");
+  var sFish = document.getElementById("playerFishFilterSelect");
+  if (sFish) sFish.value = "";
+  var sBait = document.getElementById("playerBaitFilterSelect");
+  if (sBait) sBait.value = "";
+  var sRating = document.getElementById("playerRatingFilterSelect");
+  if (sRating) sRating.value = "";
+
+  renderPlayersList();
+}
+
+function renderPlayersActiveFiltersBar() {
+  var bar = document.getElementById("playersActiveFiltersBar");
+  var resetBtn = document.getElementById("resetPlayersFiltersBtn");
+  var searchWrap = document.getElementById("playerSearchWrap");
+  var selectFish = document.getElementById("playerFishFilterSelect");
+  var selectBait = document.getElementById("playerBaitFilterSelect");
+  var selectRating = document.getElementById("playerRatingFilterSelect");
+
+  if (searchWrap) searchWrap.classList.toggle("has-value", !!filterPlayerSearchText);
+  if (selectFish) selectFish.classList.toggle("has-value", !!filterPlayerFishId);
+  if (selectBait) selectBait.classList.toggle("has-value", !!filterPlayerBait);
+  if (selectRating) selectRating.classList.toggle("has-value", !!filterPlayerRating);
+
+  var chips = [];
+
+  if (filterPlayerSearchText) {
+    chips.push(
+      '<span class="active-filter-chip">' +
+        '🔍 ' + t('filter_active_search', { term: escapeHtml(filterPlayerSearchText) }) +
+        '<button type="button" onclick="window.fishaoApp.clearPlayerSearch()" title="Odebrat filtr">&times;</button>' +
+      '</span>'
+    );
+  }
+
+  if (filterPlayerFriendsOnly) {
+    chips.push(
+      '<span class="active-filter-chip">' +
+        '⭐ ' + t('filter_active_friends', 'Pouze přátelé') +
+        '<button type="button" onclick="window.fishaoApp.togglePlayerFriendsFilter()" title="Odebrat filtr">&times;</button>' +
+      '</span>'
+    );
+  }
+
+  if (filterPlayerBackyardOnly) {
+    chips.push(
+      '<span class="active-filter-chip">' +
+        '🏡 ' + t('filter_active_backyard', 'Pouze za domem') +
+        '<button type="button" onclick="window.fishaoApp.togglePlayerBackyardFilter()" title="Odebrat filtr">&times;</button>' +
+      '</span>'
+    );
+  }
+
+  if (filterPlayerActiveNow) {
+    chips.push(
+      '<span class="active-filter-chip">' +
+        '⚡ ' + t('filter_active_now', 'Bere právě teď') +
+        '<button type="button" onclick="window.fishaoApp.togglePlayerActiveNowFilter()" title="Odebrat filtr">&times;</button>' +
+      '</span>'
+    );
+  }
+
+  if (filterPlayerFishId) {
+    var fObj = allFishes.find(function (x) { return x.id === filterPlayerFishId; });
+    var fName = fObj ? (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name) : ('#' + filterPlayerFishId);
+    chips.push(
+      '<span class="active-filter-chip">' +
+        '🐟 ' + t('filter_active_fish', { name: escapeHtml(fName) }) +
+        '<button type="button" onclick="window.fishaoApp.onPlayerFishFilterChange(\'\')" title="Odebrat filtr">&times;</button>' +
+      '</span>'
+    );
+  }
+
+  if (filterPlayerBait) {
+    var bName = (window.FISHAO_I18N && window.FISHAO_I18N.getBaitName)
+      ? window.FISHAO_I18N.getBaitName(filterPlayerBait)
+      : filterPlayerBait;
+    chips.push(
+      '<span class="active-filter-chip">' +
+        '🪱 ' + t('filter_active_bait', { bait: escapeHtml(bName) }) +
+        '<button type="button" onclick="window.fishaoApp.onPlayerBaitFilterChange(\'\')" title="Odebrat filtr">&times;</button>' +
+      '</span>'
+    );
+  }
+
+  if (filterPlayerRating) {
+    chips.push(
+      '<span class="active-filter-chip">' +
+        '⭐ ' + t('filter_active_rating', { stars: filterPlayerRating }) +
+        '<button type="button" onclick="window.fishaoApp.onPlayerRatingFilterChange(\'\')" title="Odebrat filtr">&times;</button>' +
+      '</span>'
+    );
+  }
+
+  var hasAnyFilter = (chips.length > 0);
+  if (resetBtn) {
+    resetBtn.style.display = hasAnyFilter ? "inline-flex" : "none";
+  }
+
+  if (bar) {
+    if (hasAnyFilter) {
+      bar.style.display = "flex";
+      bar.innerHTML = '<span class="active-filters-title">🎯 ' + t('players_active_filters_title', 'Aktivní filtry:') + '</span>' +
+        chips.join('') +
+        '<button type="button" class="active-filters-clear-all" onclick="window.fishaoApp.resetPlayerFilters()" title="Resetovat všechny filtry">' +
+          t('players_filter_clear_all', 'Vymazat vše ↺') +
+        '</button>';
+    } else {
+      bar.style.display = "none";
+      bar.innerHTML = "";
+    }
+  }
+}
+
+function toggleBackyardCardExpand(uid, event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  if (expandedPlayerBackyardCards.has(uid)) {
+    expandedPlayerBackyardCards.delete(uid);
+  } else {
+    expandedPlayerBackyardCards.add(uid);
+  }
+  renderPlayersList();
+}
+
 /**
  * Render player cards in the community grid
  */
@@ -204,31 +441,55 @@ function renderPlayersList() {
   var countBadge = document.getElementById("playersCountBadge");
   if (!grid) return;
 
+  renderPlayersActiveFiltersBar();
+
   var myUid = currentUser ? currentUser.uid : "";
   var searchNorm = normStr(filterPlayerSearchText);
 
   var filtered = allPlayersList.filter(function (p) {
+    var pBackyard = (p.backyardFishIds || []).filter(isBackyardBreedable);
+
     if (filterPlayerFriendsOnly && !friendUids.has(p.uid)) {
       return false;
     }
-    if (filterPlayerBackyardOnly && (!p.backyardFishIds || p.backyardFishIds.length === 0)) {
+    if (filterPlayerBackyardOnly && pBackyard.length === 0) {
       return false;
     }
-    if (filterPlayerFishId && (!p.backyardFishIds || p.backyardFishIds.indexOf(filterPlayerFishId) === -1)) {
+    if (filterPlayerFishId && pBackyard.indexOf(filterPlayerFishId) === -1) {
       return false;
+    }
+    if (filterPlayerActiveNow) {
+      var hasActive = pBackyard.some(function (fid) {
+        var fObj = allFishes.find(function (x) { return x.id === fid; });
+        return fObj && isFishActiveNow(fObj.raw_times);
+      });
+      if (!hasActive) return false;
+    }
+    if (filterPlayerBait) {
+      var hasBait = pBackyard.some(function (fid) {
+        var fObj = allFishes.find(function (x) { return x.id === fid; });
+        return fObj && fObj.baits && fObj.baits.indexOf(filterPlayerBait) !== -1;
+      });
+      if (!hasBait) return false;
+    }
+    if (filterPlayerRating) {
+      var hasRating = pBackyard.some(function (fid) {
+        var fObj = allFishes.find(function (x) { return x.id === fid; });
+        return fObj && fObj.rating === filterPlayerRating;
+      });
+      if (!hasRating) return false;
     }
     if (searchNorm) {
       var nameMatch = normStr(p.displayName).indexOf(searchNorm) !== -1;
       var clubMatch = normStr(p.clubName).indexOf(searchNorm) !== -1;
-      var fishMatch = false;
-      if (p.backyardFishIds && p.backyardFishIds.length) {
-        fishMatch = p.backyardFishIds.some(function (fid) {
-          var fObj = allFishes.find(function (x) { return x.id === fid; });
-          if (!fObj) return false;
-          var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name;
-          return normStr(fName).indexOf(searchNorm) !== -1;
-        });
-      }
+      var fishMatch = pBackyard.some(function (fid) {
+        var fObj = allFishes.find(function (x) { return x.id === fid; });
+        if (!fObj) return false;
+        var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name;
+        if (normStr(fName).indexOf(searchNorm) !== -1) return true;
+        if (fObj.baits && fObj.baits.some(function (b) { return normStr(b).indexOf(searchNorm) !== -1; })) return true;
+        return false;
+      });
       if (!nameMatch && !clubMatch && !fishMatch) return false;
     }
     return true;
@@ -304,25 +565,36 @@ function renderPlayersList() {
       });
     }
 
-    // Backyard fish preview chips (strictly backyard species)
+    // Backyard fish rich cards (strictly backyard species)
     var bFishes = (p.backyardFishIds || []).filter(isBackyardBreedable);
-    var backyardChipsHtml = "";
+    var backyardCardsHtml = "";
     if (bFishes.length > 0) {
-      var maxPreview = 4;
-      var previewSlice = bFishes.slice(0, maxPreview);
-      previewSlice.forEach(function (fid) {
+      var isExpanded = expandedPlayerBackyardCards.has(p.uid);
+      var maxPreview = 2;
+      var showSlice = isExpanded ? bFishes : bFishes.slice(0, maxPreview);
+
+      backyardCardsHtml += '<div class="player-backyard-list">';
+      showSlice.forEach(function (fid) {
         var fObj = allFishes.find(function (x) { return x.id === fid; });
-        var fName = fObj ? (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name) : ('#' + fid);
-        backyardChipsHtml += '<span class="backyard-mini-chip" title="' + escapeHtml(fName) + '">' +
-          '<img src="images/fish_' + fid + '.png" alt="" onerror="this.src=\'images/fish_icon.png\'">' +
-          escapeHtml(fName) +
-          '</span>';
+        if (fObj) {
+          backyardCardsHtml += createRichBackyardFishCard(fObj);
+        }
       });
+      backyardCardsHtml += '</div>';
+
       if (bFishes.length > maxPreview) {
-        backyardChipsHtml += '<span class="backyard-mini-chip more">+' + (bFishes.length - maxPreview) + '</span>';
+        if (isExpanded) {
+          backyardCardsHtml += '<button type="button" class="player-backyard-expand-btn" onclick="window.fishaoApp.toggleBackyardCardExpand(\'' + p.uid + '\', event)">' +
+            t('backyard_collapse', 'Méně ▴') +
+            '</button>';
+        } else {
+          backyardCardsHtml += '<button type="button" class="player-backyard-expand-btn" onclick="window.fishaoApp.toggleBackyardCardExpand(\'' + p.uid + '\', event)">' +
+            '+ ' + t('backyard_show_all', { count: bFishes.length - maxPreview }) +
+            '</button>';
+        }
       }
     } else {
-      backyardChipsHtml = '<div class="player-card-empty-backyard">' + t('player_card_backyard_empty', 'Žádné ryby za domem') + '</div>';
+      backyardCardsHtml = '<div class="player-card-empty-backyard">' + t('player_card_backyard_empty', 'Žádné ryby za domem') + '</div>';
     }
 
     var friendBtnHtml = "";
@@ -363,9 +635,7 @@ function renderPlayersList() {
           '<div class="player-card-backyard-header">' +
             '<span>🏡 ' + t('player_card_backyard_title', { count: bFishes.length }) + '</span>' +
           '</div>' +
-          '<div class="player-card-backyard-chips">' +
-            backyardChipsHtml +
-          '</div>' +
+          backyardCardsHtml +
         '</div>' +
       '</div>' +
 
@@ -376,33 +646,6 @@ function renderPlayersList() {
   });
 
   grid.innerHTML = html;
-}
-
-/**
- * Filter and search handlers for community view
- */
-function onPlayerSearchInput(val) {
-  filterPlayerSearchText = (val || "").trim();
-  renderPlayersList();
-}
-
-function clearPlayerSearch() {
-  var input = document.getElementById("playerSearchInput");
-  if (input) input.value = "";
-  filterPlayerSearchText = "";
-  renderPlayersList();
-}
-
-function togglePlayerBackyardFilter() {
-  filterPlayerBackyardOnly = !filterPlayerBackyardOnly;
-  var btn = document.getElementById("filterPlayerBackyardOnlyBtn");
-  if (btn) btn.classList.toggle("active", filterPlayerBackyardOnly);
-  renderPlayersList();
-}
-
-function onPlayerFishFilterChange(val) {
-  filterPlayerFishId = val ? parseInt(val, 10) : null;
-  renderPlayersList();
 }
 
 /**
@@ -558,6 +801,75 @@ function renderModalBackyardOwners(fishId) {
 }
 
 /**
+ * Toggle visual catalog of all 83 breedable backyard fish in profile modal
+ */
+function toggleBackyardAllGrid() {
+  isProfileBackyardCatalogOpen = !isProfileBackyardCatalogOpen;
+  var container = document.getElementById("profileAllBackyardCatalog");
+  var btnText = document.getElementById("btnToggleAllBackyardGridText");
+  if (container) {
+    container.style.display = isProfileBackyardCatalogOpen ? "block" : "none";
+  }
+  if (btnText) {
+    btnText.innerText = isProfileBackyardCatalogOpen
+      ? t('profile_btn_catalog_hide', '📋 Skrýt katalog ryb ▴')
+      : t('profile_btn_catalog_show', '📋 Procházet všech 83 ryb k odchovu ▾');
+  }
+  if (isProfileBackyardCatalogOpen) {
+    renderProfileBackyardCatalog();
+  }
+}
+
+function renderProfileBackyardCatalog(searchTerm) {
+  var container = document.getElementById("profileAllBackyardCatalog");
+  if (!container || !isProfileBackyardCatalogOpen) return;
+
+  var q = normStr(searchTerm || "");
+  var bBreedables = allFishes.filter(isBackyardBreedable);
+  bBreedables.sort(function (a, b) {
+    var nameA = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(a) : a.name;
+    var nameB = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(b) : b.name;
+    return nameA.localeCompare(nameB);
+  });
+
+  if (q) {
+    bBreedables = bBreedables.filter(function (f) {
+      var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
+      return normStr(fName).indexOf(q) !== -1 || String(f.id) === q;
+    });
+  }
+
+  var html = '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px;">' +
+    '<span style="font-size: 11.5px; font-weight: 700; color: #2dd4bf;">' +
+      '83 ryb určených k odchovu (' + bBreedables.length + ')' +
+    '</span>' +
+    '<input type="text" class="dash-input" style="height: 28px; font-size: 11px; padding: 2px 8px; width: 150px;" placeholder="Hledat v katalogu..." value="' + escapeHtml(searchTerm || '') + '" oninput="window.fishaoApp.filterBackyardCatalog(this.value)">' +
+  '</div>';
+
+  html += '<div class="profile-catalog-grid">';
+  bBreedables.forEach(function (f) {
+    var fid = f.id;
+    var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
+    var isSelected = backyardFishIds.has(fid);
+    var stars = '★'.repeat(f.rating || 1);
+
+    html += '<div class="catalog-fish-card ' + (isSelected ? 'selected' : '') + '" onclick="window.fishaoApp.toggleBackyardFish(' + fid + ')" title="' + escapeHtml(fName) + ' (' + stars + ')">' +
+      (isSelected ? '<span class="catalog-fish-check">✓</span>' : '') +
+      '<img src="images/fish_' + fid + '.png" alt="" onerror="this.src=\'images/fish_icon.png\'">' +
+      '<span class="catalog-fish-name">' + escapeHtml(fName) + '</span>' +
+      '<span class="catalog-fish-stars">' + stars + '</span>' +
+    '</div>';
+  });
+  html += '</div>';
+
+  container.innerHTML = html;
+}
+
+function filterBackyardCatalog(val) {
+  renderProfileBackyardCatalog(val);
+}
+
+/**
  * Render backyard chips inside the profile modal
  */
 function renderBackyardProfilePicker() {
@@ -572,21 +884,26 @@ function renderBackyardProfilePicker() {
     container.innerHTML = '<span style="font-size: 11.5px; color: var(--text-muted);">' +
       t('profile_backyard_empty_hint', 'Zatím nemáš vybrané žádné ryby. Můžeš je přidat vyhledáním níže.') +
       '</span>';
-    return;
+  } else {
+    var html = "";
+    ids.forEach(function (fid) {
+      var fObj = allFishes.find(function (x) { return x.id === fid; });
+      var fName = fObj ? (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name) : ('Ryba #' + fid);
+      var stars = fObj ? '★'.repeat(fObj.rating || 1) : '';
+      html += '<span class="profile-backyard-chip">' +
+        '<img src="images/fish_' + fid + '.png" alt="" onerror="this.src=\'images/fish_icon.png\'">' +
+        '<span>' + escapeHtml(fName) + '</span>' +
+        '<span class="chip-stars">' + stars + '</span>' +
+        '<button type="button" class="profile-backyard-chip-remove" onclick="window.fishaoApp.removeBackyardFish(' + fid + ')" title="Odebrat">&times;</button>' +
+        '</span>';
+    });
+    container.innerHTML = html;
   }
 
-  var html = "";
-  ids.forEach(function (fid) {
-    var fObj = allFishes.find(function (x) { return x.id === fid; });
-    var fName = fObj ? (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name) : ('Ryba #' + fid);
-    html += '<span class="profile-backyard-chip">' +
-      '<img src="images/fish_' + fid + '.png" alt="" onerror="this.src=\'images/fish_icon.png\'">' +
-      escapeHtml(fName) +
-      '<button type="button" class="profile-backyard-chip-remove" onclick="window.fishaoApp.removeBackyardFish(' + fid + ')" title="Odebrat">&times;</button>' +
-      '</span>';
-  });
-
-  container.innerHTML = html;
+  // Keep visual catalog checkmarks in sync if open
+  if (isProfileBackyardCatalogOpen) {
+    renderProfileBackyardCatalog();
+  }
 }
 
 /**
@@ -794,13 +1111,9 @@ async function openPlayerModal(uid) {
       backyardHtml += '<div class="player-modal-backyard-grid">';
       bFishes.forEach(function (fid) {
         var fObj = allFishes.find(function (x) { return x.id === fid; });
-        var fName = fObj ? (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name) : ('Ryba #' + fid);
-        var stars = fObj ? '★'.repeat(fObj.rating || 1) : '';
-        backyardHtml += '<div class="player-modal-backyard-card" onclick="window.fishaoApp.closePlayerModal(); window.fishaoApp.openFishDetail(' + fid + ')" title="' + escapeHtml(fName) + ' (klikni pro detail)">' +
-          '<img src="images/fish_' + fid + '.png" alt="" onerror="this.src=\'images/fish_icon.png\'">' +
-          '<div class="player-modal-backyard-card-name">' + escapeHtml(fName) + '</div>' +
-          '<div class="player-modal-backyard-card-stars">' + stars + '</div>' +
-          '</div>';
+        if (fObj) {
+          backyardHtml += createRichBackyardFishCard(fObj, '', true);
+        }
       });
       backyardHtml += '</div>';
     }
