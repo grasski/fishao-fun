@@ -6,15 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FISHAO – Encyklopedie a Klubové ryby</title>
   <!-- Modern Modular Stylesheets -->
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/header.css">
-  <link rel="stylesheet" href="css/nav.css">
-  <link rel="stylesheet" href="css/filters.css">
-  <link rel="stylesheet" href="css/table.css">
-  <link rel="stylesheet" href="css/clubs.css">
-  <link rel="stylesheet" href="css/players.css">
-  <link rel="stylesheet" href="css/modals.css">
-  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/base.css?v=2.2">
+  <link rel="stylesheet" href="css/header.css?v=2.2">
+  <link rel="stylesheet" href="css/nav.css?v=2.2">
+  <link rel="stylesheet" href="css/filters.css?v=2.2">
+  <link rel="stylesheet" href="css/table.css?v=2.2">
+  <link rel="stylesheet" href="css/clubs.css?v=2.2">
+  <link rel="stylesheet" href="css/players.css?v=2.2">
+  <link rel="stylesheet" href="css/modals.css?v=2.2">
+  <link rel="stylesheet" href="css/responsive.css?v=2.2">
 </head>
 
 <body>
@@ -337,7 +337,7 @@
       <!-- Players Community Content -->
       <div id="playersContent" style="display: none;">
         <div class="community-notice-bar teal-notice">
-          <span>💡</span>
+          <span class="notice-icon">💡</span>
           <span data-i18n="players_community_notice"><strong>Komunitní nástroj:</strong> Data hráčů, úlovků a ryb za domem nejsou nijak propojena se servery hry FISHAO (neodpovídají automaticky realitě ve hře). V seznamu se zobrazují pouze rybáři, kteří se na tomto webu zaregistrují.</span>
         </div>
         <div class="players-community-toolbar">
@@ -385,10 +385,6 @@
 
         <!-- STATE A: No Club Joined (Search & Join or Create) -->
         <div id="clubNoClubState" style="display: none;">
-          <div class="community-notice-bar purple-notice">
-            <span>💡</span>
-            <span data-i18n="club_community_notice"><strong>Komunitní kluby:</strong> Kluby a jejich milníky jsou komunitní funkcí této encyklopedie a nejsou nijak propojeny se servery hry FISHAO. Zobrazují se zde výhradně kluby a členové, kteří se zaregistrují na tomto webu.</span>
-          </div>
           <!-- No Club Header Bar -->
           <div class="view-action-bar purple" id="noClubBar" style="margin-bottom: 14px;">
             <div class="action-bar-left">
@@ -398,6 +394,11 @@
             <div class="action-bar-right">
               <span class="stat-chip" style="color: var(--text-muted);" data-i18n="badge_no_club">Bez klubu</span>
             </div>
+          </div>
+
+          <div class="community-notice-bar purple-notice">
+            <span class="notice-icon">💡</span>
+            <span data-i18n="club_community_notice"><strong>Komunitní kluby:</strong> Kluby a jejich milníky jsou komunitní funkcí této encyklopedie a nejsou nijak propojeny se servery hry FISHAO. Zobrazují se zde výhradně kluby a členové, kteří se zaregistrují na tomto webu.</span>
           </div>
 
           <div class="dash-card purple-card no-club-card">
@@ -438,10 +439,6 @@
 
         <!-- STATE B: Active Club Joined -->
         <div id="clubActiveState" style="display: none;">
-          <div class="community-notice-bar purple-notice">
-            <span>💡</span>
-            <span data-i18n="club_community_notice"><strong>Komunitní kluby:</strong> Kluby a jejich milníky jsou komunitní funkcí této encyklopedie a nejsou nijak propojeny se servery hry FISHAO. Zobrazují se zde výhradně kluby a členové, kteří se zaregistrují na tomto webu.</span>
-          </div>
           <!-- Active Club Header Bar -->
           <div class="view-action-bar purple" id="activeClubBar" style="margin-bottom: 14px;">
             <div class="action-bar-left">
@@ -452,6 +449,11 @@
             <div class="action-bar-right">
               <button class="pill-btn danger" onclick="window.fishaoApp.leaveClub()" data-i18n="club_btn_leave">🚪 Opustit klub</button>
             </div>
+          </div>
+
+          <div class="community-notice-bar purple-notice">
+            <span class="notice-icon">💡</span>
+            <span data-i18n="club_community_notice"><strong>Komunitní kluby:</strong> Kluby a jejich milníky jsou komunitní funkcí této encyklopedie a nejsou nijak propojeny se servery hry FISHAO. Zobrazují se zde výhradně kluby a členové, kteří se zaregistrují na tomto webu.</span>
           </div>
 
           <!-- Club Members Grid Card -->
@@ -1205,23 +1207,23 @@
   <div id="appToast" class="app-toast" style="display: none;"></div>
 
   <!-- Data scripts and localization -->
-  <script src="data/i18n/ui_cs.js"></script>
-  <script src="data/i18n/ui_en.js"></script>
-  <script src="data/i18n/taxonomies.js"></script>
-  <script src="data/i18n/fish_names.js"></script>
-  <script src="data/i18n.js"></script>
-  <script src="data/fishes.js"></script>
-  <script src="data/prices.js"></script>
-  <script src="firebase-config.js"></script>
+  <script src="data/i18n/ui_cs.js?v=2.2"></script>
+  <script src="data/i18n/ui_en.js?v=2.2"></script>
+  <script src="data/i18n/taxonomies.js?v=2.2"></script>
+  <script src="data/i18n/fish_names.js?v=2.2"></script>
+  <script src="data/i18n.js?v=2.2"></script>
+  <script src="data/fishes.js?v=2.2"></script>
+  <script src="data/prices.js?v=2.2"></script>
+  <script src="firebase-config.js?v=2.2"></script>
   <!-- Modular FISHAO Application Logic -->
-  <script src="js/state.js"></script>
-  <script src="js/table.js"></script>
-  <script src="js/clubs.js"></script>
-  <script src="js/market.js"></script>
-  <script src="js/filters.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/players.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/state.js?v=2.2"></script>
+  <script src="js/table.js?v=2.2"></script>
+  <script src="js/clubs.js?v=2.2"></script>
+  <script src="js/market.js?v=2.2"></script>
+  <script src="js/filters.js?v=2.2"></script>
+  <script src="js/auth.js?v=2.2"></script>
+  <script src="js/players.js?v=2.2"></script>
+  <script src="js/main.js?v=2.2"></script>
 
 </body>
 
