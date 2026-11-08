@@ -26,6 +26,9 @@
     overflow-x: visible;
     margin-bottom: 12px;
   }
+  .main-nav-bar .nav-tab:last-child:nth-child(odd) {
+    grid-column: span 2;
+  }
   .nav-tab {
     min-width: 0;
     padding: 10px 12px;
@@ -181,6 +184,9 @@
     border-radius: 14px;
     overflow-x: visible;
     margin-bottom: 12px;
+  }
+  .main-nav-bar .nav-tab:last-child:nth-child(odd) {
+    grid-column: span 2;
   }
   .nav-tab {
     min-width: 0;

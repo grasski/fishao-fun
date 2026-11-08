@@ -35,14 +35,20 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
      - `css/filters.css`: Search box, filter card, size inputs, toggle pills.
      - `css/table.css`: Table styling, fish images, badges, price cells, caught buttons, counter bar.
      - `css/clubs.css`: Club dashboard, active club bar, milestone roadmap, roster cards, special fish cards.
+     - `css/players.css`: Community player directory, player cards, and backyard bred fish styles.
      - `css/modals.css`: Modals layout, fish detail hero, price forms, bulk modal, profile/player modals, toasts.
      - `css/responsive.css`: Unified media queries (<=900px, <=768px, <=640px, <=420px).
    * `style.css` acts as the master `@import` bundle for backward compatibility.
    * All action bar controls maintain a unified 32px height standard (`.pill-btn`, `.toggle-pill`, `.btn-subtle-link`, `.sign-in-btn.sm`).
 
 7. **Modular JavaScript Architecture (`js/`):**
-   * Code is organized into cohesive modules under `js/`: `state.js`, `table.js`, `clubs.js`, `market.js`, `filters.js`, `auth.js`, and `main.js`.
+   * Code is organized into cohesive modules under `js/`: `state.js`, `table.js`, `clubs.js`, `market.js`, `filters.js`, `auth.js`, `players.js`, and `main.js`.
+   * `js/players.js`: Community player list, backyard fish breeding (`backyardFishIds`), universal player modal, reverse fish-to-player lookups.
    * Public browser handlers are exposed on `window.fishaoApp` in `js/main.js`. Do not edit the legacy monolithic `app.js`.
 
-For detailed documentation, refer to the Antigravity Skill at `.agents/skills/fishao/SKILL.md`.
+8. **Backyard Fish Breeding ("Za domem") & Community Directory:**
+   * Logged-in players can specify which fish they breed in their backyard pond (`backyardFishIds`).
+   * The community tab allows browsing all registered players, their catch progress, club affiliation, and bred fish.
+   * In the fish detail modal, players can see who currently has that fish bred ("Kdo má tuto rybu za domem").
 
+For detailed documentation, refer to the Antigravity Skill at `.agents/skills/fishao/SKILL.md`.

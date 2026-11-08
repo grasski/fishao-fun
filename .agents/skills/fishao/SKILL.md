@@ -99,6 +99,7 @@ Prices are stored as a map from `fishId` (as string) to an array of price entrie
   * `clubId`: String | null.
   * `clubName`: String | null.
   * `caughtFishIds`: Array<Number> (List of caught fish IDs, max 1000).
+  * `backyardFishIds`: Array<Number> (List of backyard bred fish IDs, max 300).
   * `createdAt`, `lastLogin`.
 
 ### 2.4 Firebase Security Rules & Communication Best Practices (`firestore.rules`)
@@ -127,7 +128,8 @@ The monolithic `app.js` was refactored into modular, cohesive files loaded direc
 4. `js/market.js`: Fish market price history persistence (`persistPriceHistory`), Sunday detection, single price submission/deletion (`submitNewPrice`, `deletePriceEntry`), modal price history rendering (`renderModalHistory`), bulk price import with autocomplete suggestions (`processBulkImport`), and JSON export (`exportPricesJson`).
 5. `js/filters.js`: Multi-criteria fish filtering engine (`applyFilters`, `resetFilters`), mission size handlers (`setSizeFilter`, `onRangeSizeInput`), collection filters, and dropdown options initializers.
 6. `js/auth.js`: Firebase authentication (`signIn`, `signOut`), GDPR-compliant profile synchronization (`loadUserProfile`, `saveProfile`), and UI state synchronization (`updateAuthUI`).
-7. `js/main.js`: Live clock and timezone switching (`setTimezone`, `updateClock`), view routing (`switchView`), static DOM translations (`setLanguage`, `updateStaticTranslations`), modal listeners, `window.fishaoApp` exports, and application boot.
+7. `js/players.js`: Community player list, backyard fish breeding (`backyardFishIds`), universal player modal, reverse fish-to-player lookups.
+8. `js/main.js`: Live clock and timezone switching (`setTimezone`, `updateClock`), view routing (`switchView`), static DOM translations (`setLanguage`, `updateStaticTranslations`), modal listeners, `window.fishaoApp` exports, and application boot.
 
 ### 2.6 Modular Stylesheets (`css/`)
 
@@ -138,8 +140,9 @@ The 3,200+ line monolithic `style.css` was refactored into targeted CSS modules:
 4. `css/filters.css`: Search input, filter card grid, fish size slider & numeric inputs, filter pills.
 5. `css/table.css`: Table layout, zebra striping, sticky headers, fish images, rating stars, price trends, caught buttons.
 6. `css/clubs.css`: Active club header bar, roadmap milestones, member cards, special fish cards.
-7. `css/modals.css`: Fish detail modal hero, fish market single & bulk modals, auth gate cards, player profile modal, emoji picker, toast messages.
-8. `css/responsive.css`: Mobile and tablet media queries (`<=900px`, `<=768px`, `<=640px`, `<=420px`).
+7. `css/players.css`: Community player cards, grid, backyard chips, and detail modal extensions.
+8. `css/modals.css`: Fish detail modal hero, fish market single & bulk modals, auth gate cards, player profile modal, emoji picker, toast messages.
+9. `css/responsive.css`: Mobile and tablet media queries (`<=900px`, `<=768px`, `<=640px`, `<=420px`).
 
 `style.css` acts as the master `@import` orchestrator for backward compatibility.
 
@@ -173,6 +176,7 @@ View Key        | Tab Button       | Main Header Sub-Toolbar
 `"club"`        | `#tabClub`       | `#bannerClub` (Gold theme – unlocked milestones, hide locked toggle)
 `"club_manage"` | `#tabClubManage` | Full management dashboard (member roster, milestone roadmap, special fish)
 `"market"`      | `#tabMarket`     | `#bannerMarket` (Market stats, Sunday notice, bulk import trigger)
+`"players"`     | `#tabPlayers`    | `#bannerPlayers` (Teal theme – player search, backyard filter, bred fish dropdown)
 
 ---
 

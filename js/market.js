@@ -95,6 +95,12 @@ function openPriceModal(fid) {
   if (ratingBox) ratingBox.innerHTML = renderRatingBadge(f.rating);
 
   updateModalCaughtBtn(fid);
+  if (typeof updateModalBackyardBtn === 'function') {
+    updateModalBackyardBtn(fid);
+  }
+  if (typeof renderModalBackyardOwners === 'function') {
+    renderModalBackyardOwners(fid);
+  }
 
   // Locations and water
   var locEl = document.getElementById("modalFishLocations");

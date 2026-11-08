@@ -11,7 +11,8 @@ Moderní webová aplikace a interaktivní encyklopedie pro hráče rybářské h
 - **Pokročilé vyhledávání a filtry**: Rychlé filtrování podle názvu, prostředí, vzácnosti, minimálního levelu a velikostního rozpětí (vhodné pro plnění misí).
 - **Osobní sbírka úlovků**: Možnost označovat chycené ryby a sledovat procentuální postup ve sbírce.
 - **Klubový postup**: Nastavení bodů klubu s vizuálním odlišením odemčených ryb a odpočtem bodů do dalších milníků.
-- **Tržní ceny**: Evidence a přehled prodejních cen ryb na trhu včetně historie a statistik.
+- **Tržní ceny**: Evidence a přehled prodejních cen ryb na trhu včetně historie a statistik (v neděli zavřeno).
+- **Komunita & Ryby Za domem**: Přehled všech hráčů, jejich klubů a úlovků. Možnost nastavit své odchované ryby za domem a zpětné zjištění, kteří hráči mají danou rybu k dispozici.
 - **Hybridní úložiště**: Plně funkční lokálně v prohlížeči (`localStorage`) s volitelnou synchronizací v reálném čase přes Firebase (Google přihlášení).
 
 ---
@@ -29,6 +30,7 @@ fishao/
 │   ├── filters.css     # Vyhledávací a filtrační panel, posuvníky velikostí
 │   ├── table.css       # Tabulka ryb, odznaky, ceny a tlačítka úlovků
 │   ├── clubs.css       # Klubová sekce, statistiky, milníky a seznam členů
+│   ├── players.css     # Komunita hráčů, karty uživatelů a dvorek (za domem)
 │   ├── modals.css      # Modální okna (detail ryby, ceny, hromadný import, profil, toast)
 │   └── responsive.css  # Responzivní pravidla pro mobilní a tabletová zobrazení
 ├── js/                 # Modulární aplikační logika
@@ -38,6 +40,7 @@ fishao/
 │   ├── market.js       # Fish Market ceník, historie, jednotlivé zadávání a hromadný import
 │   ├── filters.js      # Filtrování (hledání, vody, lokace, čas, velikosti, řazení)
 │   ├── auth.js         # Firebase autentizace a GDPR-compliant synchronizace profilu
+│   ├── players.js      # Komunita, ryby za domem, univerzální profil a reverzní vyhledávání
 │   └── main.js         # Přepínání pohledů, hodiny, překlady, window.fishaoApp a start
 ├── firebase-config.js  # Konfigurace Firebase projektu
 ├── firestore.rules     # Bezpečnostní pravidla pro Firestore databázi

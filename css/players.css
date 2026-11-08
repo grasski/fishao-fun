@@ -1,0 +1,459 @@
+/* ===================================================================
+   FISHAO – Players Community & Backyard Styles (css/players.css)
+   =================================================================== */
+
+/* --- Players Grid & Cards --- */
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.player-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.22s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.player-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(20, 184, 166, 0.45);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.player-card.is-me {
+  border-color: rgba(139, 92, 246, 0.4);
+  background: linear-gradient(180deg, rgba(139, 92, 246, 0.06) 0%, var(--surface) 100%);
+}
+
+.player-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.player-card-avatar-wrap {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(20, 184, 166, 0.15);
+  border: 2px solid rgba(20, 184, 166, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.player-card-avatar-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.player-card-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.player-card-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.player-card-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-card-me-tag {
+  font-size: 11px;
+  font-weight: 800;
+  color: #c084fc;
+  background: rgba(139, 92, 246, 0.2);
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
+.player-card-club-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.player-card-club-badge {
+  color: #fbbf24;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Stats progress block inside card */
+.player-card-stats {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.player-card-stat-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.player-card-stat-label {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.player-card-stat-val {
+  font-weight: 700;
+}
+
+/* Backyard preview inside card */
+.player-card-backyard {
+  margin-bottom: 14px;
+  flex: 1;
+}
+
+.player-card-backyard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2dd4bf;
+  margin-bottom: 6px;
+}
+
+.player-card-backyard-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.backyard-mini-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 7px;
+  background: rgba(20, 184, 166, 0.12);
+  border: 1px solid rgba(20, 184, 166, 0.3);
+  font-size: 11px;
+  color: #e0f2fe;
+  max-width: 100%;
+}
+
+.backyard-mini-chip img {
+  width: 22px;
+  height: 13px;
+  object-fit: contain;
+}
+
+.backyard-mini-chip.more {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border);
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.player-card-empty-backyard {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 4px 0;
+}
+
+.player-card-btn {
+  width: 100%;
+  height: 34px;
+  background: rgba(20, 184, 166, 0.12);
+  color: #2dd4bf;
+  border: 1px solid rgba(20, 184, 166, 0.35);
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.18s;
+}
+
+.player-card-btn:hover {
+  background: rgba(20, 184, 166, 0.25);
+  color: #5eead4;
+  border-color: #14b8a6;
+}
+
+/* --- Fish Detail Modal Backyard Toggle Pill --- */
+.btn-backyard-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-backyard-pill:hover {
+  background: rgba(20, 184, 166, 0.15);
+  color: #2dd4bf;
+  border-color: rgba(20, 184, 166, 0.4);
+}
+
+.btn-backyard-pill.active {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.35), rgba(16, 185, 129, 0.2));
+  color: #2dd4bf;
+  border-color: #14b8a6;
+  box-shadow: 0 0 14px rgba(20, 184, 166, 0.35);
+}
+
+/* Backyard Owners Box in Fish Detail */
+.modal-backyard-owners-box {
+  background: rgba(20, 184, 166, 0.05);
+  border: 1px solid rgba(20, 184, 166, 0.2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 12px;
+}
+
+.modal-backyard-owners-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #2dd4bf;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.modal-backyard-owners-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.modal-backyard-owner-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(20, 184, 166, 0.15);
+  border: 1px solid rgba(20, 184, 166, 0.35);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #f0fdfa;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.modal-backyard-owner-pill:hover {
+  background: rgba(20, 184, 166, 0.3);
+  border-color: #14b8a6;
+  transform: translateY(-1px);
+}
+
+/* --- Universal Player Modal Backyard Section --- */
+.player-modal-backyard-section {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  text-align: left;
+}
+
+.player-modal-backyard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #2dd4bf;
+  margin-bottom: 8px;
+}
+
+.player-modal-backyard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.player-modal-backyard-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.18s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-modal-backyard-card:hover {
+  background: rgba(20, 184, 166, 0.15);
+  border-color: rgba(20, 184, 166, 0.45);
+  transform: scale(1.02);
+}
+
+.player-modal-backyard-card img {
+  width: 50px;
+  height: 28px;
+  object-fit: contain;
+  margin-bottom: 4px;
+}
+
+.player-modal-backyard-card-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.player-modal-backyard-card-stars {
+  font-size: 10px;
+  color: #fbbf24;
+  margin-top: 2px;
+}
+
+/* --- Profile Modal Backyard Section --- */
+.profile-backyard-section {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.profile-backyard-chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 40px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.profile-backyard-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(20, 184, 166, 0.18);
+  border: 1px solid rgba(20, 184, 166, 0.4);
+  font-size: 12px;
+  color: #f0fdfa;
+}
+
+.profile-backyard-chip img {
+  width: 26px;
+  height: 15px;
+  object-fit: contain;
+}
+
+.profile-backyard-chip-remove {
+  background: none;
+  border: none;
+  color: #f87171;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0 2px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.profile-backyard-chip-remove:hover {
+  color: #ef4444;
+}
+
+.profile-backyard-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 180px;
+  overflow-y: auto;
+  background: #111a2e;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  margin-top: 4px;
+}
+
+.profile-backyard-sugg-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 12.5px;
+  transition: background 0.15s;
+}
+
+.profile-backyard-sugg-item:hover {
+  background: rgba(20, 184, 166, 0.2);
+  color: #2dd4bf;
+}
+
+.profile-backyard-sugg-item img {
+  width: 32px;
+  height: 18px;
+  object-fit: contain;
+}
+
+@media (max-width: 640px) {
+  .players-grid {
+    grid-template-columns: 1fr;
+  }
+}

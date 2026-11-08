@@ -34,6 +34,7 @@ async function initFirebaseSync() {
         userProfile = null;
         isAdmin = false;
         caughtFishIds = new Set();
+        backyardFishIds = new Set();
         if (clubUnsubscribe) {
           clubUnsubscribe();
           clubUnsubscribe = null;
@@ -130,6 +131,7 @@ async function loadUserProfile(user) {
         clubId: "",
         clubName: "",
         caughtFishIds: Array.from(caughtFishIds),
+        backyardFishIds: Array.from(backyardFishIds),
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString()
       };
@@ -139,6 +141,9 @@ async function loadUserProfile(user) {
     isAdmin = (userProfile.role === "admin");
     if (userProfile.caughtFishIds && Array.isArray(userProfile.caughtFishIds)) {
       caughtFishIds = new Set(userProfile.caughtFishIds);
+    }
+    if (userProfile.backyardFishIds && Array.isArray(userProfile.backyardFishIds)) {
+      backyardFishIds = new Set(userProfile.backyardFishIds);
     }
 
     if (userProfile.clubId) {
@@ -155,6 +160,9 @@ async function loadUserProfile(user) {
         isAdmin = (userProfile.role === "admin");
         if (userProfile.caughtFishIds && Array.isArray(userProfile.caughtFishIds)) {
           caughtFishIds = new Set(userProfile.caughtFishIds);
+        }
+        if (userProfile.backyardFishIds && Array.isArray(userProfile.backyardFishIds)) {
+          backyardFishIds = new Set(userProfile.backyardFishIds);
         }
         if (userProfile.clubId !== oldClubId) {
           if (userProfile.clubId) {
@@ -213,6 +221,13 @@ function updateAuthUI() {
   if (collBannerAuth && collBannerGuest) {
     collBannerAuth.style.display = currentUser ? "flex" : "none";
     collBannerGuest.style.display = currentUser ? "none" : "flex";
+  }
+
+  var gatePlayers = document.getElementById("gatePlayers");
+  var playersContent = document.getElementById("playersContent");
+  if (gatePlayers && playersContent) {
+    gatePlayers.style.display = currentUser ? "none" : "block";
+    playersContent.style.display = currentUser ? "block" : "none";
   }
 
   if (!isFirebaseConfigured) {
@@ -354,6 +369,10 @@ function openProfileModal() {
   btns.forEach(function (b) {
     b.classList.toggle("active", b.innerText.trim() === selectedProfilePresetEmoji);
   });
+
+  if (typeof renderBackyardProfilePicker === 'function') {
+    renderBackyardProfilePicker();
+  }
 
   if (overlay) overlay.style.display = "flex";
 }

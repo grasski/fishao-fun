@@ -41,6 +41,17 @@ var collectionFilterMode = "all"; // 'all' | 'caught' | 'missing'
 var currentUser = null;
 var userProfile = null;
 var caughtFishIds = new Set();
+var backyardFishIds = new Set();
+try {
+  var localBackyard = localStorage.getItem('fishao_backyard_fish_ids');
+  if (localBackyard) {
+    backyardFishIds = new Set(JSON.parse(localBackyard));
+  }
+} catch (e) {}
+var allPlayersList = [];
+var filterPlayerBackyardOnly = false;
+var filterPlayerFishId = null;
+var filterPlayerSearchText = "";
 var isAdmin = false;
 
 // Firebase service instances

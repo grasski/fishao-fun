@@ -85,12 +85,13 @@ function switchView(view) {
   }
   currentView = view;
 
-  var tabs = ["tabClub", "tabAll", "tabClubManage", "tabMarket"];
+  var tabs = ["tabClub", "tabAll", "tabClubManage", "tabMarket", "tabPlayers"];
   var tabMap = {
     "club": "tabClub",
     "all": "tabAll",
     "club_manage": "tabClubManage",
-    "market": "tabMarket"
+    "market": "tabMarket",
+    "players": "tabPlayers"
   };
 
   tabs.forEach(function (tId) {
@@ -101,17 +102,41 @@ function switchView(view) {
   var bClub = document.getElementById("bannerClub");
   var bCollection = document.getElementById("bannerCollection");
   var bMarket = document.getElementById("bannerMarket");
+  var bPlayers = document.getElementById("bannerPlayers");
   var secManage = document.getElementById("sectionClubManage");
   var secTable = document.getElementById("sectionFishTable");
+  var secPlayers = document.getElementById("sectionPlayers");
   var filterCard = document.getElementById("filterCard");
   var gateClub = document.getElementById("gateClubManage");
   var manageContent = document.getElementById("manageClubContent");
+  var gatePlayers = document.getElementById("gatePlayers");
+  var playersContent = document.getElementById("playersContent");
 
   if (bClub) bClub.style.display = (view === "club") ? "flex" : "none";
   if (bCollection) bCollection.style.display = (view === "all") ? "flex" : "none";
   if (bMarket) bMarket.style.display = (view === "market") ? "flex" : "none";
+  if (bPlayers) bPlayers.style.display = (view === "players") ? "flex" : "none";
 
   updateMarketTabStatus();
+
+  if (view === "players") {
+    if (secPlayers) secPlayers.style.display = "block";
+    if (secManage) secManage.style.display = "none";
+    if (secTable) secTable.style.display = "none";
+    if (filterCard) filterCard.style.display = "none";
+
+    if (!currentUser) {
+      if (gatePlayers) gatePlayers.style.display = "block";
+      if (playersContent) playersContent.style.display = "none";
+    } else {
+      if (gatePlayers) gatePlayers.style.display = "none";
+      if (playersContent) playersContent.style.display = "block";
+      if (typeof loadAllPlayers === 'function') loadAllPlayers();
+    }
+    return;
+  } else {
+    if (secPlayers) secPlayers.style.display = "none";
+  }
 
   if (view === "club_manage") {
     if (secManage) secManage.style.display = "block";
@@ -313,6 +338,16 @@ window.fishaoApp = {
   renderClubMilestones: renderClubMilestones,
   renderRatingBadge: renderRatingBadge,
   toggleCaughtFromModal: toggleCaughtFromModal,
+  toggleBackyardFish: toggleBackyardFish,
+  toggleBackyardFromModal: toggleBackyardFromModal,
+  addBackyardFish: addBackyardFish,
+  removeBackyardFish: removeBackyardFish,
+  onPlayerSearchInput: onPlayerSearchInput,
+  togglePlayerBackyardFilter: togglePlayerBackyardFilter,
+  onPlayerFishFilterChange: onPlayerFishFilterChange,
+  onBackyardSearchInput: onBackyardSearchInput,
+  selectBackyardSearchResult: selectBackyardSearchResult,
+  loadAllPlayers: loadAllPlayers,
   openFishDetail: openPriceModal,
   onPriceDateChange: onPriceDateChange,
   onBulkDateChange: onBulkDateChange,

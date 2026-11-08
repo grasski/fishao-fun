@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="css/filters.css">
   <link rel="stylesheet" href="css/table.css">
   <link rel="stylesheet" href="css/clubs.css">
+  <link rel="stylesheet" href="css/players.css">
   <link rel="stylesheet" href="css/modals.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
@@ -124,6 +125,11 @@
         <span class="tab-title" data-i18n="nav_market">Fish Market</span>
         <span class="tab-pill" id="tabMarketPill" data-i18n="nav_market_pill">Výkup</span>
       </button>
+      <button class="nav-tab teal" id="tabPlayers" onclick="window.fishaoApp.switchView('players')">
+        <span class="tab-icon">👥</span>
+        <span class="tab-title" data-i18n="nav_players">Hráči &amp; Dvorek</span>
+        <span class="tab-pill" id="tabPlayersPill" data-i18n="nav_players_pill">Komunita</span>
+      </button>
     </nav>
 
     <!-- Compact Sub-Toolbar: Club View (Gold Theme) -->
@@ -223,6 +229,53 @@
         <div class="sunday-notice-desc" data-i18n="market_sunday_banner_desc">Každou celou neděli (00:00 – 24:00) je výkup ryb ve hře FISHAO uzavřen. Výkup se znovu otevře v pondělí. Níže jsou zobrazeny poslední známé ceny z předchozích dnů.</div>
       </div>
     </div>
+
+    <!-- Compact Sub-Toolbar: Players & Backyard View (Teal Theme) -->
+    <div class="view-action-bar teal" id="bannerPlayers" style="display: none;">
+      <div class="action-bar-left">
+        <div class="search-input-wrap" style="min-width: 240px;">
+          <input type="text" id="playerSearchInput" class="dash-input" placeholder="Hledat hráče, klub nebo rybu..." data-i18n-placeholder="players_search_placeholder" oninput="window.fishaoApp.onPlayerSearchInput(this.value)">
+        </div>
+        <button type="button" class="toggle-pill" id="filterPlayerBackyardOnlyBtn" onclick="window.fishaoApp.togglePlayerBackyardFilter()">
+          🏡 <span data-i18n="players_filter_backyard_only">Pouze s rybou za domem</span>
+        </button>
+        <div class="search-input-wrap" style="min-width: 200px;">
+          <select id="playerFishFilterSelect" class="dash-input select-clean" onchange="window.fishaoApp.onPlayerFishFilterChange(this.value)">
+            <option value="" data-i18n="players_filter_all_fishes">Všechny odchované ryby</option>
+          </select>
+        </div>
+      </div>
+      <div class="action-bar-right">
+        <span id="playersCountBadge" class="status-counter-item" style="color: var(--text-muted); font-size: 13px;">0 hráčů</span>
+        <button type="button" class="pill-btn teal active" onclick="window.fishaoApp.openProfileModal()">
+          <span>🏡</span> <span data-i18n="players_manage_my_backyard">Moje ryby za domem</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Section: Community Players & Backyard -->
+    <section id="sectionPlayers" style="display: none; margin-bottom: 30px;">
+      <!-- Auth Gate: shown when user is not logged in -->
+      <div class="auth-gate-card" id="gatePlayers" style="display: none;">
+        <div class="auth-gate-icon">👥</div>
+        <h3 data-i18n="players_gate_title">Komunita rybářů &amp; Dvorek</h3>
+        <p data-i18n="players_gate_desc">Pro zobrazení seznamu hráčů, jejich úlovků, klubů a odchovaných ryb za domem se prosím přihlas přes Google.</p>
+        <button class="sign-in-btn" onclick="window.fishaoApp.signIn()" style="margin-top: 6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" />
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z" />
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z" />
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" />
+          </svg>
+          <span data-i18n="coll_guest_btn">Přihlásit se přes Google</span>
+        </button>
+      </div>
+
+      <!-- Players Community Content -->
+      <div id="playersContent" style="display: none;">
+        <div id="playersGrid" class="players-grid"></div>
+      </div>
+    </section>
 
     <!-- SECTION: Club Management & Milestones Center (Purple Theme) -->
     <section id="sectionClubManage" class="club-manage-section" style="display: none;">
@@ -635,9 +688,14 @@
                 <span id="modalFishIdBadge" class="fish-id-tag">#--</span>
                 <span id="modalFishClubTag" class="badge-club-tag" style="display: none;">🏆 Klubová</span>
               </div>
-              <button id="modalBtnCaught" class="btn-caught-pill" onclick="window.fishaoApp.toggleCaughtFromModal()">
-                ✓ Chyceno
-              </button>
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <button id="modalBtnCaught" class="btn-caught-pill" onclick="window.fishaoApp.toggleCaughtFromModal()">
+                  ✓ Chyceno
+                </button>
+                <button id="modalBtnBackyard" class="btn-backyard-pill" onclick="window.fishaoApp.toggleBackyardFromModal()">
+                  🏡 Za domem
+                </button>
+              </div>
             </div>
             <div id="modalFishRatingBox" style="margin-top: 8px;"></div>
           </div>
@@ -666,6 +724,9 @@
             <div class="detail-val" id="modalFishClubUnlock">--</div>
           </div>
         </div>
+
+        <!-- Backyard owners who have this fish -->
+        <div id="modalBackyardOwnersBox" class="modal-backyard-owners-box"></div>
 
         <!-- Fish Market Section Header -->
         <div class="modal-market-divider"> <span data-i18n="modal_market_divider">💵 Fish Market – Výkupní ceny a
@@ -862,6 +923,21 @@
           <input type="text" id="inputProfileNickname" class="dash-input" maxlength="40" placeholder="Zadej svou přezdívku..." onkeydown="if(event.key==='Enter') window.fishaoApp.saveProfile()">
         </div>
 
+        <!-- Backyard fish selection -->
+        <div class="profile-backyard-section">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1;" data-i18n="profile_backyard_label">
+              🏡 Moje ryby za domem (odchované v jezírku):
+            </label>
+            <span id="profileBackyardCount" style="font-size: 11px; color: #2dd4bf; font-weight: 700;">0 ryb</span>
+          </div>
+          <div id="profileBackyardChips" class="profile-backyard-chips-wrap"></div>
+          <div style="position: relative; margin-top: 8px;">
+            <input type="text" id="inputBackyardSearch" class="dash-input" placeholder="Přidat rybu za dům (začni psát název)..." data-i18n-placeholder="profile_backyard_search_placeholder" oninput="window.fishaoApp.onBackyardSearchInput(this.value)">
+            <div id="backyardSearchSuggestions" class="profile-backyard-suggestions" style="display: none;"></div>
+          </div>
+        </div>
+
         <!-- Action buttons -->
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--border);">
           <button type="button" class="pill-btn" onclick="window.fishaoApp.closeProfileModal()" data-i18n="confirm_cancel">Zrušit</button>
@@ -893,7 +969,7 @@
   <!-- Player Profile Detail Modal -->
   <div class="modal-overlay" id="playerModalOverlay"
     onclick="window.fishaoApp.onModalOverlayClick(event, 'playerModalOverlay')">
-    <div class="modal-box" style="max-width: 440px; text-align: center;">
+    <div class="modal-box" style="max-width: 500px; text-align: center;">
       <div class="modal-header" style="justify-content: flex-end; padding-bottom: 0; border-bottom: none;">
         <button class="modal-close" onclick="window.fishaoApp.closePlayerModal()">&times;</button>
       </div>
@@ -927,6 +1003,9 @@
           <div class="player-stat-meta" id="playerModalJoined"></div>
         </div>
 
+        <!-- Backyard Fish Section -->
+        <div id="playerModalBackyardWrap"></div>
+
         <div id="playerModalSelfActions" style="margin-top: 16px; display: none;">
           <button class="pill-btn purple" style="width: 100%; height: 38px; font-weight: 700;" onclick="window.fishaoApp.closePlayerModal(); window.fishaoApp.openProfileModal();">
             ✏️ Upravit můj profil (přezdívka / avatar)
@@ -955,6 +1034,7 @@
   <script src="js/market.js"></script>
   <script src="js/filters.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/players.js"></script>
   <script src="js/main.js"></script>
 
 </body>

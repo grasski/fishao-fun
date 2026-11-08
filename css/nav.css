@@ -109,6 +109,17 @@
   color: #dcfce7;
 }
 
+.nav-tab.teal.active {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.25), rgba(20, 184, 166, 0.08));
+  color: #2dd4bf;
+  border-color: #14b8a6;
+  box-shadow: 0 4px 15px rgba(20, 184, 166, 0.2);
+}
+.nav-tab.teal.active .tab-pill {
+  background: rgba(20, 184, 166, 0.35);
+  color: #ccfbf1;
+}
+
 /* ===================================================================
    3. COMPACT VIEW ACTION BARS (Sleek Sub-Toolbars - Unified 54px min-height)
    =================================================================== */
@@ -139,6 +150,9 @@
 }
 .view-action-bar.purple {
   border-left: 4px solid var(--purple);
+}
+.view-action-bar.teal {
+  border-left: 4px solid #14b8a6;
 }
 
 .action-bar-left, .action-bar-right {
