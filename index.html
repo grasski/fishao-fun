@@ -230,46 +230,84 @@
       </div>
     </div>
 
-    <!-- Compact Sub-Toolbar: Players & Backyard View (Teal Theme) -->
-    <div class="view-action-bar teal" id="bannerPlayers" style="display: none;">
-      <div class="action-bar-left" style="flex: 1; flex-wrap: wrap; gap: 8px;">
-        <div class="search-input-wrap lg" id="playerSearchWrap">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="playerSearchInput" class="search-input-lg" placeholder="Hledat hráče, klub nebo rybu..." data-i18n-placeholder="players_search_placeholder" oninput="window.fishaoApp.onPlayerSearchInput(this.value)">
-          <button type="button" class="search-clear-btn" id="playerSearchClearBtn" onclick="window.fishaoApp.clearPlayerSearch()" title="Vymazat hledání" style="display: none;">&times;</button>
+    <!-- Filter Card: Players & Backyard View (Redesigned like Encyclopedia) -->
+    <div class="filter-card" id="bannerPlayers" style="display: none;">
+      <!-- Row 1: Search and Primary Category Selectors -->
+      <div class="filter-row filter-row-main">
+        <div class="filter-group search-group">
+          <label class="filter-label" for="playerSearchInput" data-i18n="filter_search_player_label">Hledat hráče nebo rybu</label>
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="playerSearchInput" class="filter-control search-input"
+              placeholder="Hledat hráče, klub nebo rybu..." data-i18n-placeholder="players_search_placeholder"
+              oninput="window.fishaoApp.onPlayerSearchInput(this.value)">
+          </div>
         </div>
-        <button type="button" class="pill-btn" id="filterPlayerFriendsOnlyBtn" onclick="window.fishaoApp.togglePlayerFriendsFilter()">
-          ⭐ <span data-i18n="players_filter_friends_only">Pouze přátelé</span>
-        </button>
-        <button type="button" class="pill-btn" id="filterPlayerBackyardOnlyBtn" onclick="window.fishaoApp.togglePlayerBackyardFilter()">
-          🏡 <span data-i18n="players_filter_backyard_only">Pouze s rybou za domem</span>
-        </button>
-        <button type="button" class="pill-btn" id="filterPlayerActiveNowBtn" onclick="window.fishaoApp.togglePlayerActiveNowFilter()">
-          ⚡ <span data-i18n="players_filter_active_now">Bere teď za domem</span>
-        </button>
-        <div class="search-input-wrap" style="min-width: 180px;">
-          <select id="playerFishFilterSelect" class="dash-input select-clean" onchange="window.fishaoApp.onPlayerFishFilterChange(this.value)">
-            <option value="" data-i18n="players_filter_all_fishes">Všechny odchované ryby</option>
+
+        <div class="filter-group">
+          <label class="filter-label" for="playerBaitFilterSelect" data-i18n="filter_bait_label">Návnada</label>
+          <select id="playerBaitFilterSelect" class="filter-control" onchange="window.fishaoApp.onPlayerBaitFilterChange(this.value)">
+            <option value="" data-i18n="opt_bait_all">Všechny návnady</option>
+            <option value="Hmyz">Hmyz</option>
+            <option value="Rostlinné">Rostlinné</option>
+            <option value="Ryby">Ryby</option>
+            <option value="Těsta">Těsta</option>
+            <option value="Přívlač/Nástrahy">Přívlač/Nástrahy</option>
+            <option value="Maso">Maso</option>
+            <option value="Žraločí">Žraločí</option>
+            <option value="Háčky">Háčky</option>
           </select>
         </div>
-        <div class="search-input-wrap" style="min-width: 150px;">
-          <select id="playerBaitFilterSelect" class="dash-input select-clean" onchange="window.fishaoApp.onPlayerBaitFilterChange(this.value)">
-            <option value="" data-i18n="players_filter_bait_label">Všechny návnady</option>
+
+        <div class="filter-group sm">
+          <label class="filter-label" for="playerRatingFilterSelect" data-i18n="filter_rating_label">Rating</label>
+          <select id="playerRatingFilterSelect" class="filter-control" onchange="window.fishaoApp.onPlayerRatingFilterChange(this.value)">
+            <option value="" data-i18n="opt_rating_all">Všechny</option>
+            <option value="5">★★★★★ (5)</option>
+            <option value="4">★★★★☆ (4)</option>
+            <option value="3">★★★☆☆ (3)</option>
+            <option value="2">★★☆☆☆ (2)</option>
+            <option value="1">★☆☆☆☆ (1)</option>
+            <option value="min3" data-i18n="opt_rating_min3">Minimálně 3★</option>
+            <option value="min4" data-i18n="opt_rating_min4">Minimálně 4★</option>
           </select>
         </div>
-        <div class="search-input-wrap" style="min-width: 140px;">
-          <select id="playerRatingFilterSelect" class="dash-input select-clean" onchange="window.fishaoApp.onPlayerRatingFilterChange(this.value)">
-            <option value="" data-i18n="players_filter_rating_label">Všechny vzácnosti</option>
-            <option value="5">★★★★★ (5★)</option>
-            <option value="4">★★★★☆ (4★)</option>
-            <option value="3">★★★☆☆ (3★)</option>
-            <option value="2">★★☆☆☆ (2★)</option>
-            <option value="1">★☆☆☆☆ (1★)</option>
+
+        <div class="filter-group">
+          <label class="filter-label" for="playerTimeFilterSelect" data-i18n="filter_time_label">Čas a aktivita</label>
+          <select id="playerTimeFilterSelect" class="filter-control" onchange="window.fishaoApp.onPlayerTimeFilterChange(this.value)">
+            <option value="" data-i18n="opt_time_all">Celý den i noc</option>
+            <option value="now" data-i18n="opt_time_now">⚡ PRÁVĚ BERE (ŽIVĚ)</option>
+            <option value="night" data-i18n="opt_time_night">🌙 Noční ryby</option>
+            <option value="day" data-i18n="opt_time_day">☀️ Denní ryby</option>
+            <option value="morning" data-i18n="opt_time_morning">🌅 Ráno (06:00 - 12:00)</option>
+            <option value="afternoon" data-i18n="opt_time_afternoon">☀️ Odpoledne (12:00 - 18:00)</option>
+            <option value="evening" data-i18n="opt_time_evening">🌇 Večer (18:00 - 24:00)</option>
+            <option value="deepnight" data-i18n="opt_time_deepnight">🌌 Hluboká noc (00:00 - 06:00)</option>
           </select>
         </div>
-        <button type="button" class="pill-btn danger" id="resetPlayersFiltersBtn" onclick="window.fishaoApp.resetPlayerFilters()" style="display: none; height: 34px; padding: 0 12px; font-size: 12px;" title="Resetovat filtry">
-          <span>↺</span> <span data-i18n="players_filter_reset">Resetovat filtry</span>
-        </button>
+
+        <div class="filter-group filter-group-reset">
+          <button type="button" class="btn-reset" id="resetPlayersFiltersBtn" onclick="window.fishaoApp.resetPlayerFilters()"
+            title="Obnovit všechny filtry" data-i18n-title="filter_btn_reset">
+            <span data-i18n="filter_btn_reset">↺ Obnovit filtry</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Row 2: Quick Status Toggles -->
+      <div class="filter-row filter-row-sub">
+        <div class="quick-status-toggles">
+          <button type="button" class="pill-btn" id="filterPlayerFriendsOnlyBtn" onclick="window.fishaoApp.togglePlayerFriendsFilter()">
+            ⭐ <span data-i18n="players_filter_friends_only">Pouze přátelé</span>
+          </button>
+          <button type="button" class="pill-btn" id="filterPlayerBackyardOnlyBtn" onclick="window.fishaoApp.togglePlayerBackyardFilter()">
+            🏡 <span data-i18n="players_filter_backyard_only">Pouze s rybou za domem</span>
+          </button>
+          <button type="button" class="pill-btn" id="filterPlayerActiveNowBtn" onclick="window.fishaoApp.togglePlayerActiveNowFilter()">
+            ⚡ <span data-i18n="players_filter_active_now">Bere teď za domem</span>
+          </button>
+        </div>
       </div>
     </div>
 

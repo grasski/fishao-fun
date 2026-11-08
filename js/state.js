@@ -59,6 +59,7 @@ try {
 var filterPlayerFriendsOnly = false;
 var filterPlayerBackyardOnly = false;
 var filterPlayerActiveNow = false;
+var filterPlayerTime = "";
 var filterPlayerFishId = null;
 var filterPlayerBait = "";
 var filterPlayerRating = null;

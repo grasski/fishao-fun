@@ -164,8 +164,8 @@ function populatePlayerFishFilterDropdown() {
   var selectBait = document.getElementById("playerBaitFilterSelect");
   if (selectBait) {
     var currentBaitVal = selectBait.value || filterPlayerBait || "";
-    var backyardBaits = ['Ryby', 'Maso', 'Rostlinné', 'Hmyz', 'Těsta', 'Přívlač/Nástrahy', 'Žraločí', 'Háčky'];
-    var htmlBait = '<option value="">' + t('players_filter_bait_label', 'Všechny návnady') + '</option>';
+    var backyardBaits = ['Hmyz', 'Rostlinné', 'Ryby', 'Těsta', 'Přívlač/Nástrahy', 'Maso', 'Žraločí', 'Háčky'];
+    var htmlBait = '<option value="">' + t('opt_bait_all', 'Všechny návnady') + '</option>';
     backyardBaits.forEach(function (b) {
       var bName = (window.FISHAO_I18N && window.FISHAO_I18N.getBaitName)
         ? window.FISHAO_I18N.getBaitName(b)
@@ -173,6 +173,34 @@ function populatePlayerFishFilterDropdown() {
       htmlBait += '<option value="' + b + '"' + (b === currentBaitVal ? ' selected' : '') + '>' + escapeHtml(bName) + '</option>';
     });
     selectBait.innerHTML = htmlBait;
+  }
+
+  var selectRating = document.getElementById("playerRatingFilterSelect");
+  if (selectRating) {
+    var curRating = selectRating.value || (filterPlayerRating !== null ? String(filterPlayerRating) : "");
+    selectRating.innerHTML =
+      '<option value="">' + t('opt_rating_all', 'Všechny') + '</option>' +
+      '<option value="5"' + (curRating === '5' ? ' selected' : '') + '>★★★★★ (5)</option>' +
+      '<option value="4"' + (curRating === '4' ? ' selected' : '') + '>★★★★☆ (4)</option>' +
+      '<option value="3"' + (curRating === '3' ? ' selected' : '') + '>★★★☆☆ (3)</option>' +
+      '<option value="2"' + (curRating === '2' ? ' selected' : '') + '>★★☆☆☆ (2)</option>' +
+      '<option value="1"' + (curRating === '1' ? ' selected' : '') + '>★☆☆☆☆ (1)</option>' +
+      '<option value="min3"' + (curRating === 'min3' ? ' selected' : '') + '>' + t('opt_rating_min3', 'Minimálně 3★') + '</option>' +
+      '<option value="min4"' + (curRating === 'min4' ? ' selected' : '') + '>' + t('opt_rating_min4', 'Minimálně 4★') + '</option>';
+  }
+
+  var selectTime = document.getElementById("playerTimeFilterSelect");
+  if (selectTime) {
+    var curTime = selectTime.value || filterPlayerTime || (filterPlayerActiveNow ? "now" : "");
+    selectTime.innerHTML =
+      '<option value="">' + t('opt_time_all', 'Celý den i noc') + '</option>' +
+      '<option value="now"' + (curTime === 'now' ? ' selected' : '') + '>' + t('opt_time_now', '⚡ PRÁVĚ BERE (ŽIVĚ)') + '</option>' +
+      '<option value="night"' + (curTime === 'night' ? ' selected' : '') + '>' + t('opt_time_night', '🌙 Noční ryby') + '</option>' +
+      '<option value="day"' + (curTime === 'day' ? ' selected' : '') + '>' + t('opt_time_day', '☀️ Denní ryby') + '</option>' +
+      '<option value="morning"' + (curTime === 'morning' ? ' selected' : '') + '>' + t('opt_time_morning', '🌅 Ráno (06:00 - 12:00)') + '</option>' +
+      '<option value="afternoon"' + (curTime === 'afternoon' ? ' selected' : '') + '>' + t('opt_time_afternoon', '☀️ Odpoledne (12:00 - 18:00)') + '</option>' +
+      '<option value="evening"' + (curTime === 'evening' ? ' selected' : '') + '>' + t('opt_time_evening', '🌇 Večer (18:00 - 24:00)') + '</option>' +
+      '<option value="deepnight"' + (curTime === 'deepnight' ? ' selected' : '') + '>' + t('opt_time_deepnight', '🌌 Hluboká noc (00:00 - 06:00)') + '</option>';
   }
 }
 
@@ -258,7 +286,23 @@ function togglePlayerBackyardFilter() {
 }
 
 function togglePlayerActiveNowFilter() {
-  filterPlayerActiveNow = !filterPlayerActiveNow;
+  if (filterPlayerActiveNow || filterPlayerTime === "now") {
+    filterPlayerActiveNow = false;
+    filterPlayerTime = "";
+  } else {
+    filterPlayerActiveNow = true;
+    filterPlayerTime = "now";
+  }
+  var btn = document.getElementById("filterPlayerActiveNowBtn");
+  if (btn) btn.classList.toggle("active", filterPlayerActiveNow);
+  var timeSel = document.getElementById("playerTimeFilterSelect");
+  if (timeSel) timeSel.value = filterPlayerTime;
+  renderPlayersList();
+}
+
+function onPlayerTimeFilterChange(val) {
+  filterPlayerTime = val || "";
+  filterPlayerActiveNow = (filterPlayerTime === "now");
   var btn = document.getElementById("filterPlayerActiveNowBtn");
   if (btn) btn.classList.toggle("active", filterPlayerActiveNow);
   renderPlayersList();
@@ -275,7 +319,7 @@ function onPlayerBaitFilterChange(val) {
 }
 
 function onPlayerRatingFilterChange(val) {
-  filterPlayerRating = val ? parseInt(val, 10) : null;
+  filterPlayerRating = val || null;
   renderPlayersList();
 }
 
@@ -296,6 +340,7 @@ function resetPlayerFilters() {
   filterPlayerFriendsOnly = false;
   filterPlayerBackyardOnly = false;
   filterPlayerActiveNow = false;
+  filterPlayerTime = "";
   filterPlayerFishId = null;
   filterPlayerBait = "";
   filterPlayerRating = null;
@@ -308,54 +353,26 @@ function resetPlayerFilters() {
   if (fBackyardBtn) fBackyardBtn.classList.remove("active");
   var fActiveBtn = document.getElementById("filterPlayerActiveNowBtn");
   if (fActiveBtn) fActiveBtn.classList.remove("active");
+
   var sFish = document.getElementById("playerFishFilterSelect");
   if (sFish) sFish.value = "";
   var sBait = document.getElementById("playerBaitFilterSelect");
   if (sBait) sBait.value = "";
   var sRating = document.getElementById("playerRatingFilterSelect");
   if (sRating) sRating.value = "";
+  var sTime = document.getElementById("playerTimeFilterSelect");
+  if (sTime) sTime.value = "";
 
   renderPlayersList();
 }
 
 function renderPlayersActiveFiltersBar() {
-  var resetBtn = document.getElementById("resetPlayersFiltersBtn");
-  var searchWrap = document.getElementById("playerSearchWrap");
-  var selectFish = document.getElementById("playerFishFilterSelect");
-  var selectBait = document.getElementById("playerBaitFilterSelect");
-  var selectRating = document.getElementById("playerRatingFilterSelect");
-
-  if (searchWrap) searchWrap.classList.toggle("has-value", !!filterPlayerSearchText);
-  if (selectFish) selectFish.classList.toggle("has-value", !!filterPlayerFishId);
-  if (selectBait) selectBait.classList.toggle("has-value", !!filterPlayerBait);
-  if (selectRating) selectRating.classList.toggle("has-value", !!filterPlayerRating);
-
   var fFriendsBtn = document.getElementById("filterPlayerFriendsOnlyBtn");
   if (fFriendsBtn) fFriendsBtn.classList.toggle("active", !!filterPlayerFriendsOnly);
   var fBackyardBtn = document.getElementById("filterPlayerBackyardOnlyBtn");
   if (fBackyardBtn) fBackyardBtn.classList.toggle("active", !!filterPlayerBackyardOnly);
   var fActiveBtn = document.getElementById("filterPlayerActiveNowBtn");
   if (fActiveBtn) fActiveBtn.classList.toggle("active", !!filterPlayerActiveNow);
-
-  var hasAnyFilter = !!(
-    filterPlayerSearchText ||
-    filterPlayerFriendsOnly ||
-    filterPlayerBackyardOnly ||
-    filterPlayerActiveNow ||
-    filterPlayerFishId ||
-    filterPlayerBait ||
-    filterPlayerRating
-  );
-
-  if (resetBtn) {
-    resetBtn.style.display = hasAnyFilter ? "inline-flex" : "none";
-  }
-
-  var bar = document.getElementById("playersActiveFiltersBar");
-  if (bar) {
-    bar.style.display = "none";
-    bar.innerHTML = "";
-  }
 }
 
 var activeBackyardMenuUid = null;
@@ -428,12 +445,21 @@ function renderPlayersList() {
     if (filterPlayerFishId && pBackyard.indexOf(filterPlayerFishId) === -1) {
       return false;
     }
-    if (filterPlayerActiveNow) {
-      var hasActive = pBackyard.some(function (fid) {
+    var effectiveTime = filterPlayerTime || (filterPlayerActiveNow ? "now" : "");
+    if (effectiveTime) {
+      var hasTime = pBackyard.some(function (fid) {
         var fObj = allFishes.find(function (x) { return x.id === fid; });
-        return fObj && isFishActiveNow(fObj.raw_times);
+        if (!fObj) return false;
+        if (effectiveTime === "now") return isFishActiveNow(fObj.raw_times);
+        if (effectiveTime === "night") return !!fObj.is_night;
+        if (effectiveTime === "day") return !fObj.is_night;
+        if (effectiveTime === "morning") return isFishActiveAtLocalHour(fObj.raw_times, 9);
+        if (effectiveTime === "afternoon") return isFishActiveAtLocalHour(fObj.raw_times, 15);
+        if (effectiveTime === "evening") return isFishActiveAtLocalHour(fObj.raw_times, 21);
+        if (effectiveTime === "deepnight") return isFishActiveAtLocalHour(fObj.raw_times, 3);
+        return true;
       });
-      if (!hasActive) return false;
+      if (!hasTime) return false;
     }
     if (filterPlayerBait) {
       var hasBait = pBackyard.some(function (fid) {
@@ -445,7 +471,11 @@ function renderPlayersList() {
     if (filterPlayerRating) {
       var hasRating = pBackyard.some(function (fid) {
         var fObj = allFishes.find(function (x) { return x.id === fid; });
-        return fObj && fObj.rating === filterPlayerRating;
+        if (!fObj) return false;
+        var r = fObj.rating || 1;
+        if (filterPlayerRating === "min3") return r >= 3;
+        if (filterPlayerRating === "min4") return r >= 4;
+        return r === parseInt(filterPlayerRating, 10);
       });
       if (!hasRating) return false;
     }

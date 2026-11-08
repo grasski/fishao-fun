@@ -360,6 +360,7 @@ window.fishaoApp = {
   togglePlayerBackyardFilter: togglePlayerBackyardFilter,
   togglePlayerFriendsFilter: togglePlayerFriendsFilter,
   togglePlayerActiveNowFilter: togglePlayerActiveNowFilter,
+  onPlayerTimeFilterChange: onPlayerTimeFilterChange,
   onPlayerFishFilterChange: onPlayerFishFilterChange,
   onPlayerBaitFilterChange: onPlayerBaitFilterChange,
   onPlayerRatingFilterChange: onPlayerRatingFilterChange,
