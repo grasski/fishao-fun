@@ -122,6 +122,49 @@
   background: #f59e0b;
 }
 
+.sync-timer-sep {
+  color: #475569;
+  font-size: 9px;
+  user-select: none;
+}
+
+.sync-countdown {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10.5px;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+}
+
+.sync-refresh-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 2px;
+  font-size: 11px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease, color 0.2s ease;
+}
+
+.sync-refresh-btn:hover {
+  color: #38bdf8;
+  transform: scale(1.18);
+}
+
+.sync-refresh-btn:active,
+.sync-refresh-btn.spinning {
+  animation: spinSyncBtn 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes spinSyncBtn {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* TIME WIDGET */
 .time-widget {
   background: var(--surface-input);

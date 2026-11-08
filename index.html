@@ -27,10 +27,15 @@
           <span class="app-logo">🐟</span>
           <h1><span data-i18n="app_title">FISHAO</span> <span class="header-highlight"
               data-i18n="app_subtitle">Encyklopedie</span></h1>
-          <!-- Sync status indicator -->
+          <!-- Sync status indicator + Auto-update Timer & Refresh -->
           <div id="syncStatusBadge" class="sync-status-badge local" title="Stav synchronizace dat">
             <span class="sync-dot"></span>
             <span id="syncStatusText" data-i18n="sync_local">Lokální</span>
+            <span class="sync-timer-sep">•</span>
+            <span id="syncCountdownTimer" class="sync-countdown" title="Čas do další automatické synchronizace dat">05:00</span>
+            <button type="button" id="headerRefreshBtn" class="sync-refresh-btn" onclick="window.fishaoApp.triggerManualDataRefresh()" title="Okamžitě aktualizovat data" data-i18n-title="sync_refresh_btn_title">
+              🔄
+            </button>
           </div>
         </div>
         <p class="header-desc" data-i18n="app_desc">Kompletní přehled 80 klubových &amp; 615 obecných ryb • Živý čas

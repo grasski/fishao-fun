@@ -55,6 +55,58 @@ function setTimezone(tz) {
   applyFilters();
 }
 
+function updateSyncCountdown() {
+  var timerEl = document.getElementById("syncCountdownTimer");
+  if (!timerEl) return;
+
+  var now = Date.now();
+  if (typeof lastPlayersFetchTime === 'undefined' || !lastPlayersFetchTime) {
+    lastPlayersFetchTime = now;
+  }
+  var ttl = (typeof PLAYERS_CACHE_TTL_MS !== 'undefined') ? PLAYERS_CACHE_TTL_MS : (5 * 60 * 1000);
+  var elapsed = now - lastPlayersFetchTime;
+  var remainingMs = Math.max(0, ttl - elapsed);
+  var remainingSec = Math.ceil(remainingMs / 1000);
+
+  if (remainingSec <= 0) {
+    if (typeof loadAllPlayers === 'function' && currentView === 'players' && currentUser) {
+      loadAllPlayers(true);
+    } else {
+      lastPlayersFetchTime = now;
+    }
+    remainingSec = Math.ceil(ttl / 1000);
+  }
+
+  var mins = Math.floor(remainingSec / 60);
+  var secs = remainingSec % 60;
+  var timeStr = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+
+  timerEl.innerText = timeStr;
+  var timerTitle = (typeof t === 'function')
+    ? t('sync_timer_tooltip', { time: timeStr }, 'Zbývá ' + timeStr + ' do automatického obnovení dat')
+    : ('Zbývá ' + timeStr + ' do obnovení');
+  timerEl.title = timerTitle;
+}
+
+async function triggerManualDataRefresh() {
+  var refreshBtn = document.getElementById("headerRefreshBtn");
+  if (refreshBtn) {
+    refreshBtn.classList.add("spinning");
+    setTimeout(function () {
+      refreshBtn.classList.remove("spinning");
+    }, 700);
+  }
+
+  if (typeof lastPlayersFetchTime !== 'undefined') {
+    lastPlayersFetchTime = Date.now();
+  }
+  if (typeof loadAllPlayers === 'function' && currentUser) {
+    await loadAllPlayers(true);
+  }
+  updateSyncCountdown();
+  showToast(t('sync_manual_refreshed', 'Data byla úspěšně aktualizována.'), 'info');
+}
+
 function updateClock() {
   var now = new Date();
   var h, m, s;
@@ -76,6 +128,7 @@ function updateClock() {
   if (clockEl) {
     clockEl.innerText = h.toString().padStart(2, '0') + ":" + m.toString().padStart(2, '0') + ":" + s.toString().padStart(2, '0');
   }
+  updateSyncCountdown();
 }
 setInterval(updateClock, 1000);
 
@@ -184,8 +237,8 @@ function updateStaticTranslations() {
   if (enBtn) enBtn.classList.toggle("active", lang === "en");
 
   document.querySelectorAll("[data-i18n]").forEach(function (el) {
-    // Skip syncStatusText so we don't overwrite live/offline state with default attribute
-    if (el.id === "syncStatusText" || el.id === "tzLocalBtn" || el.id === "clockLabel" || el.id === "marketSundayNoticeDesc") return;
+    // Skip syncStatusText and live timers so we don't overwrite live/offline state with default attribute
+    if (el.id === "syncStatusText" || el.id === "tzLocalBtn" || el.id === "clockLabel" || el.id === "marketSundayNoticeDesc" || el.id === "syncCountdownTimer") return;
     var key = el.getAttribute("data-i18n");
     var val = t(key);
     if (val !== undefined && val !== null && val !== key) {
@@ -377,6 +430,8 @@ window.fishaoApp = {
   refreshPlayersList: refreshPlayersList,
   setPlayerPage: setPlayerPage,
   kickMemberFromClub: kickMemberFromClub,
+  triggerManualDataRefresh: triggerManualDataRefresh,
+  updateSyncCountdown: updateSyncCountdown,
   openFishDetail: openPriceModal,
   onPriceDateChange: onPriceDateChange,
   onBulkDateChange: onBulkDateChange,
