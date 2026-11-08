@@ -129,13 +129,33 @@ The monolithic `app.js` was refactored into modular, cohesive files loaded direc
 6. `js/auth.js`: Firebase authentication (`signIn`, `signOut`), GDPR-compliant profile synchronization (`loadUserProfile`, `saveProfile`), and UI state synchronization (`updateAuthUI`).
 7. `js/main.js`: Live clock and timezone switching (`setTimezone`, `updateClock`), view routing (`switchView`), static DOM translations (`setLanguage`, `updateStaticTranslations`), modal listeners, `window.fishaoApp` exports, and application boot.
 
+### 2.6 Modular Stylesheets (`css/`)
+
+The 3,200+ line monolithic `style.css` was refactored into targeted CSS modules:
+1. `css/base.css`: `:root` color tokens, resets, body typography, container layout.
+2. `css/header.css`: Header bar, logo, clock widget, timezone & language switchers, auth pill.
+3. `css/nav.css`: Main navigation bar tabs (segmented control) and view sub-toolbars.
+4. `css/filters.css`: Search input, filter card grid, fish size slider & numeric inputs, filter pills.
+5. `css/table.css`: Table layout, zebra striping, sticky headers, fish images, rating stars, price trends, caught buttons.
+6. `css/clubs.css`: Active club header bar, roadmap milestones, member cards, special fish cards.
+7. `css/modals.css`: Fish detail modal hero, fish market single & bulk modals, auth gate cards, player profile modal, emoji picker, toast messages.
+8. `css/responsive.css`: Mobile and tablet media queries (`<=900px`, `<=768px`, `<=640px`, `<=420px`).
+
+`style.css` acts as the master `@import` orchestrator for backward compatibility.
+
 ---
 
-## 3. Localization System (`data/i18n.js`)
+## 3. Localization System (`data/i18n.js` & `data/i18n/`)
 
+* **Structure:**
+  * `data/i18n/ui_cs.js`: Czech UI dictionary (`FISHAO_I18N_UI_CS`).
+  * `data/i18n/ui_en.js`: English UI dictionary (`FISHAO_I18N_UI_EN`).
+  * `data/i18n/taxonomies.js`: Baits, waters, and locations translations (`FISHAO_I18N_TAXONOMIES`).
+  * `data/i18n/fish_names.js`: 615 fish translations (`FISHAO_I18N_FISH_NAMES`).
+  * `data/i18n.js`: Core engine exposing `window.FISHAO_I18N`.
 * **Supported Languages:** `cs` (Czech, default), `en` (English).
 * **Helper Function:** `t(key, params)` retrieves translated strings and interpolates `{placeholder}` tokens.
-* **Fish Names:** Handled dynamically via `window.FISHAO_I18N.getFishName(fish, lang)` using the translations map in `data/i18n.js`.
+* **Fish Names:** Handled dynamically via `window.FISHAO_I18N.getFishName(fish, lang)` using the translations map in `data/i18n/fish_names.js`.
 * **DOM Auto-translation:**
   * Elements with `[data-i18n="key"]` have their text/HTML updated on language change.
   * Inputs with `[data-i18n-placeholder="key"]` have their placeholders updated.

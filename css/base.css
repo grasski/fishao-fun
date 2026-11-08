@@ -1,0 +1,72 @@
+/* FISHAO – Modern Stylesheet (style.css v3.0) */
+
+:root {
+  /* Color Palette: Deep Space Marine Theme */
+  --bg: #090d16;
+  --bg-gradient: radial-gradient(circle at top right, #111a2e 0%, #080c14 100%);
+  --surface: #101726;
+  --surface-raised: #151f33;
+  --surface-hover: #1c2942;
+  --surface-input: #0c121e;
+  --bg-card: #151f33;
+  --bg-tertiary: rgba(255, 255, 255, 0.04);
+  --border-color: rgba(255, 255, 255, 0.1);
+  
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --border-focus: #38bdf8;
+  
+  --text-main: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #8492a6;
+  --text-disabled: #475569;
+  
+  /* Feature Accent Colors */
+  --ocean: #0284c7;
+  --ocean-light: #38bdf8;
+  --ocean-glow: rgba(56, 189, 248, 0.25);
+  
+  --emerald: #10b981;
+  --emerald-light: #34d399;
+  --emerald-glow: rgba(16, 185, 129, 0.25);
+  
+  --gold: #f59e0b;
+  --gold-light: #fbbf24;
+  --gold-glow: rgba(245, 158, 11, 0.25);
+  
+  --purple: #8b5cf6;
+  --purple-light: #c084fc;
+  
+  --rose: #ef4444;
+  --rose-light: #f87171;
+
+  /* Theme tokens for views */
+  --theme-club: #f59e0b;
+  --theme-all: #0284c7;
+  --theme-manage: #8b5cf6;
+  --theme-collection: #10b981;
+  --theme-market: #22c55e;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  background-image: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-main);
+  padding: 20px 24px 60px 24px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 1720px;
+  margin: 0 auto;
+}
+

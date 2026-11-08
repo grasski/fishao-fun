@@ -17,12 +17,27 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
 4. **Fish Market Rules:**
    * The Fish Market is **strictly closed on Sundays** (`getDay() === 0`).
    * No prices can be entered or imported for Sunday dates.
-5. **Bilingual Localization:**
+5. **Bilingual Localization & Modular i18n (`data/i18n/`):**
    * Supported languages: Czech (`cs`, default) and English (`en`).
-   * Add all new text keys to `data/i18n.js` in both `cs` and `en` blocks.
+   * Dictionaries are separated into modular files:
+     - `data/i18n/ui_cs.js`: Czech UI strings (`FISHAO_I18N_UI_CS`).
+     - `data/i18n/ui_en.js`: English UI strings (`FISHAO_I18N_UI_EN`).
+     - `data/i18n/taxonomies.js`: Baits, waters, and location translations (`FISHAO_I18N_TAXONOMIES`).
+     - `data/i18n/fish_names.js`: 615 fish translations (`FISHAO_I18N_FISH_NAMES`).
+     - `data/i18n.js`: Core engine, methods `t()`, `getFishName()`, `getLocationName()`, `getBaitName()`, `getWaterName()`.
+   * Add all new text keys to `ui_cs.js` and `ui_en.js`.
    * Use HTML attributes `data-i18n`, `data-i18n-placeholder`, and `data-i18n-title` for static elements.
-6. **Styles:**
-   * Follow the CSS custom properties in `style.css` (`:root`).
+6. **Modular Stylesheets (`css/`):**
+   * Styles are organized into modular files under `css/`:
+     - `css/base.css`: Root variables (`:root`), resets, body, typography, layout container.
+     - `css/header.css`: Header, logo, live time widget, timezone/language toggles, auth panel.
+     - `css/nav.css`: Main navigation bar tabs and compact view action bars / sub-toolbars.
+     - `css/filters.css`: Search box, filter card, size inputs, toggle pills.
+     - `css/table.css`: Table styling, fish images, badges, price cells, caught buttons, counter bar.
+     - `css/clubs.css`: Club dashboard, active club bar, milestone roadmap, roster cards, special fish cards.
+     - `css/modals.css`: Modals layout, fish detail hero, price forms, bulk modal, profile/player modals, toasts.
+     - `css/responsive.css`: Unified media queries (<=900px, <=768px, <=640px, <=420px).
+   * `style.css` acts as the master `@import` bundle for backward compatibility.
    * All action bar controls maintain a unified 32px height standard (`.pill-btn`, `.toggle-pill`, `.btn-subtle-link`, `.sign-in-btn.sm`).
 
 7. **Modular JavaScript Architecture (`js/`):**

@@ -1,0 +1,494 @@
+/* ===================================================================
+   10. RESPONSIVE MEDIA QUERIES
+   =================================================================== */
+
+/* Tablet & Smaller Desktop Screens (<= 900px) */
+@media (max-width: 900px) {
+  body {
+    padding: 10px;
+  }
+  .app-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .header-right {
+    justify-content: flex-start;
+  }
+
+  /* Modern 2x2 Grid Menu from 900px downwards (prevents squishing tabs in a single row) */
+  .main-nav-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 6px;
+    border-radius: 14px;
+    overflow-x: visible;
+    margin-bottom: 12px;
+  }
+  .nav-tab {
+    min-width: 0;
+    padding: 10px 12px;
+    font-size: 13px;
+    gap: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 10px;
+    white-space: normal;
+  }
+  .nav-tab .tab-icon {
+    font-size: 18px;
+    line-height: 1;
+  }
+  .nav-tab .tab-title {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .nav-tab .tab-pill {
+    font-size: 11px;
+    padding: 2px 8px;
+    font-weight: 800;
+  }
+  /* When club is not active (tabClub hidden), tabMarket neatly spans full bottom row */
+  .main-nav-bar:has(#tabClub[style*="none"]) #tabMarket,
+  .main-nav-bar:has(#tabClub:empty) #tabMarket {
+    grid-column: span 2;
+    padding: 10px 14px;
+  }
+
+  .filter-row-sub {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-group-reset {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+  .btn-reset {
+    margin-left: 0;
+    width: 100%;
+  }
+  .manage-top-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Collection filter pills side-by-side in sub-toolbar */
+  #bannerCollection .action-bar-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  #bannerCollection .action-bar-right {
+    width: 100%;
+  }
+  #bannerCollection .btn-group-pills {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    gap: 6px;
+  }
+  #bannerCollection .btn-group-pills .pill-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    justify-content: center;
+    text-align: center;
+    padding: 7px 4px;
+    font-size: 11.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Tablet & Large Mobile Screens (<= 768px) */
+@media (max-width: 768px) {
+  body {
+    padding: 8px;
+  }
+  .container {
+    padding: 0;
+  }
+  .app-header {
+    padding: 14px 16px;
+    border-radius: 14px;
+    margin-bottom: 12px;
+  }
+  .header-left .logo-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .header-left h1 {
+    font-size: 21px;
+  }
+  .header-desc {
+    font-size: 12px;
+    line-height: 1.4;
+    margin: 6px 0 8px 0;
+  }
+  .header-disclaimer {
+    font-size: 11px;
+    flex-wrap: wrap;
+    line-height: 1.4;
+  }
+  .header-right {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .auth-panel {
+    order: 1;
+    flex: 1 1 auto;
+  }
+  .lang-widget {
+    order: 2;
+  }
+  .time-widget {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    padding: 6px 12px;
+  }
+  .club-finder-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .club-create-col {
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-left: 0;
+    padding-top: 18px;
+  }
+}
+
+/* Mobile Phones (<= 640px) */
+@media (max-width: 640px) {
+  body {
+    padding: 6px;
+  }
+
+  /* Compact 2x2 Grid Menu with vertical tab contents for phones */
+  .main-nav-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 6px;
+    border-radius: 14px;
+    overflow-x: visible;
+    margin-bottom: 12px;
+  }
+  .nav-tab {
+    min-width: 0;
+    padding: 10px 6px;
+    font-size: 12px;
+    gap: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 10px;
+    white-space: normal;
+  }
+  .nav-tab .tab-icon {
+    font-size: 20px;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .nav-tab .tab-title {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .nav-tab .tab-pill {
+    font-size: 10px;
+    padding: 2px 7px;
+    margin-top: 2px;
+    font-weight: 800;
+  }
+  /* When club is not joined (tabClub hidden), tabMarket spans full bottom row */
+  .main-nav-bar:has(#tabClub[style*="none"]) #tabMarket,
+  .main-nav-bar:has(#tabClub:empty) #tabMarket {
+    grid-column: span 2;
+    flex-direction: row;
+    gap: 8px;
+    padding: 10px 14px;
+  }
+  .main-nav-bar:has(#tabClub[style*="none"]) #tabMarket .tab-icon,
+  .main-nav-bar:has(#tabClub:empty) #tabMarket .tab-icon {
+    margin-bottom: 0;
+  }
+  .main-nav-bar:has(#tabClub[style*="none"]) #tabMarket .tab-pill,
+  .main-nav-bar:has(#tabClub:empty) #tabMarket .tab-pill {
+    margin-top: 0;
+  }
+
+  /* Compact View Action Bars */
+  .view-action-bar {
+    padding: 10px 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .action-bar-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .action-bar-left, .action-bar-right {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .action-bar-right {
+    flex-wrap: wrap;
+  }
+  .action-badge-club {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .action-bar-hint {
+    font-size: 11px;
+    width: 100%;
+  }
+
+  /* Collection filter pills side-by-side on mobile */
+  #bannerCollection .btn-group-pills {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    gap: 6px;
+  }
+  #bannerCollection .btn-group-pills .pill-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    justify-content: center;
+    text-align: center;
+    padding: 6px 3px;
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Market banner on mobile */
+  #bannerMarket .action-bar-right {
+    width: 100%;
+  }
+  #bannerMarket .action-bar-right .pill-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Filter Card Mobile Layout */
+  .filter-card {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+  .filter-row-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .filter-group.search-group {
+    grid-column: span 2;
+  }
+  .filter-group {
+    min-width: 0;
+    flex: unset;
+  }
+  .filter-group.sm {
+    flex: unset;
+  }
+  .filter-control {
+    padding: 8px 10px;
+    font-size: 12.5px;
+  }
+  .filter-row-sub {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding-top: 8px;
+  }
+  .size-filter-cluster {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+  }
+  .size-inputs-pair {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+  }
+  .size-quick-presets {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    width: 100%;
+  }
+  .pill-btn-size {
+    padding: 5px 2px;
+    font-size: 11px;
+    justify-content: center;
+    width: 100%;
+  }
+  .quick-status-toggles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+  .quick-status-toggles .pill-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  /* Table and Counter on Mobile */
+  .status-counter-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 8px 10px;
+  }
+  .counter-hint {
+    font-size: 11px;
+  }
+  .table-container {
+    border-radius: 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+  table th, table td {
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+  .fish-img-box {
+    width: 80px;
+    height: 46px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+  .caught-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Detail Modal on Mobile */
+  .modal-overlay {
+    padding: 8px;
+    align-items: flex-end;
+  }
+  .modal-box {
+    width: 100%;
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 16px 16px 10px 10px;
+    margin: 0;
+  }
+  .modal-header {
+    padding: 12px 14px;
+  }
+  .modal-title {
+    font-size: 14.5px;
+  }
+  .modal-body {
+    padding: 12px;
+    gap: 10px;
+    max-height: calc(90vh - 54px);
+  }
+  .modal-fish-hero {
+    padding: 10px;
+    gap: 10px;
+  }
+  .modal-fish-img-container {
+    width: 130px;
+    height: 76px;
+    padding: 2px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+  #modalFishName {
+    font-size: 16px !important;
+  }
+  .modal-details-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .price-stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .price-stat-card {
+    padding: 8px 4px;
+  }
+  .price-stat-label {
+    font-size: 10px;
+  }
+  .price-stat-val {
+    font-size: 12.5px;
+  }
+
+  /* Active Club Management on Mobile */
+  .active-club-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+  }
+  .active-club-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .club-members-grid {
+    grid-template-columns: 1fr;
+  }
+  .special-fishes-grid {
+    grid-template-columns: 1fr;
+  }
+  .milestones-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Very Small Phones (<= 420px) */
+@media (max-width: 420px) {
+  .header-left h1 {
+    font-size: 18px;
+  }
+  .app-logo {
+    font-size: 20px;
+  }
+  .nav-tab {
+    padding: 8px 4px;
+  }
+  .nav-tab .tab-title {
+    font-size: 11px;
+  }
+  #bannerCollection .btn-group-pills .pill-btn {
+    font-size: 10px;
+    padding: 6px 2px;
+  }
+  .modal-fish-hero {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .modal-fish-img-container {
+    width: 150px;
+    height: 86px;
+  }
+}
+

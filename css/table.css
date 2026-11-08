@@ -1,0 +1,548 @@
+/* ===================================================================
+   5. STATUS & COUNTER BAR
+   =================================================================== */
+
+.status-counter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 0 4px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.counter-text {
+  font-weight: 800;
+  color: #fff;
+  font-size: 13px;
+}
+
+.active-filter-tags {
+  margin-left: 8px;
+  color: #38bdf8;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.counter-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ===================================================================
+   6. TABLE STYLING (High Contrast, Legible, Crisp)
+   =================================================================== */
+
+.table-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow-x: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+th {
+  background: #0c121e;
+  color: #94a3b8;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  padding: 12px 14px;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+  user-select: none;
+}
+
+td {
+  padding: 9px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  vertical-align: middle;
+}
+
+tbody tr {
+  cursor: pointer;
+  transition: background 0.12s ease;
+  background: #0f1624;
+}
+tbody tr:nth-child(even) {
+  background: #111a2c;
+}
+
+tbody tr:hover td {
+  background: #1a2740 !important;
+}
+
+/* Locked fish row */
+tr.row-locked {
+  opacity: 0.42;
+  filter: grayscale(0.5);
+}
+tr.row-locked:hover {
+  opacity: 0.85;
+  filter: grayscale(0);
+}
+
+/* Caught fish row */
+tr.row-caught {
+  border-left: 3px solid #10b981;
+}
+
+/* Caught toggle button */
+.caught-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px dashed #4b5563;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+.caught-btn:hover {
+  border-color: #10b981;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+.caught-btn.caught {
+  background: #059669;
+  border: 2px solid #10b981;
+  color: #fff;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.fish-img-box {
+  width: 92px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 2px;
+}
+.fish-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.6));
+  transition: transform 0.18s ease;
+}
+tbody tr:hover .fish-img {
+  transform: scale(1.12);
+}
+
+.badge {
+  padding: 3px 7px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-block;
+  white-space: nowrap;
+}
+.badge-salt {
+  background: rgba(2, 132, 199, 0.16);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+.badge-fresh {
+  background: rgba(16, 185, 129, 0.16);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+.badge-club-tag {
+  background: rgba(245, 158, 11, 0.16);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* RATING BADGES (Clear rarity-based star tiers) */
+.rating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.rating-badge .rating-num {
+  font-weight: 800;
+  font-size: 11px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  letter-spacing: -0.2px;
+}
+
+.rating-badge .rating-stars-track {
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: 1.5px;
+  font-size: 11px;
+}
+
+.rating-badge .stars-inactive {
+  color: rgba(255, 255, 255, 0.15);
+}
+
+/* Tier 1 - Common (Slate) */
+.rating-badge.rate-1 {
+  background: rgba(148, 163, 184, 0.1);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #94a3b8;
+}
+.rating-badge.rate-1 .stars-active { color: #cbd5e1; }
+.rating-badge.rate-1 .rating-num { color: #cbd5e1; }
+
+/* Tier 2 - Uncommon (Emerald) */
+.rating-badge.rate-2 {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #34d399;
+}
+.rating-badge.rate-2 .stars-active { color: #34d399; }
+.rating-badge.rate-2 .rating-num { color: #6ee7b7; }
+
+/* Tier 3 - Rare (Sky Blue) */
+.rating-badge.rate-3 {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
+}
+.rating-badge.rate-3 .stars-active { color: #38bdf8; }
+.rating-badge.rate-3 .rating-num { color: #7dd3fc; }
+
+/* Tier 4 - Epic (Purple) */
+.rating-badge.rate-4 {
+  background: rgba(168, 85, 247, 0.14);
+  border-color: rgba(168, 85, 247, 0.4);
+  color: #c084fc;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.2);
+}
+.rating-badge.rate-4 .stars-active { color: #c084fc; }
+.rating-badge.rate-4 .rating-num { color: #e9d5ff; }
+
+/* Tier 5 - Legendary (Gold) */
+.rating-badge.rate-5 {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(251, 191, 36, 0.55);
+  color: #fbbf24;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+}
+.rating-badge.rate-5 .stars-active {
+  color: #fbbf24;
+  text-shadow: 0 0 6px rgba(251, 191, 36, 0.6);
+}
+.rating-badge.rate-5 .rating-num {
+  color: #fef08a;
+  background: rgba(245, 158, 11, 0.35);
+}
+
+.bait-tag {
+  background: #151e30;
+  border: 1px solid var(--border);
+  color: #cbd5e1;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 5px;
+  display: inline-block;
+  margin: 1px;
+  white-space: nowrap;
+}
+
+.loc-tag {
+  background: #0f1624;
+  border: 1px solid var(--border);
+  color: #94a3b8;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  margin: 1px;
+}
+
+.time-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.time-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e2e8f0;
+  white-space: nowrap;
+}
+.time-night { color: #818cf8; }
+.time-subtext {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+.time-now-active {
+  background: #10b981;
+  color: #022c22;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 1px 5px;
+  border-radius: 999px;
+  letter-spacing: 0.5px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.len-box { white-space: nowrap; }
+.len-dim { color: #64748b; font-size: 11px; }
+.len-avg { color: #f8fafc; font-weight: 800; font-size: 13px; }
+
+/* PRICE CELLS - Fishbucks / Fishměna */
+.price-cell {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.price-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #34d399;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.price-badge .cash-icon {
+  font-size: 13px;
+  line-height: 1;
+}
+
+/* Today Active Price Badge */
+.price-badge.price-today {
+  background: rgba(16, 185, 129, 0.16);
+  border-color: rgba(16, 185, 129, 0.55);
+  color: #34d399;
+}
+.price-cell:hover .price-badge.price-today {
+  border-color: #34d399;
+  background: rgba(16, 185, 129, 0.28);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.35);
+  transform: translateY(-1px);
+}
+.badge-today-pill {
+  font-size: 9px;
+  background: rgba(16, 185, 129, 0.25);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  color: #a7f3d0;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 800;
+  margin-left: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* Past / Historical Price Badge (not active today) */
+.price-badge.price-past {
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #94a3b8;
+  font-weight: 600;
+}
+.price-cell:hover .price-badge.price-past {
+  border-color: #94a3b8;
+  background: rgba(148, 163, 184, 0.16);
+  color: #cbd5e1;
+  transform: translateY(-1px);
+}
+.price-past-dash {
+  color: #64748b;
+  font-weight: 800;
+  font-size: 12px;
+}
+.price-past-sub {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* Sunday Closed Price Badge */
+.price-badge.price-closed {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+  font-weight: 600;
+}
+.price-cell:hover .price-badge.price-closed {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.2);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
+  transform: translateY(-1px);
+}
+.price-closed-icon {
+  font-size: 11px;
+  line-height: 1;
+}
+.price-closed-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #f59e0b;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.price-empty.price-closed-empty {
+  color: #f59e0b;
+  border: 1px dashed rgba(245, 158, 11, 0.4);
+}
+.price-empty.price-closed-empty:hover {
+  border-color: #f59e0b;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.price-empty {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #64748b;
+  font-size: 11px;
+  border: 1px dashed #334155;
+  padding: 3px 6px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+.price-empty:hover { color: #94a3b8; border-color: #64748b; }
+
+.price-history-count {
+  font-size: 9px;
+  color: #94a3b8;
+  background: rgba(255,255,255,0.06);
+  padding: 1px 4px;
+  border-radius: 3px;
+  margin-left: 2px;
+}
+
+/* Table header sunday closed badge */
+.th-sunday-closed-pill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  color: #fca5a5;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-left: 4px;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* Nav Tab Closed Pill */
+.tab-pill.pill-closed {
+  background: rgba(239, 68, 68, 0.2) !important;
+  color: #fca5a5 !important;
+  border: 1px solid rgba(239, 68, 68, 0.45) !important;
+}
+
+/* Sunday Market Notice Banners */
+.market-sunday-notice-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.16) 0%, rgba(245, 158, 11, 0.12) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  border-radius: 10px;
+  padding: 12px 18px;
+  margin-bottom: 14px;
+  color: #fecaca;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+.sunday-notice-icon {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.sunday-notice-content {
+  flex: 1;
+}
+.sunday-notice-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #f87171;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.sunday-notice-desc {
+  font-size: 12px;
+  color: #e2e8f0;
+  line-height: 1.45;
+}
+
+.modal-market-sunday-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 10px 0 14px 0;
+  font-size: 12px;
+  color: #fde68a;
+}
+.modal-market-sunday-alert strong {
+  color: #fbbf24;
+}
+
+/* UNLOCK STATUS */
+.status-unlocked { display: flex; flex-direction: column; gap: 1px; }
+.status-unlocked .status-cost { color: #34d399; font-weight: 700; font-size: 12px; }
+.status-unlocked .status-desc { color: #059669; font-size: 11px; }
+
+.status-locked { display: flex; flex-direction: column; gap: 1px; }
+.status-locked .status-cost { color: #f87171; font-weight: 700; font-size: 12px; }
+.status-locked .status-desc { color: #ef4444; font-size: 11px; font-weight: 600; }
+
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--text-muted);
+  font-size: 15px;
+}
+

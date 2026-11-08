@@ -21,7 +21,16 @@ Moderní webová aplikace a interaktivní encyklopedie pro hráče rybářské h
 ```text
 fishao/
 ├── index.html          # Uživatelské rozhraní aplikace
-├── style.css           # Vizuální styl a responzivní rozvržení
+├── style.css           # Hlavní rozcestník stylů (@import svazek)
+├── css/                # Modulární kaskádové styly (CSS)
+│   ├── base.css        # CSS proměnné, resety, typografie a kontejner
+│   ├── header.css      # Hlavička, logo, časovač, přepínače a uživatelský profil
+│   ├── nav.css         # Hlavní navigace (záložky) a lišty akcí pro jednotlivé pohledy
+│   ├── filters.css     # Vyhledávací a filtrační panel, posuvníky velikostí
+│   ├── table.css       # Tabulka ryb, odznaky, ceny a tlačítka úlovků
+│   ├── clubs.css       # Klubová sekce, statistiky, milníky a seznam členů
+│   ├── modals.css      # Modální okna (detail ryby, ceny, hromadný import, profil, toast)
+│   └── responsive.css  # Responzivní pravidla pro mobilní a tabletová zobrazení
 ├── js/                 # Modulární aplikační logika
 │   ├── state.js        # Globální stav, lokalizační a datumové pomocné funkce, dialogy
 │   ├── table.js        # Vykreslování tabulky ryb, časové kalkulace a správa úlovků
@@ -34,7 +43,12 @@ fishao/
 ├── firestore.rules     # Bezpečnostní pravidla pro Firestore databázi
 ├── build_data.py       # Nástroj pro generování dat z herních zdrojů
 ├── data/
-│   ├── i18n.js         # Kompletní lokalizace aplikace (CZ / EN)
+│   ├── i18n.js         # Jádro lokalizace a API pro překlady
+│   ├── i18n/           # Modulární jazykové slovníky
+│   │   ├── ui_cs.js    # České texty uživatelského rozhraní
+│   │   ├── ui_en.js    # Anglické texty uživatelského rozhraní
+│   │   ├── taxonomies.js # Překlady návnad, vod a lokací
+│   │   └── fish_names.js # Překlady 615 názvů ryb (CZ / EN)
 │   ├── fishes.js       # Databáze herních a klubových ryb
 │   └── prices.js       # Výchozí tržní ceník
 └── images/             # Ikony a náhledy ryb
