@@ -92,8 +92,8 @@ service cloud.firestore {
         && (!('friendUids' in request.resource.data) || (request.resource.data.friendUids is list && request.resource.data.friendUids.size() <= 300)))
         || isAdmin();
 
-      // Only admins can delete user profiles
-      allow delete: if isAdmin();
+      // Users can delete their own profile (GDPR self-service deletion), or admins
+      allow delete: if (request.auth != null && request.auth.uid == userId) || isAdmin();
     }
   }
 }

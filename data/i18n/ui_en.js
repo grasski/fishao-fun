@@ -107,7 +107,7 @@
       "dim_max": "Max: {val} cm",
       "dim_min": "Min: {val} cm",
       "disclaimer_badge": "Fan Project",
-      "disclaimer_text": "This is a non-commercial fan project. The official game is available at",
+      "disclaimer_text": "This is a fan encyclopedia. The community FISHAO game is playable at",
       "filter_active_wrapper": "[Active: {notes}]",
       "filter_bait_label": "Bait:",
       "filter_btn_now": "⚡ Biting now (Live)",
@@ -403,19 +403,25 @@
       "footer_fan_badge": "Fan Project",
       "footer_disclaimer": "FISHAO is a registered trademark of GamoVation B.V. This website is an unofficial community project made by players for players and is not affiliated with or endorsed by GamoVation. All in-game artwork and names belong to their respective owners.",
       "footer_privacy_link": "Privacy Policy & GDPR",
-      "footer_official_link": "Official FISHAO Website",
+      "footer_official_link": "FISHAO Community Game",
       "footer_version": "Made with ❤️ for the fishing community",
+      "unit_points_full": "points",
       "privacy_modal_title": "Privacy Policy & GDPR",
       "privacy_sec1_title": "1. Non-Profit Community Project",
       "privacy_sec1_desc": "This website is an unofficial, free, and non-commercial fan tool created by the community for FISHAO players. The website contains no advertisements, paid features, or monetization.",
       "privacy_sec2_title": "2. What Data We Process",
-      "privacy_sec2_desc": "When signing in via Google (Firebase Authentication), we only receive your Google identifier (UID) and email address for authentication purposes. The database also stores your chosen in-game nickname, avatar (icon/emoji), club membership, and your lists of caught fish and backyard fish. Your email address is NEVER publicly displayed to other users.",
+      "privacy_sec2_desc": "When signing in via Google (Firebase Authentication), authentication is handled directly by Google. Your email address is NOT stored in the Firestore database (the database stores zero email addresses). Only your technical Google UID, chosen in-game nickname, avatar (icon/emoji), club membership, and caught/backyard fish lists are saved.",
       "privacy_sec3_title": "3. No Third-Party Tracking or Cookies",
       "privacy_sec3_desc": "This website does not use Google Analytics, advertising trackers, Facebook Pixel, or any other third-party tracking scripts. The browser storage (localStorage/sessionStorage) strictly stores functional preferences necessary for website operations (selected language, timezone, price and player caches to minimize bandwidth).",
       "privacy_sec4_title": "4. Copyright & Trademarks",
       "privacy_sec4_desc": "FISHAO is a registered trademark of GamoVation B.V. All fish artwork, bait images, and game assets are the intellectual property of GamoVation and are used here under fair use for community and reference purposes.",
       "privacy_sec5_title": "5. Data Management & Deletion",
-      "privacy_sec5_desc": "You can modify your nickname and avatar at any time in profile settings. If you wish to permanently delete your game profile and all related data from the database, please contact the project maintainer or administrator."
+      "privacy_sec5_desc": "You can modify your nickname and avatar at any time in profile settings. You can permanently delete your game profile and all related data at any time directly in your profile window using the 'Delete Account & Data' button.",
+      "profile_btn_delete_account": "Delete Account & Data",
+      "profile_delete_title": "Permanent Account Deletion",
+      "profile_delete_confirm": "Are you sure you want to permanently delete your account and all game data? This action is irreversible: it deletes your profile, catches, backyard fish, removes you from your club and signs you out.",
+      "profile_delete_btn": "Delete Everything",
+      "profile_deleted_success": "Your account and all game data have been successfully deleted."
   };
 
   if (typeof window !== 'undefined') {

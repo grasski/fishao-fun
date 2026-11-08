@@ -518,6 +518,90 @@ async function saveProfile() {
   }
 }
 
+async function deleteAccount() {
+  if (!currentUser || !db) return;
+
+  var ok = await showConfirmModal(
+    t('profile_delete_title', 'Trvalé smazání účtu'),
+    t('profile_delete_confirm', 'Opravdu chceš trvale smazat svůj účet a veškerá herní data? Tato akce je nevratná: smaže tvůj herní profil, úlovky, ryby za domem, odebere tě z klubu a odhlásí tě.'),
+    t('profile_delete_btn', 'Smazat vše'),
+    true
+  );
+  if (!ok) return;
+
+  try {
+    var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var uid = currentUser.uid;
+
+    // 1. If user is in a club, clean up member entry from club document
+    if (userProfile && userProfile.clubId) {
+      try {
+        var clubRef = fsModule.doc(db, "clubs", userProfile.clubId);
+        var snap = await fsModule.getDoc(clubRef);
+        if (snap.exists()) {
+          var cData = snap.data();
+          var cnt = cData.memberCount || 1;
+          var members = cData.members || {};
+          var wasMember = !!members[uid];
+          var leaveUpdate = {
+            memberCount: Math.max(0, wasMember ? (cnt - 1) : cnt),
+            updatedAt: new Date().toISOString(),
+            lastUpdatedBy: uid
+          };
+          leaveUpdate["members." + uid] = fsModule.deleteField();
+          await fsModule.updateDoc(clubRef, leaveUpdate);
+        }
+      } catch (e) {
+        console.warn("Could not clean up club membership on account deletion:", e);
+      }
+    }
+
+    // 2. Delete user profile document from Firestore
+    var userDocRef = fsModule.doc(db, "users", uid);
+    await fsModule.deleteDoc(userDocRef);
+
+    // 3. Clear local storage and caches
+    try {
+      localStorage.removeItem('fishao_backyard_fish_ids');
+      localStorage.removeItem('fishao_friends_uids');
+      localStorage.removeItem('fishao_nick_prompted_' + uid);
+      sessionStorage.removeItem('fishao_players_cache_v1');
+    } catch (e) {}
+
+    // 4. Remove from in-memory allPlayersList
+    if (typeof allPlayersList !== 'undefined' && Array.isArray(allPlayersList)) {
+      allPlayersList = allPlayersList.filter(function (p) { return p.uid !== uid; });
+    }
+
+    caughtFishIds.clear();
+    backyardFishIds.clear();
+    friendUids.clear();
+    userProfile = null;
+    currentClubId = "";
+    currentClubName = "";
+    isAdmin = false;
+
+    // 5. Delete Firebase Auth user if supported, or sign out
+    try {
+      if (typeof currentUser.delete === 'function') {
+        await currentUser.delete();
+      }
+    } catch (authErr) {
+      console.warn("Auth user deletion requires recent login, signing out instead:", authErr);
+      await signOut();
+    }
+
+    closeProfileModal();
+    updateAuthUI();
+    updateCaughtStats();
+    applyFilters();
+    showToast(t('profile_deleted_success', 'Tvůj účet a veškerá herní data byla úspěšně smazána.'), "info");
+  } catch (err) {
+    console.error("Failed to delete account:", err);
+    showToast("Chyba při mazání účtu: " + err.message, "error");
+  }
+}
+
 function editNickname() {
   openProfileModal();
 }

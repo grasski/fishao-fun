@@ -398,6 +398,7 @@ window.fishaoApp = {
   selectPresetAvatar: selectPresetAvatar,
   onAvatarUrlInput: onAvatarUrlInput,
   saveProfile: saveProfile,
+  deleteAccount: deleteAccount,
   resolveConfirmModal: resolveConfirmModal,
   showToast: showToast,
   toggleCaughtFish: toggleCaughtFish,

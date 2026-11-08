@@ -107,7 +107,7 @@
       "dim_max": "Max: {val} cm",
       "dim_min": "Min: {val} cm",
       "disclaimer_badge": "Fanouškovský projekt",
-      "disclaimer_text": "Jedná se pouze o fanouškovský projekt. Reálná hra je dostupná na",
+      "disclaimer_text": "Jedná se o fanouškovskou encyklopedii. Komunitní hra FISHAO běží na",
       "filter_active_wrapper": "[Aktivní: {notes}]",
       "filter_bait_label": "Návnada",
       "filter_btn_now": "⚡ Právě bere",
@@ -403,19 +403,25 @@
       "footer_fan_badge": "Fanouškovský projekt",
       "footer_disclaimer": "FISHAO je registrovaná ochranná známka společnosti GamoVation B.V. Tento web je neoficiální komunitní projekt vytvořený hráči pro hráče a není nijak spojen ani sponzorován společností GamoVation. Veškerá grafika a názvy ze hry patří jejich příslušným vlastníkům.",
       "footer_privacy_link": "Zásady ochrany soukromí & GDPR",
-      "footer_official_link": "Oficiální web FISHAO",
+      "footer_official_link": "Komunitní hra FISHAO",
       "footer_version": "Vyrobeno s ❤️ pro komunitu rybářů",
+      "unit_points_full": "bodů",
       "privacy_modal_title": "Zásady ochrany soukromí & GDPR",
       "privacy_sec1_title": "1. Neziskový komunitní projekt",
       "privacy_sec1_desc": "Tento web je neoficiální, bezplatný a nekomerční fanouškovský nástroj vytvořený komunitou pro hráče hry FISHAO. Web neobsahuje žádné reklamy, placené funkce ani monetizaci.",
       "privacy_sec2_title": "2. Jaká data zpracováváme",
-      "privacy_sec2_desc": "Při přihlášení přes Google (Firebase Authentication) získáváme pouze tvůj Google identifikátor (UID) a e-mail pro ověření identity. V databázi se dále ukládá tvá zvolená herní přezdívka, avatar (ikona/emoji), členství v klubu a tvůj seznam odchycených ryb a ryb za domem. E-mailová adresa není NIKDY veřejně zobrazována ostatním uživatelům.",
+      "privacy_sec2_desc": "Při přihlášení přes Google (Firebase Authentication) probíhá bezpečné ověření identity přes Google. V databázi Firestore NENÍ ukládán tvůj e-mail (databáze vůbec neobsahuje e-mailové adresy). Ukládá se pouze technické Google UID, tvá zvolená herní přezdívka, avatar (ikona/emoji), členství v klubu a seznam odchycených ryb a ryb za domem. E-mail není nikde ukládán ani zobrazován.",
       "privacy_sec3_title": "3. Žádné sledování ani cookies třetích stran",
       "privacy_sec3_desc": "Web nepoužívá Google Analytics, reklamní trackery, Facebook Pixel ani žádné jiné sledovací skripty třetích stran. Do lokálního úložiště prohlížeče (localStorage/sessionStorage) se ukládají výhradně technická nastavení nezbytná pro fungování webu (zvolený jazyk, časové pásmo, mezipaměť cen a hráčů pro snížení přenosu dat).",
       "privacy_sec4_title": "4. Autorská práva a ochranné známky",
       "privacy_sec4_desc": "FISHAO je registrovaná ochranná známka společnosti GamoVation B.V. Všechny obrázky ryb, návnad a herní materiály jsou duševním vlastnictvím společnosti GamoVation a jsou zde použity v rámci fair-use pro komunitní a vzdělávací účely.",
       "privacy_sec5_title": "5. Správa a smazání dat",
-      "privacy_sec5_desc": "Svůj profil (přezdívku a avatar) můžeš kdykoliv libovolně upravit v nastavení profilu. Pokud si přeješ svůj herní profil z databáze trvale smazat, stačí kontaktovat správce projektu nebo administrátora."
+      "privacy_sec5_desc": "Svůj profil (přezdívku a avatar) můžeš kdykoliv libovolně upravit v nastavení profilu. Svůj herní profil a veškerá data můžeš kdykoliv trvale smazat přímo v okně profilu tlačítkem 'Smazat účet a data'.",
+      "profile_btn_delete_account": "Smazat účet a data",
+      "profile_delete_title": "Trvalé smazání účtu",
+      "profile_delete_confirm": "Opravdu chceš trvale smazat svůj účet a veškerá herní data? Tato akce je nevratná: smaže tvůj herní profil, úlovky, ryby za domem, odebere tě z klubu a odhlásí tě.",
+      "profile_delete_btn": "Smazat vše",
+      "profile_deleted_success": "Tvůj účet a veškerá herní data byla úspěšně smazána."
   };
 
   if (typeof window !== 'undefined') {

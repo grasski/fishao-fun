@@ -436,7 +436,7 @@
             <div class="action-bar-left">
               <span class="action-bar-title" style="color: #c084fc;">🏰 <span id="activeClubName">Klub</span></span>
               <span class="stat-chip" id="activeClubMembers" style="background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.35); color: #c084fc;">👥 1 člen</span>
-              <span class="action-bar-hint" id="activeClubPtsHint">⭐ <strong id="activeClubPtsDisplay" style="color: #fbbf24;">0</strong> bodů</span>
+              <span class="action-bar-hint" id="activeClubPtsHint">⭐ <strong id="activeClubPtsDisplay" style="color: #fbbf24;">0</strong> <span data-i18n="unit_points_full">bodů</span></span>
             </div>
             <div class="action-bar-right">
               <button class="pill-btn danger" onclick="window.fishaoApp.leaveClub()" data-i18n="club_btn_leave">🚪 Opustit klub</button>
@@ -742,7 +742,7 @@
         <div class="footer-left">
           <div class="footer-logo">
             <span class="footer-icon">🐟</span>
-            <span class="footer-title">FISHAO Encyklopedie</span>
+            <span class="footer-title"><span data-i18n="app_title">FISHAO</span> <span data-i18n="app_subtitle">Encyklopedie</span></span>
             <span class="footer-tag" data-i18n="footer_fan_badge">Fanouškovský projekt</span>
           </div>
           <p class="footer-disclaimer" data-i18n="footer_disclaimer">
@@ -1055,9 +1055,14 @@
         </div>
 
         <!-- Action buttons -->
-        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--border);">
-          <button type="button" class="pill-btn" onclick="window.fishaoApp.closeProfileModal()" data-i18n="confirm_cancel">Zrušit</button>
-          <button type="button" class="pill-btn purple active" onclick="window.fishaoApp.saveProfile()" data-i18n="profile_btn_save">💾 Uložit profil</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 10px;">
+          <button type="button" class="btn-subtle-link danger" onclick="window.fishaoApp.deleteAccount()" style="font-size: 12px; color: #f87171; background: none; border: none; cursor: pointer; padding: 4px 0;" title="Trvale smazat můj herní profil a data">
+            🗑️ <span data-i18n="profile_btn_delete_account">Smazat účet a data</span>
+          </button>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="pill-btn" onclick="window.fishaoApp.closeProfileModal()" data-i18n="confirm_cancel">Zrušit</button>
+            <button type="button" class="pill-btn purple active" onclick="window.fishaoApp.saveProfile()" data-i18n="profile_btn_save">💾 Uložit profil</button>
+          </div>
         </div>
       </div>
     </div>
