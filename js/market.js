@@ -148,7 +148,7 @@ function openPriceModal(fid) {
     }
   }
 
-  var initialPriceDate = (new Date().getDay() === 0) ? getYesterdayISO() : getTodayISO();
+  var initialPriceDate = getTodayISO();
   var elNewDate = document.getElementById("newPriceDate");
   if (elNewDate) elNewDate.value = initialPriceDate;
   var elNewVal = document.getElementById("newPriceValue");
@@ -348,7 +348,7 @@ function openBulkModal() {
     showAuthNotice(t('auth_notice_bulk'));
     return;
   }
-  var initialBulkDate = (new Date().getDay() === 0) ? getYesterdayISO() : getTodayISO();
+  var initialBulkDate = getTodayISO();
   var dt = document.getElementById("bulkImportDate");
   if (dt) dt.value = initialBulkDate;
   onBulkDateChange(initialBulkDate);
@@ -664,3 +664,4 @@ async function resetPriceHistoryToDefault() {
     resEl.innerText = t('reset_prices_done');
   }
 }
+

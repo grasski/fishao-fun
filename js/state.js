@@ -163,11 +163,10 @@ function isDateSunday(isoDate) {
 }
 
 var todayISO = getTodayISO();
-var defaultOpenDate = (new Date().getDay() === 0) ? getYesterdayISO() : todayISO;
 var elNewDate = document.getElementById("newPriceDate");
-if (elNewDate) elNewDate.value = defaultOpenDate;
+if (elNewDate) elNewDate.value = todayISO;
 var elBulkDate = document.getElementById("bulkImportDate");
-if (elBulkDate) elBulkDate.value = defaultOpenDate;
+if (elBulkDate) elBulkDate.value = todayISO;
 
 // -------------------------------------------------------------
 // Toast & Modal Notification Utilities
