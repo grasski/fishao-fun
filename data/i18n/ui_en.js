@@ -383,7 +383,9 @@
       "profile_backyard_count_label": "{count} / 83 fish",
       "filter_clear_btn_title": "Clear filter",
       "filter_search_clear_title": "Clear search",
-      "filter_reset_all_title": "Reset all filters"
+      "filter_reset_all_title": "Reset all filters",
+      "player_modal_edit_profile": "Edit my profile (nickname / avatar)",
+      "profile_edit_tooltip": "Edit player profile"
   };
 
   if (typeof window !== 'undefined') {

@@ -86,7 +86,7 @@
             </svg>
             <span data-i18n="sign_in">Přihlásit se</span>
           </button>
-          <div class="user-info-bar" id="userInfoBar" style="display: none;" onclick="window.fishaoApp.openProfileModal()" title="Upravit hráčský profil">
+          <div class="user-info-bar" id="userInfoBar" style="display: none;" onclick="window.fishaoApp.openProfileModal()" title="Upravit hráčský profil" data-i18n-title="profile_edit_tooltip">
             <img class="user-avatar-img" id="userAvatarImg" src="" alt="Avatar" style="display: none;" onerror="this.style.display='none'; document.getElementById('userAvatarBadge').style.display='flex';">
             <div class="user-avatar-badge" id="userAvatarBadge">🎣</div>
             <div class="user-details">
@@ -1015,9 +1015,9 @@
           <!-- Large Avatar -->
         </div>
         <h3 id="playerModalName" style="margin: 10px 0 4px 0; font-size: 20px; color: var(--text-main);"></h3>
-        <div id="playerModalRole" style="margin-bottom: 10px;"></div>
-        <div style="margin-bottom: 16px;">
-          <button type="button" id="playerModalFriendBtn" class="pill-btn" style="display: none; padding: 4px 14px; font-size: 12px; font-weight: 700;" onclick="window.fishaoApp.toggleFriend(document.getElementById('playerModalName').dataset.currentUid)">
+        <div class="player-modal-badges-bar" style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 8px 0 16px 0;">
+          <span id="playerModalRole" style="display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center;"></span>
+          <button type="button" id="playerModalFriendBtn" class="pill-btn" style="display: none; padding: 3px 12px; font-size: 11px; font-weight: 700;" onclick="window.fishaoApp.toggleFriend(document.getElementById('playerModalName').dataset.currentUid)">
             ⭐ Přidat do přátel
           </button>
         </div>
@@ -1050,7 +1050,7 @@
 
         <div id="playerModalSelfActions" style="margin-top: 16px; display: none;">
           <button class="pill-btn purple" style="width: 100%; height: 38px; font-weight: 700;" onclick="window.fishaoApp.closePlayerModal(); window.fishaoApp.openProfileModal();">
-            ✏️ Upravit můj profil (přezdívka / avatar)
+            ✏️ <span data-i18n="player_modal_edit_profile">Upravit můj profil (přezdívka / avatar)</span>
           </button>
         </div>
       </div>

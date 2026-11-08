@@ -383,7 +383,9 @@
       "profile_backyard_count_label": "{count} / 83 ryb",
       "filter_clear_btn_title": "Vymazat filtr",
       "filter_search_clear_title": "Vymazat hledání",
-      "filter_reset_all_title": "Resetovat všechny filtry"
+      "filter_reset_all_title": "Resetovat všechny filtry",
+      "player_modal_edit_profile": "Upravit můj profil (přezdívka / avatar)",
+      "profile_edit_tooltip": "Upravit hráčský profil"
   };
 
   if (typeof window !== 'undefined') {

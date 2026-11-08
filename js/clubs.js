@@ -239,7 +239,7 @@ function renderClubMembers(membersMap, creatorId) {
     html += '<div class="club-member-chip' + (isCr ? ' creator' : '') + '" onclick="window.fishaoApp.openPlayerModal(\'' + uid + '\')" title="' + escapeHtml(t('club_member_view_profile', 'Kliknutím zobrazíš detail hráče')) + '">' +
       avatarHtml +
       '<div class="club-member-info">' +
-        '<div class="club-member-name">' + escapeHtml(dName) + (isMe ? ' <span style="font-size:11px;color:#a78bfa;">(Ty)</span>' : '') + '</div>' +
+        '<div class="club-member-name">' + escapeHtml(dName) + (isMe ? ' <span style="font-size:11px;color:#a78bfa;">(' + t('player_card_me_tag', 'Ty') + ')</span>' : '') + '</div>' +
         '<div class="club-member-tag">' +
           roleBadge + countBadge +
         '</div>' +

@@ -661,9 +661,8 @@ function renderPlayersList() {
           '<div class="player-card-meta">' +
             '<div class="player-card-name-row">' +
               '<span class="player-card-name">' + escapeHtml(p.displayName) + '</span>' +
-              (isMe ? '<span class="player-card-me-tag">(Ty)</span>' : '') +
+              (isMe ? '<span class="player-card-me-tag">(' + t('player_card_me_tag', 'Ty') + ')</span>' : '') +
               roleBadge +
-              (isFriend ? '<span class="player-friend-badge" title="' + t('friend_badge_title', 'Tento hráč je v tvých přátelích') + '">⭐ ' + t('btn_friend_yes', 'Přítel') + '</span>' : '') +
             '</div>' +
             '<div class="player-card-club-row">' + clubInfo + '</div>' +
           '</div>' +
