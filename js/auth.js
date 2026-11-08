@@ -465,3 +465,4 @@ async function saveProfile() {
 function editNickname() {
   openProfileModal();
 }
+

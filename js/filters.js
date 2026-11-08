@@ -393,3 +393,4 @@ function updateRatingFilterOptions() {
     '<option value="min4">' + t('opt_rating_min4') + '</option>';
   select.value = curVal;
 }
+

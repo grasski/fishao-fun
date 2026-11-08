@@ -317,7 +317,7 @@ function renderTableHead() {
       '<tr>' +
       '<th style="width: 48px;">#</th>' +
       caughtCol +
-      '<th style="width: 95px;">' + t('col_appearance') + '</th>' +
+      '<th style="width: 108px;">' + t('col_appearance') + '</th>' +
       '<th>' + t('col_water') + '</th>' +
       '<th>' + t('col_fish') + '</th>' +
       '<th>' + t('col_rarity') + '</th>' +
@@ -332,7 +332,7 @@ function renderTableHead() {
       '<tr>' +
       '<th style="width: 48px;">#</th>' +
       caughtCol +
-      '<th style="width: 95px;">' + t('col_appearance') + '</th>' +
+      '<th style="width: 108px;">' + t('col_appearance') + '</th>' +
       '<th>' + t('col_fish') + '</th>' +
       '<th>' + t('col_rarity') + '</th>' +
       priceColHtml +
@@ -430,3 +430,4 @@ function renderTableBody(data) {
 
   document.getElementById("counter").innerText = t('counter_showing', { shown: data.length, total: total });
 }
+

@@ -331,3 +331,4 @@ var initialLang = (window.FISHAO_I18N && window.FISHAO_I18N.currentLang) || loca
 setLanguage(initialLang);
 switchView("all");
 initFirebaseSync();
+

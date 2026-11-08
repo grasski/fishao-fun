@@ -895,7 +895,7 @@ function renderClubMilestones() {
         '</div>' +
         '<div class="dash-card-body">' +
         '<div class="milestone-fish-row" style="margin-top: 4px;">' +
-        '<div class="milestone-fish-img-box" style="width: 70px; height: 46px;">' +
+        '<div class="milestone-fish-img-box" style="width: 84px; height: 52px;">' +
         '<img src="images/fish_' + nextFish.id + '.png" class="milestone-fish-img" alt="' + nextFishName + '" onerror="this.src=\'images/default-fish.png\'">' +
         '</div>' +
         '<div class="milestone-fish-info">' +
@@ -1042,3 +1042,4 @@ function updateClubStats() {
     }
   }
 }
+
