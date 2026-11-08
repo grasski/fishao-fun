@@ -15,6 +15,11 @@
 }
 .modal-overlay.active { display: flex; }
 
+/* Confirmation modal must always float above any existing active modal overlay */
+#confirmModalOverlay {
+  z-index: 10000;
+}
+
 .modal-box {
   background: #101726;
   border: 1px solid var(--border-strong);

@@ -399,7 +399,23 @@
       "club_member_kicked": "Player was removed from the club.",
       "sync_timer_tooltip": "Time until automatic data refresh: {time}",
       "sync_refresh_btn_title": "Refresh data now",
-      "sync_manual_refreshed": "Data has been successfully refreshed."
+      "sync_manual_refreshed": "Data has been successfully refreshed.",
+      "footer_fan_badge": "Fan Project",
+      "footer_disclaimer": "FISHAO is a registered trademark of GamoVation B.V. This website is an unofficial community project made by players for players and is not affiliated with or endorsed by GamoVation. All in-game artwork and names belong to their respective owners.",
+      "footer_privacy_link": "Privacy Policy & GDPR",
+      "footer_official_link": "Official FISHAO Website",
+      "footer_version": "Made with ❤️ for the fishing community",
+      "privacy_modal_title": "Privacy Policy & GDPR",
+      "privacy_sec1_title": "1. Non-Profit Community Project",
+      "privacy_sec1_desc": "This website is an unofficial, free, and non-commercial fan tool created by the community for FISHAO players. The website contains no advertisements, paid features, or monetization.",
+      "privacy_sec2_title": "2. What Data We Process",
+      "privacy_sec2_desc": "When signing in via Google (Firebase Authentication), we only receive your Google identifier (UID) and email address for authentication purposes. The database also stores your chosen in-game nickname, avatar (icon/emoji), club membership, and your lists of caught fish and backyard fish. Your email address is NEVER publicly displayed to other users.",
+      "privacy_sec3_title": "3. No Third-Party Tracking or Cookies",
+      "privacy_sec3_desc": "This website does not use Google Analytics, advertising trackers, Facebook Pixel, or any other third-party tracking scripts. The browser storage (localStorage/sessionStorage) strictly stores functional preferences necessary for website operations (selected language, timezone, price and player caches to minimize bandwidth).",
+      "privacy_sec4_title": "4. Copyright & Trademarks",
+      "privacy_sec4_desc": "FISHAO is a registered trademark of GamoVation B.V. All fish artwork, bait images, and game assets are the intellectual property of GamoVation and are used here under fair use for community and reference purposes.",
+      "privacy_sec5_title": "5. Data Management & Deletion",
+      "privacy_sec5_desc": "You can modify your nickname and avatar at any time in profile settings. If you wish to permanently delete your game profile and all related data from the database, please contact the project maintainer or administrator."
   };
 
   if (typeof window !== 'undefined') {

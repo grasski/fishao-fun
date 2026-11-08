@@ -735,6 +735,35 @@
         </table>
       </div>
     </div> <!-- Closes #sectionFishTable -->
+
+    <!-- Application Footer: Disclaimer & Privacy -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <div class="footer-left">
+          <div class="footer-logo">
+            <span class="footer-icon">🐟</span>
+            <span class="footer-title">FISHAO Encyklopedie</span>
+            <span class="footer-tag" data-i18n="footer_fan_badge">Fanouškovský projekt</span>
+          </div>
+          <p class="footer-disclaimer" data-i18n="footer_disclaimer">
+            FISHAO je registrovaná ochranná známka společnosti GamoVation B.V. Tento web je neoficiální komunitní projekt vytvořený hráči pro hráče a není nijak spojen ani sponzorován společností GamoVation. Veškerá grafika a názvy ze hry patří jejich příslušným vlastníkům.
+          </p>
+        </div>
+        <div class="footer-right">
+          <div class="footer-links">
+            <button type="button" class="footer-link-btn" onclick="window.fishaoApp.openPrivacyModal()">
+              🛡️ <span data-i18n="footer_privacy_link">Zásady ochrany soukromí &amp; GDPR</span>
+            </button>
+            <a href="https://www.fishao.net/" target="_blank" rel="noopener noreferrer" class="footer-link-btn">
+              🌐 <span data-i18n="footer_official_link">Oficiální web FISHAO</span> ↗
+            </a>
+          </div>
+          <div class="footer-meta">
+            <span data-i18n="footer_version">Vyrobeno s ❤️ pro komunitu rybářů</span>
+          </div>
+        </div>
+      </div>
+    </footer>
   </div> <!-- Closes .container -->
 
   <!-- Authentication notice popup -->
@@ -1109,6 +1138,49 @@
             🚪 <span data-i18n="club_btn_kick">Odebrat hráče z klubu</span>
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy Policy & GDPR Modal -->
+  <div class="modal-overlay" id="privacyModalOverlay" onclick="window.fishaoApp.onModalOverlayClick(event, 'privacyModalOverlay')">
+    <div class="modal-box" style="max-width: 620px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🛡️ <span data-i18n="privacy_modal_title">Zásady ochrany soukromí &amp; GDPR</span></span>
+        </div>
+        <button class="modal-close" onclick="window.fishaoApp.closePrivacyModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px 24px; max-height: 70vh; overflow-y: auto;">
+        <div style="font-size: 13px; line-height: 1.65; color: #cbd5e1; display: flex; flex-direction: column; gap: 16px;">
+          <div>
+            <h4 style="color: #38bdf8; margin: 0 0 6px 0; font-size: 14px;" data-i18n="privacy_sec1_title">1. Neziskový komunitní projekt</h4>
+            <p style="margin: 0;" data-i18n="privacy_sec1_desc">Tento web je neoficiální, bezplatný a nekomerční fanouškovský nástroj vytvořený hráči pro hráče hry FISHAO. Web neobsahuje žádné reklamy, placené funkce ani monetizaci.</p>
+          </div>
+
+          <div>
+            <h4 style="color: #38bdf8; margin: 0 0 6px 0; font-size: 14px;" data-i18n="privacy_sec2_title">2. Jaká data zpracováváme</h4>
+            <p style="margin: 0;" data-i18n="privacy_sec2_desc">Při přihlášení přes Google (Firebase Authentication) získáváme pouze tvůj Google identifikátor (UID) a e-mail pro ověření identity. V databázi se dále ukládá tvá zvolená herní přezdívka, avatar (ikona/emoji), členství v klubu a tvůj seznam odchycených ryb a ryb za domem. E-mailová adresa není NIKDY veřejně zobrazována ostatním uživatelům.</p>
+          </div>
+
+          <div>
+            <h4 style="color: #38bdf8; margin: 0 0 6px 0; font-size: 14px;" data-i18n="privacy_sec3_title">3. Žádné sledování ani cookies třetích stran</h4>
+            <p style="margin: 0;" data-i18n="privacy_sec3_desc">Web nepoužívá Google Analytics, reklamní trackery, Facebook Pixel ani žádné jiné sledovací skripty třetích stran. Do lokálního úložiště prohlížeče (localStorage/sessionStorage) se ukládají výhradně technická nastavení nezbytná pro fungování webu (zvolený jazyk, časové pásmo, mezipaměť cen a hráčů pro snížení přenosu dat).</p>
+          </div>
+
+          <div>
+            <h4 style="color: #38bdf8; margin: 0 0 6px 0; font-size: 14px;" data-i18n="privacy_sec4_title">4. Autorská práva a ochranné známky</h4>
+            <p style="margin: 0;" data-i18n="privacy_sec4_desc">FISHAO je registrovaná ochranná známka společnosti GamoVation B.V. Všechny obrázky ryb, návnad a herní materiály jsou duševním vlastnictvím společnosti GamoVation a jsou zde použity v rámci fair-use pro komunitní a vzdělávací účely.</p>
+          </div>
+
+          <div>
+            <h4 style="color: #38bdf8; margin: 0 0 6px 0; font-size: 14px;" data-i18n="privacy_sec5_title">5. Správa a smazání dat</h4>
+            <p style="margin: 0;" data-i18n="privacy_sec5_desc">Svůj profil (přezdívku a avatar) můžeš kdykoliv libovolně upravit v nastavení profilu. Pokud si přeješ svůj herní profil z databáze trvale smazat, stačí kontaktovat správce projektu nebo administrátora.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 12px 20px; background: #0c121e; border-top: 1px solid var(--border); display: flex; justify-content: flex-end;">
+        <button type="button" class="pill-btn" onclick="window.fishaoApp.closePrivacyModal()" data-i18n="action_close">Zavřít</button>
       </div>
     </div>
   </div>

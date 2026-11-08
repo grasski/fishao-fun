@@ -399,7 +399,23 @@
       "club_member_kicked": "Hráč byl odebrán z klubu.",
       "sync_timer_tooltip": "Čas do automatického obnovení dat: {time}",
       "sync_refresh_btn_title": "Okamžitě aktualizovat data",
-      "sync_manual_refreshed": "Data byla úspěšně aktualizována."
+      "sync_manual_refreshed": "Data byla úspěšně aktualizována.",
+      "footer_fan_badge": "Fanouškovský projekt",
+      "footer_disclaimer": "FISHAO je registrovaná ochranná známka společnosti GamoVation B.V. Tento web je neoficiální komunitní projekt vytvořený hráči pro hráče a není nijak spojen ani sponzorován společností GamoVation. Veškerá grafika a názvy ze hry patří jejich příslušným vlastníkům.",
+      "footer_privacy_link": "Zásady ochrany soukromí & GDPR",
+      "footer_official_link": "Oficiální web FISHAO",
+      "footer_version": "Vyrobeno s ❤️ pro komunitu rybářů",
+      "privacy_modal_title": "Zásady ochrany soukromí & GDPR",
+      "privacy_sec1_title": "1. Neziskový komunitní projekt",
+      "privacy_sec1_desc": "Tento web je neoficiální, bezplatný a nekomerční fanouškovský nástroj vytvořený komunitou pro hráče hry FISHAO. Web neobsahuje žádné reklamy, placené funkce ani monetizaci.",
+      "privacy_sec2_title": "2. Jaká data zpracováváme",
+      "privacy_sec2_desc": "Při přihlášení přes Google (Firebase Authentication) získáváme pouze tvůj Google identifikátor (UID) a e-mail pro ověření identity. V databázi se dále ukládá tvá zvolená herní přezdívka, avatar (ikona/emoji), členství v klubu a tvůj seznam odchycených ryb a ryb za domem. E-mailová adresa není NIKDY veřejně zobrazována ostatním uživatelům.",
+      "privacy_sec3_title": "3. Žádné sledování ani cookies třetích stran",
+      "privacy_sec3_desc": "Web nepoužívá Google Analytics, reklamní trackery, Facebook Pixel ani žádné jiné sledovací skripty třetích stran. Do lokálního úložiště prohlížeče (localStorage/sessionStorage) se ukládají výhradně technická nastavení nezbytná pro fungování webu (zvolený jazyk, časové pásmo, mezipaměť cen a hráčů pro snížení přenosu dat).",
+      "privacy_sec4_title": "4. Autorská práva a ochranné známky",
+      "privacy_sec4_desc": "FISHAO je registrovaná ochranná známka společnosti GamoVation B.V. Všechny obrázky ryb, návnad a herní materiály jsou duševním vlastnictvím společnosti GamoVation a jsou zde použity v rámci fair-use pro komunitní a vzdělávací účely.",
+      "privacy_sec5_title": "5. Správa a smazání dat",
+      "privacy_sec5_desc": "Svůj profil (přezdívku a avatar) můžeš kdykoliv libovolně upravit v nastavení profilu. Pokud si přeješ svůj herní profil z databáze trvale smazat, stačí kontaktovat správce projektu nebo administrátora."
   };
 
   if (typeof window !== 'undefined') {

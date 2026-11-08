@@ -314,11 +314,22 @@ function setLanguage(lang) {
   }
 }
 
+function openPrivacyModal() {
+  var modal = document.getElementById("privacyModalOverlay");
+  if (modal) modal.classList.add("active");
+}
+
+function closePrivacyModal() {
+  var modal = document.getElementById("privacyModalOverlay");
+  if (modal) modal.classList.remove("active");
+}
+
 function closeAllModals() {
   closePriceModal();
   closeBulkModal();
   closeProfileModal();
   closePlayerModal();
+  closePrivacyModal();
   resolveConfirmModal(false);
 }
 
@@ -328,6 +339,7 @@ function onModalOverlayClick(e, id) {
     if (id === 'bulkModalOverlay') closeBulkModal();
     if (id === 'profileModalOverlay') closeProfileModal();
     if (id === 'playerModalOverlay') closePlayerModal();
+    if (id === 'privacyModalOverlay') closePrivacyModal();
     if (id === 'confirmModalOverlay') resolveConfirmModal(false);
   }
 }
@@ -381,6 +393,8 @@ window.fishaoApp = {
   closeProfileModal: closeProfileModal,
   openPlayerModal: openPlayerModal,
   closePlayerModal: closePlayerModal,
+  openPrivacyModal: openPrivacyModal,
+  closePrivacyModal: closePrivacyModal,
   selectPresetAvatar: selectPresetAvatar,
   onAvatarUrlInput: onAvatarUrlInput,
   saveProfile: saveProfile,
