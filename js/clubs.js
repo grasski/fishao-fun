@@ -43,9 +43,27 @@ async function bindClubListener(clubId) {
           }
         }
 
+        var memberKeys = Object.keys(members);
+        var actualCount = memberKeys.length;
+
         currentClubName = data.name || "";
         currentClubPoints = typeof data.points === 'number' ? data.points : 0;
-        currentClubMemberCount = typeof data.memberCount === 'number' ? data.memberCount : 1;
+        currentClubMemberCount = Math.max(actualCount, typeof data.memberCount === 'number' ? data.memberCount : actualCount);
+
+        var acName = document.getElementById("activeClubName");
+        if (acName) acName.innerText = currentClubName || "Klub";
+        var acPts = document.getElementById("activeClubPtsDisplay");
+        if (acPts) acPts.innerText = currentClubPoints.toLocaleString(getLocale());
+        var acMemb = document.getElementById("activeClubMembers");
+        if (acMemb) acMemb.innerText = '👥 ' + formatClubMemberCount(currentClubMemberCount);
+
+        // Self-heal memberCount in Firestore if desynced
+        if (data.memberCount !== actualCount && actualCount > 0) {
+          try {
+            fsModule.updateDoc(clubDocRef, { memberCount: actualCount });
+          } catch (e) {}
+        }
+
         currentClubUnlockedFcFishIds = new Set(data.unlockedFcFishIds || []);
         currentClubUnlockedMonsterIds = new Set(data.unlockedMonsterIds || []);
         renderClubMembers(members, data.createdBy);
@@ -259,7 +277,15 @@ function renderClubMembers(membersMap, creatorId) {
     return a.localeCompare(b);
   });
 
-  if (countEl) countEl.innerText = Math.max(memberKeys.length, currentClubMemberCount || 1);
+  var actualCount = memberKeys.length;
+  currentClubMemberCount = actualCount;
+  if (countEl) countEl.innerText = actualCount;
+  var acMemb = document.getElementById("activeClubMembers");
+  if (acMemb) acMemb.innerText = '👥 ' + formatClubMemberCount(actualCount);
+  var acName = document.getElementById("activeClubName");
+  if (acName && currentClubName) acName.innerText = currentClubName;
+  var acPts = document.getElementById("activeClubPtsDisplay");
+  if (acPts) acPts.innerText = currentClubPoints.toLocaleString(getLocale());
 
   var html = "";
   memberKeys.forEach(function (uid) {

@@ -142,6 +142,16 @@ function t(key, params, fallback) {
   return fallback !== undefined ? fallback : key;
 }
 
+function formatClubMemberCount(count) {
+  var num = Math.max(0, parseInt(count) || 0);
+  if (getLang() === 'en') {
+    return num + (num === 1 ? ' member' : ' members');
+  }
+  if (num === 1) return '1 člen';
+  if (num >= 2 && num <= 4) return num + ' členové';
+  return num + ' členů';
+}
+
 function getLocalizedTzCity() {
   if (!detectedCityRaw) return t('tz_local_city_default');
   if (getLang() === 'en') return detectedCityRaw;

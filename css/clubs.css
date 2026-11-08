@@ -38,6 +38,50 @@
   letter-spacing: 0.5px;
 }
 
+/* Integrated Club Card Header */
+.club-header-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 18px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid var(--border);
+}
+.club-header-info-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.club-header-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+.club-chip-members {
+  background: rgba(139, 92, 246, 0.15) !important;
+  border: 1px solid rgba(139, 92, 246, 0.35) !important;
+  color: #c084fc !important;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.club-chip-points {
+  background: rgba(245, 158, 11, 0.12) !important;
+  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+  color: #fbbf24 !important;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.club-header-actions-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
 .manage-card.purple-card {
   border-top: 3px solid var(--purple);
   background: linear-gradient(180deg, rgba(139, 92, 246, 0.08) 0%, var(--surface) 100%);

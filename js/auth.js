@@ -320,7 +320,7 @@ function updateAuthUI() {
         var acName = document.getElementById("activeClubName");
         if (acName) acName.innerText = currentClubName || "Klub";
         var acMemb = document.getElementById("activeClubMembers");
-        if (acMemb) acMemb.innerText = t('club_active_members', { count: currentClubMemberCount });
+        if (acMemb) acMemb.innerText = '👥 ' + formatClubMemberCount(currentClubMemberCount);
         var acPtsDisplay = document.getElementById("activeClubPtsDisplay");
         if (acPtsDisplay) acPtsDisplay.innerText = currentClubPoints.toLocaleString(getLocale());
         var ptsManage = document.getElementById("clubPointsManageInput");

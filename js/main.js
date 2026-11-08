@@ -171,6 +171,11 @@ function switchView(view) {
   if (bMarket) bMarket.style.display = (view === "market") ? "flex" : "none";
   if (bPlayers) bPlayers.style.display = (view === "players" && currentUser) ? "flex" : "none";
 
+  var subNoticePlayers = document.getElementById("subNoticePlayers");
+  var subNoticeClubs = document.getElementById("subNoticeClubs");
+  if (subNoticePlayers) subNoticePlayers.style.display = (view === "players") ? "flex" : "none";
+  if (subNoticeClubs) subNoticeClubs.style.display = (view === "club_manage") ? "flex" : "none";
+
   updateMarketTabStatus();
 
   if (view === "players") {
