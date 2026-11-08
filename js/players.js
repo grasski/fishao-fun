@@ -120,7 +120,7 @@ function createRichBackyardFishCard(fObj, extraClass, isModal) {
     '</div>' +
     '<div class="pbfc-meta">' +
       '<span class="pbfc-time" title="' + escapeHtml(timeInfo.sub || timeDisplay) + '">⏰ ' + escapeHtml(timeDisplay) + '</span>' +
-      '<span class="pbfc-baits" title="' + escapeHtml(baitsDisplay) + '">🪱 ' + escapeHtml(baitsDisplay) + '</span>' +
+      '<span class="pbfc-baits" title="' + escapeHtml(baitsDisplay) + '">' + escapeHtml(baitsDisplay) + '</span>' +
     '</div>' +
   '</div>';
 }
@@ -333,11 +333,13 @@ function renderPlayersActiveFiltersBar() {
 
   var chips = [];
 
+  var clearTitle = t('filter_clear_btn_title', 'Vymazat filtr');
+
   if (filterPlayerSearchText) {
     chips.push(
       '<span class="active-filter-chip">' +
         '🔍 ' + t('filter_active_search', { term: escapeHtml(filterPlayerSearchText) }) +
-        '<button type="button" onclick="window.fishaoApp.clearPlayerSearch()" title="Odebrat filtr">&times;</button>' +
+        '<button type="button" onclick="window.fishaoApp.clearPlayerSearch()" title="' + escapeHtml(clearTitle) + '">&times;</button>' +
       '</span>'
     );
   }
@@ -346,7 +348,7 @@ function renderPlayersActiveFiltersBar() {
     chips.push(
       '<span class="active-filter-chip">' +
         '⭐ ' + t('filter_active_friends', 'Pouze přátelé') +
-        '<button type="button" onclick="window.fishaoApp.togglePlayerFriendsFilter()" title="Odebrat filtr">&times;</button>' +
+        '<button type="button" onclick="window.fishaoApp.togglePlayerFriendsFilter()" title="' + escapeHtml(clearTitle) + '">&times;</button>' +
       '</span>'
     );
   }
@@ -355,7 +357,7 @@ function renderPlayersActiveFiltersBar() {
     chips.push(
       '<span class="active-filter-chip">' +
         '🏡 ' + t('filter_active_backyard', 'Pouze za domem') +
-        '<button type="button" onclick="window.fishaoApp.togglePlayerBackyardFilter()" title="Odebrat filtr">&times;</button>' +
+        '<button type="button" onclick="window.fishaoApp.togglePlayerBackyardFilter()" title="' + escapeHtml(clearTitle) + '">&times;</button>' +
       '</span>'
     );
   }
@@ -364,7 +366,7 @@ function renderPlayersActiveFiltersBar() {
     chips.push(
       '<span class="active-filter-chip">' +
         '⚡ ' + t('filter_active_now', 'Bere právě teď') +
-        '<button type="button" onclick="window.fishaoApp.togglePlayerActiveNowFilter()" title="Odebrat filtr">&times;</button>' +
+        '<button type="button" onclick="window.fishaoApp.togglePlayerActiveNowFilter()" title="' + escapeHtml(clearTitle) + '">&times;</button>' +
       '</span>'
     );
   }
@@ -375,7 +377,7 @@ function renderPlayersActiveFiltersBar() {
     chips.push(
       '<span class="active-filter-chip">' +
         '🐟 ' + t('filter_active_fish', { name: escapeHtml(fName) }) +
-        '<button type="button" onclick="window.fishaoApp.onPlayerFishFilterChange(\'\')" title="Odebrat filtr">&times;</button>' +
+        '<button type="button" onclick="window.fishaoApp.onPlayerFishFilterChange(\'\')" title="' + escapeHtml(clearTitle) + '">&times;</button>' +
       '</span>'
     );
   }
@@ -386,8 +388,8 @@ function renderPlayersActiveFiltersBar() {
       : filterPlayerBait;
     chips.push(
       '<span class="active-filter-chip">' +
-        '🪱 ' + t('filter_active_bait', { bait: escapeHtml(bName) }) +
-        '<button type="button" onclick="window.fishaoApp.onPlayerBaitFilterChange(\'\')" title="Odebrat filtr">&times;</button>' +
+        t('filter_active_bait', { bait: escapeHtml(bName) }) +
+        '<button type="button" onclick="window.fishaoApp.onPlayerBaitFilterChange(\'\')" title="' + escapeHtml(clearTitle) + '">&times;</button>' +
       '</span>'
     );
   }
@@ -396,7 +398,7 @@ function renderPlayersActiveFiltersBar() {
     chips.push(
       '<span class="active-filter-chip">' +
         '⭐ ' + t('filter_active_rating', { stars: filterPlayerRating }) +
-        '<button type="button" onclick="window.fishaoApp.onPlayerRatingFilterChange(\'\')" title="Odebrat filtr">&times;</button>' +
+        '<button type="button" onclick="window.fishaoApp.onPlayerRatingFilterChange(\'\')" title="' + escapeHtml(clearTitle) + '">&times;</button>' +
       '</span>'
     );
   }
@@ -418,7 +420,7 @@ function renderPlayersActiveFiltersBar() {
       bar.style.display = "flex";
       bar.innerHTML = '<span class="active-filters-title">🎯 ' + t('players_active_filters_title', 'Aktivní filtry:') + '</span>' +
         chips.join('') +
-        '<button type="button" class="active-filters-clear-all" onclick="window.fishaoApp.resetPlayerFilters()" title="Resetovat všechny filtry">' +
+        '<button type="button" class="active-filters-clear-all" onclick="window.fishaoApp.resetPlayerFilters()" title="' + escapeHtml(t('filter_reset_all_title', 'Resetovat všechny filtry')) + '">' +
           t('players_filter_clear_all', 'Vymazat vše ↺') +
         '</button>';
     } else {
@@ -589,7 +591,7 @@ function renderPlayersList() {
 
     var roleBadge = "";
     if (p.role === "admin") {
-      roleBadge = '<span class="pill-btn danger active" style="font-size: 10px; padding: 1px 7px; height: auto;">🛡️ Admin</span>';
+      roleBadge = '<span class="pill-btn danger active" style="font-size: 10px; padding: 1px 7px; height: auto;">🛡️ ' + t('admin_badge', 'Admin') + '</span>';
     }
 
     var clubInfo = p.clubName
@@ -629,8 +631,8 @@ function renderPlayersList() {
         // Floating Popover Menu (renders all fish without expanding card height or stretching grid)
         backyardCardsHtml += '<div id="backyardMenu_' + p.uid + '" class="player-backyard-popover-menu" style="display: none;" onclick="event.stopPropagation();">' +
           '<div class="pbm-header">' +
-            '<span class="pbm-title">🏡 ' + escapeHtml(p.displayName) + ' (' + bFishes.length + ' ryb)</span>' +
-            '<button type="button" class="pbm-close" onclick="window.fishaoApp.closeBackyardMenu(\'' + p.uid + '\', event)" title="Zavřít">&times;</button>' +
+            '<span class="pbm-title">🏡 ' + escapeHtml(p.displayName) + ' – ' + t('player_backyard_menu_title', { count: bFishes.length }) + '</span>' +
+            '<button type="button" class="pbm-close" onclick="window.fishaoApp.closeBackyardMenu(\'' + p.uid + '\', event)" title="' + t('action_close', 'Zavřít') + '">&times;</button>' +
           '</div>' +
           '<div class="pbm-list">';
         bFishes.forEach(function (fid) {
@@ -647,7 +649,7 @@ function renderPlayersList() {
 
     var friendBtnHtml = "";
     if (!isMe && currentUser) {
-      friendBtnHtml = '<button type="button" class="player-friend-star-btn ' + (isFriend ? 'active' : '') + '" onclick="window.fishaoApp.toggleFriend(\'' + p.uid + '\', event)" title="' + (isFriend ? 'Odebrat z přátel' : 'Přidat do přátel') + '">' +
+      friendBtnHtml = '<button type="button" class="player-friend-star-btn ' + (isFriend ? 'active' : '') + '" onclick="window.fishaoApp.toggleFriend(\'' + p.uid + '\', event)" title="' + (isFriend ? t('btn_friend_remove_title', 'Odebrat z přátel') : t('btn_friend_add_title', 'Přidat do přátel')) + '">' +
         (isFriend ? '⭐ ' + t('btn_friend_yes', 'Přítel') : '☆ ' + t('btn_friend_add', 'Přidat do přátel')) +
         '</button>';
     }
@@ -661,7 +663,7 @@ function renderPlayersList() {
               '<span class="player-card-name">' + escapeHtml(p.displayName) + '</span>' +
               (isMe ? '<span class="player-card-me-tag">(Ty)</span>' : '') +
               roleBadge +
-              (isFriend ? '<span class="player-friend-badge" title="Tento hráč je v tvých přátelích">⭐ Přítel</span>' : '') +
+              (isFriend ? '<span class="player-friend-badge" title="' + t('friend_badge_title', 'Tento hráč je v tvých přátelích') + '">⭐ ' + t('btn_friend_yes', 'Přítel') + '</span>' : '') +
             '</div>' +
             '<div class="player-card-club-row">' + clubInfo + '</div>' +
           '</div>' +
@@ -670,11 +672,11 @@ function renderPlayersList() {
 
         '<div class="player-card-stats">' +
           '<div class="player-card-stat-line">' +
-            '<span class="player-card-stat-label">🎣 Úlovky:</span>' +
+            '<span class="player-card-stat-label">🎣 ' + t('player_card_stat_catches', 'Úlovky:') + '</span>' +
             '<span class="player-card-stat-val" style="color: #38bdf8;">' + totalCatches + ' / ' + allFishes.length + '</span>' +
           '</div>' +
           '<div class="player-card-stat-line">' +
-            '<span class="player-card-stat-label">🏆 Klubové ryby:</span>' +
+            '<span class="player-card-stat-label">🏆 ' + t('player_card_stat_club_fish', 'Klubové ryby:') + '</span>' +
             '<span class="player-card-stat-val" style="color: #34d399;">' + clubCatches + ' / 80</span>' +
           '</div>' +
         '</div>' +
@@ -839,7 +841,7 @@ function renderModalBackyardOwners(fishId) {
     var isFriend = friendUids.has(p.uid);
     var av = p.avatarUrl || "🎣";
     var avIcon = (av.startsWith("http://") || av.startsWith("https://")) ? "🎣" : av;
-    pillsHtml += '<span class="modal-backyard-owner-pill' + (isFriend ? ' is-friend' : '') + '" onclick="window.fishaoApp.openPlayerModal(\'' + p.uid + '\')" title="' + escapeHtml(p.displayName) + (isFriend ? ' (Přítel)' : '') + '">' +
+    pillsHtml += '<span class="modal-backyard-owner-pill' + (isFriend ? ' is-friend' : '') + '" onclick="window.fishaoApp.openPlayerModal(\'' + p.uid + '\')" title="' + escapeHtml(p.displayName) + (isFriend ? ' (' + t('btn_friend_yes', 'Přítel') + ')' : '') + '">' +
       (isFriend ? '⭐ ' : '') + avIcon + ' ' + escapeHtml(p.displayName) +
       '</span>';
   });
@@ -889,9 +891,9 @@ function renderProfileBackyardCatalog(searchTerm) {
 
   var html = '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px;">' +
     '<span style="font-size: 11.5px; font-weight: 700; color: #2dd4bf;">' +
-      '83 ryb určených k odchovu (' + bBreedables.length + ')' +
+      t('profile_catalog_header', { count: bBreedables.length }, 'Katalog 83 ryb k odchovu (' + bBreedables.length + ')') +
     '</span>' +
-    '<input type="text" class="dash-input" style="height: 28px; font-size: 11px; padding: 2px 8px; width: 150px;" placeholder="Hledat v katalogu..." value="' + escapeHtml(searchTerm || '') + '" oninput="window.fishaoApp.filterBackyardCatalog(this.value)">' +
+    '<input type="text" class="dash-input" style="height: 28px; font-size: 11px; padding: 2px 8px; width: 150px;" placeholder="' + escapeHtml(t('profile_catalog_filter_placeholder', 'Hledat v katalogu...')) + '" value="' + escapeHtml(searchTerm || '') + '" oninput="window.fishaoApp.filterBackyardCatalog(this.value)">' +
   '</div>';
 
   html += '<div class="profile-catalog-grid">';
@@ -926,7 +928,7 @@ function renderBackyardProfilePicker() {
   if (!container) return;
 
   var ids = Array.from(backyardFishIds).filter(isBackyardBreedable);
-  if (countEl) countEl.innerText = ids.length + " / 83 ryb";
+  if (countEl) countEl.innerText = t('profile_backyard_count_label', { count: ids.length }, ids.length + " / 83 ryb");
 
   if (ids.length === 0) {
     container.innerHTML = '<span style="font-size: 11.5px; color: var(--text-muted);">' +
@@ -942,7 +944,7 @@ function renderBackyardProfilePicker() {
         '<img src="images/fish_' + fid + '.png" alt="" onerror="this.src=\'images/fish_icon.png\'">' +
         '<span>' + escapeHtml(fName) + '</span>' +
         '<span class="chip-stars">' + stars + '</span>' +
-        '<button type="button" class="profile-backyard-chip-remove" onclick="window.fishaoApp.removeBackyardFish(' + fid + ')" title="Odebrat">&times;</button>' +
+        '<button type="button" class="profile-backyard-chip-remove" onclick="window.fishaoApp.removeBackyardFish(' + fid + ')" title="' + escapeHtml(t('profile_chip_remove_title', 'Odebrat')) + '">&times;</button>' +
         '</span>';
     });
     container.innerHTML = html;
@@ -1054,9 +1056,10 @@ async function openPlayerModal(uid) {
     }
   }
 
+  var defaultFisher = t('user_default_fisher', 'Rybář');
   var dName = isMe
-    ? ((userProfile && userProfile.displayName) ? userProfile.displayName : ((player && player.displayName) || "Rybář"))
-    : ((player && player.displayName) || (clubMem && clubMem.displayName) || "Rybář");
+    ? ((userProfile && userProfile.displayName) ? userProfile.displayName : ((player && player.displayName) || defaultFisher))
+    : ((player && player.displayName) || (clubMem && clubMem.displayName) || defaultFisher);
 
   var av = isMe
     ? ((userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : ((player && player.avatarUrl) || "🎣"))
@@ -1096,7 +1099,7 @@ async function openPlayerModal(uid) {
 
   var nameEl = document.getElementById("playerModalName");
   if (nameEl) {
-    nameEl.innerText = dName + (isMe ? " (Ty)" : "");
+    nameEl.innerText = dName + (isMe ? (" (" + t('player_card_me_tag', 'Ty') + ")") : "");
     nameEl.dataset.currentUid = uid;
   }
 

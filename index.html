@@ -94,7 +94,7 @@
                 <span class="user-name" id="userName" data-i18n="user_default">Uživatel</span>
                 <button class="edit-nick-btn" onclick="event.stopPropagation(); window.fishaoApp.openProfileModal()" title="Změnit přezdívku a avatar" data-i18n-title="modal_profile_title">✏️</button>
               </div>
-              <span class="admin-badge" id="adminBadge" style="display: none;" data-i18n="admin_badge">🛡️ Admin</span>
+              <span class="admin-badge" id="adminBadge" style="display: none;">🛡️ <span data-i18n="admin_badge">Admin</span></span>
             </div>
             <button class="sign-out-btn" onclick="event.stopPropagation(); window.fishaoApp.signOut()" title="Odhlásit se" data-i18n="sign_out"
               data-i18n-title="sign_out">Odhlásit</button>
@@ -735,7 +735,7 @@
             <div class="detail-val" id="modalFishLocations">--</div>
           </div>
           <div class="modal-detail-item">
-            <span class="detail-label" data-i18n="modal_baits">🪱 Vhodné návnady</span>
+            <span class="detail-label" data-i18n="modal_baits">Vhodné návnady</span>
             <div class="detail-val" id="modalFishBaits">--</div>
           </div>
           <div class="modal-detail-item">

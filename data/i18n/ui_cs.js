@@ -5,7 +5,7 @@
   'use strict';
 
   var dict = {
-      "admin_badge": "🛡️ Admin",
+      "admin_badge": "Admin",
       "app_desc": "Kompletní přehled 80 klubových &amp; 615 obecných ryb • Živý čas lovu • Ceník Fish Market • Osobní sbírka úlovků",
       "app_subtitle": "Encyklopedie",
       "app_title": "FISHAO",
@@ -149,7 +149,7 @@
       "milestone_progress_title": "Postup k tomuto milníku: {pct}%",
       "milestone_remaining_pts": "Zbývá ještě {diff} bodů",
       "modal_add_record": "Přidat nový záznam do historie",
-      "modal_baits": "🪱 Vhodné návnady",
+      "modal_baits": "Vhodné návnady",
       "modal_btn_caught_no": "+ Označit jako chycené",
       "modal_btn_caught_yes": "✓ Chyceno (ve sbírce)",
       "modal_club_unlock": "🏰 Klubové podmínky odemčení",
@@ -342,7 +342,7 @@
       "backyard_not_breedable": "Tato ryba není určena pro chov za domem.",
       "modal_btn_backyard_yes": "🏡 Za domem ✓",
       "modal_btn_backyard_no": "🏡 Za domem",
-      "modal_backyard_owners_title": "🏡 Kdo má tuto rybu za domem:",
+      "modal_backyard_owners_title": "Kdo má tuto rybu za domem:",
       "modal_backyard_owners_none": "Tuto rybu zatím nikdo nemá za domem.",
       "backyard_added_toast": "Ryba '{name}' byla přidána za dům!",
       "backyard_removed_toast": "Ryba '{name}' byla odebrána ze zahrady.",
@@ -367,7 +367,23 @@
       "profile_btn_catalog_hide": "📋 Skrýt katalog ryb ▴",
       "backyard_show_all": "Zobrazit všech {count} ryb ▾",
       "backyard_collapse": "Méně ▴",
-      "time_all_day": "Celý den (24h)"
+      "time_all_day": "Celý den (24h)",
+      "player_card_stat_catches": "Úlovky:",
+      "player_card_stat_club_fish": "Klubové ryby:",
+      "player_backyard_menu_title": "Odchované ryby ({count})",
+      "action_close": "Zavřít",
+      "btn_friend_add_title": "Přidat do přátel",
+      "btn_friend_remove_title": "Odebrat z přátel",
+      "friend_badge_title": "Tento hráč je v tvých přátelích",
+      "profile_catalog_header": "Katalog 83 ryb k odchovu ({count})",
+      "profile_catalog_filter_placeholder": "Hledat v katalogu...",
+      "profile_chip_remove_title": "Odebrat",
+      "user_default_fisher": "Rybář",
+      "player_card_me_tag": "Ty",
+      "profile_backyard_count_label": "{count} / 83 ryb",
+      "filter_clear_btn_title": "Vymazat filtr",
+      "filter_search_clear_title": "Vymazat hledání",
+      "filter_reset_all_title": "Resetovat všechny filtry"
   };
 
   if (typeof window !== 'undefined') {

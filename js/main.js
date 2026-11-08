@@ -239,6 +239,19 @@ function setLanguage(lang) {
   renderClubMembers(currentClubMembersMap, currentClubCreatorId);
   applyFilters();
 
+  if (typeof populatePlayerFishFilterDropdown === 'function') populatePlayerFishFilterDropdown();
+  if (typeof renderPlayerActiveFilterChips === 'function') renderPlayerActiveFilterChips();
+  if (typeof renderPlayersList === 'function' && currentView === 'players') renderPlayersList();
+  if (typeof renderBackyardProfilePicker === 'function') renderBackyardProfilePicker();
+
+  var pModal = document.getElementById("playerModalOverlay");
+  if (pModal && pModal.classList.contains("active")) {
+    var nameEl = document.getElementById("playerModalName");
+    if (nameEl && nameEl.dataset.currentUid && typeof openPlayerModal === 'function') {
+      openPlayerModal(nameEl.dataset.currentUid);
+    }
+  }
+
   if (selectedModalFishId) {
     var modal = document.getElementById("priceModalOverlay");
     if (modal && modal.classList.contains("active")) {

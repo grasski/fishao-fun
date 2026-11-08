@@ -5,7 +5,7 @@
   'use strict';
 
   var dict = {
-      "admin_badge": "🛡️ Admin",
+      "admin_badge": "Admin",
       "app_desc": "Complete overview of 80 club &amp; 615 standard fish • Live biting times • Fish Market prices • Personal catch collection",
       "app_subtitle": "Encyclopedia",
       "app_title": "FISHAO",
@@ -149,7 +149,7 @@
       "milestone_progress_title": "Progress to milestone: {pct}%",
       "milestone_remaining_pts": "{diff} pts remaining",
       "modal_add_record": "Add new record to history",
-      "modal_baits": "🪱 Recommended Baits",
+      "modal_baits": "Recommended Baits",
       "modal_btn_caught_no": "+ Mark as caught",
       "modal_btn_caught_yes": "✓ Caught (in collection)",
       "modal_club_unlock": "🏰 Club Unlock Requirements",
@@ -342,7 +342,7 @@
       "backyard_not_breedable": "This fish cannot be bred in the backyard pond.",
       "modal_btn_backyard_yes": "🏡 In Backyard ✓",
       "modal_btn_backyard_no": "🏡 Backyard",
-      "modal_backyard_owners_title": "🏡 Players with this fish in backyard:",
+      "modal_backyard_owners_title": "Players with this fish in backyard:",
       "modal_backyard_owners_none": "Nobody has this fish in their backyard yet.",
       "backyard_added_toast": "Fish '{name}' added to backyard!",
       "backyard_removed_toast": "Fish '{name}' removed from backyard.",
@@ -367,7 +367,23 @@
       "profile_btn_catalog_hide": "📋 Hide fish catalog ▴",
       "backyard_show_all": "Show all {count} fish ▾",
       "backyard_collapse": "Less ▴",
-      "time_all_day": "All day (24h)"
+      "time_all_day": "All day (24h)",
+      "player_card_stat_catches": "Catches:",
+      "player_card_stat_club_fish": "Club fish:",
+      "player_backyard_menu_title": "Backyard fish ({count})",
+      "action_close": "Close",
+      "btn_friend_add_title": "Add to friends",
+      "btn_friend_remove_title": "Remove from friends",
+      "friend_badge_title": "This player is in your friends list",
+      "profile_catalog_header": "Catalog of 83 backyard fish ({count})",
+      "profile_catalog_filter_placeholder": "Search catalog...",
+      "profile_chip_remove_title": "Remove",
+      "user_default_fisher": "Angler",
+      "player_card_me_tag": "You",
+      "profile_backyard_count_label": "{count} / 83 fish",
+      "filter_clear_btn_title": "Clear filter",
+      "filter_search_clear_title": "Clear search",
+      "filter_reset_all_title": "Reset all filters"
   };
 
   if (typeof window !== 'undefined') {
