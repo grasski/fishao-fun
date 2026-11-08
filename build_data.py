@@ -88,6 +88,7 @@ for f in fishes:
         baits_cz = [bait_translations.get(b, b) for b in baits]
         times = req.get('caught_time', [])
         times_str = ", ".join(times) if times else "Celý den"
+        dates = req.get('caught_date', [])
 
         unlock_type = 'points' if pts is not None else ('fc' if fc is not None else 'monster')
 
@@ -99,6 +100,7 @@ for f in fishes:
             'baits': baits_cz,
             'time': times_str,
             'raw_times': times,
+            'raw_dates': dates,
             'is_night': bool(times),
             'min_l': int(f.get('min_length', 0)),
             'avg_l': int(f.get('avg_length', 0)),
@@ -146,6 +148,7 @@ for f in fishes:
     baits_cz = [bait_translations.get(b, b) for b in baits]
     times = req.get('caught_time', [])
     times_str = ", ".join(times) if times else "Celý den"
+    dates = req.get('caught_date', [])
 
     club_info = club_map.get(fid)
     fish_entry = {
@@ -157,6 +160,7 @@ for f in fishes:
         'baits': baits_cz,
         'time': times_str,
         'raw_times': times,
+        'raw_dates': dates,
         'is_night': bool(times),
         'min_l': int(f.get('min_length', 0)),
         'avg_l': int(f.get('avg_length', 0)),

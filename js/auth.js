@@ -97,19 +97,39 @@ async function initFirebaseSync() {
 async function initFirebaseAnalytics() {
   if (firebaseAnalytics) return firebaseAnalytics;
   if (localStorage.getItem("fishao_cookie_consent") !== "granted") return null;
-  if (!firebaseApp || !firebaseConfig || !firebaseConfig.measurementId) return null;
+  if (!firebaseApp || !firebaseConfig || !firebaseConfig.measurementId) {
+    console.warn("[FISHAO Analytics] Cannot initialize: firebaseApp or measurementId missing.");
+    return null;
+  }
+
+  if (window.location.protocol === 'file:') {
+    console.warn("[FISHAO Analytics] Note: Google Analytics does not record events on file:/// protocol. Please open via http://localhost or online web server.");
+  }
 
   try {
     var analyticsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js");
     var supported = await analyticsModule.isSupported();
-    if (!supported) return null;
+    if (!supported) {
+      console.warn("[FISHAO Analytics] isSupported() returned false (cookies/indexedDB blocked, or adblock active).");
+      return null;
+    }
 
     analyticsModuleRef = analyticsModule;
     firebaseAnalytics = analyticsModule.getAnalytics(firebaseApp);
-    analyticsModule.logEvent(firebaseAnalytics, "app_open");
+
+    var debugFlag = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:');
+    var baseParams = debugFlag ? { debug_mode: true } : {};
+
+    analyticsModule.logEvent(firebaseAnalytics, "app_open", baseParams);
+    analyticsModule.logEvent(firebaseAnalytics, "page_view", Object.assign({
+      page_title: document.title,
+      page_location: window.location.href
+    }, baseParams));
+
+    console.log("[FISHAO Analytics] Initialized successfully. measurementId:", firebaseConfig.measurementId, debugFlag ? "(DebugView enabled)" : "");
     return firebaseAnalytics;
   } catch (err) {
-    console.warn("Firebase Analytics skipped or unavailable:", err);
+    console.warn("[FISHAO Analytics] Initialization failed (often caused by AdBlock or network):", err);
     return null;
   }
 }
@@ -117,9 +137,12 @@ async function initFirebaseAnalytics() {
 function logAnalyticsEvent(eventName, eventParams) {
   if (!firebaseAnalytics || !analyticsModuleRef) return;
   try {
-    analyticsModuleRef.logEvent(firebaseAnalytics, eventName, eventParams || {});
+    var debugFlag = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:');
+    var params = Object.assign(debugFlag ? { debug_mode: true } : {}, eventParams || {});
+    analyticsModuleRef.logEvent(firebaseAnalytics, eventName, params);
+    console.log("[FISHAO Analytics Event]", eventName, params);
   } catch (e) {
-    console.debug("Analytics event failed:", e);
+    console.debug("[FISHAO Analytics] Event failed:", e);
   }
 }
 

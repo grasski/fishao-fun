@@ -111,7 +111,7 @@ function applyFilters() {
     if (!isNaN(maxSize) && f.min_l > maxSize) return false;
 
     if (timeVal === "now") {
-      if (!isFishActiveNow(f.raw_times)) return false;
+      if (!isFishActiveNow(f.raw_times, f.raw_dates)) return false;
     } else if (timeVal === "night") {
       if (!f.is_night) return false;
     } else if (timeVal === "day") {

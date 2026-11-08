@@ -33,7 +33,66 @@ function formatCatchTime(rawTimes) {
   };
 }
 
-function isFishActiveNow(rawTimes) {
+function isFishInSeasonNow(rawDates) {
+  if (!rawDates || rawDates.length === 0) return true;
+  var now = new Date();
+  var curVal = (now.getUTCMonth() + 1) * 100 + now.getUTCDate();
+
+  for (var i = 0; i < rawDates.length; i++) {
+    var clean = rawDates[i].trim();
+    if (!clean.includes('-')) continue;
+    var parts = clean.split('-');
+    var sParts = parts[0].split('.').map(Number);
+    var eParts = parts[1].split('.').map(Number);
+    var sVal = sParts[0] * 100 + sParts[1];
+    var eVal = eParts[0] * 100 + eParts[1];
+
+    if (sVal <= eVal) {
+      if (curVal >= sVal && curVal <= eVal) return true;
+    } else {
+      if (curVal >= sVal || curVal <= eVal) return true;
+    }
+  }
+  return false;
+}
+
+function formatCatchDate(rawDates) {
+  if (!rawDates || rawDates.length === 0) {
+    return {
+      text: t('date_all_year') || 'Celoročně',
+      isSeasonal: false,
+      inSeason: true
+    };
+  }
+
+  var isEn = (window.FISHAO_I18N && window.FISHAO_I18N.currentLang === 'en');
+  var enMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  var formatted = rawDates.map(function (dStr) {
+    var clean = dStr.trim();
+    if (!clean.includes('-')) return clean;
+    var parts = clean.split('-');
+    var s = parts[0].split('.').map(Number);
+    var e = parts[1].split('.').map(Number);
+    if (isEn) {
+      return (enMonths[s[0] - 1] || s[0]) + " " + s[1] + " – " + (enMonths[e[0] - 1] || e[0]) + " " + e[1];
+    } else {
+      return s[1] + ". " + s[0] + ". – " + e[1] + ". " + e[0] + ".";
+    }
+  });
+
+  var inSeason = isFishInSeasonNow(rawDates);
+  return {
+    text: formatted.join(', '),
+    isSeasonal: true,
+    inSeason: inSeason
+  };
+}
+
+function isFishActiveNow(rawTimes, rawDates) {
+  if (rawDates && rawDates.length > 0 && !isFishInSeasonNow(rawDates)) {
+    return false;
+  }
   if (!rawTimes || rawTimes.length === 0) return true;
   var now = new Date();
   var curUtcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
@@ -366,8 +425,15 @@ function renderTableBody(data) {
 
   if (currentView === "club") {
     tbody.innerHTML = data.map(function (f) {
-      var isNow = isFishActiveNow(f.raw_times);
+      var isNow = isFishActiveNow(f.raw_times, f.raw_dates);
       var timeInfo = formatCatchTime(f.raw_times);
+      var dateInfo = formatCatchDate(f.raw_dates);
+      var dateBadgeHtml = "";
+      if (dateInfo.isSeasonal) {
+        var sClass = dateInfo.inSeason ? "date-badge in-season" : "date-badge out-of-season";
+        var sTitle = dateInfo.inSeason ? t('date_in_season_title') : t('date_out_of_season_title');
+        dateBadgeHtml = '<div class="' + sClass + '" title="' + sTitle + '"><span class="date-icon">📅</span> ' + dateInfo.text + '</div>';
+      }
       var unlock = getUnlockStatus(f, currentClubPoints);
       var rowClass = [];
       if (!unlock.isUnlocked) rowClass.push("row-locked");
@@ -391,7 +457,8 @@ function renderTableBody(data) {
         '<td><div class="time-cell"><span class="time-badge ' + (f.is_night ? 'time-night' : '') + '">' +
         (f.is_night ? '🌙 ' : '☀️ ') + timeInfo.primary +
         (isNow ? '<span class="time-now-active">' + activeNowLabel + '</span>' : '') +
-        '</span>' + (timeInfo.sub ? '<span class="time-subtext">' + timeInfo.sub + '</span>' : '') + '</div></td>' +
+        '</span>' + (timeInfo.sub ? '<span class="time-subtext">' + timeInfo.sub + '</span>' : '') +
+        dateBadgeHtml + '</div></td>' +
         '<td class="len-box"><span class="len-dim">' + f.min_l + '</span> / <strong class="len-avg">' + f.avg_l + ' cm</strong> / <span class="len-dim">' + f.max_l + ' cm</span></td>' +
         '<td><div class="' + (unlock.isUnlocked ? 'status-unlocked' : 'status-locked') + '"><span class="status-cost">' + unlock.costText + '</span><span class="status-desc">' + unlock.desc + '</span></div></td>' +
         '</tr>';
@@ -401,8 +468,15 @@ function renderTableBody(data) {
     var unspecText = t('loc_unspecified');
 
     tbody.innerHTML = data.map(function (f, idx) {
-      var isNow = isFishActiveNow(f.raw_times);
+      var isNow = isFishActiveNow(f.raw_times, f.raw_dates);
       var timeInfo = formatCatchTime(f.raw_times);
+      var dateInfo = formatCatchDate(f.raw_dates);
+      var dateBadgeHtml = "";
+      if (dateInfo.isSeasonal) {
+        var sClass = dateInfo.inSeason ? "date-badge in-season" : "date-badge out-of-season";
+        var sTitle = dateInfo.inSeason ? t('date_in_season_title') : t('date_out_of_season_title');
+        dateBadgeHtml = '<div class="' + sClass + '" title="' + sTitle + '"><span class="date-icon">📅</span> ' + dateInfo.text + '</div>';
+      }
       var rowClass = caughtFishIds.has(f.id) ? "row-caught" : "";
       var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
 
@@ -428,7 +502,8 @@ function renderTableBody(data) {
         '<td><div class="time-cell"><span class="time-badge ' + (f.is_night ? 'time-night' : '') + '">' +
         (f.is_night ? '🌙 ' : '☀️ ') + timeInfo.primary +
         (isNow ? '<span class="time-now-active">' + activeNowLabel + '</span>' : '') +
-        '</span>' + (timeInfo.sub ? '<span class="time-subtext">' + timeInfo.sub + '</span>' : '') + '</div></td>' +
+        '</span>' + (timeInfo.sub ? '<span class="time-subtext">' + timeInfo.sub + '</span>' : '') +
+        dateBadgeHtml + '</div></td>' +
         '<td class="len-box"><span class="len-dim">' + f.min_l + '</span> / <strong class="len-avg">' + f.avg_l + ' cm</strong> / <span class="len-dim">' + f.max_l + ' cm</span></td>' +
         '</tr>';
     }).join('');

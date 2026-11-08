@@ -142,11 +142,15 @@ function createRichBackyardFishCard(fObj, extraClass, isModal) {
   var fid = fObj.id;
   var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name;
   var stars = '★'.repeat(fObj.rating || 1);
-  var isNow = isFishActiveNow(fObj.raw_times);
+  var isNow = isFishActiveNow(fObj.raw_times, fObj.raw_dates);
   var timeInfo = formatCatchTime(fObj.raw_times);
   var timeDisplay = (fObj.raw_times && fObj.raw_times.length > 0)
     ? timeInfo.primary
     : t('time_all_day', 'Celý den (24h)');
+  var dateInfo = formatCatchDate(fObj.raw_dates);
+  var seasonPill = dateInfo.isSeasonal
+    ? '<span class="' + (dateInfo.inSeason ? 'date-badge in-season' : 'date-badge out-of-season') + '" style="margin-top:0; padding:1px 5px; font-size:10px;">📅 ' + dateInfo.text + '</span>'
+    : '';
   var baitsDisplay = (fObj.baits && fObj.baits.length > 0)
     ? fObj.baits.map(function (b) {
         return (window.FISHAO_I18N && window.FISHAO_I18N.getBaitName)
@@ -170,6 +174,7 @@ function createRichBackyardFishCard(fObj, extraClass, isModal) {
     '</div>' +
     '<div class="pbfc-meta">' +
       '<span class="pbfc-time" title="' + escapeHtml(timeInfo.sub || timeDisplay) + '">⏰ ' + escapeHtml(timeDisplay) + '</span>' +
+      seasonPill +
       '<span class="pbfc-baits" title="' + escapeHtml(baitsDisplay) + '">' + escapeHtml(baitsDisplay) + '</span>' +
     '</div>' +
   '</div>';
@@ -510,7 +515,7 @@ function renderPlayersList() {
       var hasTime = pBackyard.some(function (fid) {
         var fObj = allFishes.find(function (x) { return x.id === fid; });
         if (!fObj) return false;
-        if (effectiveTime === "now") return isFishActiveNow(fObj.raw_times);
+        if (effectiveTime === "now") return isFishActiveNow(fObj.raw_times, fObj.raw_dates);
         if (effectiveTime === "night") return !!fObj.is_night;
         if (effectiveTime === "day") return !fObj.is_night;
         if (effectiveTime === "morning") return isFishActiveAtLocalHour(fObj.raw_times, 9);

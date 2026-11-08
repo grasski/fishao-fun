@@ -125,7 +125,7 @@ function openPriceModal(fid) {
     };
   }
 
-  var isNow = isFishActiveNow(f.raw_times);
+  var isNow = isFishActiveNow(f.raw_times, f.raw_dates);
   var actBadge = document.getElementById("modalFishActiveBadge");
   if (actBadge) {
     actBadge.innerText = t('time_active_now');
@@ -172,6 +172,20 @@ function openPriceModal(fid) {
       (f.is_night ? '🌙 ' : '☀️ ') + timeInfo.primary +
       (isNow ? ' <span class="time-now-active">' + t('time_active_now_short') + '</span>' : '') +
       '</span>' + (timeInfo.sub ? ' <span style="font-size: 11px; color: var(--text-muted);">' + timeInfo.sub + '</span>' : '');
+  }
+
+  // Season / Dates
+  var seasonEl = document.getElementById("modalFishSeason");
+  if (seasonEl) {
+    var dateInfo = formatCatchDate(f.raw_dates);
+    if (dateInfo.isSeasonal) {
+      var badgeClass = dateInfo.inSeason ? "date-badge in-season" : "date-badge out-of-season";
+      var statusText = dateInfo.inSeason ? t('date_in_season') : t('date_out_of_season');
+      seasonEl.innerHTML = '<span class="' + badgeClass + '"><span class="date-icon">📅</span> ' + dateInfo.text + '</span> ' +
+        '<span style="font-size: 11px; margin-left: 4px; color: ' + (dateInfo.inSeason ? '#34d399' : '#fb923c') + ';">(' + statusText + ')</span>';
+    } else {
+      seasonEl.innerHTML = '<span style="color: var(--text-muted);">' + (t('date_all_year') || 'Celoročně') + '</span>';
+    }
   }
 
   // Dimensions
