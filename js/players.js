@@ -105,9 +105,9 @@ function createRichBackyardFishCard(fObj, extraClass, isModal) {
       }).join(', ')
     : '-';
 
-  var clickAction = isModal
+  var clickAction = 'event.stopPropagation(); ' + (isModal
     ? 'window.fishaoApp.closePlayerModal(); window.fishaoApp.openFishDetail(' + fid + ');'
-    : 'window.fishaoApp.openFishDetail(' + fid + ');';
+    : 'window.fishaoApp.openFishDetail(' + fid + ');');
 
   return '<div class="player-backyard-fish-card ' + (extraClass || '') + '" onclick="' + clickAction + '" title="' + escapeHtml(fName) + ' (klikni pro detail)">' +
     '<div class="pbfc-top">' +
@@ -401,6 +401,13 @@ function renderPlayersActiveFiltersBar() {
     );
   }
 
+  var fFriendsBtn = document.getElementById("filterPlayerFriendsOnlyBtn");
+  if (fFriendsBtn) fFriendsBtn.classList.toggle("active", !!filterPlayerFriendsOnly);
+  var fBackyardBtn = document.getElementById("filterPlayerBackyardOnlyBtn");
+  if (fBackyardBtn) fBackyardBtn.classList.toggle("active", !!filterPlayerBackyardOnly);
+  var fActiveBtn = document.getElementById("filterPlayerActiveNowBtn");
+  if (fActiveBtn) fActiveBtn.classList.toggle("active", !!filterPlayerActiveNow);
+
   var hasAnyFilter = (chips.length > 0);
   if (resetBtn) {
     resetBtn.style.display = hasAnyFilter ? "inline-flex" : "none";
@@ -421,16 +428,49 @@ function renderPlayersActiveFiltersBar() {
   }
 }
 
-function toggleBackyardCardExpand(uid, event) {
+var activeBackyardMenuUid = null;
+
+function toggleBackyardMenu(uid, event) {
   if (event) {
     event.stopPropagation();
   }
-  if (expandedPlayerBackyardCards.has(uid)) {
-    expandedPlayerBackyardCards.delete(uid);
-  } else {
-    expandedPlayerBackyardCards.add(uid);
+  if (activeBackyardMenuUid === uid) {
+    closeBackyardMenu(uid, event);
+    return;
   }
-  renderPlayersList();
+  closeBackyardMenu();
+  activeBackyardMenuUid = uid;
+  var menu = document.getElementById("backyardMenu_" + uid);
+  if (menu) {
+    menu.style.display = "flex";
+  }
+}
+
+function closeBackyardMenu(uid, event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  var targetUid = uid || activeBackyardMenuUid;
+  if (targetUid) {
+    var menu = document.getElementById("backyardMenu_" + targetUid);
+    if (menu) {
+      menu.style.display = "none";
+    }
+  }
+  if (!uid || uid === activeBackyardMenuUid) {
+    activeBackyardMenuUid = null;
+  }
+}
+
+if (typeof document !== 'undefined') {
+  document.addEventListener('click', function (e) {
+    if (activeBackyardMenuUid) {
+      var menu = document.getElementById("backyardMenu_" + activeBackyardMenuUid);
+      if (menu && !menu.contains(e.target)) {
+        closeBackyardMenu();
+      }
+    }
+  });
 }
 
 /**
@@ -537,7 +577,7 @@ function renderPlayersList() {
 
   var html = "";
   filtered.forEach(function (p) {
-    var isMe = (p.uid === myUid);
+    var isMe = !!(currentUser && p.uid === currentUser.uid);
     var isFriend = friendUids.has(p.uid);
     var av = p.avatarUrl || "🎣";
     var avatarHtml = "";
@@ -569,9 +609,8 @@ function renderPlayersList() {
     var bFishes = (p.backyardFishIds || []).filter(isBackyardBreedable);
     var backyardCardsHtml = "";
     if (bFishes.length > 0) {
-      var isExpanded = expandedPlayerBackyardCards.has(p.uid);
       var maxPreview = 2;
-      var showSlice = isExpanded ? bFishes : bFishes.slice(0, maxPreview);
+      var showSlice = bFishes.slice(0, maxPreview);
 
       backyardCardsHtml += '<div class="player-backyard-list">';
       showSlice.forEach(function (fid) {
@@ -583,15 +622,24 @@ function renderPlayersList() {
       backyardCardsHtml += '</div>';
 
       if (bFishes.length > maxPreview) {
-        if (isExpanded) {
-          backyardCardsHtml += '<button type="button" class="player-backyard-expand-btn" onclick="window.fishaoApp.toggleBackyardCardExpand(\'' + p.uid + '\', event)">' +
-            t('backyard_collapse', 'Méně ▴') +
-            '</button>';
-        } else {
-          backyardCardsHtml += '<button type="button" class="player-backyard-expand-btn" onclick="window.fishaoApp.toggleBackyardCardExpand(\'' + p.uid + '\', event)">' +
-            '+ ' + t('backyard_show_all', { count: bFishes.length - maxPreview }) +
-            '</button>';
-        }
+        backyardCardsHtml += '<button type="button" class="player-backyard-expand-btn" onclick="window.fishaoApp.toggleBackyardMenu(\'' + p.uid + '\', event)">' +
+          '+ ' + t('backyard_show_all', { count: bFishes.length }) +
+          '</button>';
+
+        // Floating Popover Menu (renders all fish without expanding card height or stretching grid)
+        backyardCardsHtml += '<div id="backyardMenu_' + p.uid + '" class="player-backyard-popover-menu" style="display: none;" onclick="event.stopPropagation();">' +
+          '<div class="pbm-header">' +
+            '<span class="pbm-title">🏡 ' + escapeHtml(p.displayName) + ' (' + bFishes.length + ' ryb)</span>' +
+            '<button type="button" class="pbm-close" onclick="window.fishaoApp.closeBackyardMenu(\'' + p.uid + '\', event)" title="Zavřít">&times;</button>' +
+          '</div>' +
+          '<div class="pbm-list">';
+        bFishes.forEach(function (fid) {
+          var fObj = allFishes.find(function (x) { return x.id === fid; });
+          if (fObj) {
+            backyardCardsHtml += createRichBackyardFishCard(fObj);
+          }
+        });
+        backyardCardsHtml += '</div></div>';
       }
     } else {
       backyardCardsHtml = '<div class="player-card-empty-backyard">' + t('player_card_backyard_empty', 'Žádné ryby za domem') + '</div>';
@@ -604,7 +652,7 @@ function renderPlayersList() {
         '</button>';
     }
 
-    html += '<div class="player-card' + (isMe ? ' is-me' : '') + (isFriend ? ' is-friend' : '') + '">' +
+    html += '<div class="player-card' + (isMe ? ' is-me' : '') + (isFriend ? ' is-friend' : '') + '" onclick="window.fishaoApp.openPlayerModal(\'' + p.uid + '\')">' +
       '<div>' +
         '<div class="player-card-header">' +
           avatarHtml +
@@ -639,7 +687,7 @@ function renderPlayersList() {
         '</div>' +
       '</div>' +
 
-      '<button type="button" class="player-card-btn" onclick="window.fishaoApp.openPlayerModal(\'' + p.uid + '\')">' +
+      '<button type="button" class="player-card-btn" onclick="event.stopPropagation(); window.fishaoApp.openPlayerModal(\'' + p.uid + '\')">' +
         '<span>' + t('player_card_view_profile', 'Zobrazit profil & dvorek →') + '</span>' +
       '</button>' +
     '</div>';

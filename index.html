@@ -238,13 +238,13 @@
           <input type="text" id="playerSearchInput" class="search-input-lg" placeholder="Hledat hráče, klub nebo rybu..." data-i18n-placeholder="players_search_placeholder" oninput="window.fishaoApp.onPlayerSearchInput(this.value)">
           <button type="button" class="search-clear-btn" id="playerSearchClearBtn" onclick="window.fishaoApp.clearPlayerSearch()" title="Vymazat hledání" style="display: none;">&times;</button>
         </div>
-        <button type="button" class="toggle-pill" id="filterPlayerFriendsOnlyBtn" onclick="window.fishaoApp.togglePlayerFriendsFilter()">
+        <button type="button" class="pill-btn" id="filterPlayerFriendsOnlyBtn" onclick="window.fishaoApp.togglePlayerFriendsFilter()">
           ⭐ <span data-i18n="players_filter_friends_only">Pouze přátelé</span>
         </button>
-        <button type="button" class="toggle-pill" id="filterPlayerBackyardOnlyBtn" onclick="window.fishaoApp.togglePlayerBackyardFilter()">
+        <button type="button" class="pill-btn" id="filterPlayerBackyardOnlyBtn" onclick="window.fishaoApp.togglePlayerBackyardFilter()">
           🏡 <span data-i18n="players_filter_backyard_only">Pouze s rybou za domem</span>
         </button>
-        <button type="button" class="toggle-pill" id="filterPlayerActiveNowBtn" onclick="window.fishaoApp.togglePlayerActiveNowFilter()">
+        <button type="button" class="pill-btn" id="filterPlayerActiveNowBtn" onclick="window.fishaoApp.togglePlayerActiveNowFilter()">
           ⚡ <span data-i18n="players_filter_active_now">Bere teď za domem</span>
         </button>
         <div class="search-input-wrap" style="min-width: 180px;">
@@ -906,7 +906,7 @@
 
   <!-- Profile & Avatar Edit Modal -->
   <div class="modal-overlay" id="profileModalOverlay" onclick="window.fishaoApp.onModalOverlayClick(event, 'profileModalOverlay')">
-    <div class="modal-box" style="max-width: 480px;">
+    <div class="modal-box profile-modal-box" style="max-width: 820px; width: 95%;">
       <div class="modal-header">
         <div class="modal-title">
           <span data-i18n="modal_profile_title">👤 Hráčský profil &amp; Avatar</span>
@@ -914,40 +914,43 @@
         <button class="modal-close" onclick="window.fishaoApp.closeProfileModal()">&times;</button>
       </div>
       <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
-        <!-- Avatar selection -->
-        <div>
-          <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 8px;" data-i18n="profile_avatar_label">
-            Vyber si ikonu nebo vlož URL fotky:
-          </label>
-          <div class="profile-avatar-row">
-            <div class="profile-preview-box">
-              <img id="profilePreviewImg" src="" alt="Avatar" style="display: none;" onerror="this.style.display='none'; document.getElementById('profilePreviewBadge').style.display='flex';">
-              <div id="profilePreviewBadge" class="user-avatar-badge big">🎣</div>
-            </div>
-            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-              <div class="emoji-avatar-grid">
-                <button type="button" class="emoji-pick-btn active" onclick="window.fishaoApp.selectPresetAvatar('🎣')">🎣</button>
-                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🦈')">🦈</button>
-                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🐡')">🐡</button>
-                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🐋')">🐋</button>
-                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('👑')">👑</button>
-                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🏆')">🏆</button>
-                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('⭐')">⭐</button>
-                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('⚡')">⚡</button>
-                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🌊')">🌊</button>
-                <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🐉')">🐉</button>
+        <!-- Avatar & Nickname Grid -->
+        <div class="profile-top-grid">
+          <!-- Avatar selection -->
+          <div class="profile-avatar-block">
+            <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 8px;" data-i18n="profile_avatar_label">
+              Vyber si ikonu nebo vlož URL fotky:
+            </label>
+            <div class="profile-avatar-row">
+              <div class="profile-preview-box">
+                <img id="profilePreviewImg" src="" alt="Avatar" style="display: none;" onerror="this.style.display='none'; document.getElementById('profilePreviewBadge').style.display='flex';">
+                <div id="profilePreviewBadge" class="user-avatar-badge big">🎣</div>
               </div>
-              <input type="url" id="inputProfileAvatarUrl" class="dash-input" placeholder="Vložit URL obrázku (např. https://...)" data-i18n-placeholder="profile_avatar_url_placeholder" oninput="window.fishaoApp.onAvatarUrlInput(this.value)">
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                <div class="emoji-avatar-grid">
+                  <button type="button" class="emoji-pick-btn active" onclick="window.fishaoApp.selectPresetAvatar('🎣')">🎣</button>
+                  <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🦈')">🦈</button>
+                  <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🐡')">🐡</button>
+                  <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🐋')">🐋</button>
+                  <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('👑')">👑</button>
+                  <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🏆')">🏆</button>
+                  <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('⭐')">⭐</button>
+                  <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('⚡')">⚡</button>
+                  <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🌊')">🌊</button>
+                  <button type="button" class="emoji-pick-btn" onclick="window.fishaoApp.selectPresetAvatar('🐉')">🐉</button>
+                </div>
+                <input type="url" id="inputProfileAvatarUrl" class="dash-input" placeholder="Vložit URL obrázku (např. https://...)" data-i18n-placeholder="profile_avatar_url_placeholder" oninput="window.fishaoApp.onAvatarUrlInput(this.value)">
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Nickname input -->
-        <div>
-          <label for="inputProfileNickname" style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 6px;" data-i18n="profile_nick_label">
-            Herní přezdívka (zobrazí se v klubu):
-          </label>
-          <input type="text" id="inputProfileNickname" class="dash-input" maxlength="40" placeholder="Zadej svou přezdívku..." onkeydown="if(event.key==='Enter') window.fishaoApp.saveProfile()">
+          <!-- Nickname input -->
+          <div class="profile-nick-block">
+            <label for="inputProfileNickname" style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 6px;" data-i18n="profile_nick_label">
+              Herní přezdívka (zobrazí se v klubu):
+            </label>
+            <input type="text" id="inputProfileNickname" class="dash-input" maxlength="40" placeholder="Zadej svou přezdívku..." onkeydown="if(event.key==='Enter') window.fishaoApp.saveProfile()">
+          </div>
         </div>
 
         <!-- Backyard fish selection -->
