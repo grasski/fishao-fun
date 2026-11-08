@@ -129,6 +129,9 @@ function updateClock() {
     clockEl.innerText = h.toString().padStart(2, '0') + ":" + m.toString().padStart(2, '0') + ":" + s.toString().padStart(2, '0');
   }
   updateSyncCountdown();
+  if (typeof updateMarketSundayCountdown === 'function') {
+    updateMarketSundayCountdown();
+  }
 }
 setInterval(updateClock, 1000);
 
@@ -482,6 +485,7 @@ window.fishaoApp = {
   getMarketClosedWindowText: getMarketClosedWindowText,
   getTodayPrice: getTodayPrice,
   updateMarketTabStatus: updateMarketTabStatus,
+  updateMarketSundayCountdown: updateMarketSundayCountdown,
   t: t
 };
 

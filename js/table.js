@@ -368,6 +368,10 @@ function updateMarketTabStatus() {
     }
     marketSummary.innerText = summaryText;
   }
+
+  if (typeof updateMarketSundayCountdown === 'function') {
+    updateMarketSundayCountdown();
+  }
 }
 
 function renderTableHead() {

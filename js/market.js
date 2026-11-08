@@ -71,6 +71,62 @@ function getMarketClosedWindowText() {
   return localRange + ' (' + gameUtcRef + ')';
 }
 
+function updateMarketSundayCountdown() {
+  var isSunday = isMarketClosedToday();
+  var countdownEl = document.getElementById("marketSundayCountdown");
+  var openTimeEl = document.getElementById("marketSundayOpenTimeText");
+  var utcWarningEl = document.getElementById("marketSundayUtcWarning");
+  var utcWarningTextEl = document.getElementById("marketSundayUtcWarningText");
+
+  if (!isSunday) return;
+
+  var now = new Date();
+  var curUtcDay = now.getUTCDay();
+  var daysUntilMonday = (7 - curUtcDay) % 7 || 1;
+  var monUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilMonday, 0, 0, 0, 0));
+  var diffMs = Math.max(0, monUtc.getTime() - now.getTime());
+
+  if (countdownEl) {
+    var totalSec = Math.floor(diffMs / 1000);
+    var h = Math.floor(totalSec / 3600);
+    var m = Math.floor((totalSec % 3600) / 60);
+    var s = totalSec % 60;
+    countdownEl.innerText = String(h).padStart(2, '0') + "h " + String(m).padStart(2, '0') + "m " + String(s).padStart(2, '0') + "s";
+  }
+
+  var isEn = (typeof getLang === 'function' && getLang() === 'en');
+  var city = (typeof getLocalizedTzCity === 'function') ? getLocalizedTzCity() : 'Praha';
+
+  var localH = String(monUtc.getHours()).padStart(2, '0');
+  var localM = String(monUtc.getMinutes()).padStart(2, '0');
+  var localTimeStr = localH + ":" + localM;
+
+  var tzOffset = -now.getTimezoneOffset();
+  var tzSign = tzOffset >= 0 ? "+" : "-";
+  var tzHours = Math.floor(Math.abs(tzOffset) / 60);
+  var tzOffsetStr = "UTC" + tzSign + tzHours;
+
+  if (openTimeEl) {
+    if (userTimezone === "utc") {
+      openTimeEl.innerText = isEn ? "Opens: Monday 00:00 UTC" : "Otevírá: pondělí 00:00 UTC";
+    } else {
+      var dayName = isEn ? "Monday" : "pondělí";
+      openTimeEl.innerText = (isEn ? "Opens: " : "Otevírá: ") + dayName + " " + localTimeStr + " (" + city + ", " + tzOffsetStr + ")";
+    }
+  }
+
+  if (utcWarningEl && utcWarningTextEl) {
+    if (userTimezone === "utc") {
+      utcWarningEl.style.display = "flex";
+      utcWarningTextEl.innerText = isEn
+        ? "You have game server UTC time active. In your local time (" + city + "), the market opens on Monday at " + localTimeStr + "."
+        : "Máš aktivní herní čas UTC. Ve tvém místním čase (" + city + ") se trh otevře v pondělí v " + localTimeStr + ".";
+    } else {
+      utcWarningEl.style.display = "none";
+    }
+  }
+}
+
 function getTodayPrice(fid) {
   if (isMarketClosedToday()) return null;
   var list = getFishPrices(fid);

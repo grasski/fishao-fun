@@ -145,6 +145,8 @@
       "market_recorded_prices": "Recorded fish prices: {count}",
       "market_sunday_banner_desc": "Fish Market in FISHAO is closed every Sunday during {window}. Showing last recorded prices from previous days below.",
       "market_sunday_banner_title": "Sunday: Fish Market is CLOSED",
+      "market_opens_in_label": "Opens in:",
+      "market_switch_to_local_btn": "Switch to local time",
       "milestone_all_congrats": "Congratulations on reaching {pts} pts.",
       "milestone_all_desc": "Your club has unlocked all points fishes!",
       "milestone_all_title": "🎉 All Unlocked!",
