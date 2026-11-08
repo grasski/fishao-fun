@@ -169,7 +169,7 @@ function switchView(view) {
   if (bClub) bClub.style.display = (view === "club") ? "flex" : "none";
   if (bCollection) bCollection.style.display = (view === "all") ? "flex" : "none";
   if (bMarket) bMarket.style.display = (view === "market") ? "flex" : "none";
-  if (bPlayers) bPlayers.style.display = (view === "players") ? "flex" : "none";
+  if (bPlayers) bPlayers.style.display = (view === "players" && currentUser) ? "flex" : "none";
 
   updateMarketTabStatus();
 
@@ -180,9 +180,11 @@ function switchView(view) {
     if (filterCard) filterCard.style.display = "none";
 
     if (!currentUser) {
+      if (bPlayers) bPlayers.style.display = "none";
       if (gatePlayers) gatePlayers.style.display = "block";
       if (playersContent) playersContent.style.display = "none";
     } else {
+      if (bPlayers) bPlayers.style.display = "flex";
       if (gatePlayers) gatePlayers.style.display = "none";
       if (playersContent) playersContent.style.display = "block";
       if (typeof loadAllPlayers === 'function') loadAllPlayers();

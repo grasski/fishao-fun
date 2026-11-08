@@ -466,9 +466,38 @@ textarea.bulk-input {
   border-top: 4px solid var(--purple);
   background: linear-gradient(180deg, rgba(139, 92, 246, 0.1) 0%, var(--surface) 100%);
 }
+.auth-gate-card.teal-card {
+  border-top: 4px solid #14b8a6;
+  background: linear-gradient(180deg, rgba(20, 184, 166, 0.1) 0%, var(--surface) 100%);
+}
 .auth-gate-card.green-card {
   border-top: 4px solid var(--emerald);
   background: linear-gradient(180deg, rgba(16, 185, 129, 0.1) 0%, var(--surface) 100%);
+}
+
+.community-notice-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.community-notice-bar strong {
+  color: var(--text-secondary);
+}
+.community-notice-bar.purple-notice {
+  border-left: 3px solid var(--purple);
+  background: rgba(139, 92, 246, 0.05);
+}
+.community-notice-bar.teal-notice {
+  border-left: 3px solid #14b8a6;
+  background: rgba(20, 184, 166, 0.05);
 }
 .auth-gate-icon { font-size: 44px; line-height: 1; }
 .auth-gate-card h3 { font-size: 18px; font-weight: 800; color: #fff; }

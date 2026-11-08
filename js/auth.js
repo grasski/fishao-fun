@@ -333,6 +333,13 @@ function updateAuthUI() {
           searchClubs("");
         }
       }
+    } else if (currentView === "players") {
+      var bPlayersOn = document.getElementById("bannerPlayers");
+      var gatePlayersOn = document.getElementById("gatePlayers");
+      var playersContentOn = document.getElementById("playersContent");
+      if (bPlayersOn) bPlayersOn.style.display = "flex";
+      if (gatePlayersOn) gatePlayersOn.style.display = "none";
+      if (playersContentOn) playersContentOn.style.display = "block";
     } else if (currentView === "collection") {
       if (gateCollection) gateCollection.style.display = "none";
       if (bCollection) bCollection.style.display = "flex";
@@ -365,6 +372,13 @@ function updateAuthUI() {
     if (currentView === "club_manage") {
       if (gateClub) gateClub.style.display = "block";
       if (manageContent) manageContent.style.display = "none";
+    } else if (currentView === "players") {
+      var bPlayersOff = document.getElementById("bannerPlayers");
+      var gatePlayersOff = document.getElementById("gatePlayers");
+      var playersContentOff = document.getElementById("playersContent");
+      if (bPlayersOff) bPlayersOff.style.display = "none";
+      if (gatePlayersOff) gatePlayersOff.style.display = "block";
+      if (playersContentOff) playersContentOff.style.display = "none";
     } else if (currentView === "collection") {
       if (gateCollection) gateCollection.style.display = "block";
       if (bCollection) bCollection.style.display = "none";

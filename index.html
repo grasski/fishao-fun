@@ -319,10 +319,10 @@
     <!-- Section: Community Players & Backyard -->
     <section id="sectionPlayers" style="display: none; margin-bottom: 30px;">
       <!-- Auth Gate: shown when user is not logged in -->
-      <div class="auth-gate-card" id="gatePlayers" style="display: none;">
+      <div class="auth-gate-card teal-card" id="gatePlayers" style="display: none;">
         <div class="auth-gate-icon">👥</div>
         <h3 data-i18n="players_gate_title">Komunita rybářů &amp; Dvorek</h3>
-        <p data-i18n="players_gate_desc">Pro zobrazení seznamu hráčů, jejich úlovků, klubů a odchovaných ryb za domem se prosím přihlas přes Google.</p>
+        <p data-i18n="players_gate_desc">Tento komunitní přehled a dvorek slouží pro sdílení mezi hráči encyklopedie. Data nejsou napojena na herní servery hry FISHAO (neodpovídají stavu ve hře) a zobrazují se pouze rybáři registrovaní na tomto webu. Pro zobrazení se prosím přihlas.</p>
         <button class="sign-in-btn" onclick="window.fishaoApp.signIn()" style="margin-top: 6px;">
           <svg width="16" height="16" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" />
@@ -336,6 +336,10 @@
 
       <!-- Players Community Content -->
       <div id="playersContent" style="display: none;">
+        <div class="community-notice-bar teal-notice">
+          <span>💡</span>
+          <span data-i18n="players_community_notice"><strong>Komunitní nástroj:</strong> Data hráčů, úlovků a ryb za domem nejsou nijak propojena se servery hry FISHAO (neodpovídají automaticky realitě ve hře). V seznamu se zobrazují pouze rybáři, kteří se na tomto webu zaregistrují.</span>
+        </div>
         <div class="players-community-toolbar">
           <div class="players-community-count-wrap">
             <span id="playersCountBadge" class="status-counter-item" style="color: var(--text-muted); font-size: 13px;">0 hráčů</span>
@@ -360,8 +364,7 @@
       <div class="auth-gate-card purple-card" id="gateClubManage" style="display: none;">
         <div class="auth-gate-icon">🏰</div>
         <h3 data-i18n="club_gate_title">Správa Klubu vyžaduje přihlášení</h3>
-        <p data-i18n="club_gate_desc">Přihlas se svým Google účtem, abys mohl zadat svůj klub, sledovat klubové body a
-          odemykání všech 80 klubových ryb.</p>
+        <p data-i18n="club_gate_desc">Správa klubů a milníků je komunitní nástroj této encyklopedie (není propojen se servery hry FISHAO). Zobrazují se pouze kluby a hráči registrovaní na tomto webu. Přihlas se svým Google účtem pro správu nebo připojení ke klubu.</p>
         <button class="sign-in-btn" onclick="window.fishaoApp.signIn()" style="margin-top: 6px;">
           <svg width="16" height="16" viewBox="0 0 24 24">
             <path fill="#4285F4"
@@ -382,6 +385,10 @@
 
         <!-- STATE A: No Club Joined (Search & Join or Create) -->
         <div id="clubNoClubState" style="display: none;">
+          <div class="community-notice-bar purple-notice">
+            <span>💡</span>
+            <span data-i18n="club_community_notice"><strong>Komunitní kluby:</strong> Kluby a jejich milníky jsou komunitní funkcí této encyklopedie a nejsou nijak propojeny se servery hry FISHAO. Zobrazují se zde výhradně kluby a členové, kteří se zaregistrují na tomto webu.</span>
+          </div>
           <!-- No Club Header Bar -->
           <div class="view-action-bar purple" id="noClubBar" style="margin-bottom: 14px;">
             <div class="action-bar-left">
@@ -431,6 +438,10 @@
 
         <!-- STATE B: Active Club Joined -->
         <div id="clubActiveState" style="display: none;">
+          <div class="community-notice-bar purple-notice">
+            <span>💡</span>
+            <span data-i18n="club_community_notice"><strong>Komunitní kluby:</strong> Kluby a jejich milníky jsou komunitní funkcí této encyklopedie a nejsou nijak propojeny se servery hry FISHAO. Zobrazují se zde výhradně kluby a členové, kteří se zaregistrují na tomto webu.</span>
+          </div>
           <!-- Active Club Header Bar -->
           <div class="view-action-bar purple" id="activeClubBar" style="margin-bottom: 14px;">
             <div class="action-bar-left">
