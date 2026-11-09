@@ -108,8 +108,6 @@
       "dim_avg": "Průměr: {val} cm",
       "dim_max": "Max: {val} cm",
       "dim_min": "Min: {val} cm",
-      "disclaimer_badge": "Fanouškovský projekt",
-      "disclaimer_text": "Jedná se o fanouškovskou encyklopedii. Komunitní hra FISHAO běží na",
       "filter_active_wrapper": "[Aktivní: {notes}]",
       "filter_bait_label": "Návnada",
       "filter_btn_now": "⚡ Právě bere",

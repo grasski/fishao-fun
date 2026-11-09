@@ -108,8 +108,6 @@
       "dim_avg": "Avg: {val} cm",
       "dim_max": "Max: {val} cm",
       "dim_min": "Min: {val} cm",
-      "disclaimer_badge": "Fan Project",
-      "disclaimer_text": "This is a fan encyclopedia. The community FISHAO game is playable at",
       "filter_active_wrapper": "[Active: {notes}]",
       "filter_bait_label": "Bait:",
       "filter_btn_now": "⚡ Biting now (Live)",
