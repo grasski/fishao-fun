@@ -397,6 +397,38 @@
     "location_9": {
         "cs": "Thombani Town",
         "en": "Thombani Town"
+    },
+    "EFPT_LOST_VALLEY_POND_1": {
+        "cs": "Lost Valley 1",
+        "en": "Lost Valley 1"
+    },
+    "EFPT_LOST_VALLEY_POND_2": {
+        "cs": "Lost Valley 2",
+        "en": "Lost Valley 2"
+    },
+    "EFPT_SEAGULL_HARBOR_BOAT": {
+        "cs": "Seagull Harbor – Loď",
+        "en": "Seagull Harbor – Boat"
+    },
+    "EFPT_PANHEIRA_BEACH_JETTY": {
+        "cs": "Pinheira Beach – Mol",
+        "en": "Pinheira Beach – Jetty"
+    },
+    "EFPT_COOL_MOUNTAIN_RAFT": {
+        "cs": "Cool Mountain – Vor",
+        "en": "Cool Mountain – Raft"
+    },
+    "EFPT_THOMBANI_TOWN_AFRICAN_LAKE": {
+        "cs": "Thombani Town – Africké jezero",
+        "en": "Thombani Town – African Lake"
+    },
+    "EFPT_CLUB_AREA_SALT": {
+        "cs": "Klubový revír – Slaná",
+        "en": "Club Area – Saltwater"
+    },
+    "EFPT_CLUB_AREA_FRESH": {
+        "cs": "Klubový revír – Sladká",
+        "en": "Club Area – Freshwater"
     }
     }
   };

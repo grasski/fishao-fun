@@ -104,8 +104,10 @@ function applyFilters() {
       if (rating.match(/^\d$/) && f.rating !== parseInt(rating)) return false;
     }
 
-    if (currentView === "club" && water && f.water !== water) return false;
-    if (currentView === "all" && location && !f.locations.includes(location)) return false;
+    if (currentView === "club" && water && getFishWater(f) !== water) return false;
+    if (currentView === "all" && location &&
+        !((f.locations && f.locations.includes(location)) ||
+          (f.places && f.places.includes(location)))) return false;
 
     if (!isNaN(minSize) && f.max_l < minSize) return false;
     if (!isNaN(maxSize) && f.min_l > maxSize) return false;
@@ -310,15 +312,24 @@ function initLocationOptions() {
     if (f.locations && Array.isArray(f.locations)) {
       f.locations.forEach(function (l) { if (l) locSet.add(l); });
     }
+    if (f.places && Array.isArray(f.places)) {
+      f.places.forEach(function (p) { if (p) locSet.add(p); });
+    }
   });
   var select = document.getElementById("locationFilter");
   if (!select) return;
   var currentVal = select.value;
-  var sortedLocs = Array.from(locSet).sort();
+  var sortedLocs = Array.from(locSet).map(function (l) {
+    return {
+      value: l,
+      label: window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(l) : l
+    };
+  }).sort(function (a, b) {
+    return a.label.localeCompare(b.label);
+  });
   select.innerHTML = '<option value="">' + t('opt_loc_all', { count: sortedLocs.length }) + '</option>' +
     sortedLocs.map(function (l) {
-      var locName = window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(l) : l;
-      return '<option value="' + l + '">' + locName + '</option>';
+      return '<option value="' + l.value + '">' + l.label + '</option>';
     }).join('');
   select.value = currentVal;
 }

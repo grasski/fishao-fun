@@ -441,13 +441,14 @@ function renderTableBody(data) {
       if (caughtFishIds.has(f.id)) rowClass.push("row-caught");
 
       var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
-      var waterLabel = f.water === 'Slaná' ? ('🌊 ' + t('water_salt_short')) : ('🌿 ' + t('water_fresh_short'));
+      var waterType = getFishWater(f);
+      var waterLabel = waterType === 'Slaná' ? ('🌊 ' + t('water_salt_short')) : ('🌿 ' + t('water_fresh_short'));
 
       return '<tr class="' + rowClass.join(' ') + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + rowClickTitle + '">' +
         '<td style="color: var(--text-muted); font-weight: 600;">' + f.order + '</td>' +
         '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
         '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + fishName + '" class="fish-img" onerror="this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'"></div></td>' +
-        '<td><span class="badge ' + (f.water === 'Slaná' ? 'badge-salt' : 'badge-fresh') + '">' + waterLabel + '</span></td>' +
+        '<td><span class="badge ' + (waterType === 'Slaná' ? 'badge-salt' : 'badge-fresh') + '">' + waterLabel + '</span></td>' +
         '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + fishName + '</div></td>' +
         '<td>' + renderRatingBadge(f.rating) + '</td>' +
         '<td>' + renderPriceCell(f.id) + '</td>' +
@@ -480,6 +481,7 @@ function renderTableBody(data) {
       }
       var rowClass = caughtFishIds.has(f.id) ? "row-caught" : "";
       var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
+      var locLabels = getFishLocationLabels(f);
 
       return '<tr class="' + rowClass + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + rowClickTitle + '">' +
         '<td style="color: var(--text-muted); font-weight: 600;">' + (idx + 1) + '</td>' +
@@ -491,8 +493,7 @@ function renderTableBody(data) {
         '<td>' + renderRatingBadge(f.rating) + '</td>' +
         '<td>' + renderPriceCell(f.id) + '</td>' +
         '<td style="max-width: 250px;">' +
-        (f.locations.length ? f.locations.map(function (loc) {
-          var locName = window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(loc) : loc;
+        (locLabels.length ? locLabels.map(function (locName) {
           return '<span class="loc-tag">' + locName + '</span>';
         }).join('') : '<span style="color:var(--text-muted); font-size:12px;">' + unspecText + '</span>') +
         '</td>' +

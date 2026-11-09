@@ -186,11 +186,10 @@ function formatRarityPercent(factor) {
 
 function openPriceModal(fid) {
   selectedModalFishId = fid;
-  var clubFishObj = clubFishes.find(function (x) { return x.id === fid; });
-  var allFishObj = allFishes.find(function (x) { return x.id === fid; });
-  if (!clubFishObj && !allFishObj) return;
+  var fishObj = allFishes.find(function (x) { return x.id === fid; });
+  if (!fishObj) return;
 
-  var f = Object.assign({}, allFishObj || {}, clubFishObj || {});
+  var f = Object.assign({}, fishObj);
 
   var nameEl = document.getElementById("modalFishName");
   var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
@@ -231,14 +230,14 @@ function openPriceModal(fid) {
     renderModalBackyardOwners(fid);
   }
 
-  // Locations and water
+  // Locations
   var locEl = document.getElementById("modalFishLocations");
   if (locEl) {
-    var waterBadge = f.water ? (f.water === 'Slaná' ? '🌊 ' + t('water_salt_full') : '🌿 ' + t('water_fresh_full')) : '';
-    var locs = f.locations && f.locations.length
-      ? f.locations.map(function (l) { return window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(l) : l; }).join(', ')
+    var locLabels = getFishLocationLabels(f);
+    var locs = locLabels.length
+      ? locLabels.join(', ')
       : (f.is_club ? (window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName('Klubový revír') : 'Klubový revír') : t('loc_unspecified'));
-    locEl.innerHTML = (waterBadge ? '<strong>' + waterBadge + '</strong> • ' : '') + locs;
+    locEl.innerHTML = locs;
   }
 
   // Baits

@@ -10,9 +10,43 @@ var firebaseConfig = window.FISHAO_FIREBASE_CONFIG || {};
 var isFirebaseConfigured = typeof window.isFirebaseConfigured === 'function' ? window.isFirebaseConfigured() : false;
 
 // Fish & Market Data
-var clubFishes = (window.FISHAO_DATA && window.FISHAO_DATA.clubFishes) || [];
 var allFishes = (window.FISHAO_DATA && window.FISHAO_DATA.allFishes) || [];
+
+/**
+ * Resolve a fish's water type. Club fish encode salt/fresh in their specific
+ * fishing place, so no separate `water` field is stored in the data.
+ */
+function getFishWater(fish) {
+  if (!fish) return '';
+  var places = fish.places || [];
+  if (places.indexOf('EFPT_CLUB_AREA_SALT') !== -1) return 'Slaná';
+  if (places.indexOf('EFPT_CLUB_AREA_FRESH') !== -1) return 'Sladká';
+  return '';
+}
+
+// Club fishes are derived from allFishes (is_club) and keep the historical
+// saltwater-first ordering used by the club table.
+var clubFishes = allFishes.filter(function (f) {
+  return f.is_club;
+}).sort(function (a, b) {
+  var aw = getFishWater(a) === 'Slaná' ? 0 : 1;
+  var bw = getFishWater(b) === 'Slaná' ? 0 : 1;
+  return (aw - bw) || ((a.order || 0) - (b.order || 0));
+});
 var initialPrices = window.FISHAO_DEFAULT_PRICES || {};
+
+/**
+ * Resolve the location labels to display for a fish.
+ * Specific fishing places (e.g. EFPT_LOST_VALLEY_POND_1) take precedence over
+ * the parent location (e.g. Lost Valley).
+ */
+function getFishLocationLabels(fish) {
+  if (!fish) return [];
+  var list = (fish.places && fish.places.length) ? fish.places : (fish.locations || []);
+  return list.map(function (loc) {
+    return window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(loc) : loc;
+  });
+}
 
 // View & Navigation State
 var currentView = "all";

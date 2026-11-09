@@ -28,17 +28,20 @@ This skill provides the complete reference for developing and maintaining the **
 ## 2. Data Schemas (DO NOT read raw large files)
 
 ### 2.1 Fish Object Schema (`data/fishes.js` – 615 fish)
-`window.FISHAO_DATA` is an array of 615 fish objects.
+`window.FISHAO_DATA.allFishes` is an array of 615 fish objects. The 80 club fish
+are embedded in this array with `is_club: true`; `js/state.js` derives the
+`clubFishes` global by filtering `is_club` and sorting saltwater-first.
+
 Each fish object has the following structure:
 
 ```javascript
 {
   "id": 1,                     // Number: Unique game fish ID (1 .. 1200+)
-  "order": 1,                  // Number: Club order (1 .. 80 for club fishes; 0 for others)
+  "order": 1,                  // Number: Club order (1 .. 80 for club fishes; absent for others)
   "name": "Okoun říční",       // String: Default Czech fish name
-  "water": "Sladká",           // String: 'Sladká' (Freshwater) | 'Slaná' (Saltwater)
   "baits": ["Červ", "Hmyz"],   // Array<String>: List of valid bait names
-  "locations": ["Laketown"],   // Array<String>: Location names where the fish can be caught
+  "locations": ["Laketown"],   // Array<String>: Parent location names where the fish can be caught
+  "places": ["EFPT_LOST_VALLEY_POND_1"], // Array<String>: Specific EFPT sub-locations; [] for most fish
   "raw_times": ["00:00-06:00", "18:00-24:00"], // Array<String>: Active catch time windows (Game UTC)
   "is_night": true,            // Boolean: true if only active at night/deep night
   "min_l": 15.0,               // Number: Minimum catch length in cm
@@ -51,6 +54,27 @@ Each fish object has the following structure:
   "unlock_type": "points"      // String: 'points' | 'fc' (Fishcoins) | 'monster'
 }
 ```
+
+**Supported specific fishing places (`places`):** 194 fish carry one of these
+EFPT identifiers. They are translated in `data/i18n/taxonomies.js` and shown
+instead of the parent `locations` label when present. Filtering by a parent
+location still matches its sub-location fish.
+
+| EFPT identifier | Parent location | Fish |
+|---|---|---:|
+| `EFPT_LOST_VALLEY_POND_1` | Lost Valley | 9 |
+| `EFPT_LOST_VALLEY_POND_2` | Lost Valley | 45 |
+| `EFPT_SEAGULL_HARBOR_BOAT` | Seagull Harbor | 26 |
+| `EFPT_PANHEIRA_BEACH_JETTY` | Pinheira Beach | 18 |
+| `EFPT_COOL_MOUNTAIN_RAFT` | Cool Mountain | 10 |
+| `EFPT_THOMBANI_TOWN_AFRICAN_LAKE` | Thombani Town | 6 |
+| `EFPT_CLUB_AREA_SALT` | Klubový revír | 49 |
+| `EFPT_CLUB_AREA_FRESH` | Klubový revír | 31 |
+
+**Water type is derived, not stored.** `getFishWater(fish)` in `js/state.js`
+returns `Slaná` for `EFPT_CLUB_AREA_SALT`, `Sladká` for
+`EFPT_CLUB_AREA_FRESH`, and `''` for other fish. Club tables, filters and
+milestones use this helper instead of a `water` field.
 
 > [!TIP]
 > **Club Fish Breakdown (80 total):**
@@ -124,7 +148,7 @@ Prices are stored as a map from `fishId` (as string) to an array of price entrie
 ### 2.5 Modular JavaScript Architecture (`js/`)
 
 The monolithic `app.js` was refactored into modular, cohesive files loaded directly without bundlers:
-1. `js/state.js`: Global state variables, localization helper `t()`, date and string utilities (`getTodayISO`, `getYesterdayISO`, `isDateSunday`, `normStr`, `escapeHtml`), toast notification (`showToast`), and confirmation dialog (`showConfirmModal`, `resolveConfirmModal`).
+1. `js/state.js`: Global state variables, derived `clubFishes`, fish helpers (`getFishWater`, `getFishLocationLabels`), localization helper `t()`, date and string utilities (`getTodayISO`, `getYesterdayISO`, `isDateSunday`, `normStr`, `escapeHtml`), toast notification (`showToast`), and confirmation dialog (`showConfirmModal`, `resolveConfirmModal`).
 2. `js/table.js`: Fish table rendering (`renderTableHead`, `renderTableBody`), UTC-to-local time formatting (`formatCatchTime`, `isFishActiveNow`), rating badges (`renderRatingBadge`), price cells (`renderPriceCell`), and caught fish collection toggles (`toggleCaughtFish`, `updateCaughtStats`).
 3. `js/clubs.js`: Real-time club synchronization via Firestore (`bindClubListener`), deterministic member roster rendering (`renderClubMembers`), member profile modal (`openPlayerModal`), club search, creation, joining, and leaving, club points management, milestones roadmap (`renderClubMilestones`), and FC / Monster special fish unlocks.
 4. `js/market.js`: Fish market price history persistence (`persistPriceHistory`), Sunday detection, price lookups (`getTodayPrice`, `getLatestPrice`, `getMaxPrice` — all-time high, ties resolved to the most recent date), single price submission/deletion (`submitNewPrice`, `deletePriceEntry`), fish detail modal rendering (`openPriceModal`, including the `rarity_factor` → tier badge helpers `getRarityTier` / `formatRarityPercent`), modal price history rendering (`renderModalHistory`), bulk price import with autocomplete suggestions (`processBulkImport`), and JSON export (`exportPricesJson`).
