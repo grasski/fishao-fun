@@ -74,10 +74,16 @@
 }
 
 .search-input {
-  padding-left: 36px;
   padding-top: 10px;
   padding-bottom: 10px;
   font-size: 13.5px;
+}
+
+/* Scoped to the wrapper so responsive `.filter-control` shorthand overrides
+   (equal specificity, later in the cascade) can never remove the clearance
+   reserved for the absolutely positioned search icon. */
+.search-input-wrapper .search-input {
+  padding-left: 36px;
 }
 
 .filter-control:focus {
