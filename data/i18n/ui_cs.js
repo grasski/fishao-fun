@@ -7,7 +7,7 @@
   var dict = {
       "admin_badge": "Admin",
       "app_desc": "Kompletní přehled 80 klubových &amp; 615 obecných ryb • Živý čas lovu • Ceník Fish Market • Osobní sbírka úlovků",
-      "app_subtitle": "Encyklopedie",
+      "app_subtitle": "Tracker",
       "app_title": "FISHAO",
       "auth_need_config": "Pro přihlášení je potřeba nejdříve vyplnit firebase-config.js.",
       "auth_notice_bulk": "Hromadný import do Fish Marketu vyžaduje přihlášení přes Google.",
@@ -187,7 +187,7 @@
       "date_out_of_season_title": "Tato ryba je momentálně mimo sezónu",
       "modal_today_price": "Dnešní cena",
       "modal_water_loc": "🌊 Voda a Lokace výskytu",
-      "nav_all": "Encyklopedie",
+      "nav_all": "Fishdex",
       "nav_all_pill": "615 ryb",
       "nav_club": "Klubové ryby",
       "nav_club_pill": "80 ryb",

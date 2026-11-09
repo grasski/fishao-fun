@@ -7,7 +7,7 @@
   var dict = {
       "admin_badge": "Admin",
       "app_desc": "Complete overview of 80 club &amp; 615 standard fish • Live biting times • Fish Market prices • Personal catch collection",
-      "app_subtitle": "Encyclopedia",
+      "app_subtitle": "Tracker",
       "app_title": "FISHAO",
       "auth_need_config": "Please configure firebase-config.js before signing in.",
       "auth_notice_bulk": "Bulk import into Fish Market requires Google sign-in.",
@@ -187,7 +187,7 @@
       "date_out_of_season_title": "This fish is currently out of season",
       "modal_today_price": "Today's price",
       "modal_water_loc": "🌊 Water & Catch Locations",
-      "nav_all": "Encyclopedia",
+      "nav_all": "Fishdex",
       "nav_all_pill": "615 fish",
       "nav_club": "Club Fish",
       "nav_club_pill": "80 fish",
