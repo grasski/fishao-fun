@@ -161,43 +161,40 @@ function renderPriceCell(fid) {
   var isSunday = isMarketClosedToday();
   var todayEntry = getTodayPrice(fid);
   var latest = getLatestPrice(fid);
+  var maxEntry = getMaxPrice(fid);
   var list = getFishPrices(fid);
   var locale = getLocale();
-  var histCount = list.length > 1 ? '<span class="price-history-count" title="' + t('price_history_count_title') + '">' + list.length + 'x</span>' : "";
+  var histCount = '<span class="price-history-count" title="' + t('price_history_count_title') + '">' + list.length + 'x</span>';
 
-  if (isSunday) {
-    if (latest) {
-      var dateFormatted = formatPriceDate(latest.date);
-      var titleText = t('price_cell_sunday_title', { price: latest.price.toLocaleString(locale), date: dateFormatted });
-      return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + titleText + '">' +
-        '<span class="price-badge price-closed"><span class="price-closed-icon">🔒</span> ' +
-        '<span class="price-closed-label">' + t('market_closed_tag') + '</span> ' +
-        '<span class="price-past-sub">(' + t('price_last_prefix') + ' ' + latest.price.toLocaleString(locale) + ' FB)</span>' +
-        histCount + '</span></div>';
-    } else {
-      return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + t('market_closed_notice') + '">' +
-        '<span class="price-empty price-closed-empty"><span class="price-closed-icon">🔒</span> ' + t('market_closed_tag') + '</span></div>';
-    }
-  }
-
-  if (todayEntry) {
-    var todayTitle = t('price_cell_today_active_title', { price: todayEntry.price.toLocaleString(locale) });
-    return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + todayTitle + '">' +
-      '<span class="price-badge price-today"><span class="cash-icon">💵</span> ' +
-      todayEntry.price.toLocaleString(locale) + ' FB ' +
-      '<span class="badge-today-pill">' + t('price_today_tag') + '</span>' +
-      histCount + '</span></div>';
-  } else if (latest) {
-    var dateFormatted = formatPriceDate(latest.date);
-    var pastTitle = t('price_cell_past_title', { price: latest.price.toLocaleString(locale), date: dateFormatted });
-    return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + pastTitle + '">' +
-      '<span class="price-badge price-past"><span class="price-past-dash">--</span> ' +
-      '<span class="price-past-sub">(' + t('price_last_prefix') + ' ' + latest.price.toLocaleString(locale) + ' FB)</span>' +
-      histCount + '</span></div>';
-  } else {
+  if (!latest) {
     return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + t('price_cell_add_title') + '">' +
       '<span class="price-empty">+ ' + t('price_add_btn') + '</span></div>';
   }
+
+  var cellTitle = isSunday
+    ? t('price_cell_sunday_title', { price: latest.price.toLocaleString(locale), date: formatPriceDate(latest.date) })
+    : (todayEntry
+      ? t('price_cell_today_active_title', { price: todayEntry.price.toLocaleString(locale) })
+      : t('price_cell_past_title', { price: latest.price.toLocaleString(locale), date: formatPriceDate(latest.date) }));
+
+  var todayHtml = isSunday
+    ? '<span class="price-lock">🔒</span><span class="price-today-val is-none">--</span>'
+    : (todayEntry
+      ? '<span class="price-today-val">' + todayEntry.price.toLocaleString(locale) + '</span>'
+      : '<span class="price-today-val is-none">--</span>');
+
+  var maxHtml = "";
+  if (maxEntry) {
+    var isRecord = !!(todayEntry && todayEntry.price === maxEntry.price);
+    var maxParams = { price: maxEntry.price.toLocaleString(locale), date: formatPriceDate(maxEntry.date) };
+    var maxTitle = isRecord ? t('price_max_record_title', maxParams) : t('price_max_title', maxParams);
+    maxHtml = '<span class="price-sep">/</span>' +
+      '<span class="price-max-val' + (isRecord ? ' is-record' : '') + '" title="' + maxTitle + '">' + maxParams.price + '</span>' +
+      '<span class="price-unit">FB</span>';
+  }
+
+  return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + cellTitle + '">' +
+    '<span class="price-inline">' + todayHtml + maxHtml + histCount + '</span></div>';
 }
 
 function renderCaughtBtn(fishId) {
@@ -379,7 +376,7 @@ function renderTableHead() {
   if (!thead) return;
   var caughtCol = '<th style="width: 44px; text-align: center;" title="' + t('col_caught_title') + '">✓</th>';
   var isSunday = isMarketClosedToday();
-  var priceColHtml = '<th>' + t('col_price') + (isSunday ? ' <span class="th-sunday-closed-pill" title="' + t('market_closed_sunday_tooltip') + '">🔒 ' + t('market_closed_tag') + '</span>' : '') + '</th>';
+  var priceColHtml = '<th title="' + t('col_price_title') + '">' + t('col_price') + (isSunday ? ' <span class="th-sunday-closed-pill" title="' + t('market_closed_sunday_tooltip') + '">🔒 ' + t('market_closed_tag') + '</span>' : '') + '</th>';
 
   if (currentView === "club") {
     thead.innerHTML =

@@ -327,112 +327,51 @@ tbody tr:hover .fish-img {
 .len-dim { color: #64748b; font-size: 11px; }
 .len-avg { color: #f8fafc; font-weight: 800; font-size: 13px; }
 
-/* PRICE CELLS - Fishbucks / Fishměna */
+/* PRICE CELLS - Today vs all-time max (mirrors the Length column) */
 .price-cell {
   cursor: pointer;
   transition: all 0.2s;
-}
-.price-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.4);
-  color: #34d399;
-  font-weight: 800;
-  font-size: 12px;
-  padding: 3px 8px;
-  border-radius: 6px;
-  transition: all 0.2s;
   white-space: nowrap;
 }
-.price-badge .cash-icon {
-  font-size: 13px;
-  line-height: 1;
+.price-inline {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
 }
-
-/* Today Active Price Badge */
-.price-badge.price-today {
-  background: rgba(16, 185, 129, 0.16);
-  border-color: rgba(16, 185, 129, 0.55);
+.price-today-val {
   color: #34d399;
-}
-.price-cell:hover .price-badge.price-today {
-  border-color: #34d399;
-  background: rgba(16, 185, 129, 0.28);
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.35);
-  transform: translateY(-1px);
-}
-.badge-today-pill {
-  font-size: 9px;
-  background: rgba(16, 185, 129, 0.25);
-  border: 1px solid rgba(16, 185, 129, 0.45);
-  color: #a7f3d0;
-  padding: 1px 4px;
-  border-radius: 3px;
   font-weight: 800;
-  margin-left: 2px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
+  font-size: 14px;
+  line-height: 1.2;
 }
-
-/* Past / Historical Price Badge (not active today) */
-.price-badge.price-past {
-  background: rgba(148, 163, 184, 0.08);
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  color: #94a3b8;
-  font-weight: 600;
-}
-.price-cell:hover .price-badge.price-past {
-  border-color: #94a3b8;
-  background: rgba(148, 163, 184, 0.16);
-  color: #cbd5e1;
-  transform: translateY(-1px);
-}
-.price-past-dash {
+.price-today-val.is-none {
   color: #64748b;
-  font-weight: 800;
   font-size: 12px;
+  font-weight: 700;
 }
-.price-past-sub {
+.price-sep {
+  color: #475569;
   font-size: 11px;
+}
+.price-max-val {
   color: #94a3b8;
-  font-weight: 600;
-}
-
-/* Sunday Closed Price Badge */
-.price-badge.price-closed {
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  color: #fbbf24;
-  font-weight: 600;
-}
-.price-cell:hover .price-badge.price-closed {
-  border-color: #f59e0b;
-  background: rgba(245, 158, 11, 0.2);
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
-  transform: translateY(-1px);
-}
-.price-closed-icon {
+  font-weight: 700;
   font-size: 11px;
+}
+.price-max-val.is-record { color: #fbbf24; }
+.price-unit {
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 600;
+}
+.price-lock {
+  color: #f59e0b;
+  font-size: 10px;
   line-height: 1;
 }
-.price-closed-label {
-  font-size: 11px;
-  font-weight: 800;
-  color: #f59e0b;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-.price-empty.price-closed-empty {
-  color: #f59e0b;
-  border: 1px dashed rgba(245, 158, 11, 0.4);
-}
-.price-empty.price-closed-empty:hover {
-  border-color: #f59e0b;
-  color: #fbbf24;
-  background: rgba(245, 158, 11, 0.08);
-}
+.price-cell:hover .price-today-val:not(.is-none) { color: #6ee7b7; }
+.price-cell:hover .price-max-val { color: #e2e8f0; }
+.price-cell:hover .price-max-val.is-record { color: #fbbf24; }
 
 .price-empty {
   display: inline-flex;

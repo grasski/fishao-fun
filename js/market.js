@@ -153,6 +153,19 @@ function getLatestPrice(fid) {
 }
 
 /**
+ * Returns the all-time highest recorded price entry for a fish.
+ * The list is sorted newest-first, so on a tie the most recent record wins.
+ */
+function getMaxPrice(fid) {
+  var list = getFishPrices(fid);
+  if (!list || list.length === 0) return null;
+  // List is newest-first, so ">" keeps the most recent entry on a price tie.
+  return list.reduce(function (best, item) {
+    return item.price > best.price ? item : best;
+  });
+}
+
+/**
  * Maps the game's rarity_factor (spawn weight multiplier) to a display tier.
  * 1.0 is the baseline weight; lower values are rarer (0.01 = 100x rarer than baseline).
  */
