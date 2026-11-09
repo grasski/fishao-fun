@@ -328,7 +328,7 @@ function initBaitOptions() {
   if (!select) return;
   var curVal = select.value;
   var allBaits = [
-    'Hmyz', 'Rostlinné', 'Ryby', 'Těsta', 'Přívlač/Nástrahy', 'Maso', 'Žraločí',
+    'Hmyz', 'Rostlinné', 'Ryby', 'Těsta', 'Nástrahy', 'Maso', 'Žraločí',
     'Háčky', 'Ďasí', 'Monstrum', 'Šírotlamčí', 'Prehistorické', 'Svítivčí',
     'Tuňáčí', 'Soltýní', 'Marlíní'
   ];

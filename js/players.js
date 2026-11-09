@@ -219,7 +219,7 @@ function populatePlayerFishFilterDropdown() {
   var selectBait = document.getElementById("playerBaitFilterSelect");
   if (selectBait) {
     var currentBaitVal = selectBait.value || filterPlayerBait || "";
-    var backyardBaits = ['Hmyz', 'Rostlinné', 'Ryby', 'Těsta', 'Přívlač/Nástrahy', 'Maso', 'Žraločí', 'Háčky'];
+    var backyardBaits = ['Hmyz', 'Rostlinné', 'Ryby', 'Těsta', 'Nástrahy', 'Maso', 'Žraločí', 'Háčky'];
     var htmlBait = '<option value="">' + t('opt_bait_all', 'Všechny návnady') + '</option>';
     backyardBaits.forEach(function (b) {
       var bName = (window.FISHAO_I18N && window.FISHAO_I18N.getBaitName)

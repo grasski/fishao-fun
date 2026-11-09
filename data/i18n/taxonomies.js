@@ -54,12 +54,12 @@
         "cs": "Prehistorické",
         "en": "Prehistoric"
     },
-    "Přívlač/Nástrahy": {
-        "cs": "Přívlač/Nástrahy",
+    "Nástrahy": {
+        "cs": "Nástrahy",
         "en": "Lures"
     },
     "Lures": {
-        "cs": "Přívlač/Nástrahy",
+        "cs": "Nástrahy",
         "en": "Lures"
     },
     "Rostlinné": {

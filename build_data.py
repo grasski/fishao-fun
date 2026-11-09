@@ -53,7 +53,7 @@ bait_translations = {
     'fish': 'Ryby',
     'hook': 'Háčky',
     'insects': 'Hmyz',
-    'lures': 'Přívlač/Nástrahy',
+    'lures': 'Nástrahy',
     'meat': 'Maso',
     'shark': 'Žraločí',
     'vegetal': 'Rostlinné',

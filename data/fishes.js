@@ -166,7 +166,7 @@ window.FISHAO_DATA = {
     "rarity_factor": 1.0,
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -863,7 +863,7 @@ window.FISHAO_DATA = {
     "rarity_factor": 1.0,
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -906,7 +906,7 @@ window.FISHAO_DATA = {
     "rarity_factor": 1.0,
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -1019,7 +1019,7 @@ window.FISHAO_DATA = {
     "rarity_factor": 0.02,
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "00:00-05:00",
     "raw_times": [
@@ -1132,7 +1132,7 @@ window.FISHAO_DATA = {
     "baits": [
       "Ryby",
       "Hmyz",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -1370,7 +1370,7 @@ window.FISHAO_DATA = {
     "rarity_factor": 1.0,
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -1396,7 +1396,7 @@ window.FISHAO_DATA = {
     "baits": [
       "Ryby",
       "Hmyz",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -1443,7 +1443,7 @@ window.FISHAO_DATA = {
     "rarity_factor": 0.05,
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -1599,7 +1599,7 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "baits": [
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Ryby"
     ],
     "time": "Celý den",
@@ -1669,7 +1669,7 @@ window.FISHAO_DATA = {
     "rarity_factor": 1.0,
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -1692,7 +1692,7 @@ window.FISHAO_DATA = {
     "rarity_factor": 1.0,
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -1758,7 +1758,7 @@ window.FISHAO_DATA = {
     "rarity_factor": 1.0,
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -1836,7 +1836,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "20:00-11:00",
     "raw_times": [
@@ -1907,7 +1907,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -1933,7 +1933,7 @@ window.FISHAO_DATA = {
       "Hmyz",
       "Těsta",
       "Rostlinné",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -2045,7 +2045,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "05:00-11:00, 18:00-00:00",
     "raw_times": [
@@ -2181,7 +2181,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "05:00-00:00",
     "raw_times": [
@@ -2251,7 +2251,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -2273,7 +2273,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "12:00-17:00",
     "raw_times": [
@@ -2364,7 +2364,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -2405,7 +2405,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -2427,7 +2427,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -2535,7 +2535,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Těsta",
       "Hmyz"
     ],
@@ -2559,7 +2559,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -2580,7 +2580,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -2601,7 +2601,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -2644,7 +2644,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -2686,7 +2686,7 @@ window.FISHAO_DATA = {
       "Laketown"
     ],
     "baits": [
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -2749,7 +2749,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -2899,7 +2899,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Soltýní"
     ],
     "time": "Celý den",
@@ -2921,7 +2921,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -2942,7 +2942,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -2985,7 +2985,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -3048,7 +3048,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -3111,7 +3111,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "18:00-04:00",
@@ -3159,7 +3159,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -3358,7 +3358,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -3492,7 +3492,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -3514,7 +3514,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -3536,7 +3536,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -3557,7 +3557,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -3579,7 +3579,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -3601,7 +3601,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -3727,7 +3727,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -3944,7 +3944,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Těsta",
       "Hmyz"
     ],
@@ -3967,7 +3967,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Maso"
     ],
     "time": "Celý den",
@@ -3989,7 +3989,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -4072,7 +4072,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -4094,7 +4094,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -4115,7 +4115,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -4136,7 +4136,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -4179,7 +4179,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -4201,7 +4201,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -4223,7 +4223,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -4245,7 +4245,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -4266,7 +4266,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -4288,7 +4288,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -4309,7 +4309,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -4331,7 +4331,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -4353,7 +4353,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -4420,7 +4420,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Těsta",
       "Hmyz"
     ],
@@ -4444,7 +4444,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Těsta",
       "Hmyz"
     ],
@@ -4468,7 +4468,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Těsta",
       "Hmyz"
     ],
@@ -4662,7 +4662,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -4709,7 +4709,7 @@ window.FISHAO_DATA = {
       "Těsta",
       "Rostlinné",
       "Hmyz",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -4730,7 +4730,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -4798,7 +4798,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -4820,7 +4820,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -4996,7 +4996,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -5043,7 +5043,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -5065,7 +5065,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -5087,7 +5087,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -5377,7 +5377,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -5538,7 +5538,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "08:00-22:00",
     "raw_times": [
@@ -5657,7 +5657,7 @@ window.FISHAO_DATA = {
       "Ryby",
       "Hmyz",
       "Těsta",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "05:00-11:00, 17:00-23:00",
     "raw_times": [
@@ -5776,7 +5776,7 @@ window.FISHAO_DATA = {
     "baits": [
       "Ryby",
       "Hmyz",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "08:00-18:00",
     "raw_times": [
@@ -6276,7 +6276,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "04:00-05:00",
@@ -6782,7 +6782,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -6940,7 +6940,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -7068,7 +7068,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -7090,7 +7090,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -7467,7 +7467,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -7568,7 +7568,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -8480,7 +8480,7 @@ window.FISHAO_DATA = {
     "baits": [
       "Ryby",
       "Hmyz",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "18:00-08:00",
     "raw_times": [
@@ -8546,7 +8546,7 @@ window.FISHAO_DATA = {
     "baits": [
       "Ryby",
       "Hmyz",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -8763,7 +8763,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Hmyz",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "00:00-07:00",
     "raw_times": [
@@ -8871,7 +8871,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Hmyz",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -9190,7 +9190,7 @@ window.FISHAO_DATA = {
     "baits": [
       "Hmyz",
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "05:00-12:00",
     "raw_times": [
@@ -9278,7 +9278,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -9319,7 +9319,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Hmyz",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -9363,7 +9363,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Hmyz",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "07:00-19:00",
     "raw_times": [
@@ -9556,7 +9556,7 @@ window.FISHAO_DATA = {
     "baits": [
       "Hmyz",
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -9577,7 +9577,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -9639,7 +9639,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -9744,7 +9744,7 @@ window.FISHAO_DATA = {
       "Turnaj Moray"
     ],
     "baits": [
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -9887,7 +9887,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "21:00-06:00",
     "raw_times": [
@@ -9931,7 +9931,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "17:00-05:00",
     "raw_times": [
@@ -9996,7 +9996,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -10061,7 +10061,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -10107,7 +10107,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "22:00-06:00",
     "raw_times": [
@@ -10153,7 +10153,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -10176,7 +10176,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -10198,7 +10198,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -10520,7 +10520,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -10625,7 +10625,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -11116,7 +11116,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -11144,7 +11144,7 @@ window.FISHAO_DATA = {
     "baits": [
       "Ryby",
       "Hmyz",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -11171,7 +11171,7 @@ window.FISHAO_DATA = {
     "baits": [
       "Ryby",
       "Hmyz",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -11249,7 +11249,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -11509,7 +11509,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "00:00-05:00",
     "raw_times": [
@@ -11539,7 +11539,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -11962,7 +11962,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -12222,7 +12222,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -12351,7 +12351,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -12586,7 +12586,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -12668,7 +12668,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -12952,7 +12952,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Hmyz"
     ],
     "time": "Celý den",
@@ -13906,7 +13906,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -13927,7 +13927,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "00:00-05:00",
     "raw_times": [
@@ -14205,7 +14205,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -14634,7 +14634,7 @@ window.FISHAO_DATA = {
     ],
     "baits": [
       "Ryby",
-      "Přívlač/Nástrahy"
+      "Nástrahy"
     ],
     "time": "Celý den",
     "raw_times": [],
@@ -15313,7 +15313,7 @@ window.FISHAO_DATA = {
       "Klubový revír"
     ],
     "baits": [
-      "Přívlač/Nástrahy",
+      "Nástrahy",
       "Ryby"
     ],
     "time": "Celý den",
