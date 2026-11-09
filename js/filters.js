@@ -105,7 +105,7 @@ function applyFilters() {
     }
 
     if (currentView === "club" && water && getFishWater(f) !== water) return false;
-    if (currentView === "all" && location &&
+    if (location && currentView !== "club" &&
         !((f.locations && f.locations.includes(location)) ||
           (f.places && f.places.includes(location)))) return false;
 
@@ -137,7 +137,7 @@ function applyFilters() {
 
     if (filterUncaught && caughtFishIds.has(f.id)) return false;
 
-    if (currentView === "collection" || currentView === "all") {
+    if (currentView === "collection" || currentView === "all" || currentView === "market") {
       if (collectionFilterMode === "caught" && !caughtFishIds.has(f.id)) return false;
       if (collectionFilterMode === "missing" && caughtFishIds.has(f.id)) return false;
     }
@@ -211,6 +211,25 @@ function applyFilters() {
       filterNotes.push(t('filter_note_priced'));
     }
   }
+  if (location && currentView !== "club") {
+    var locName = window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(location) : location;
+    filterNotes.push(t('filter_note_location', { name: locName }));
+  }
+  if (bait) {
+    var baitName = window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(bait) : bait;
+    filterNotes.push(t('filter_note_bait', { name: baitName }));
+  }
+  if (currentView === "club" && water) {
+    var waterName = window.FISHAO_I18N ? window.FISHAO_I18N.getWaterName(water) : water;
+    filterNotes.push(t('filter_note_water', { name: waterName }));
+  }
+  if (rating) {
+    var starStr = rating;
+    if (rating === "min3") starStr = "3★+";
+    else if (rating === "min4") starStr = "4★+";
+    else if (rating.match(/^\d$/)) starStr = rating + "★";
+    filterNotes.push(t('filter_note_rating', { stars: starStr }));
+  }
   if (filterUncaught) filterNotes.push(t('filter_note_uncaught'));
 
   if (!isNaN(minSize) && !isNaN(maxSize)) {
@@ -220,10 +239,26 @@ function applyFilters() {
     if (!isNaN(maxSize)) filterNotes.push(t('filter_note_size_max', { max: maxSize }));
   }
 
-  if (filterNowActive) {
-    var now = new Date();
-    var timeStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
-    filterNotes.push(t('filter_note_now', { time: timeStr }));
+  if (timeVal) {
+    if (timeVal === "now") {
+      var now = new Date();
+      var timeStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+      filterNotes.push(t('filter_note_now', { time: timeStr }));
+    } else if (timeVal === "seasonal") {
+      filterNotes.push(t('filter_note_time_seasonal'));
+    } else if (timeVal === "day") {
+      filterNotes.push(t('filter_note_time_day'));
+    } else if (timeVal === "night") {
+      filterNotes.push(t('filter_note_time_night'));
+    } else if (timeVal === "morning") {
+      filterNotes.push(t('filter_note_time_morning'));
+    } else if (timeVal === "afternoon") {
+      filterNotes.push(t('filter_note_time_afternoon'));
+    } else if (timeVal === "evening") {
+      filterNotes.push(t('filter_note_time_evening'));
+    } else if (timeVal === "deepnight") {
+      filterNotes.push(t('filter_note_time_deepnight'));
+    }
   }
 
   var activeDescEl = document.getElementById("activeFilterDesc");
