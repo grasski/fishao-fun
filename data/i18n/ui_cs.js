@@ -265,12 +265,6 @@
       "sign_out": "Odhlásit",
       "status_caught_count": "{caught} / {total} chyceno",
       "status_fish_count": "{unlocked} / {total} ryb",
-      "sync_error": "Chyba",
-      "sync_live": "Živě",
-      "sync_live_title": "Propojeno s cloudem: Ceny a profily se synchronizují v reálném čase!",
-      "sync_local": "Lokální",
-      "sync_local_title": "Ceny a profil se ukládají pouze v tvém prohlížeči. Pro online sdílení vyplň firebase-config.js.",
-      "sync_offline": "Offline",
       "table_empty_state": "❌ Žádná ryba neodpovídá zadaným filtrům. Zkus upravit nebo obnovit filtry.",
       "time_active_now": "⚡ BERE TEĎ",
       "time_active_now_short": "BERE TEĎ",
@@ -419,9 +413,6 @@
       "club_member_kicked": "Hráč byl odebrán z klubu.",
       "club_you_were_removed": "Byl jsi odebrán z klubu.",
       "club_ghost_cleaned": "Tento hráč již smazal svůj účet a byl automaticky odebrán z klubu.",
-      "sync_timer_tooltip": "Čas do automatického obnovení dat: {time}",
-      "sync_refresh_btn_title": "Okamžitě aktualizovat data",
-      "sync_manual_refreshed": "Data byla úspěšně aktualizována.",
       "footer_fan_badge": "Fanouškovský projekt",
       "footer_disclaimer": "FISHAO je registrovaná ochranná známka společnosti GamoVation B.V. Tento web je neoficiální komunitní projekt vytvořený hráči pro hráče a není nijak spojen ani sponzorován společností GamoVation. Veškerá grafika a názvy ze hry patří jejich příslušným vlastníkům.",
       "footer_privacy_link": "Zásady ochrany soukromí & GDPR",
@@ -455,7 +446,9 @@
       "profile_delete_title": "Trvalé smazání účtu",
       "profile_delete_confirm": "Opravdu chceš trvale smazat svůj účet a veškerá herní data? Tato akce je nevratná: smaže tvůj herní profil, úlovky, ryby za domem, odebere tě z klubu a odhlásí tě.",
       "profile_delete_btn": "Smazat vše",
-      "profile_deleted_success": "Tvůj účet a veškerá herní data byla úspěšně smazána."
+      "profile_deleted_success": "Tvůj účet a veškerá herní data byla úspěšně smazána.",
+      "seo_page_title": "FISHAO Wiki & Encyklopedie – Ryby, Fish Market ceník a Kluby",
+      "seo_meta_desc": "Kompletní FISHAO wiki a encyklopedie: přehled všech ryb včetně klubových. Denní Fish Market ceník, lokace, časy lovu, kluby a chov ryb za domem."
   };
 
   if (typeof window !== 'undefined') {

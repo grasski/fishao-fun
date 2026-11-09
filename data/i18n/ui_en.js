@@ -265,12 +265,6 @@
       "sign_out": "Sign out",
       "status_caught_count": "{caught} / {total} caught",
       "status_fish_count": "{unlocked} / {total} fish",
-      "sync_error": "Error",
-      "sync_live": "Live",
-      "sync_live_title": "Connected to cloud: Prices and profiles sync in real time!",
-      "sync_local": "Local",
-      "sync_local_title": "Prices and profile are saved only in your browser. Fill in firebase-config.js for online sync.",
-      "sync_offline": "Offline",
       "table_empty_state": "❌ No fish match the selected filters. Try adjusting or resetting filters.",
       "time_active_now": "⚡ BITING NOW",
       "time_active_now_short": "BITING NOW",
@@ -419,9 +413,6 @@
       "club_member_kicked": "Player was removed from the club.",
       "club_you_were_removed": "You have been removed from the club.",
       "club_ghost_cleaned": "This player has deleted their account and was automatically removed from the club.",
-      "sync_timer_tooltip": "Time until automatic data refresh: {time}",
-      "sync_refresh_btn_title": "Refresh data now",
-      "sync_manual_refreshed": "Data has been successfully refreshed.",
       "footer_fan_badge": "Fan Project",
       "footer_disclaimer": "FISHAO is a registered trademark of GamoVation B.V. This website is an unofficial community project made by players for players and is not affiliated with or endorsed by GamoVation. All in-game artwork and names belong to their respective owners.",
       "footer_privacy_link": "Privacy Policy & GDPR",
@@ -455,7 +446,9 @@
       "profile_delete_title": "Permanent Account Deletion",
       "profile_delete_confirm": "Are you sure you want to permanently delete your account and all game data? This action is irreversible: it deletes your profile, catches, backyard fish, removes you from your club and signs you out.",
       "profile_delete_btn": "Delete Everything",
-      "profile_deleted_success": "Your account and all game data have been successfully deleted."
+      "profile_deleted_success": "Your account and all game data have been successfully deleted.",
+      "seo_page_title": "FISHAO Wiki & Encyclopedia – Fish Guide, Fish Market Prices & Clubs",
+      "seo_meta_desc": "Complete FISHAO wiki and encyclopedia: overview of all fishes including club fishes. Daily Fish Market prices, fishing times, clubs and backyard breeding."
   };
 
   if (typeof window !== 'undefined') {

@@ -184,7 +184,7 @@ function formatRarityPercent(factor) {
   return parseFloat((val * 100).toFixed(2)).toString() + '%';
 }
 
-function openPriceModal(fid) {
+function openPriceModal(fid, skipSync) {
   selectedModalFishId = fid;
   var fishObj = allFishes.find(function (x) { return x.id === fid; });
   if (!fishObj) return;
@@ -194,6 +194,13 @@ function openPriceModal(fid) {
   var nameEl = document.getElementById("modalFishName");
   var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
   if (nameEl) nameEl.innerText = fishName;
+  try {
+    document.title = fishName + " – FISHAO Wiki & Ryby";
+  } catch (e) { }
+
+  if (!skipSync && window.fishaoApp && typeof window.fishaoApp.syncUrlRoute === "function") {
+    window.fishaoApp.syncUrlRoute(currentView, fid);
+  }
 
   var idBadge = document.getElementById("modalFishIdBadge");
   if (idBadge) idBadge.innerText = "#" + f.id;
@@ -327,9 +334,19 @@ function openPriceModal(fid) {
   document.getElementById("priceModalOverlay").classList.add("active");
 }
 
-function closePriceModal() {
+function closePriceModal(skipSync) {
   document.getElementById("priceModalOverlay").classList.remove("active");
   selectedModalFishId = null;
+  try {
+    var defTitle = (window.FISHAO_I18N && window.FISHAO_I18N.t) ? window.FISHAO_I18N.t("seo_page_title") : "FISHAO Wiki & Encyklopedie – Ryby, Fish Market ceník a Kluby";
+    if (defTitle && defTitle !== "seo_page_title") {
+      document.title = defTitle;
+    }
+  } catch (e) { }
+
+  if (!skipSync && window.fishaoApp && typeof window.fishaoApp.syncUrlRoute === "function") {
+    window.fishaoApp.syncUrlRoute(currentView, null, true);
+  }
 }
 
 function renderModalHistory(fid) {

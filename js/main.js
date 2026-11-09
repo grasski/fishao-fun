@@ -5,27 +5,7 @@
  * modal dialog controls, window.fishaoApp exports, and application boot.
  */
 
-function updateSyncBadgeUI() {
-  var syncBadge = document.getElementById("syncStatusBadge");
-  var syncText = document.getElementById("syncStatusText");
-  if (!syncBadge || !syncText) return;
-
-  if (currentSyncState === "live") {
-    syncBadge.className = "sync-status-badge live";
-    syncText.innerText = t('sync_live');
-    syncBadge.title = t('sync_live_title');
-  } else if (currentSyncState === "offline") {
-    syncBadge.className = "sync-status-badge local";
-    syncText.innerText = t('sync_offline');
-  } else if (currentSyncState === "error") {
-    syncBadge.className = "sync-status-badge local";
-    syncText.innerText = t('sync_error');
-  } else {
-    syncBadge.className = "sync-status-badge local";
-    syncText.innerText = t('sync_local');
-    syncBadge.title = t('sync_local_title');
-  }
-}
+function updateSyncBadgeUI() {}
 
 function updateTzButtonsUI() {
   var tzLocalBtn = document.getElementById("tzLocalBtn");
@@ -55,58 +35,6 @@ function setTimezone(tz) {
   applyFilters();
 }
 
-function updateSyncCountdown() {
-  var timerEl = document.getElementById("syncCountdownTimer");
-  if (!timerEl) return;
-
-  var now = Date.now();
-  if (typeof lastPlayersFetchTime === 'undefined' || !lastPlayersFetchTime) {
-    lastPlayersFetchTime = now;
-  }
-  var ttl = (typeof PLAYERS_CACHE_TTL_MS !== 'undefined') ? PLAYERS_CACHE_TTL_MS : (5 * 60 * 1000);
-  var elapsed = now - lastPlayersFetchTime;
-  var remainingMs = Math.max(0, ttl - elapsed);
-  var remainingSec = Math.ceil(remainingMs / 1000);
-
-  if (remainingSec <= 0) {
-    if (typeof loadAllPlayers === 'function' && currentView === 'players' && currentUser) {
-      loadAllPlayers(true);
-    } else {
-      lastPlayersFetchTime = now;
-    }
-    remainingSec = Math.ceil(ttl / 1000);
-  }
-
-  var mins = Math.floor(remainingSec / 60);
-  var secs = remainingSec % 60;
-  var timeStr = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
-
-  timerEl.innerText = timeStr;
-  var timerTitle = (typeof t === 'function')
-    ? t('sync_timer_tooltip', { time: timeStr }, 'Zbývá ' + timeStr + ' do automatického obnovení dat')
-    : ('Zbývá ' + timeStr + ' do obnovení');
-  timerEl.title = timerTitle;
-}
-
-async function triggerManualDataRefresh() {
-  var refreshBtn = document.getElementById("headerRefreshBtn");
-  if (refreshBtn) {
-    refreshBtn.classList.add("spinning");
-    setTimeout(function () {
-      refreshBtn.classList.remove("spinning");
-    }, 700);
-  }
-
-  if (typeof lastPlayersFetchTime !== 'undefined') {
-    lastPlayersFetchTime = Date.now();
-  }
-  if (typeof loadAllPlayers === 'function' && currentUser) {
-    await loadAllPlayers(true);
-  }
-  updateSyncCountdown();
-  showToast(t('sync_manual_refreshed', 'Data byla úspěšně aktualizována.'), 'info');
-}
-
 function updateClock() {
   var now = new Date();
   var h, m, s;
@@ -128,19 +56,122 @@ function updateClock() {
   if (clockEl) {
     clockEl.innerText = h.toString().padStart(2, '0') + ":" + m.toString().padStart(2, '0') + ":" + s.toString().padStart(2, '0');
   }
-  updateSyncCountdown();
   if (typeof updateMarketSundayCountdown === 'function') {
     updateMarketSundayCountdown();
   }
 }
 setInterval(updateClock, 1000);
 
-function switchView(view) {
+var isHandlingRoute = false;
+
+function getHashOrQueryRoute() {
+  var tab = null;
+  var fishId = null;
+
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var fishQuery = params.get('fish') || params.get('ryba');
+    var tabQuery = params.get('tab') || params.get('view');
+
+    var hash = (window.location.hash || '').replace(/^#/, '').trim().toLowerCase();
+
+    // 1. Check for fish route: #fish-123, #ryba-123 or ?fish=123
+    if (fishQuery && !isNaN(parseInt(fishQuery, 10))) {
+      fishId = parseInt(fishQuery, 10);
+    } else if (hash.indexOf('fish-') === 0 || hash.indexOf('ryba-') === 0) {
+      var rawId = hash.replace(/^(fish-|ryba-)/, '');
+      if (!isNaN(parseInt(rawId, 10))) {
+        fishId = parseInt(rawId, 10);
+      }
+    }
+
+    // 2. Check for tab route
+    var rawTab = tabQuery || hash;
+    if (rawTab) {
+      if (rawTab === 'market' || rawTab === 'trh') {
+        tab = 'market';
+      } else if (rawTab === 'club' || rawTab === 'klub' || rawTab === 'club_manage' || rawTab === 'club-manage') {
+        tab = 'club_manage';
+      } else if (rawTab === 'club-fishes' || rawTab === 'klubove-ryby') {
+        tab = 'club';
+      } else if (rawTab === 'players' || rawTab === 'hraci' || rawTab === 'komunita' || rawTab === 'dvorek') {
+        tab = 'players';
+      } else if (rawTab === 'all' || rawTab === 'encyklopedie' || rawTab === 'ryby') {
+        tab = 'all';
+      }
+    }
+  } catch (e) { }
+
+  return { tab: tab, fishId: fishId };
+}
+
+function syncUrlRoute(view, fishId, replace) {
+  if (isHandlingRoute) return;
+  try {
+    var targetHash = '';
+    if (fishId) {
+      targetHash = '#fish-' + fishId;
+    } else if (view && view !== 'all') {
+      targetHash = '#' + view;
+    }
+
+    var curHash = window.location.hash || '';
+    if (curHash === targetHash || (curHash === '' && targetHash === '')) return;
+
+    var newUrl = targetHash ? (window.location.pathname + window.location.search + targetHash) : (window.location.pathname + window.location.search);
+
+    if (window.history) {
+      if (replace && window.history.replaceState) {
+        window.history.replaceState({ view: view, fishId: fishId }, '', newUrl);
+      } else if (window.history.pushState) {
+        window.history.pushState({ view: view, fishId: fishId }, '', newUrl);
+      }
+    }
+  } catch (e) { }
+}
+
+function handleRoute() {
+  if (isHandlingRoute) return;
+  isHandlingRoute = true;
+  try {
+    var route = getHashOrQueryRoute();
+
+    // 1. Switch tab if needed
+    if (route.tab && route.tab !== currentView) {
+      switchView(route.tab, true);
+    } else if (!route.tab && !route.fishId && currentView !== 'all') {
+      switchView('all', true);
+    }
+
+    // 2. Open or close fish modal
+    var modal = document.getElementById('priceModalOverlay');
+    var isModalActive = modal && modal.classList.contains('active');
+
+    if (route.fishId) {
+      if (typeof openPriceModal === 'function') {
+        openPriceModal(route.fishId, true);
+      }
+    } else if (isModalActive) {
+      if (typeof closePriceModal === 'function') {
+        closePriceModal(true);
+      }
+    }
+  } catch (e) {
+  } finally {
+    isHandlingRoute = false;
+  }
+}
+
+function switchView(view, skipSync) {
   var isInClub = !!(currentUser && currentClubId);
   if (view === "club" && !isInClub) {
     view = "all";
   }
   currentView = view;
+
+  if (!skipSync) {
+    syncUrlRoute(view, null);
+  }
 
   if (typeof logAnalyticsEvent === "function") {
     logAnalyticsEvent("screen_view", { screen_name: view });
@@ -250,9 +281,21 @@ function updateStaticTranslations() {
   if (csBtn) csBtn.classList.toggle("active", lang === "cs");
   if (enBtn) enBtn.classList.toggle("active", lang === "en");
 
+  // Dynamic SEO title & meta description update on language change
+  try {
+    var pageTitle = t("seo_page_title");
+    if (pageTitle && pageTitle !== "seo_page_title") {
+      document.title = pageTitle;
+    }
+    var metaDescEl = document.getElementById("metaDescription");
+    var pageDesc = t("seo_meta_desc");
+    if (metaDescEl && pageDesc && pageDesc !== "seo_meta_desc") {
+      metaDescEl.setAttribute("content", pageDesc);
+    }
+  } catch (e) { }
+
   document.querySelectorAll("[data-i18n]").forEach(function (el) {
-    // Skip syncStatusText and live timers so we don't overwrite live/offline state with default attribute
-    if (el.id === "syncStatusText" || el.id === "tzLocalBtn" || el.id === "clockLabel" || el.id === "marketSundayNoticeDesc" || el.id === "syncCountdownTimer") return;
+    if (el.id === "tzLocalBtn" || el.id === "clockLabel" || el.id === "marketSundayNoticeDesc") return;
     var key = el.getAttribute("data-i18n");
     var val = t(key);
     if (val !== undefined && val !== null && val !== key) {
@@ -289,7 +332,6 @@ function setLanguage(lang) {
   } catch (e) { }
 
   updateStaticTranslations();
-  updateSyncBadgeUI();
   updateTzButtonsUI();
   updateClock();
   updateAuthUI();
@@ -472,8 +514,6 @@ window.fishaoApp = {
   kickMemberFromClub: kickMemberFromClub,
   deleteAccount: deleteAccount,
   unbindClubListener: unbindClubListener,
-  triggerManualDataRefresh: triggerManualDataRefresh,
-  updateSyncCountdown: updateSyncCountdown,
   openFishDetail: openPriceModal,
   onPriceDateChange: onPriceDateChange,
   onBulkDateChange: onBulkDateChange,
@@ -487,12 +527,31 @@ window.fishaoApp = {
   getMaxPrice: getMaxPrice,
   updateMarketTabStatus: updateMarketTabStatus,
   updateMarketSundayCountdown: updateMarketSundayCountdown,
+  syncUrlRoute: syncUrlRoute,
+  handleRoute: handleRoute,
+  getHashOrQueryRoute: getHashOrQueryRoute,
   t: t
 };
 
 // Initialize localization & application
 var initialLang = (window.FISHAO_I18N && window.FISHAO_I18N.currentLang) || localStorage.getItem('fishao_lang') || 'cs';
 setLanguage(initialLang);
-switchView("all");
+
+// Initialize routing from URL hash or query params
+var initialRoute = getHashOrQueryRoute();
+if (initialRoute.tab && initialRoute.tab !== "all") {
+  switchView(initialRoute.tab, true);
+} else {
+  switchView("all", true);
+}
+
+if (initialRoute.fishId) {
+  openPriceModal(initialRoute.fishId, true);
+}
+
+// Setup popstate & hashchange listeners for back/forward browser navigation
+window.addEventListener('popstate', handleRoute);
+window.addEventListener('hashchange', handleRoute);
+
 initFirebaseSync();
 

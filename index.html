@@ -4,7 +4,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FISHAO – Encyklopedie a Klubové ryby</title>
+  <title>FISHAO Wiki & Encyklopedie – Ryby, Fish Market ceník a Kluby</title>
+
+  <!-- SEO Primary Meta Tags -->
+  <meta name="title" content="FISHAO Wiki & Encyklopedie – Ryby, Fish Market ceník a Kluby">
+  <meta name="description" id="metaDescription" content="Kompletní FISHAO wiki a encyklopedie: přehled všech ryb včetně klubových. Denní Fish Market ceník, lokace, časy lovu, kluby a chov ryb za domem.">
+  <meta name="keywords" content="fishao wiki, wiki, fishao ryby, fishao fishes, fishao club, fishao kluby, klubové ryby, fishao encyklopedie, encyclopedia, fish market ceník, fishao ceník, fish market, fish market prices, fishao návnady, fishao baits, fishao za domem, fishao backyard, ryby fishao, lov ryb, fishao tracker, fishao guide, fishao database">
+  <meta name="author" content="FISHAO Community">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="theme-color" content="#1a2736">
+
+  <!-- Canonical & Alternates -->
+  <link rel="canonical" href="https://fishao-tracker.cz/">
+  <link rel="alternate" hreflang="cs" href="https://fishao-tracker.cz/?lang=cs">
+  <link rel="alternate" hreflang="en" href="https://fishao-tracker.cz/?lang=en">
+  <link rel="alternate" hreflang="x-default" href="https://fishao-tracker.cz/">
+
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <!-- Open Graph / Facebook / Discord -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fishao-tracker.cz/">
+  <meta property="og:site_name" content="FISHAO Wiki & Tracker">
+  <meta property="og:title" content="FISHAO Wiki & Encyklopedie – Ryby, Fish Market ceník a Kluby">
+  <meta property="og:description" content="Kompletní FISHAO wiki a encyklopedie: přehled všech ryb včetně klubových. Denní Fish Market ceník, kluby a chov za domem.">
+  <meta property="og:image" content="https://fishao-tracker.cz/images/fish_1.png">
+  <meta property="og:locale" content="cs_CZ">
+  <meta property="og:locale:alternate" content="en_US">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:url" content="https://fishao-tracker.cz/">
+  <meta name="twitter:title" content="FISHAO Wiki & Encyklopedie – Ryby, Fish Market ceník a Kluby">
+  <meta name="twitter:description" content="Kompletní FISHAO wiki a encyklopedie: přehled všech ryb včetně klubových. Denní Fish Market ceník, kluby a chov za domem.">
+  <meta name="twitter:image" content="https://fishao-tracker.cz/images/fish_1.png">
+
+  <!-- Structured Data (Schema.org / JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://fishao-tracker.cz/#app",
+        "name": "FISHAO Wiki & Encyklopedie – Ryby, Fish Market ceník a Kluby",
+        "alternateName": ["FISHAO Wiki", "FISHAO Ryby Tracker", "FISHAO Encyklopedie", "Fishao Guide"],
+        "url": "https://fishao-tracker.cz/",
+        "applicationCategory": "GameApplication, ReferenceApplication",
+        "operatingSystem": "All",
+        "inLanguage": ["cs", "en"],
+        "description": "Kompletní komunitní FISHAO wiki a encyklopedie: přehled všech ryb včetně klubových, Fish Market ceník, lokace, časy lovu a správa klubů.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "CZK"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://fishao-tracker.cz/#website",
+        "url": "https://fishao-tracker.cz/",
+        "name": "FISHAO Wiki & Tracker",
+        "description": "Kompletní FISHAO wiki: přehled všech ryb včetně klubových a denní Fish Market ceník",
+        "inLanguage": ["cs", "en"]
+      }
+    ]
+  }
+  </script>
+
   <!-- Modern Modular Stylesheets -->
   <link rel="stylesheet" href="css/base.css?v=3.1">
   <link rel="stylesheet" href="css/header.css?v=3.1">
@@ -27,19 +95,6 @@
           <span class="app-logo">🐟</span>
           <h1><span data-i18n="app_title">FISHAO</span> <span class="header-highlight"
               data-i18n="app_subtitle">Encyklopedie</span></h1>
-          <!-- Sync status indicator + Auto-update Timer & Refresh -->
-          <div id="syncStatusBadge" class="sync-status-badge local" title="Stav synchronizace dat">
-            <span class="sync-dot"></span>
-            <span id="syncStatusText" data-i18n="sync_local">Lokální</span>
-            <span class="sync-timer-sep">•</span>
-            <span id="syncCountdownTimer" class="sync-countdown"
-              title="Čas do další automatické synchronizace dat">05:00</span>
-            <button type="button" id="headerRefreshBtn" class="sync-refresh-btn"
-              onclick="window.fishaoApp.triggerManualDataRefresh()" title="Okamžitě aktualizovat data"
-              data-i18n-title="sync_refresh_btn_title">
-              🔄
-            </button>
-          </div>
         </div>
         <p class="header-desc" data-i18n="app_desc">Kompletní přehled 80 klubových &amp; 615 obecných ryb • Živý čas
           lovu • Ceník Fish Market • Osobní sbírka úlovků</p>
