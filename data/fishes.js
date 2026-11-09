@@ -8,6 +8,7 @@ window.FISHAO_DATA = {
     "name": "Pomčík citronový",
     "water": "Slaná",
     "rating": 1,
+    "rarity_factor": 1.0,
     "baits": [
       "Rostlinné"
     ],
@@ -30,6 +31,7 @@ window.FISHAO_DATA = {
     "name": "Čtverzubec běloskvrnný",
     "water": "Slaná",
     "rating": 3,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz"
@@ -51,6 +53,7 @@ window.FISHAO_DATA = {
     "name": "Klaun uzdičkatý",
     "water": "Slaná",
     "rating": 3,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz",
       "Maso",
@@ -73,6 +76,7 @@ window.FISHAO_DATA = {
     "name": "Sapín zelený",
     "water": "Slaná",
     "rating": 2,
+    "rarity_factor": 1.0,
     "baits": [
       "Rostlinné",
       "Hmyz"
@@ -94,6 +98,7 @@ window.FISHAO_DATA = {
     "name": "Pomčík Potterův",
     "water": "Slaná",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Rostlinné"
     ],
@@ -114,6 +119,7 @@ window.FISHAO_DATA = {
     "name": "Havýš rohatý",
     "water": "Slaná",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz",
@@ -136,6 +142,7 @@ window.FISHAO_DATA = {
     "name": "Kanic tečkovaný",
     "water": "Slaná",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby"
     ],
@@ -156,6 +163,7 @@ window.FISHAO_DATA = {
     "name": "Jehlice krokodýlí",
     "water": "Slaná",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Přívlač/Nástrahy"
@@ -177,6 +185,7 @@ window.FISHAO_DATA = {
     "name": "Pilonos vouskatý",
     "water": "Slaná",
     "rating": 3,
+    "rarity_factor": 1.0,
     "baits": [
       "Žraločí"
     ],
@@ -197,6 +206,7 @@ window.FISHAO_DATA = {
     "name": "Řasovník protáhlý",
     "water": "Slaná",
     "rating": 5,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz"
@@ -218,6 +228,7 @@ window.FISHAO_DATA = {
     "name": "Pilohřbet jihoaustralský",
     "water": "Slaná",
     "rating": 5,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz"
@@ -241,6 +252,7 @@ window.FISHAO_DATA = {
     "name": "Chimérovka tasmánská",
     "water": "Slaná",
     "rating": 3,
+    "rarity_factor": 1.0,
     "baits": [
       "Žraločí"
     ],
@@ -263,6 +275,7 @@ window.FISHAO_DATA = {
     "name": "Chrochtal východní",
     "water": "Slaná",
     "rating": 2,
+    "rarity_factor": 1.0,
     "baits": [
       "Těsta",
       "Hmyz",
@@ -285,6 +298,7 @@ window.FISHAO_DATA = {
     "name": "Netopýrník hrbohlavý",
     "water": "Slaná",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz",
@@ -308,6 +322,7 @@ window.FISHAO_DATA = {
     "name": "Pyskoun třásniploutvý",
     "water": "Slaná",
     "rating": 2,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz"
@@ -329,6 +344,7 @@ window.FISHAO_DATA = {
     "name": "Hlaváčovec nádherný",
     "water": "Slaná",
     "rating": 2,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz"
     ],
@@ -349,6 +365,7 @@ window.FISHAO_DATA = {
     "name": "Klipka krokvicová",
     "water": "Slaná",
     "rating": 3,
+    "rarity_factor": 1.0,
     "baits": [
       "Těsta",
       "Hmyz",
@@ -371,6 +388,7 @@ window.FISHAO_DATA = {
     "name": "Trnonoš australský",
     "water": "Slaná",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz"
     ],
@@ -393,6 +411,7 @@ window.FISHAO_DATA = {
     "name": "Lampař severní",
     "water": "Slaná",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz",
       "Těsta",
@@ -417,6 +436,7 @@ window.FISHAO_DATA = {
     "name": "Štětičkovec obecný",
     "water": "Slaná",
     "rating": 3,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz"
@@ -438,6 +458,7 @@ window.FISHAO_DATA = {
     "name": "Bodlok Achillův",
     "water": "Slaná",
     "rating": 2,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz",
       "Těsta",
@@ -460,6 +481,7 @@ window.FISHAO_DATA = {
     "name": "Pardachirus morrowi",
     "water": "Slaná",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz"
     ],
@@ -480,6 +502,7 @@ window.FISHAO_DATA = {
     "name": "Čtverzubec ostnatý",
     "water": "Slaná",
     "rating": 2,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz",
       "Těsta",
@@ -502,6 +525,7 @@ window.FISHAO_DATA = {
     "name": "Hlaváč Griessingerův",
     "water": "Slaná",
     "rating": 2,
+    "rarity_factor": 1.0,
     "baits": [
       "Těsta",
       "Rostlinné"
@@ -523,6 +547,7 @@ window.FISHAO_DATA = {
     "name": "Kladivoun tiburo",
     "water": "Slaná",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Žraločí"
     ],
@@ -543,6 +568,7 @@ window.FISHAO_DATA = {
     "name": "Halančíkovec slaništní",
     "water": "Slaná",
     "rating": 5,
+    "rarity_factor": 0.2,
     "baits": [
       "Těsta",
       "Rostlinné"
@@ -564,6 +590,7 @@ window.FISHAO_DATA = {
     "name": "Medúzovec okounovitý",
     "water": "Slaná",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz"
@@ -585,6 +612,7 @@ window.FISHAO_DATA = {
     "name": "Pásovka černá",
     "water": "Slaná",
     "rating": 5,
+    "rarity_factor": 0.1,
     "baits": [
       "Ryby"
     ],
@@ -607,6 +635,7 @@ window.FISHAO_DATA = {
     "name": "Hlubinář",
     "water": "Slaná",
     "rating": 5,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz"
     ],
@@ -631,6 +660,7 @@ window.FISHAO_DATA = {
     "name": "Bezkýlovec lopatonosý",
     "water": "Slaná",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby"
     ],
@@ -653,6 +683,7 @@ window.FISHAO_DATA = {
     "name": "Lampovníček Barnardův",
     "water": "Slaná",
     "rating": 3,
+    "rarity_factor": 1.0,
     "baits": [
       "Těsta",
       "Hmyz"
@@ -674,6 +705,7 @@ window.FISHAO_DATA = {
     "name": "Kanic šípohlavý",
     "water": "Slaná",
     "rating": 3,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby"
     ],
@@ -694,6 +726,7 @@ window.FISHAO_DATA = {
     "name": "Parmice pruhovaná",
     "water": "Slaná",
     "rating": 5,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz",
       "Ryby"
@@ -715,6 +748,7 @@ window.FISHAO_DATA = {
     "name": "Kněžík duhový",
     "water": "Slaná",
     "rating": 2,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz"
@@ -736,6 +770,7 @@ window.FISHAO_DATA = {
     "name": "Lesklec africký",
     "water": "Slaná",
     "rating": 2,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz"
     ],
@@ -756,6 +791,7 @@ window.FISHAO_DATA = {
     "name": "Králíčkovec zlatoskvrnný",
     "water": "Slaná",
     "rating": 3,
+    "rarity_factor": 1.0,
     "baits": [
       "Rostlinné"
     ],
@@ -778,6 +814,7 @@ window.FISHAO_DATA = {
     "name": "Hlaváč červenopruhý",
     "water": "Slaná",
     "rating": 1,
+    "rarity_factor": 1.0,
     "baits": [
       "Těsta",
       "Rostlinné"
@@ -799,6 +836,7 @@ window.FISHAO_DATA = {
     "name": "Oblohlav divukrásný",
     "water": "Slaná",
     "rating": 3,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz",
       "Ryby"
@@ -822,6 +860,7 @@ window.FISHAO_DATA = {
     "name": "Chňapal císařský",
     "water": "Slaná",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Přívlač/Nástrahy"
@@ -843,6 +882,7 @@ window.FISHAO_DATA = {
     "name": "Kněžík srpkovitý",
     "water": "Slaná",
     "rating": 2,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz"
     ],
@@ -863,6 +903,7 @@ window.FISHAO_DATA = {
     "name": "Kranas zlatý",
     "water": "Slaná",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Přívlač/Nástrahy",
@@ -885,6 +926,7 @@ window.FISHAO_DATA = {
     "name": "Havýš žlutohnědý",
     "water": "Slaná",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Těsta",
       "Hmyz",
@@ -907,6 +949,7 @@ window.FISHAO_DATA = {
     "name": "Manta velká",
     "water": "Slaná",
     "rating": 5,
+    "rarity_factor": 0.2,
     "baits": [
       "Ryby"
     ],
@@ -927,6 +970,7 @@ window.FISHAO_DATA = {
     "name": "Vlajkovka červenavá",
     "water": "Slaná",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz"
@@ -948,6 +992,7 @@ window.FISHAO_DATA = {
     "name": "Kladivoun křídlohlavý",
     "water": "Slaná",
     "rating": 5,
+    "rarity_factor": 0.5,
     "baits": [
       "Žraločí"
     ],
@@ -971,6 +1016,7 @@ window.FISHAO_DATA = {
     "name": "Ještěrohlavec hlubokomořský",
     "water": "Slaná",
     "rating": 5,
+    "rarity_factor": 0.02,
     "baits": [
       "Ryby",
       "Přívlač/Nástrahy"
@@ -996,6 +1042,7 @@ window.FISHAO_DATA = {
     "name": "Žralok grónský",
     "water": "Slaná",
     "rating": 5,
+    "rarity_factor": 1.0,
     "baits": [
       "Monstrum"
     ],
@@ -1016,6 +1063,7 @@ window.FISHAO_DATA = {
     "name": "Piloun malozubý",
     "water": "Slaná",
     "rating": 5,
+    "rarity_factor": 1.0,
     "baits": [
       "Monstrum"
     ],
@@ -1036,6 +1084,7 @@ window.FISHAO_DATA = {
     "name": "Piloun obecný",
     "water": "Slaná",
     "rating": 5,
+    "rarity_factor": 1.0,
     "baits": [
       "Monstrum"
     ],
@@ -1056,6 +1105,7 @@ window.FISHAO_DATA = {
     "name": "Tlamovec Thomasův",
     "water": "Sladká",
     "rating": 1,
+    "rarity_factor": 1.0,
     "baits": [
       "Těsta",
       "Hmyz",
@@ -1078,6 +1128,7 @@ window.FISHAO_DATA = {
     "name": "Štika americká",
     "water": "Sladká",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz",
@@ -1100,6 +1151,7 @@ window.FISHAO_DATA = {
     "name": "Chanos stříbřitý",
     "water": "Sladká",
     "rating": 3,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz"
     ],
@@ -1120,6 +1172,7 @@ window.FISHAO_DATA = {
     "name": "Cichlida plochohlavá",
     "water": "Sladká",
     "rating": 3,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz"
@@ -1141,6 +1194,7 @@ window.FISHAO_DATA = {
     "name": "Okouníček sklovitý",
     "water": "Sladká",
     "rating": 2,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz"
     ],
@@ -1161,6 +1215,7 @@ window.FISHAO_DATA = {
     "name": "Čtverzubec lysý",
     "water": "Sladká",
     "rating": 2,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz"
@@ -1182,6 +1237,7 @@ window.FISHAO_DATA = {
     "name": "Plošák stříbřitý",
     "water": "Sladká",
     "rating": 2,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz"
@@ -1203,6 +1259,7 @@ window.FISHAO_DATA = {
     "name": "Perleťovka démon",
     "water": "Sladká",
     "rating": 2,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz"
@@ -1224,6 +1281,7 @@ window.FISHAO_DATA = {
     "name": "Dánio duhové",
     "water": "Sladká",
     "rating": 1,
+    "rarity_factor": 1.0,
     "baits": [
       "Těsta",
       "Hmyz",
@@ -1246,6 +1304,7 @@ window.FISHAO_DATA = {
     "name": "Galaxie velká",
     "water": "Sladká",
     "rating": 5,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz"
     ],
@@ -1266,6 +1325,7 @@ window.FISHAO_DATA = {
     "name": "Jeseter sibiřský",
     "water": "Sladká",
     "rating": 5,
+    "rarity_factor": 0.2,
     "baits": [
       "Ryby"
     ],
@@ -1286,6 +1346,7 @@ window.FISHAO_DATA = {
     "name": "Jeseter krátkorypý",
     "water": "Sladká",
     "rating": 5,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby"
     ],
@@ -1306,6 +1367,7 @@ window.FISHAO_DATA = {
     "name": "Kostlín skvrnitý",
     "water": "Sladká",
     "rating": 5,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Přívlač/Nástrahy"
@@ -1330,6 +1392,7 @@ window.FISHAO_DATA = {
     "name": "Štika zlatá",
     "water": "Sladká",
     "rating": 5,
+    "rarity_factor": 0.1,
     "baits": [
       "Ryby",
       "Hmyz",
@@ -1352,6 +1415,7 @@ window.FISHAO_DATA = {
     "name": "Hrdložábřík bělavý",
     "water": "Sladká",
     "rating": 5,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Maso",
@@ -1376,6 +1440,7 @@ window.FISHAO_DATA = {
     "name": "Kostlín černý",
     "water": "Sladká",
     "rating": 5,
+    "rarity_factor": 0.05,
     "baits": [
       "Ryby",
       "Přívlač/Nástrahy"
@@ -1397,6 +1462,7 @@ window.FISHAO_DATA = {
     "name": "Rypoun vidlozubý",
     "water": "Sladká",
     "rating": 5,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz"
     ],
@@ -1417,6 +1483,7 @@ window.FISHAO_DATA = {
     "name": "Tetra Sweglesova",
     "water": "Sladká",
     "rating": 3,
+    "rarity_factor": 1.0,
     "baits": [
       "Těsta",
       "Rostlinné",
@@ -1439,6 +1506,7 @@ window.FISHAO_DATA = {
     "name": "Cichlida madagaskarská",
     "water": "Sladká",
     "rating": 5,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Hmyz"
@@ -1460,6 +1528,7 @@ window.FISHAO_DATA = {
     "name": "Piraňa tmavá",
     "water": "Sladká",
     "rating": 4,
+    "rarity_factor": 0.1,
     "baits": [
       "Ryby",
       "Rostlinné",
@@ -1483,6 +1552,7 @@ window.FISHAO_DATA = {
     "name": "Vějířovka příčnopruhá",
     "water": "Sladká",
     "rating": 2,
+    "rarity_factor": 1.0,
     "baits": [
       "Těsta",
       "Rostlinné",
@@ -1505,6 +1575,7 @@ window.FISHAO_DATA = {
     "name": "Noční poutník",
     "water": "Sladká",
     "rating": 5,
+    "rarity_factor": 0.2,
     "baits": [
       "Těsta",
       "Rostlinné"
@@ -1526,6 +1597,7 @@ window.FISHAO_DATA = {
     "name": "Kostlín zlatý",
     "water": "Sladká",
     "rating": 5,
+    "rarity_factor": 0.2,
     "baits": [
       "Přívlač/Nástrahy",
       "Ryby"
@@ -1547,6 +1619,7 @@ window.FISHAO_DATA = {
     "name": "Bojovnice Brownových",
     "water": "Sladká",
     "rating": 1,
+    "rarity_factor": 1.0,
     "baits": [
       "Těsta",
       "Rostlinné",
@@ -1569,6 +1642,7 @@ window.FISHAO_DATA = {
     "name": "Channa aurantimaculata",
     "water": "Sladká",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Hmyz",
       "Ryby"
@@ -1592,6 +1666,7 @@ window.FISHAO_DATA = {
     "name": "Štika americká červenoploutvá",
     "water": "Sladká",
     "rating": 4,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Přívlač/Nástrahy",
@@ -1614,6 +1689,7 @@ window.FISHAO_DATA = {
     "name": "Štikovka skvrnitá",
     "water": "Sladká",
     "rating": 3,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Přívlač/Nástrahy",
@@ -1636,6 +1712,7 @@ window.FISHAO_DATA = {
     "name": "Neonka obecná",
     "water": "Sladká",
     "rating": 1,
+    "rarity_factor": 1.0,
     "baits": [
       "Rostlinné",
       "Hmyz"
@@ -1657,6 +1734,7 @@ window.FISHAO_DATA = {
     "name": "Jeseter amurský",
     "water": "Sladká",
     "rating": 5,
+    "rarity_factor": 0.5,
     "baits": [
       "Ryby"
     ],
@@ -1677,6 +1755,7 @@ window.FISHAO_DATA = {
     "name": "Kostlín floridský",
     "water": "Sladká",
     "rating": 5,
+    "rarity_factor": 1.0,
     "baits": [
       "Ryby",
       "Přívlač/Nástrahy"
@@ -1701,6 +1780,7 @@ window.FISHAO_DATA = {
     "name": "Jeseter jihočínský",
     "water": "Sladká",
     "rating": 5,
+    "rarity_factor": 0.1,
     "baits": [
       "Ryby"
     ],
@@ -1723,6 +1803,7 @@ window.FISHAO_DATA = {
     "name": "Piraňa obecná",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical",
       "Marshville"
@@ -1748,6 +1829,7 @@ window.FISHAO_DATA = {
     "name": "Arapaima velká",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical",
       "Aquayama"
@@ -1773,6 +1855,7 @@ window.FISHAO_DATA = {
     "name": "Parma obecná",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Laketown",
       "Thombani Town"
@@ -1796,6 +1879,7 @@ window.FISHAO_DATA = {
     "name": "Hořavka duhová",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Laketown"
     ],
@@ -1816,6 +1900,7 @@ window.FISHAO_DATA = {
     "name": "Okounek pstruhový",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Laketown",
       "Cool Mountain"
@@ -1838,6 +1923,7 @@ window.FISHAO_DATA = {
     "name": "Slunečnice velkoploutvá",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Laketown",
       "Thombani Town",
@@ -1862,6 +1948,7 @@ window.FISHAO_DATA = {
     "name": "Marlín modrý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -1883,6 +1970,7 @@ window.FISHAO_DATA = {
     "name": "Kapr obecný",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Laketown",
       "Rio Tropical",
@@ -1907,6 +1995,7 @@ window.FISHAO_DATA = {
     "name": "Sumec velký",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain"
     ],
@@ -1930,6 +2019,7 @@ window.FISHAO_DATA = {
     "name": "Vyza velká",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain"
     ],
@@ -1949,6 +2039,7 @@ window.FISHAO_DATA = {
     "name": "Siven severní",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain"
     ],
@@ -1975,6 +2066,7 @@ window.FISHAO_DATA = {
     "name": "Losos masu",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama"
     ],
@@ -1998,6 +2090,7 @@ window.FISHAO_DATA = {
     "name": "Latimérie podivná",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -2017,6 +2110,7 @@ window.FISHAO_DATA = {
     "name": "Karas obecný",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Lake Run"
     ],
@@ -2038,6 +2132,7 @@ window.FISHAO_DATA = {
     "name": "Limanda obecná",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -2058,6 +2153,7 @@ window.FISHAO_DATA = {
     "name": "Jelec proudník",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Race"
     ],
@@ -2079,6 +2175,7 @@ window.FISHAO_DATA = {
     "name": "Kujaba brazilská",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -2103,6 +2200,7 @@ window.FISHAO_DATA = {
     "name": "Úhoř",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Laketown",
       "Thombani Town"
@@ -2127,6 +2225,7 @@ window.FISHAO_DATA = {
     "name": "Hlaváč",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Thombani Town"
     ],
@@ -2146,6 +2245,7 @@ window.FISHAO_DATA = {
     "name": "Kostlín",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Race"
     ],
@@ -2166,6 +2266,7 @@ window.FISHAO_DATA = {
     "name": "Hadohlavec červený",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama",
       "Marshville"
@@ -2189,6 +2290,7 @@ window.FISHAO_DATA = {
     "name": "Kapr zlatý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Laketown"
     ],
@@ -2212,6 +2314,7 @@ window.FISHAO_DATA = {
     "name": "Žralok kladivoun",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -2235,6 +2338,7 @@ window.FISHAO_DATA = {
     "name": "Kranas obecný",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -2254,6 +2358,7 @@ window.FISHAO_DATA = {
     "name": "Losos čavyča",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -2274,6 +2379,7 @@ window.FISHAO_DATA = {
     "name": "Měsíčník svítivý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -2293,6 +2399,7 @@ window.FISHAO_DATA = {
     "name": "Okoun žlutý",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Race"
     ],
@@ -2314,6 +2421,7 @@ window.FISHAO_DATA = {
     "name": "Tuňák obecný",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -2334,6 +2442,7 @@ window.FISHAO_DATA = {
     "name": "Platýs velký",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -2354,6 +2463,7 @@ window.FISHAO_DATA = {
     "name": "Zako japonský",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama"
     ],
@@ -2374,6 +2484,7 @@ window.FISHAO_DATA = {
     "name": "Koruška maloústá",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Lake Run"
     ],
@@ -2394,6 +2505,7 @@ window.FISHAO_DATA = {
     "name": "Čtverzubec",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -2416,6 +2528,7 @@ window.FISHAO_DATA = {
     "name": "Pstruh duhový",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Pstruží farma",
       "Cool Mountain"
@@ -2439,6 +2552,7 @@ window.FISHAO_DATA = {
     "name": "Chňapal červený",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach",
       "Seagull Harbor"
@@ -2460,6 +2574,7 @@ window.FISHAO_DATA = {
     "name": "Losos obecný",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -2480,6 +2595,7 @@ window.FISHAO_DATA = {
     "name": "Mořčák evropský",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -2500,6 +2616,7 @@ window.FISHAO_DATA = {
     "name": "Žralok",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -2520,6 +2637,7 @@ window.FISHAO_DATA = {
     "name": "Štika obecná",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Laketown",
       "Marshville"
@@ -2542,6 +2660,7 @@ window.FISHAO_DATA = {
     "name": "Cejn velký",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Laketown"
     ],
@@ -2562,6 +2681,7 @@ window.FISHAO_DATA = {
     "name": "Slunečnice malá",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Laketown"
     ],
@@ -2582,6 +2702,7 @@ window.FISHAO_DATA = {
     "name": "Lín obecný",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama"
     ],
@@ -2602,6 +2723,7 @@ window.FISHAO_DATA = {
     "name": "Akara dvouskvrnná",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -2621,6 +2743,7 @@ window.FISHAO_DATA = {
     "name": "Anténovec paranánský",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -2642,6 +2765,7 @@ window.FISHAO_DATA = {
     "name": "Paúhoř elektrický",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Marshville"
     ],
@@ -2662,6 +2786,7 @@ window.FISHAO_DATA = {
     "name": "Vějířovka černoploutvá",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -2682,6 +2807,7 @@ window.FISHAO_DATA = {
     "name": "Úzkotlamka cejnovitá",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -2702,6 +2828,7 @@ window.FISHAO_DATA = {
     "name": "Hřebenáč paví",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -2722,6 +2849,7 @@ window.FISHAO_DATA = {
     "name": "Útesník pruhovaný",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -2742,6 +2870,7 @@ window.FISHAO_DATA = {
     "name": "Havýš plástevný",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -2763,6 +2892,7 @@ window.FISHAO_DATA = {
     "name": "Soltýn barakuda",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft",
       "Turnaj Boat On Sea"
@@ -2785,6 +2915,7 @@ window.FISHAO_DATA = {
     "name": "Tarpon atlantský",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -2805,6 +2936,7 @@ window.FISHAO_DATA = {
     "name": "Kranas duhový",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -2827,6 +2959,7 @@ window.FISHAO_DATA = {
     "name": "Žabohlavec surinamský",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -2846,6 +2979,7 @@ window.FISHAO_DATA = {
     "name": "Vidlatka tuňákovitá",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -2866,6 +3000,7 @@ window.FISHAO_DATA = {
     "name": "Kanic modroskvrnný",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -2886,6 +3021,7 @@ window.FISHAO_DATA = {
     "name": "Sardinka oblá",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -2906,6 +3042,7 @@ window.FISHAO_DATA = {
     "name": "Vyza malá",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama"
     ],
@@ -2926,6 +3063,7 @@ window.FISHAO_DATA = {
     "name": "Pomec modročelý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -2946,6 +3084,7 @@ window.FISHAO_DATA = {
     "name": "Chrochtal modropásý",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -2966,6 +3105,7 @@ window.FISHAO_DATA = {
     "name": "Kanic bělopruhý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -2992,6 +3132,7 @@ window.FISHAO_DATA = {
     "name": "Pomec černý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -3012,6 +3153,7 @@ window.FISHAO_DATA = {
     "name": "Chňapal",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -3032,6 +3174,7 @@ window.FISHAO_DATA = {
     "name": "Ostenec sargasový",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -3053,6 +3196,7 @@ window.FISHAO_DATA = {
     "name": "Pyskoun perlový",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -3074,6 +3218,7 @@ window.FISHAO_DATA = {
     "name": "Kranas mosazopruhý",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -3094,6 +3239,7 @@ window.FISHAO_DATA = {
     "name": "Křížovec dlouhoploutvý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Mystic Desert"
     ],
@@ -3117,6 +3263,7 @@ window.FISHAO_DATA = {
     "name": "Tlamovec Livingstonův",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Mystic Desert"
     ],
@@ -3136,6 +3283,7 @@ window.FISHAO_DATA = {
     "name": "Gurama velká",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama",
       "Marshville"
@@ -3157,6 +3305,7 @@ window.FISHAO_DATA = {
     "name": "Arowana zlatá",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pyramida"
     ],
@@ -3177,6 +3326,7 @@ window.FISHAO_DATA = {
     "name": "Keříčkovec červenolemý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Mystic Desert",
       "Thombani Town"
@@ -3201,6 +3351,7 @@ window.FISHAO_DATA = {
     "name": "Afrotetra Forskållova",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Mystic Desert",
       "Thombani Town"
@@ -3223,6 +3374,7 @@ window.FISHAO_DATA = {
     "name": "Rypoun úhořovitý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Mystic Desert",
       "Thombani Town"
@@ -3244,6 +3396,7 @@ window.FISHAO_DATA = {
     "name": "Tlamoun nilský",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Mystic Desert",
       "Thombani Town"
@@ -3264,6 +3417,7 @@ window.FISHAO_DATA = {
     "name": "Sumčík stříbřitý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Mystic Desert",
       "Thombani Town"
@@ -3288,6 +3442,7 @@ window.FISHAO_DATA = {
     "name": "Klaun očkatý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -3308,6 +3463,7 @@ window.FISHAO_DATA = {
     "name": "Perlín ostrobřichý",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain"
     ],
@@ -3329,6 +3485,7 @@ window.FISHAO_DATA = {
     "name": "Robalo nilský",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Mystic Desert",
       "Thombani Town"
@@ -3351,6 +3508,7 @@ window.FISHAO_DATA = {
     "name": "Candát severoamerický",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain"
     ],
@@ -3372,6 +3530,7 @@ window.FISHAO_DATA = {
     "name": "Cichlida",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Lake Run"
     ],
@@ -3392,6 +3551,7 @@ window.FISHAO_DATA = {
     "name": "Parma velkotlamá",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Thombani Town"
     ],
@@ -3413,6 +3573,7 @@ window.FISHAO_DATA = {
     "name": "Smuha chrochtavá",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain"
     ],
@@ -3434,6 +3595,7 @@ window.FISHAO_DATA = {
     "name": "Nožovec velký",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama"
     ],
@@ -3455,6 +3617,7 @@ window.FISHAO_DATA = {
     "name": "Hrouzkovka skvrnoploutvá",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama"
     ],
@@ -3475,6 +3638,7 @@ window.FISHAO_DATA = {
     "name": "Sekavec vepřorypý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama"
     ],
@@ -3495,6 +3659,7 @@ window.FISHAO_DATA = {
     "name": "Jeseter čínský",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama"
     ],
@@ -3514,6 +3679,7 @@ window.FISHAO_DATA = {
     "name": "Katla obecná",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama"
     ],
@@ -3535,6 +3701,7 @@ window.FISHAO_DATA = {
     "name": "Rypoun zobanitý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Marshville"
     ],
@@ -3554,6 +3721,7 @@ window.FISHAO_DATA = {
     "name": "Leskyně skvrnitá",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Sibiri City"
     ],
@@ -3574,6 +3742,7 @@ window.FISHAO_DATA = {
     "name": "Tkaničnice stříbřitá",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Sibiri City"
     ],
@@ -3596,6 +3765,7 @@ window.FISHAO_DATA = {
     "name": "Cípal pyskatý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Sibiri City"
     ],
@@ -3617,6 +3787,7 @@ window.FISHAO_DATA = {
     "name": "Sleď obecný",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Sibiri City"
     ],
@@ -3637,6 +3808,7 @@ window.FISHAO_DATA = {
     "name": "Žralok psí",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Sibiri City"
     ],
@@ -3658,6 +3830,7 @@ window.FISHAO_DATA = {
     "name": "Úhořovec mořský",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Sibiri City"
     ],
@@ -3677,6 +3850,7 @@ window.FISHAO_DATA = {
     "name": "Ostnatec zmijí",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Sibiri City"
     ],
@@ -3697,6 +3871,7 @@ window.FISHAO_DATA = {
     "name": "Treska skvrnitá",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Sibiri City"
     ],
@@ -3717,6 +3892,7 @@ window.FISHAO_DATA = {
     "name": "Mořan zlatý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Thombani Town"
     ],
@@ -3737,6 +3913,7 @@ window.FISHAO_DATA = {
     "name": "Pasumec elektrický",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Thombani Town"
     ],
@@ -3760,6 +3937,7 @@ window.FISHAO_DATA = {
     "name": "Pstruh obecný",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Pstruží farma",
       "Marshville"
@@ -3783,6 +3961,7 @@ window.FISHAO_DATA = {
     "name": "Kostlín obrovský",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Marshville"
     ],
@@ -3804,6 +3983,7 @@ window.FISHAO_DATA = {
     "name": "Vlkouš obecný",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -3824,6 +4004,7 @@ window.FISHAO_DATA = {
     "name": "Kaprovec velkoústý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Race"
     ],
@@ -3843,6 +4024,7 @@ window.FISHAO_DATA = {
     "name": "Lipan podhorní",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Race"
     ],
@@ -3863,6 +4045,7 @@ window.FISHAO_DATA = {
     "name": "Pomčík ohnivý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -3883,6 +4066,7 @@ window.FISHAO_DATA = {
     "name": "Paokoun zlatavý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Marshville"
     ],
@@ -3904,6 +4088,7 @@ window.FISHAO_DATA = {
     "name": "Binga tygří",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Race"
     ],
@@ -3924,6 +4109,7 @@ window.FISHAO_DATA = {
     "name": "Piloun mnohozubý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -3944,6 +4130,7 @@ window.FISHAO_DATA = {
     "name": "Jeseter jezerní",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Lake Run"
     ],
@@ -3964,6 +4151,7 @@ window.FISHAO_DATA = {
     "name": "Karas Lví hlava",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Lake Run"
     ],
@@ -3985,6 +4173,7 @@ window.FISHAO_DATA = {
     "name": "Paokoun mramorovaný",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Marshville"
     ],
@@ -4006,6 +4195,7 @@ window.FISHAO_DATA = {
     "name": "Vrubozubec paví",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Race"
     ],
@@ -4027,6 +4217,7 @@ window.FISHAO_DATA = {
     "name": "Kanic písmenkový",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -4048,6 +4239,7 @@ window.FISHAO_DATA = {
     "name": "Zubatice makrelová",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Race"
     ],
@@ -4068,6 +4260,7 @@ window.FISHAO_DATA = {
     "name": "Losos gorbuša",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Race"
     ],
@@ -4089,6 +4282,7 @@ window.FISHAO_DATA = {
     "name": "Plachetník širokoploutvý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -4109,6 +4303,7 @@ window.FISHAO_DATA = {
     "name": "Hlavačka",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Marshville"
     ],
@@ -4130,6 +4325,7 @@ window.FISHAO_DATA = {
     "name": "Losos nerka",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain"
     ],
@@ -4151,6 +4347,7 @@ window.FISHAO_DATA = {
     "name": "Ostnovec skvrnoocasý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Marshville"
     ],
@@ -4172,6 +4369,7 @@ window.FISHAO_DATA = {
     "name": "Piraňa rostlinožravá",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Marshville"
     ],
@@ -4192,6 +4390,7 @@ window.FISHAO_DATA = {
     "name": "Ostnatec skvrnkovaný",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -4214,6 +4413,7 @@ window.FISHAO_DATA = {
     "name": "Pstruh aguabonita",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Pstruží farma",
       "Turnaj Lake Run"
@@ -4237,6 +4437,7 @@ window.FISHAO_DATA = {
     "name": "Siven americký",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Pstruží farma",
       "Turnaj Lake Run"
@@ -4260,6 +4461,7 @@ window.FISHAO_DATA = {
     "name": "Tygří ryba",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Pstruží farma",
       "Turnaj Race"
@@ -4283,6 +4485,7 @@ window.FISHAO_DATA = {
     "name": "Chobotnice pobřežní",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -4306,6 +4509,7 @@ window.FISHAO_DATA = {
     "name": "Rejnok říční",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -4327,6 +4531,7 @@ window.FISHAO_DATA = {
     "name": "Vranka mnohoostná",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain"
     ],
@@ -4346,6 +4551,7 @@ window.FISHAO_DATA = {
     "name": "Amuřice Hoevenova",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama"
     ],
@@ -4366,6 +4572,7 @@ window.FISHAO_DATA = {
     "name": "Pilohřbetec malošupinatý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Mystic Desert",
       "Aquayama"
@@ -4387,6 +4594,7 @@ window.FISHAO_DATA = {
     "name": "Rejnok severní",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Sibiri City"
     ],
@@ -4407,6 +4615,7 @@ window.FISHAO_DATA = {
     "name": "Platýs bradavičnatý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Lake Run"
     ],
@@ -4427,6 +4636,7 @@ window.FISHAO_DATA = {
     "name": "Blatňák menší",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Lake Run"
     ],
@@ -4446,6 +4656,7 @@ window.FISHAO_DATA = {
     "name": "Okoun říční",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Lake Run"
     ],
@@ -4467,6 +4678,7 @@ window.FISHAO_DATA = {
     "name": "Karas zlatý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Lake Run",
       "Pyramida"
@@ -4488,6 +4700,7 @@ window.FISHAO_DATA = {
     "name": "Jelec tloušť",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Race"
     ],
@@ -4511,6 +4724,7 @@ window.FISHAO_DATA = {
     "name": "Candát obecný",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Lake Run"
     ],
@@ -4532,6 +4746,7 @@ window.FISHAO_DATA = {
     "name": "Sumeček černý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Lake Run"
     ],
@@ -4555,6 +4770,7 @@ window.FISHAO_DATA = {
     "name": "Strašík maloústý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -4576,6 +4792,7 @@ window.FISHAO_DATA = {
     "name": "Ropušnice malá",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -4597,6 +4814,7 @@ window.FISHAO_DATA = {
     "name": "Siven malma",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Race"
     ],
@@ -4618,6 +4836,7 @@ window.FISHAO_DATA = {
     "name": "Krunýřovec guyanský",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Lake Run"
     ],
@@ -4638,6 +4857,7 @@ window.FISHAO_DATA = {
     "name": "Veslonos americký",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Laketown"
     ],
@@ -4657,6 +4877,7 @@ window.FISHAO_DATA = {
     "name": "Perutýn ohnivý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -4679,6 +4900,7 @@ window.FISHAO_DATA = {
     "name": "Havýš hladký",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -4699,6 +4921,7 @@ window.FISHAO_DATA = {
     "name": "Ploskozubec duhový",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -4718,6 +4941,7 @@ window.FISHAO_DATA = {
     "name": "Velkotlamec Johnsonův",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Sibiri City"
     ],
@@ -4742,6 +4966,7 @@ window.FISHAO_DATA = {
     "name": "Pangas velký",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Lake Run"
     ],
@@ -4765,6 +4990,7 @@ window.FISHAO_DATA = {
     "name": "Slunečnice červenooká",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Lake Run"
     ],
@@ -4786,6 +5012,7 @@ window.FISHAO_DATA = {
     "name": "Vřeténka mandarín",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -4810,6 +5037,7 @@ window.FISHAO_DATA = {
     "name": "Okounek černý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Race"
     ],
@@ -4831,6 +5059,7 @@ window.FISHAO_DATA = {
     "name": "Okounek tmavoskvrnný",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Race"
     ],
@@ -4852,6 +5081,7 @@ window.FISHAO_DATA = {
     "name": "Koryféna velká",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -4872,6 +5102,7 @@ window.FISHAO_DATA = {
     "name": "Letoun středomořský",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -4892,6 +5123,7 @@ window.FISHAO_DATA = {
     "name": "Muréna jávská",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -4913,6 +5145,7 @@ window.FISHAO_DATA = {
     "name": "Sisora Yarrellova",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -4936,6 +5169,7 @@ window.FISHAO_DATA = {
     "name": "Sekernatka drobná",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -4957,6 +5191,7 @@ window.FISHAO_DATA = {
     "name": "Okounek černoskvrnný",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -4980,6 +5215,7 @@ window.FISHAO_DATA = {
     "name": "Ouklej obecná",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5000,6 +5236,7 @@ window.FISHAO_DATA = {
     "name": "Živorodka duhová",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5020,6 +5257,7 @@ window.FISHAO_DATA = {
     "name": "Veleparma thajská",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5041,6 +5279,7 @@ window.FISHAO_DATA = {
     "name": "Terčovec",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 0.2,
     "locations": [
       "Za domem"
     ],
@@ -5063,6 +5302,7 @@ window.FISHAO_DATA = {
     "name": "Sumíček bajad",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5086,6 +5326,7 @@ window.FISHAO_DATA = {
     "name": "Kaprovec černý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5107,6 +5348,7 @@ window.FISHAO_DATA = {
     "name": "Kančík citrónový",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5129,6 +5371,7 @@ window.FISHAO_DATA = {
     "name": "Hlavatka obecná",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5150,6 +5393,7 @@ window.FISHAO_DATA = {
     "name": "Candátek modropásý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5174,6 +5418,7 @@ window.FISHAO_DATA = {
     "name": "Bahník východoafrický",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5196,6 +5441,7 @@ window.FISHAO_DATA = {
     "name": "Nožovec černý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5216,6 +5462,7 @@ window.FISHAO_DATA = {
     "name": "Mník jednovousý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5240,6 +5487,7 @@ window.FISHAO_DATA = {
     "name": "Trnovec černý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5263,6 +5511,7 @@ window.FISHAO_DATA = {
     "name": "Vandélie obecná",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5283,6 +5532,7 @@ window.FISHAO_DATA = {
     "name": "Štika muskalunga",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5307,6 +5557,7 @@ window.FISHAO_DATA = {
     "name": "Žralok bělavý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5331,6 +5582,7 @@ window.FISHAO_DATA = {
     "name": "Trnucha thajská",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5353,6 +5605,7 @@ window.FISHAO_DATA = {
     "name": "Kančík modroskvrnný",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5372,6 +5625,7 @@ window.FISHAO_DATA = {
     "name": "Sumeček plochohlavý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5395,6 +5649,7 @@ window.FISHAO_DATA = {
     "name": "Siven velkohlavý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5422,6 +5677,7 @@ window.FISHAO_DATA = {
     "name": "Pstruh apačský",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5449,6 +5705,7 @@ window.FISHAO_DATA = {
     "name": "Sumeček velký",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5472,6 +5729,7 @@ window.FISHAO_DATA = {
     "name": "Vranka pruhoploutvá",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5491,6 +5749,7 @@ window.FISHAO_DATA = {
     "name": "Drsek menší",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5510,6 +5769,7 @@ window.FISHAO_DATA = {
     "name": "Slunečnice pestrá",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5533,6 +5793,7 @@ window.FISHAO_DATA = {
     "name": "Vranka čtyřrohá",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5552,6 +5813,7 @@ window.FISHAO_DATA = {
     "name": "Razbora červenopruhá",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5573,6 +5835,7 @@ window.FISHAO_DATA = {
     "name": "Úzkotlamka nádherná",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5596,6 +5859,7 @@ window.FISHAO_DATA = {
     "name": "Halančík Gardnerův",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5618,6 +5882,7 @@ window.FISHAO_DATA = {
     "name": "Trnovec hřebenočelý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5639,6 +5904,7 @@ window.FISHAO_DATA = {
     "name": "Sekavec příčnopásý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5660,6 +5926,7 @@ window.FISHAO_DATA = {
     "name": "Motýlkovec africký",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5681,6 +5948,7 @@ window.FISHAO_DATA = {
     "name": "Hrotočelec ohnivý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5703,6 +5971,7 @@ window.FISHAO_DATA = {
     "name": "Ostnáč jednovousý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5725,6 +5994,7 @@ window.FISHAO_DATA = {
     "name": "Kaproun obecný",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5749,6 +6019,7 @@ window.FISHAO_DATA = {
     "name": "Jeseter bílý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5770,6 +6041,7 @@ window.FISHAO_DATA = {
     "name": "Hlavatka sibiřská",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5795,6 +6067,7 @@ window.FISHAO_DATA = {
     "name": "Hlístoun červenohřívý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach",
       "Sibiri City",
@@ -5819,6 +6092,7 @@ window.FISHAO_DATA = {
     "name": "Čtverzubec trpasličí",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5839,6 +6113,7 @@ window.FISHAO_DATA = {
     "name": "Duhovka",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5859,6 +6134,7 @@ window.FISHAO_DATA = {
     "name": "Pangas vláknoploutvý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5886,6 +6162,7 @@ window.FISHAO_DATA = {
     "name": "Arowana dvojvousá",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5909,6 +6186,7 @@ window.FISHAO_DATA = {
     "name": "Arowana asijská",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5930,6 +6208,7 @@ window.FISHAO_DATA = {
     "name": "Bojovnice pestrá",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5949,6 +6228,7 @@ window.FISHAO_DATA = {
     "name": "Čtverzubec konžský",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5969,6 +6249,7 @@ window.FISHAO_DATA = {
     "name": "Čtverzubec baileyi",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -5989,6 +6270,7 @@ window.FISHAO_DATA = {
     "name": "Chaka indonéská",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -6012,6 +6294,7 @@ window.FISHAO_DATA = {
     "name": "Žabohlavec trojtrnný",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -6033,6 +6316,7 @@ window.FISHAO_DATA = {
     "name": "Žralok sedmižábrý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -6052,6 +6336,7 @@ window.FISHAO_DATA = {
     "name": "Žralok límcový",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -6073,6 +6358,7 @@ window.FISHAO_DATA = {
     "name": "Žralok trnitý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -6092,6 +6378,7 @@ window.FISHAO_DATA = {
     "name": "Ostroun obecný",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -6111,6 +6398,7 @@ window.FISHAO_DATA = {
     "name": "Žralok Cookeův",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -6132,6 +6420,7 @@ window.FISHAO_DATA = {
     "name": "Polorejnok",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -6151,6 +6440,7 @@ window.FISHAO_DATA = {
     "name": "Různozubec Francisův",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -6174,6 +6464,7 @@ window.FISHAO_DATA = {
     "name": "Wobegong skvrnitý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -6193,6 +6484,7 @@ window.FISHAO_DATA = {
     "name": "Žralok zebrovitý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -6214,6 +6506,7 @@ window.FISHAO_DATA = {
     "name": "Žralok vouskatý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -6238,6 +6531,7 @@ window.FISHAO_DATA = {
     "name": "Žralok obrovský",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -6257,6 +6551,7 @@ window.FISHAO_DATA = {
     "name": "Vousatec Smithův",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -6276,6 +6571,7 @@ window.FISHAO_DATA = {
     "name": "Pruhoun novozélandský",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -6295,6 +6591,7 @@ window.FISHAO_DATA = {
     "name": "Máčka korálová",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -6314,6 +6611,7 @@ window.FISHAO_DATA = {
     "name": "Žralok modrý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -6333,6 +6631,7 @@ window.FISHAO_DATA = {
     "name": "Žralok tygří",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -6352,6 +6651,7 @@ window.FISHAO_DATA = {
     "name": "Žralok šotek",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Sibiri City"
     ],
@@ -6373,6 +6673,7 @@ window.FISHAO_DATA = {
     "name": "Žralok veliký",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor",
       "Turnaj Boat On Sea",
@@ -6394,6 +6695,7 @@ window.FISHAO_DATA = {
     "name": "Žralok velkoústý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Sibiri City"
     ],
@@ -6413,6 +6715,7 @@ window.FISHAO_DATA = {
     "name": "Liškoun obecný",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -6432,6 +6735,7 @@ window.FISHAO_DATA = {
     "name": "Žralok východní",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Sibiri City"
     ],
@@ -6451,6 +6755,7 @@ window.FISHAO_DATA = {
     "name": "Žralok bílý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -6470,6 +6775,7 @@ window.FISHAO_DATA = {
     "name": "Siven obří",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pstruží farma",
       "Cool Mountain"
@@ -6492,6 +6798,7 @@ window.FISHAO_DATA = {
     "name": "Veslonos čínský",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama"
     ],
@@ -6515,6 +6822,7 @@ window.FISHAO_DATA = {
     "name": "Sumec albín",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Thombani Town"
     ],
@@ -6536,6 +6844,7 @@ window.FISHAO_DATA = {
     "name": "Tolstolobik bílý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -6557,6 +6866,7 @@ window.FISHAO_DATA = {
     "name": "Bahník americký",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -6582,6 +6892,7 @@ window.FISHAO_DATA = {
     "name": "Pyskoun skvrnitý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -6603,6 +6914,7 @@ window.FISHAO_DATA = {
     "name": "Kytarovec křivoústý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -6622,6 +6934,7 @@ window.FISHAO_DATA = {
     "name": "Kanic obrovský",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -6644,6 +6957,7 @@ window.FISHAO_DATA = {
     "name": "Platýs tichomořský",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -6663,6 +6977,7 @@ window.FISHAO_DATA = {
     "name": "Ploskozubec vysokočelý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -6684,6 +6999,7 @@ window.FISHAO_DATA = {
     "name": "Udicovka tasmánská",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -6703,6 +7019,7 @@ window.FISHAO_DATA = {
     "name": "Řasovník rozedraný",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -6723,6 +7040,7 @@ window.FISHAO_DATA = {
     "name": "Muréna obecná",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -6744,6 +7062,7 @@ window.FISHAO_DATA = {
     "name": "Jeseter perský",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain"
     ],
@@ -6765,6 +7084,7 @@ window.FISHAO_DATA = {
     "name": "Ostenec chřestivý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -6785,6 +7105,7 @@ window.FISHAO_DATA = {
     "name": "Jeseter hvězdnatý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Laketown"
     ],
@@ -6807,6 +7128,7 @@ window.FISHAO_DATA = {
     "name": "Jeseter velký",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -6826,6 +7148,7 @@ window.FISHAO_DATA = {
     "name": "Arowana zlatá červenoocasá",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -6846,6 +7169,7 @@ window.FISHAO_DATA = {
     "name": "Arowana černá",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Pyramida"
     ],
@@ -6870,6 +7194,7 @@ window.FISHAO_DATA = {
     "name": "Fantang nilský",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -6890,6 +7215,7 @@ window.FISHAO_DATA = {
     "name": "Zelená arowana",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -6912,6 +7238,7 @@ window.FISHAO_DATA = {
     "name": "Zeleno-červená arowana",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -6932,6 +7259,7 @@ window.FISHAO_DATA = {
     "name": "Arowana žlutoocasá",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -6955,6 +7283,7 @@ window.FISHAO_DATA = {
     "name": "Baramundi malajský",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama"
     ],
@@ -6977,6 +7306,7 @@ window.FISHAO_DATA = {
     "name": "Arowana platinová",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -6999,6 +7329,7 @@ window.FISHAO_DATA = {
     "name": "Baramundi severní",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -7021,6 +7352,7 @@ window.FISHAO_DATA = {
     "name": "Arowana modrá",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.2,
     "locations": [
       "Za domem"
     ],
@@ -7043,6 +7375,7 @@ window.FISHAO_DATA = {
     "name": "Piraňa plodožravá",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -7065,6 +7398,7 @@ window.FISHAO_DATA = {
     "name": "Pachiméra sagamská",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7084,6 +7418,7 @@ window.FISHAO_DATA = {
     "name": "Štítovec krátkoploutvý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7105,6 +7440,7 @@ window.FISHAO_DATA = {
     "name": "Pilníkotrn velký",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7125,6 +7461,7 @@ window.FISHAO_DATA = {
     "name": "Okouník černopásý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7145,6 +7482,7 @@ window.FISHAO_DATA = {
     "name": "Muréna nosatá",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7164,6 +7502,7 @@ window.FISHAO_DATA = {
     "name": "Manta obrovská",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7183,6 +7522,7 @@ window.FISHAO_DATA = {
     "name": "Lopatonos alabamský",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7202,6 +7542,7 @@ window.FISHAO_DATA = {
     "name": "Krakatice obrovská",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7221,6 +7562,7 @@ window.FISHAO_DATA = {
     "name": "Mečoun obecný",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7241,6 +7583,7 @@ window.FISHAO_DATA = {
     "name": "Gyrodus",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7260,6 +7603,7 @@ window.FISHAO_DATA = {
     "name": "Acanthodes",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7279,6 +7623,7 @@ window.FISHAO_DATA = {
     "name": "Antiarchi",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7298,6 +7643,7 @@ window.FISHAO_DATA = {
     "name": "Dunkleosteus",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7317,6 +7663,7 @@ window.FISHAO_DATA = {
     "name": "Xiphactinus",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7336,6 +7683,7 @@ window.FISHAO_DATA = {
     "name": "Titanichthys",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7355,6 +7703,7 @@ window.FISHAO_DATA = {
     "name": "Thelodus",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7374,6 +7723,7 @@ window.FISHAO_DATA = {
     "name": "Osteolepis",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7393,6 +7743,7 @@ window.FISHAO_DATA = {
     "name": "Pteraspis",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7412,6 +7763,7 @@ window.FISHAO_DATA = {
     "name": "Platysomus",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7431,6 +7783,7 @@ window.FISHAO_DATA = {
     "name": "Cheirolepis",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7450,6 +7803,7 @@ window.FISHAO_DATA = {
     "name": "Materpiscis",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7469,6 +7823,7 @@ window.FISHAO_DATA = {
     "name": "Macropoma",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7488,6 +7843,7 @@ window.FISHAO_DATA = {
     "name": "Leedsichthys",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7507,6 +7863,7 @@ window.FISHAO_DATA = {
     "name": "Hyneria",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7526,6 +7883,7 @@ window.FISHAO_DATA = {
     "name": "Helicoprion",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7545,6 +7903,7 @@ window.FISHAO_DATA = {
     "name": "Megalodon",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7564,6 +7923,7 @@ window.FISHAO_DATA = {
     "name": "Arandaspis",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7583,6 +7943,7 @@ window.FISHAO_DATA = {
     "name": "Aspidorhynchus",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7602,6 +7963,7 @@ window.FISHAO_DATA = {
     "name": "Cladoselache",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7621,6 +7983,7 @@ window.FISHAO_DATA = {
     "name": "Cheiracanthus",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7640,6 +8003,7 @@ window.FISHAO_DATA = {
     "name": "Cobelodus",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7659,6 +8023,7 @@ window.FISHAO_DATA = {
     "name": "Coccosteus",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7678,6 +8043,7 @@ window.FISHAO_DATA = {
     "name": "Dapedium",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7697,6 +8063,7 @@ window.FISHAO_DATA = {
     "name": "Drepanaspis",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7716,6 +8083,7 @@ window.FISHAO_DATA = {
     "name": "Enchodus",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7735,6 +8103,7 @@ window.FISHAO_DATA = {
     "name": "Gyrosteus",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7754,6 +8123,7 @@ window.FISHAO_DATA = {
     "name": "Moythomasia",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7773,6 +8143,7 @@ window.FISHAO_DATA = {
     "name": "Orthacanthus",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7792,6 +8163,7 @@ window.FISHAO_DATA = {
     "name": "Pharyngolepis",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7811,6 +8183,7 @@ window.FISHAO_DATA = {
     "name": "Pikaia",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7830,6 +8203,7 @@ window.FISHAO_DATA = {
     "name": "Saurichthys",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7849,6 +8223,7 @@ window.FISHAO_DATA = {
     "name": "Semionotus",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7868,6 +8243,7 @@ window.FISHAO_DATA = {
     "name": "Stethacanthus",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7887,6 +8263,7 @@ window.FISHAO_DATA = {
     "name": "Xenacanthus",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -7906,6 +8283,7 @@ window.FISHAO_DATA = {
     "name": "Bodlok pestrý",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -7925,6 +8303,7 @@ window.FISHAO_DATA = {
     "name": "Pyskoun korunkatý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -7946,6 +8325,7 @@ window.FISHAO_DATA = {
     "name": "Trubkotlamka skvrnitá",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -7965,6 +8345,7 @@ window.FISHAO_DATA = {
     "name": "Kněžík dvoupruhý",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -7986,6 +8367,7 @@ window.FISHAO_DATA = {
     "name": "Ostnatec ryšavý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8006,6 +8388,7 @@ window.FISHAO_DATA = {
     "name": "Ploskozubec královský",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8027,6 +8410,7 @@ window.FISHAO_DATA = {
     "name": "Pruhatec černopruhý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8048,6 +8432,7 @@ window.FISHAO_DATA = {
     "name": "Štíhlice písečná",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8068,6 +8453,7 @@ window.FISHAO_DATA = {
     "name": "Kněžík Garnotův",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8087,6 +8473,7 @@ window.FISHAO_DATA = {
     "name": "Očař noční",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8110,6 +8497,7 @@ window.FISHAO_DATA = {
     "name": "Bodlok žlutý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8130,6 +8518,7 @@ window.FISHAO_DATA = {
     "name": "Jednotrn vlajkoocasý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8150,6 +8539,7 @@ window.FISHAO_DATA = {
     "name": "Kanic tmavý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8171,6 +8561,7 @@ window.FISHAO_DATA = {
     "name": "Akilolo zelený",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8191,6 +8582,7 @@ window.FISHAO_DATA = {
     "name": "Bičonoš zobanovitý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8214,6 +8606,7 @@ window.FISHAO_DATA = {
     "name": "Klipka žlutopruhá",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8233,6 +8626,7 @@ window.FISHAO_DATA = {
     "name": "Ploskozubec modrý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8255,6 +8649,7 @@ window.FISHAO_DATA = {
     "name": "Ostenec Picassův",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8276,6 +8671,7 @@ window.FISHAO_DATA = {
     "name": "Kněžík žlutoocasý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8295,6 +8691,7 @@ window.FISHAO_DATA = {
     "name": "Ostenec vdova",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8316,6 +8713,7 @@ window.FISHAO_DATA = {
     "name": "Tloušťovka bermudská",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8336,6 +8734,7 @@ window.FISHAO_DATA = {
     "name": "Klipka příčnopruhá",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8358,6 +8757,7 @@ window.FISHAO_DATA = {
     "name": "Kambala tropická",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8380,6 +8780,7 @@ window.FISHAO_DATA = {
     "name": "Pomec tříbarevný",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8399,6 +8800,7 @@ window.FISHAO_DATA = {
     "name": "Siba skvrnitá",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8419,6 +8821,7 @@ window.FISHAO_DATA = {
     "name": "Oliheň Lessonova",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8440,6 +8843,7 @@ window.FISHAO_DATA = {
     "name": "Ploskozubec půlnoční",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8461,6 +8865,7 @@ window.FISHAO_DATA = {
     "name": "Vidlatka palometa",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8483,6 +8888,7 @@ window.FISHAO_DATA = {
     "name": "Ostenec zelenavý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8503,6 +8909,7 @@ window.FISHAO_DATA = {
     "name": "Chňapal modropruhý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8526,6 +8933,7 @@ window.FISHAO_DATA = {
     "name": "Klipka fantomová",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8546,6 +8954,7 @@ window.FISHAO_DATA = {
     "name": "Žralok dlouhoploutvý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8565,6 +8974,7 @@ window.FISHAO_DATA = {
     "name": "Žralok hnědý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8584,6 +8994,7 @@ window.FISHAO_DATA = {
     "name": "Žralok západoaustralský",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8603,6 +9014,7 @@ window.FISHAO_DATA = {
     "name": "Žraloček brazilský",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8622,6 +9034,7 @@ window.FISHAO_DATA = {
     "name": "Žralok citronový",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8643,6 +9056,7 @@ window.FISHAO_DATA = {
     "name": "Žralok ostrý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8662,6 +9076,7 @@ window.FISHAO_DATA = {
     "name": "Chřestivec Darwinův",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8682,6 +9097,7 @@ window.FISHAO_DATA = {
     "name": "Jehla pruhovaná",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8701,6 +9117,7 @@ window.FISHAO_DATA = {
     "name": "Bodlok jednorohý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8722,6 +9139,7 @@ window.FISHAO_DATA = {
     "name": "Světloun Carterův",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8745,6 +9163,7 @@ window.FISHAO_DATA = {
     "name": "Kněžík šachovnicovitý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8764,6 +9183,7 @@ window.FISHAO_DATA = {
     "name": "Kanic tygří",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8787,6 +9207,7 @@ window.FISHAO_DATA = {
     "name": "Kanícek fialovožlutý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8807,6 +9228,7 @@ window.FISHAO_DATA = {
     "name": "Kanic hřbetoskvrnný",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8829,6 +9251,7 @@ window.FISHAO_DATA = {
     "name": "Klipka žlutá",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8849,6 +9272,7 @@ window.FISHAO_DATA = {
     "name": "Kranas modroploutvý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8869,6 +9293,7 @@ window.FISHAO_DATA = {
     "name": "Pilníkotrn nejmenší",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8888,6 +9313,7 @@ window.FISHAO_DATA = {
     "name": "Komorník havajský",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8908,6 +9334,7 @@ window.FISHAO_DATA = {
     "name": "Klipka hrotcová",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8930,6 +9357,7 @@ window.FISHAO_DATA = {
     "name": "Bodianus diplotaenia",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8952,6 +9380,7 @@ window.FISHAO_DATA = {
     "name": "Havýš běloskvrnný",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8972,6 +9401,7 @@ window.FISHAO_DATA = {
     "name": "Ostenec bělolemý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -8994,6 +9424,7 @@ window.FISHAO_DATA = {
     "name": "Pomec prstenčitý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -9014,6 +9445,7 @@ window.FISHAO_DATA = {
     "name": "Halančíkovec ďábelský",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.2,
     "locations": [
       "Za domem"
     ],
@@ -9033,6 +9465,7 @@ window.FISHAO_DATA = {
     "name": "Anténovec červenoocasý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -9054,6 +9487,7 @@ window.FISHAO_DATA = {
     "name": "Kohoutovec dlouhoploutvý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -9074,6 +9508,7 @@ window.FISHAO_DATA = {
     "name": "Muréna zebrovaná",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9093,6 +9528,7 @@ window.FISHAO_DATA = {
     "name": "Muréna hvězdovitá",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9113,6 +9549,7 @@ window.FISHAO_DATA = {
     "name": "Muréna zelenavá",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9134,6 +9571,7 @@ window.FISHAO_DATA = {
     "name": "Muréna poskvrněná",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9154,6 +9592,7 @@ window.FISHAO_DATA = {
     "name": "Muréna žlutolemá",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9173,6 +9612,7 @@ window.FISHAO_DATA = {
     "name": "Muréna leopardí",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9193,6 +9633,7 @@ window.FISHAO_DATA = {
     "name": "Muréna žlutoocasá",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9213,6 +9654,7 @@ window.FISHAO_DATA = {
     "name": "Muréna žlutotlamá",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9232,6 +9674,7 @@ window.FISHAO_DATA = {
     "name": "Muréna tygrovitá",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9252,6 +9695,7 @@ window.FISHAO_DATA = {
     "name": "Muréna pestrá",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9273,6 +9717,7 @@ window.FISHAO_DATA = {
     "name": "Muréna běloústá",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9294,6 +9739,7 @@ window.FISHAO_DATA = {
     "name": "Muréna pardálí",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9313,6 +9759,7 @@ window.FISHAO_DATA = {
     "name": "Muréna řetízková",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9332,6 +9779,7 @@ window.FISHAO_DATA = {
     "name": "Muréna Breedenova",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9351,6 +9799,7 @@ window.FISHAO_DATA = {
     "name": "Muréna psí",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9370,6 +9819,7 @@ window.FISHAO_DATA = {
     "name": "Muréna žlutohlavá",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9390,6 +9840,7 @@ window.FISHAO_DATA = {
     "name": "Muréna bělooká",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9410,6 +9861,7 @@ window.FISHAO_DATA = {
     "name": "Salpa Maggiore",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.01,
     "locations": [
       "Turnaj Moray"
     ],
@@ -9429,6 +9881,7 @@ window.FISHAO_DATA = {
     "name": "Chrochtal žlutopruhý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -9451,6 +9904,7 @@ window.FISHAO_DATA = {
     "name": "Kanic tygrovaný",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -9471,6 +9925,7 @@ window.FISHAO_DATA = {
     "name": "Chňapal žlutoploutvý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -9493,6 +9948,7 @@ window.FISHAO_DATA = {
     "name": "Ještěrohlavec prostřední",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -9512,6 +9968,7 @@ window.FISHAO_DATA = {
     "name": "Chrochtal prasečí",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -9533,6 +9990,7 @@ window.FISHAO_DATA = {
     "name": "Rozedranec červenoskvrnný",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -9553,6 +10011,7 @@ window.FISHAO_DATA = {
     "name": "Pyskoun dlouhoploutvý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -9572,6 +10031,7 @@ window.FISHAO_DATA = {
     "name": "Kapr lysec",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 0.2,
     "locations": [
       "Laketown",
       "Marshville"
@@ -9594,6 +10054,7 @@ window.FISHAO_DATA = {
     "name": "Losos kisuč",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain",
       "Seagull Harbor"
@@ -9616,6 +10077,7 @@ window.FISHAO_DATA = {
     "name": "Úhoř novozélandský",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 0.2,
     "locations": [
       "Laketown",
       "Marshville"
@@ -9639,6 +10101,7 @@ window.FISHAO_DATA = {
     "name": "Kostlín albín",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.05,
     "locations": [
       "Marshville"
     ],
@@ -9661,6 +10124,7 @@ window.FISHAO_DATA = {
     "name": "Úhoř japonský",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama"
     ],
@@ -9683,6 +10147,7 @@ window.FISHAO_DATA = {
     "name": "Hybridní mořčák pruhovaný",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain"
     ],
@@ -9704,6 +10169,7 @@ window.FISHAO_DATA = {
     "name": "Mořčák stříbřitý",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Laketown",
       "Cool Mountain"
@@ -9726,6 +10192,7 @@ window.FISHAO_DATA = {
     "name": "Mořčák pruhovaný",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain"
     ],
@@ -9747,6 +10214,7 @@ window.FISHAO_DATA = {
     "name": "Dlouhonos třásnitý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.2,
     "locations": [
       "Seagull Harbor",
       "Turnaj Boat On Sea"
@@ -9768,6 +10236,7 @@ window.FISHAO_DATA = {
     "name": "Amur bílý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Little Rio"
     ],
@@ -9790,6 +10259,7 @@ window.FISHAO_DATA = {
     "name": "Tolstolobec pestrý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 0.1,
     "locations": [
       "Little Rio"
     ],
@@ -9810,6 +10280,7 @@ window.FISHAO_DATA = {
     "name": "Příčnoústka čtyřvousá",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Little Rio"
     ],
@@ -9829,6 +10300,7 @@ window.FISHAO_DATA = {
     "name": "Labeo černé",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Little Rio"
     ],
@@ -9849,6 +10321,7 @@ window.FISHAO_DATA = {
     "name": "Jehlice lagunová",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Little Rio"
     ],
@@ -9869,6 +10342,7 @@ window.FISHAO_DATA = {
     "name": "Krunýřovec",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Little Rio"
     ],
@@ -9890,6 +10364,7 @@ window.FISHAO_DATA = {
     "name": "Bichir senegalský",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 0.01,
     "locations": [
       "Little Rio"
     ],
@@ -9912,6 +10387,7 @@ window.FISHAO_DATA = {
     "name": "Anténovec vláknovitý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Little Rio"
     ],
@@ -9934,6 +10410,7 @@ window.FISHAO_DATA = {
     "name": "Čtverzubec mbu",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Little Rio"
     ],
@@ -9953,6 +10430,7 @@ window.FISHAO_DATA = {
     "name": "Nožovka běločelá",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Little Rio"
     ],
@@ -9973,6 +10451,7 @@ window.FISHAO_DATA = {
     "name": "Krunýřovec zebra",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -9992,6 +10471,7 @@ window.FISHAO_DATA = {
     "name": "Panceřníček Juliin",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -10013,6 +10493,7 @@ window.FISHAO_DATA = {
     "name": "Polozobánka malajská",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -10033,6 +10514,7 @@ window.FISHAO_DATA = {
     "name": "Štika amurská",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 0.1,
     "locations": [
       "Za domem"
     ],
@@ -10054,6 +10536,7 @@ window.FISHAO_DATA = {
     "name": "Aju východní",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -10074,6 +10557,7 @@ window.FISHAO_DATA = {
     "name": "Sekavka nádherná",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -10094,6 +10578,7 @@ window.FISHAO_DATA = {
     "name": "Piloun mikrodon",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.5,
     "locations": [
       "Za domem"
     ],
@@ -10113,6 +10598,7 @@ window.FISHAO_DATA = {
     "name": "Živorodka ostrotlamá",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -10133,6 +10619,7 @@ window.FISHAO_DATA = {
     "name": "Okounek světlý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -10153,6 +10640,7 @@ window.FISHAO_DATA = {
     "name": "Panchax prstencový",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -10172,6 +10660,7 @@ window.FISHAO_DATA = {
     "name": "Tlamovec čelnatý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -10191,6 +10680,7 @@ window.FISHAO_DATA = {
     "name": "Hrotočelec ozbrojený",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -10213,6 +10703,7 @@ window.FISHAO_DATA = {
     "name": "Žralok kyklop",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.1,
     "locations": [
       "Pirate Cave"
     ],
@@ -10232,6 +10723,7 @@ window.FISHAO_DATA = {
     "name": "Šírotlamka pelikánovitá",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.5,
     "locations": [
       "Pirate Cave"
     ],
@@ -10251,6 +10743,7 @@ window.FISHAO_DATA = {
     "name": "Tupohlavec Rosenův",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.2,
     "locations": [
       "Pirate Cave"
     ],
@@ -10270,6 +10763,7 @@ window.FISHAO_DATA = {
     "name": "Sliznatá ryba",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.05,
     "locations": [
       "Pirate Cave"
     ],
@@ -10289,6 +10783,7 @@ window.FISHAO_DATA = {
     "name": "Ďas mořský",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Pirate Cave"
     ],
@@ -10308,6 +10803,7 @@ window.FISHAO_DATA = {
     "name": "Svítivec",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Pirate Cave"
     ],
@@ -10327,6 +10823,7 @@ window.FISHAO_DATA = {
     "name": "Neoclinus blanchardi",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pirate Cave"
     ],
@@ -10346,6 +10843,7 @@ window.FISHAO_DATA = {
     "name": "Čtverzubec běloskvrnný",
     "is_club": true,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10371,6 +10869,7 @@ window.FISHAO_DATA = {
     "name": "Králíčkovec zlatoskvrnný",
     "is_club": true,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10397,6 +10896,7 @@ window.FISHAO_DATA = {
     "name": "Klaun uzdičkatý",
     "is_club": true,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10423,6 +10923,7 @@ window.FISHAO_DATA = {
     "name": "Sapín zelený",
     "is_club": true,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10448,6 +10949,7 @@ window.FISHAO_DATA = {
     "name": "Pomčík Potterův",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10472,6 +10974,7 @@ window.FISHAO_DATA = {
     "name": "Pilohřbet jihoaustralský",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10499,6 +11002,7 @@ window.FISHAO_DATA = {
     "name": "Havýš rohatý",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10525,6 +11029,7 @@ window.FISHAO_DATA = {
     "name": "Kněžík duhový",
     "is_club": true,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10550,6 +11055,7 @@ window.FISHAO_DATA = {
     "name": "Pásovka černá",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 0.1,
     "locations": [
       "Klubový revír"
     ],
@@ -10576,6 +11082,7 @@ window.FISHAO_DATA = {
     "name": "Channa aurantimaculata",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10603,6 +11110,7 @@ window.FISHAO_DATA = {
     "name": "Štika americká červenoploutvá",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10629,6 +11137,7 @@ window.FISHAO_DATA = {
     "name": "Štika americká",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10655,6 +11164,7 @@ window.FISHAO_DATA = {
     "name": "Štika zlatá",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 0.1,
     "locations": [
       "Klubový revír"
     ],
@@ -10681,6 +11191,7 @@ window.FISHAO_DATA = {
     "name": "Tlamovec Thomasův",
     "is_club": true,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10707,6 +11218,7 @@ window.FISHAO_DATA = {
     "name": "Kanic tečkovaný",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10731,6 +11243,7 @@ window.FISHAO_DATA = {
     "name": "Jehlice krokodýlí",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10756,6 +11269,7 @@ window.FISHAO_DATA = {
     "name": "Chanos stříbřitý",
     "is_club": true,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10780,6 +11294,7 @@ window.FISHAO_DATA = {
     "name": "Pilonos vouskatý",
     "is_club": true,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10804,6 +11319,7 @@ window.FISHAO_DATA = {
     "name": "Cichlida plochohlavá",
     "is_club": true,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10829,6 +11345,7 @@ window.FISHAO_DATA = {
     "name": "Řasovník protáhlý",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10854,6 +11371,7 @@ window.FISHAO_DATA = {
     "name": "Okouníček sklovitý",
     "is_club": true,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10878,6 +11396,7 @@ window.FISHAO_DATA = {
     "name": "Chimérovka tasmánská",
     "is_club": true,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10904,6 +11423,7 @@ window.FISHAO_DATA = {
     "name": "Netopýrník hrbohlavý",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10931,6 +11451,7 @@ window.FISHAO_DATA = {
     "name": "Pyskoun třásniploutvý",
     "is_club": true,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10956,6 +11477,7 @@ window.FISHAO_DATA = {
     "name": "Vlajkovka červenavá",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -10981,6 +11503,7 @@ window.FISHAO_DATA = {
     "name": "Ještěrohlavec hlubokomořský",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 0.02,
     "locations": [
       "Klubový revír"
     ],
@@ -11010,6 +11533,7 @@ window.FISHAO_DATA = {
     "name": "Kostlín černý",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 0.05,
     "locations": [
       "Klubový revír"
     ],
@@ -11035,6 +11559,7 @@ window.FISHAO_DATA = {
     "name": "Chrochtal východní",
     "is_club": true,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11061,6 +11586,7 @@ window.FISHAO_DATA = {
     "name": "Hlaváčovec nádherný",
     "is_club": true,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11085,6 +11611,7 @@ window.FISHAO_DATA = {
     "name": "Klipka krokvicová",
     "is_club": true,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11111,6 +11638,7 @@ window.FISHAO_DATA = {
     "name": "Pomčík citronový",
     "is_club": true,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11137,6 +11665,7 @@ window.FISHAO_DATA = {
     "name": "Čtverzubec lysý",
     "is_club": true,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11162,6 +11691,7 @@ window.FISHAO_DATA = {
     "name": "Plošák stříbřitý",
     "is_club": true,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11187,6 +11717,7 @@ window.FISHAO_DATA = {
     "name": "Neonka obecná",
     "is_club": true,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11212,6 +11743,7 @@ window.FISHAO_DATA = {
     "name": "Perleťovka démon",
     "is_club": true,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11237,6 +11769,7 @@ window.FISHAO_DATA = {
     "name": "Dánio duhové",
     "is_club": true,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11263,6 +11796,7 @@ window.FISHAO_DATA = {
     "name": "Galaxie velká",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11287,6 +11821,7 @@ window.FISHAO_DATA = {
     "name": "Jeseter amurský",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 0.5,
     "locations": [
       "Klubový revír"
     ],
@@ -11311,6 +11846,7 @@ window.FISHAO_DATA = {
     "name": "Manta velká",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 0.2,
     "locations": [
       "Klubový revír"
     ],
@@ -11335,6 +11871,7 @@ window.FISHAO_DATA = {
     "name": "Ploskozubec zelenozubý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -11355,6 +11892,7 @@ window.FISHAO_DATA = {
     "name": "Pomec císařský",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -11375,6 +11913,7 @@ window.FISHAO_DATA = {
     "name": "Vějířník třásnitý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -11395,6 +11934,7 @@ window.FISHAO_DATA = {
     "name": "Různozubec přilbovitý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -11416,6 +11956,7 @@ window.FISHAO_DATA = {
     "name": "Rozedranec pestrý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -11436,6 +11977,7 @@ window.FISHAO_DATA = {
     "name": "Trnonoš australský",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11462,6 +12004,7 @@ window.FISHAO_DATA = {
     "name": "Oblohlav divukrásný",
     "is_club": true,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11489,6 +12032,7 @@ window.FISHAO_DATA = {
     "name": "Lampař severní",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11517,6 +12061,7 @@ window.FISHAO_DATA = {
     "name": "Kněžík srpkovitý",
     "is_club": true,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11541,6 +12086,7 @@ window.FISHAO_DATA = {
     "name": "Štětičkovec obecný",
     "is_club": true,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11566,6 +12112,7 @@ window.FISHAO_DATA = {
     "name": "Havýš žlutohnědý",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11592,6 +12139,7 @@ window.FISHAO_DATA = {
     "name": "Bodlok Achillův",
     "is_club": true,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11618,6 +12166,7 @@ window.FISHAO_DATA = {
     "name": "Jeseter jihočínský",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 0.1,
     "locations": [
       "Klubový revír"
     ],
@@ -11642,6 +12191,7 @@ window.FISHAO_DATA = {
     "name": "Pardachirus morrowi",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11666,6 +12216,7 @@ window.FISHAO_DATA = {
     "name": "Chňapal císařský",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11691,6 +12242,7 @@ window.FISHAO_DATA = {
     "name": "Čtverzubec ostnatý",
     "is_club": true,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11717,6 +12269,7 @@ window.FISHAO_DATA = {
     "name": "Hlaváč červenopruhý",
     "is_club": true,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11742,6 +12295,7 @@ window.FISHAO_DATA = {
     "name": "Jeseter sibiřský",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 0.2,
     "locations": [
       "Klubový revír"
     ],
@@ -11766,6 +12320,7 @@ window.FISHAO_DATA = {
     "name": "Jeseter krátkorypý",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11790,6 +12345,7 @@ window.FISHAO_DATA = {
     "name": "Kostlín floridský",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -11818,6 +12374,7 @@ window.FISHAO_DATA = {
     "name": "Tuňák žlutoploutvý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -11837,6 +12394,7 @@ window.FISHAO_DATA = {
     "name": "Tuňák velkooký",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 0.2,
     "locations": [
       "Lucky Raft"
     ],
@@ -11859,6 +12417,7 @@ window.FISHAO_DATA = {
     "name": "Tuňák tichomořský",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -11881,6 +12440,7 @@ window.FISHAO_DATA = {
     "name": "Marlín černý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -11900,6 +12460,7 @@ window.FISHAO_DATA = {
     "name": "Marlín pruhovaný",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 0.1,
     "locations": [
       "Lucky Raft"
     ],
@@ -11919,6 +12480,7 @@ window.FISHAO_DATA = {
     "name": "Marlín bílý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -11938,6 +12500,7 @@ window.FISHAO_DATA = {
     "name": "Soltýn ostroploutvý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -11957,6 +12520,7 @@ window.FISHAO_DATA = {
     "name": "Soltýn pelikání",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -11976,6 +12540,7 @@ window.FISHAO_DATA = {
     "name": "Soltýn žlutoocasý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -11995,6 +12560,7 @@ window.FISHAO_DATA = {
     "name": "Soltýn velkooký",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -12014,6 +12580,7 @@ window.FISHAO_DATA = {
     "name": "Kostlín skvrnitý",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12042,6 +12609,7 @@ window.FISHAO_DATA = {
     "name": "Bojovnice Brownových",
     "is_club": true,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12068,6 +12636,7 @@ window.FISHAO_DATA = {
     "name": "Halančíkovec slaništní",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 0.2,
     "locations": [
       "Klubový revír"
     ],
@@ -12093,6 +12662,7 @@ window.FISHAO_DATA = {
     "name": "Štikovka skvrnitá",
     "is_club": true,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12119,6 +12689,7 @@ window.FISHAO_DATA = {
     "name": "Hlaváč Griessingerův",
     "is_club": true,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12144,6 +12715,7 @@ window.FISHAO_DATA = {
     "name": "Soltýn stříbřitý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -12163,6 +12735,7 @@ window.FISHAO_DATA = {
     "name": "Soltýn pobřežní",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -12182,6 +12755,7 @@ window.FISHAO_DATA = {
     "name": "Soltýn Hellerův",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -12203,6 +12777,7 @@ window.FISHAO_DATA = {
     "name": "Soltýn tmavopruhý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 0.5,
     "locations": [
       "Lucky Raft"
     ],
@@ -12222,6 +12797,7 @@ window.FISHAO_DATA = {
     "name": "Soltýn Australský",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 0.5,
     "locations": [
       "Lucky Raft"
     ],
@@ -12241,6 +12817,7 @@ window.FISHAO_DATA = {
     "name": "Žralok grónský",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12265,6 +12842,7 @@ window.FISHAO_DATA = {
     "name": "Piloun malozubý",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12289,6 +12867,7 @@ window.FISHAO_DATA = {
     "name": "Piloun obecný",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12313,6 +12892,7 @@ window.FISHAO_DATA = {
     "name": "Lesklec africký",
     "is_club": true,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12337,6 +12917,7 @@ window.FISHAO_DATA = {
     "name": "Hrdložábřík bělavý",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12365,6 +12946,7 @@ window.FISHAO_DATA = {
     "name": "Kranas zlatý",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12391,6 +12973,7 @@ window.FISHAO_DATA = {
     "name": "Kladivoun tiburo",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12415,6 +12998,7 @@ window.FISHAO_DATA = {
     "name": "Kladivoun křídlohlavý",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 0.5,
     "locations": [
       "Klubový revír"
     ],
@@ -12442,6 +13026,7 @@ window.FISHAO_DATA = {
     "name": "Noční poutník",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 0.2,
     "locations": [
       "Klubový revír"
     ],
@@ -12467,6 +13052,7 @@ window.FISHAO_DATA = {
     "name": "Medúzovec okounovitý",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12492,6 +13078,7 @@ window.FISHAO_DATA = {
     "name": "Rypoun vidlozubý",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12516,6 +13103,7 @@ window.FISHAO_DATA = {
     "name": "Tetra Sweglesova",
     "is_club": true,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12542,6 +13130,7 @@ window.FISHAO_DATA = {
     "name": "Cichlida madagaskarská",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12567,6 +13156,7 @@ window.FISHAO_DATA = {
     "name": "Piraňa tmavá",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 0.1,
     "locations": [
       "Klubový revír"
     ],
@@ -12594,6 +13184,7 @@ window.FISHAO_DATA = {
     "name": "Vějířovka příčnopruhá",
     "is_club": true,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12620,6 +13211,7 @@ window.FISHAO_DATA = {
     "name": "Kanic cukrový",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Továrna na nábytek"
     ],
@@ -12641,6 +13233,7 @@ window.FISHAO_DATA = {
     "name": "Kanic oranžovoskvrnný",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Továrna na nábytek"
     ],
@@ -12662,6 +13255,7 @@ window.FISHAO_DATA = {
     "name": "Kanic křiklavý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Továrna na nábytek"
     ],
@@ -12682,6 +13276,7 @@ window.FISHAO_DATA = {
     "name": "Pomec maskový",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Továrna na nábytek"
     ],
@@ -12702,6 +13297,7 @@ window.FISHAO_DATA = {
     "name": "Pomčík Boyleův",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Továrna na nábytek"
     ],
@@ -12722,6 +13318,7 @@ window.FISHAO_DATA = {
     "name": "Tuňák křídlatý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -12741,6 +13338,7 @@ window.FISHAO_DATA = {
     "name": "Tuňák australský",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -12760,6 +13358,7 @@ window.FISHAO_DATA = {
     "name": "Tuňák atlantský",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -12779,6 +13378,7 @@ window.FISHAO_DATA = {
     "name": "Tuňák dlouhoocasý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -12798,6 +13398,7 @@ window.FISHAO_DATA = {
     "name": "Tuňák malý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lucky Raft"
     ],
@@ -12817,6 +13418,7 @@ window.FISHAO_DATA = {
     "name": "Hlubinář",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -12845,6 +13447,7 @@ window.FISHAO_DATA = {
     "name": "Ipnops",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -12867,6 +13470,7 @@ window.FISHAO_DATA = {
     "name": "Tlamovec sprengerae",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Mystic Desert"
     ],
@@ -12886,6 +13490,7 @@ window.FISHAO_DATA = {
     "name": "Dánio jayarami",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama"
     ],
@@ -12906,6 +13511,7 @@ window.FISHAO_DATA = {
     "name": "Rypoun západoafrický",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Mystic Desert"
     ],
@@ -12927,6 +13533,7 @@ window.FISHAO_DATA = {
     "name": "Slimule bělopruhá",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -12948,6 +13555,7 @@ window.FISHAO_DATA = {
     "name": "Hlaváčovec černoploutvý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -12969,6 +13577,7 @@ window.FISHAO_DATA = {
     "name": "Terčovka Beckerova",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -12990,6 +13599,7 @@ window.FISHAO_DATA = {
     "name": "Sekavec sabažský",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -13010,6 +13620,7 @@ window.FISHAO_DATA = {
     "name": "Pakaprovec ostrohřbetý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -13031,6 +13642,7 @@ window.FISHAO_DATA = {
     "name": "Křížovec panamský",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 0.2,
     "locations": [
       "Seagull Harbor"
     ],
@@ -13050,6 +13662,7 @@ window.FISHAO_DATA = {
     "name": "Ostroretka stěhovavá",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Laketown"
     ],
@@ -13071,6 +13684,7 @@ window.FISHAO_DATA = {
     "name": "Plotice obecná",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain"
     ],
@@ -13092,6 +13706,7 @@ window.FISHAO_DATA = {
     "name": "Střevle potoční",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain"
     ],
@@ -13113,6 +13728,7 @@ window.FISHAO_DATA = {
     "name": "Makrela obecná",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -13134,6 +13750,7 @@ window.FISHAO_DATA = {
     "name": "Sardel obecná",
     "is_club": false,
     "rating": 1,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -13154,6 +13771,7 @@ window.FISHAO_DATA = {
     "name": "Šprot obecný",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -13174,6 +13792,7 @@ window.FISHAO_DATA = {
     "name": "Ježdík obecný",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -13193,6 +13812,7 @@ window.FISHAO_DATA = {
     "name": "Síh peleď",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -13214,6 +13834,7 @@ window.FISHAO_DATA = {
     "name": "Skalára amazonská",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -13235,6 +13856,7 @@ window.FISHAO_DATA = {
     "name": "Koljuška tříostná",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain"
     ],
@@ -13254,6 +13876,7 @@ window.FISHAO_DATA = {
     "name": "Řasovník rubínový",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.2,
     "locations": [
       "Palm Island"
     ],
@@ -13277,6 +13900,7 @@ window.FISHAO_DATA = {
     "name": "Lates stříbřitý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13297,6 +13921,7 @@ window.FISHAO_DATA = {
     "name": "Parachaenichthys charcoti",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -13321,6 +13946,7 @@ window.FISHAO_DATA = {
     "name": "Žralok krátkoploutvý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13340,6 +13966,7 @@ window.FISHAO_DATA = {
     "name": "Žralok černoploutvý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13361,6 +13988,7 @@ window.FISHAO_DATA = {
     "name": "Světloun Bonnaterrův",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13380,6 +14008,7 @@ window.FISHAO_DATA = {
     "name": "Žralůček indonéský",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13401,6 +14030,7 @@ window.FISHAO_DATA = {
     "name": "Polorejnok obecný",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13420,6 +14050,7 @@ window.FISHAO_DATA = {
     "name": "Chobotnice kroužkovaná",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13440,6 +14071,7 @@ window.FISHAO_DATA = {
     "name": "Bezkýlovec listošupinatý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13459,6 +14091,7 @@ window.FISHAO_DATA = {
     "name": "Žralok velrybář",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13478,6 +14111,7 @@ window.FISHAO_DATA = {
     "name": "Parmovec skvělý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13500,6 +14134,7 @@ window.FISHAO_DATA = {
     "name": "Studnař Rosenblattův",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13522,6 +14157,7 @@ window.FISHAO_DATA = {
     "name": "Studnař řemínkový",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13542,6 +14178,7 @@ window.FISHAO_DATA = {
     "name": "Slizoun znamenitý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13562,6 +14199,7 @@ window.FISHAO_DATA = {
     "name": "Vranka červená",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13582,6 +14220,7 @@ window.FISHAO_DATA = {
     "name": "Hlaváč širokopruhý",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13603,6 +14242,7 @@ window.FISHAO_DATA = {
     "name": "Hlaváč krabí",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -13622,6 +14262,7 @@ window.FISHAO_DATA = {
     "name": "Placka pomořanská",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -13642,6 +14283,7 @@ window.FISHAO_DATA = {
     "name": "Bolen dravý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Cool Mountain"
     ],
@@ -13662,6 +14304,7 @@ window.FISHAO_DATA = {
     "name": "Slunka obecná",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -13682,6 +14325,7 @@ window.FISHAO_DATA = {
     "name": "Podoustev říční",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Sibiri City"
     ],
@@ -13701,6 +14345,7 @@ window.FISHAO_DATA = {
     "name": "Mřenka mramorovaná",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Laketown"
     ],
@@ -13720,6 +14365,7 @@ window.FISHAO_DATA = {
     "name": "Carcharocles chubutensis",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -13739,6 +14385,7 @@ window.FISHAO_DATA = {
     "name": "Cretoxyrhina",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -13758,6 +14405,7 @@ window.FISHAO_DATA = {
     "name": "Deltoptychius",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -13777,6 +14425,7 @@ window.FISHAO_DATA = {
     "name": "Ischnacanthus",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -13796,6 +14445,7 @@ window.FISHAO_DATA = {
     "name": "Ctenurella",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -13815,6 +14465,7 @@ window.FISHAO_DATA = {
     "name": "Astraspis",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -13834,6 +14485,7 @@ window.FISHAO_DATA = {
     "name": "Boreaspis",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -13853,6 +14505,7 @@ window.FISHAO_DATA = {
     "name": "Dartmuthia",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -13872,6 +14525,7 @@ window.FISHAO_DATA = {
     "name": "Doryaspis arctica",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -13891,6 +14545,7 @@ window.FISHAO_DATA = {
     "name": "Doryaspis nathorsti",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Lost Valley"
     ],
@@ -13910,6 +14565,7 @@ window.FISHAO_DATA = {
     "name": "Kančík papouščí",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -13930,6 +14586,7 @@ window.FISHAO_DATA = {
     "name": "Kančík perleťový",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -13950,6 +14607,7 @@ window.FISHAO_DATA = {
     "name": "Kančík Doviův",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -13970,6 +14628,7 @@ window.FISHAO_DATA = {
     "name": "Kančík managujský",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -13990,6 +14649,7 @@ window.FISHAO_DATA = {
     "name": "Kančík červenohlavý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -14011,6 +14671,7 @@ window.FISHAO_DATA = {
     "name": "Keříčkovec jeskynní",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.1,
     "locations": [
       "Pyramida"
     ],
@@ -14032,6 +14693,7 @@ window.FISHAO_DATA = {
     "name": "Anténovec ozdobný",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -14052,6 +14714,7 @@ window.FISHAO_DATA = {
     "name": "Sanak asijský",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.2,
     "locations": [
       "Aquayama"
     ],
@@ -14071,6 +14734,7 @@ window.FISHAO_DATA = {
     "name": "Pilníkotrn slepený",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -14092,6 +14756,7 @@ window.FISHAO_DATA = {
     "name": "Uzlatka východoatlantská",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 0.2,
     "locations": [
       "Seagull Harbor"
     ],
@@ -14115,6 +14780,7 @@ window.FISHAO_DATA = {
     "name": "Štikovka brazilská",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -14134,6 +14800,7 @@ window.FISHAO_DATA = {
     "name": "Máčka úzkohlavá",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -14153,6 +14820,7 @@ window.FISHAO_DATA = {
     "name": "Narcina surinamská",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -14173,6 +14841,7 @@ window.FISHAO_DATA = {
     "name": "Dlouhozubec dravý",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -14192,6 +14861,7 @@ window.FISHAO_DATA = {
     "name": "Páskoun pruhovaný",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.2,
     "locations": [
       "Pinheira Beach"
     ],
@@ -14211,6 +14881,7 @@ window.FISHAO_DATA = {
     "name": "Cichlida piquiti",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -14231,6 +14902,7 @@ window.FISHAO_DATA = {
     "name": "Trahir krátkoocasý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -14251,6 +14923,7 @@ window.FISHAO_DATA = {
     "name": "Anténovec skvrnitý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Rio Tropical"
     ],
@@ -14271,6 +14944,7 @@ window.FISHAO_DATA = {
     "name": "Terčovka pulcovitá",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.1,
     "locations": [
       "Seagull Harbor"
     ],
@@ -14292,6 +14966,7 @@ window.FISHAO_DATA = {
     "name": "Slimule pelagická",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -14311,6 +14986,7 @@ window.FISHAO_DATA = {
     "name": "Pseudoliparis Swirei",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Seagull Harbor"
     ],
@@ -14332,6 +15008,7 @@ window.FISHAO_DATA = {
     "name": "Muréna zlatá",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 0.1,
     "locations": [
       "Pinheira Beach"
     ],
@@ -14353,6 +15030,7 @@ window.FISHAO_DATA = {
     "name": "Manta mexická",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.2,
     "locations": [
       "Turnaj Boat On Sea"
     ],
@@ -14372,6 +15050,7 @@ window.FISHAO_DATA = {
     "name": "Pilníkotrn Taylorův",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -14392,6 +15071,7 @@ window.FISHAO_DATA = {
     "name": "Tupohlavec krátkochvostý",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.1,
     "locations": [
       "Seagull Harbor"
     ],
@@ -14413,6 +15093,7 @@ window.FISHAO_DATA = {
     "name": "Muréna sladkovodní",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Aquayama"
     ],
@@ -14434,6 +15115,7 @@ window.FISHAO_DATA = {
     "name": "Jeskyňovka Yunokawa",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.2,
     "locations": [
       "Pinheira Beach"
     ],
@@ -14457,6 +15139,7 @@ window.FISHAO_DATA = {
     "name": "Akilolo nosatý",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Palm Island"
     ],
@@ -14477,6 +15160,7 @@ window.FISHAO_DATA = {
     "name": "Duhovka lososová",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Za domem"
     ],
@@ -14497,6 +15181,7 @@ window.FISHAO_DATA = {
     "name": "Hadař zubatkový",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 0.1,
     "locations": [
       "Seagull Harbor"
     ],
@@ -14519,6 +15204,7 @@ window.FISHAO_DATA = {
     "name": "Bezkýlovec lopatonosý",
     "is_club": true,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -14545,6 +15231,7 @@ window.FISHAO_DATA = {
     "name": "Lampovníček Barnardův",
     "is_club": true,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -14570,6 +15257,7 @@ window.FISHAO_DATA = {
     "name": "Kanic šípohlavý",
     "is_club": true,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -14594,6 +15282,7 @@ window.FISHAO_DATA = {
     "name": "Parmice pruhovaná",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 1.0,
     "locations": [
       "Klubový revír"
     ],
@@ -14619,6 +15308,7 @@ window.FISHAO_DATA = {
     "name": "Kostlín zlatý",
     "is_club": true,
     "rating": 5,
+    "rarity_factor": 0.2,
     "locations": [
       "Klubový revír"
     ],
@@ -14644,6 +15334,7 @@ window.FISHAO_DATA = {
     "name": "Jehla harlekýnská",
     "is_club": false,
     "rating": 3,
+    "rarity_factor": 1.0,
     "locations": [
       "Pinheira Beach"
     ],
@@ -14663,6 +15354,7 @@ window.FISHAO_DATA = {
     "name": "Latimérie celebeská",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.2,
     "locations": [
       "Pinheira Beach"
     ],
@@ -14684,6 +15376,7 @@ window.FISHAO_DATA = {
     "name": "Africký skvrnitý úhoř",
     "is_club": false,
     "rating": 5,
+    "rarity_factor": 0.1,
     "locations": [
       "Thombani Town"
     ],
@@ -14705,6 +15398,7 @@ window.FISHAO_DATA = {
     "name": "Štikovec indický",
     "is_club": false,
     "rating": 2,
+    "rarity_factor": 1.0,
     "locations": [
       "Little Rio"
     ],
@@ -14724,6 +15418,7 @@ window.FISHAO_DATA = {
     "name": "Jehla cejlonská",
     "is_club": false,
     "rating": 4,
+    "rarity_factor": 1.0,
     "locations": [
       "Little Rio"
     ],

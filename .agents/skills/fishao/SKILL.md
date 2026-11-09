@@ -27,8 +27,8 @@ This skill provides the complete reference for developing and maintaining the **
 
 ## 2. Data Schemas (DO NOT read raw large files)
 
-### 2.1 Fish Object Schema (`data/fishes.js` – 277 KB, 615 fish)
-`window.FISHAO_FISHES` is an array of 615 fish objects.
+### 2.1 Fish Object Schema (`data/fishes.js` – 615 fish)
+`window.FISHAO_DATA` is an array of 615 fish objects.
 Each fish object has the following structure:
 
 ```javascript
@@ -44,7 +44,8 @@ Each fish object has the following structure:
   "min_l": 15.0,               // Number: Minimum catch length in cm
   "avg_l": 32.5,               // Number: Average catch length in cm
   "max_l": 55.0,               // Number: Maximum catch length in cm
-  "rating": 3,                 // Number: Difficulty/rarity rating (1 to 5 stars)
+  "rating": 3,                 // Number: Difficulty rating (1 to 5 stars)
+  "rarity_factor": 1.0,        // Number: Game spawn-weight multiplier; 1.0 = baseline, lower = rarer (0.01 = 100x rarer)
   "is_club": true,             // Boolean: true if it is one of the 80 club fish
   "points": 500,               // Number: Club points required to unlock (for points fish)
   "unlock_type": "points"      // String: 'points' | 'fc' (Fishcoins) | 'monster'
@@ -126,7 +127,7 @@ The monolithic `app.js` was refactored into modular, cohesive files loaded direc
 1. `js/state.js`: Global state variables, localization helper `t()`, date and string utilities (`getTodayISO`, `getYesterdayISO`, `isDateSunday`, `normStr`, `escapeHtml`), toast notification (`showToast`), and confirmation dialog (`showConfirmModal`, `resolveConfirmModal`).
 2. `js/table.js`: Fish table rendering (`renderTableHead`, `renderTableBody`), UTC-to-local time formatting (`formatCatchTime`, `isFishActiveNow`), rating badges (`renderRatingBadge`), price cells (`renderPriceCell`), and caught fish collection toggles (`toggleCaughtFish`, `updateCaughtStats`).
 3. `js/clubs.js`: Real-time club synchronization via Firestore (`bindClubListener`), deterministic member roster rendering (`renderClubMembers`), member profile modal (`openPlayerModal`), club search, creation, joining, and leaving, club points management, milestones roadmap (`renderClubMilestones`), and FC / Monster special fish unlocks.
-4. `js/market.js`: Fish market price history persistence (`persistPriceHistory`), Sunday detection, single price submission/deletion (`submitNewPrice`, `deletePriceEntry`), modal price history rendering (`renderModalHistory`), bulk price import with autocomplete suggestions (`processBulkImport`), and JSON export (`exportPricesJson`).
+4. `js/market.js`: Fish market price history persistence (`persistPriceHistory`), Sunday detection, single price submission/deletion (`submitNewPrice`, `deletePriceEntry`), fish detail modal rendering (`openPriceModal`, including the `rarity_factor` → tier badge helpers `getRarityTier` / `formatRarityPercent`), modal price history rendering (`renderModalHistory`), bulk price import with autocomplete suggestions (`processBulkImport`), and JSON export (`exportPricesJson`).
 5. `js/filters.js`: Multi-criteria fish filtering engine (`applyFilters`, `resetFilters`), mission size handlers (`setSizeFilter`, `onRangeSizeInput`), collection filters, and dropdown options initializers.
 6. `js/auth.js`: Firebase authentication (`signIn`, `signOut`), GDPR-compliant profile synchronization (`loadUserProfile`, `saveProfile`), and UI state synchronization (`updateAuthUI`).
 7. `js/players.js`: Community player list, backyard fish breeding (`backyardFishIds`), universal player modal, reverse fish-to-player lookups.

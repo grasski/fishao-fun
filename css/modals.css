@@ -176,6 +176,45 @@
   line-height: 1.4;
 }
 
+/* RARITY PILL (game rarity_factor tiers) */
+.rarity-pill {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  border: 1px solid transparent;
+  vertical-align: middle;
+}
+.rarity-pill.rarity-common {
+  background: rgba(148, 163, 184, 0.1);
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #94a3b8;
+}
+.rarity-pill.rarity-uncommon {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #34d399;
+}
+.rarity-pill.rarity-rare {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
+}
+.rarity-pill.rarity-very-rare {
+  background: rgba(168, 85, 247, 0.14);
+  border-color: rgba(168, 85, 247, 0.4);
+  color: #c084fc;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.2);
+}
+.rarity-pill.rarity-legendary {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(251, 191, 36, 0.55);
+  color: #fbbf24;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+}
+
 .modal-market-divider {
   font-size: 13px;
   font-weight: 800;

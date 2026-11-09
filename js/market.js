@@ -152,6 +152,25 @@ function getLatestPrice(fid) {
   return list[0];
 }
 
+/**
+ * Maps the game's rarity_factor (spawn weight multiplier) to a display tier.
+ * 1.0 is the baseline weight; lower values are rarer (0.01 = 100x rarer than baseline).
+ */
+function getRarityTier(factor) {
+  var val = (typeof factor === 'number') ? factor : parseFloat(factor);
+  if (!isFinite(val) || val >= 1) return { key: 'common', cls: 'rarity-common' };
+  if (val >= 0.5) return { key: 'uncommon', cls: 'rarity-uncommon' };
+  if (val >= 0.2) return { key: 'rare', cls: 'rarity-rare' };
+  if (val >= 0.1) return { key: 'very_rare', cls: 'rarity-very-rare' };
+  return { key: 'legendary', cls: 'rarity-legendary' };
+}
+
+function formatRarityPercent(factor) {
+  var val = (typeof factor === 'number') ? factor : parseFloat(factor);
+  if (!isFinite(val) || val <= 0) return '';
+  return parseFloat((val * 100).toFixed(2)).toString() + '%';
+}
+
 function openPriceModal(fid) {
   selectedModalFishId = fid;
   var clubFishObj = clubFishes.find(function (x) { return x.id === fid; });
@@ -250,6 +269,20 @@ function openPriceModal(fid) {
     dimEl.innerHTML = '<span class="len-dim">' + t('dim_min', { val: f.min_l }) + '</span> • ' +
       '<strong class="len-avg" style="color: #38bdf8;">' + t('dim_avg', { val: f.avg_l }) + '</strong> • ' +
       '<span class="len-dim">' + t('dim_max', { val: f.max_l }) + '</span>';
+  }
+
+  // Rarity (game rarity_factor, 1.0 = baseline weight, lower = rarer)
+  var rarityEl = document.getElementById("modalFishRarity");
+  if (rarityEl) {
+    var rarityFactor = (typeof f.rarity_factor === 'number') ? f.rarity_factor : parseFloat(f.rarity_factor);
+    if (isFinite(rarityFactor) && rarityFactor > 0) {
+      var rarityTier = getRarityTier(rarityFactor);
+      rarityEl.innerHTML = '<span class="rarity-pill ' + rarityTier.cls + '">' +
+        t('rarity_' + rarityTier.key) + ' (' + formatRarityPercent(rarityFactor) + ')' +
+        '</span>';
+    } else {
+      rarityEl.innerHTML = '<span style="color: var(--text-muted);">--</span>';
+    }
   }
 
   // Club unlock status
