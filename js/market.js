@@ -194,6 +194,21 @@ function openPriceModal(fid, skipSync) {
   var nameEl = document.getElementById("modalFishName");
   var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
   if (nameEl) nameEl.innerText = fishName;
+  var altNameEl = document.getElementById("modalFishAltName");
+  if (altNameEl) {
+    var curLang = (window.FISHAO_I18N && window.FISHAO_I18N.currentLang) || 'cs';
+    var otherLang = curLang === 'cs' ? 'en' : 'cs';
+    var otherName = (window.FISHAO_I18N && typeof window.FISHAO_I18N.getFishName === 'function')
+      ? window.FISHAO_I18N.getFishName(f, otherLang)
+      : '';
+    if (otherName && otherName !== fishName) {
+      altNameEl.innerText = '(' + otherName + ')';
+      altNameEl.style.display = 'inline-block';
+    } else {
+      altNameEl.style.display = 'none';
+      altNameEl.innerText = '';
+    }
+  }
   try {
     document.title = fishName + " – FISHAO Wiki & Ryby";
   } catch (e) { }
@@ -573,21 +588,24 @@ function onBulkSearchInput(e) {
 
   for (var i = 0; i < allFishes.length; i++) {
     var f = allFishes[i];
-    var nameCz = f.name || "";
-    var nameEn = (window.FISHAO_I18N && window.FISHAO_I18N.translations && window.FISHAO_I18N.translations.en && window.FISHAO_I18N.translations.en.fish_names && window.FISHAO_I18N.translations.en.fish_names[f.id]) || "";
+    var nameCz = (window.FISHAO_I18N && typeof window.FISHAO_I18N.getFishName === 'function') ? window.FISHAO_I18N.getFishName(f, 'cs') : (f.name || "");
+    var nameEn = (window.FISHAO_I18N && typeof window.FISHAO_I18N.getFishName === 'function') ? window.FISHAO_I18N.getFishName(f, 'en') : "";
     var curName = (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name) || "";
 
-    var normCz = normStr(nameCz);
-    var normEn = normStr(nameEn);
+    var isMatch = (window.FISHAO_I18N && typeof window.FISHAO_I18N.matchesFishSearch === 'function')
+      ? window.FISHAO_I18N.matchesFishSearch(f, nq)
+      : (normStr(nameCz).includes(nq) || (nameEn && normStr(nameEn).includes(nq)));
 
-    if (normCz.includes(nq) || (normEn && normEn.includes(nq))) {
+    if (isMatch) {
       if (!seenNames.has(curName)) {
         seenNames.add(curName);
         var latestPr = getLatestPrice(f.id);
+        var curLang = (window.FISHAO_I18N && window.FISHAO_I18N.currentLang) || 'cs';
+        var alt = curLang === 'cs' ? nameEn : nameCz;
         matches.push({
           id: f.id,
           name: curName,
-          altName: (getLang() === 'cz' ? nameEn : nameCz),
+          altName: (alt && alt !== curName) ? alt : "",
           latestPrice: latestPr ? latestPr.price : null
         });
         if (matches.length >= 8) break;
@@ -741,13 +759,14 @@ async function processBulkImport() {
   for (var i = 0; i < allFishes.length; i++) {
     var f = allFishes[i];
     nameToFish.set(normStr(f.name), f);
-    if (window.FISHAO_I18N && typeof window.FISHAO_I18N.getFishName === 'function') {
-      var prevLang = window.FISHAO_I18N.currentLang;
-      window.FISHAO_I18N.currentLang = 'en';
-      var enName = window.FISHAO_I18N.getFishName(f);
-      window.FISHAO_I18N.currentLang = 'cs';
-      var csName = window.FISHAO_I18N.getFishName(f);
-      window.FISHAO_I18N.currentLang = prevLang;
+    if (window.FISHAO_I18N && typeof window.FISHAO_I18N.getFishNames === 'function') {
+      var allNames = window.FISHAO_I18N.getFishNames(f);
+      for (var ni = 0; ni < allNames.length; ni++) {
+        nameToFish.set(normStr(allNames[ni]), f);
+      }
+    } else if (window.FISHAO_I18N && typeof window.FISHAO_I18N.getFishName === 'function') {
+      var enName = window.FISHAO_I18N.getFishName(f, 'en');
+      var csName = window.FISHAO_I18N.getFishName(f, 'cs');
       if (enName) nameToFish.set(normStr(enName), f);
       if (csName) nameToFish.set(normStr(csName), f);
     }

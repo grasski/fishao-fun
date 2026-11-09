@@ -552,8 +552,12 @@ function renderPlayersList() {
       var fishMatch = pBackyard.some(function (fid) {
         var fObj = allFishes.find(function (x) { return x.id === fid; });
         if (!fObj) return false;
-        var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name;
-        if (normStr(fName).indexOf(searchNorm) !== -1) return true;
+        if (window.FISHAO_I18N && typeof window.FISHAO_I18N.matchesFishSearch === 'function') {
+          if (window.FISHAO_I18N.matchesFishSearch(fObj, searchNorm)) return true;
+        } else {
+          var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name;
+          if (normStr(fName).indexOf(searchNorm) !== -1) return true;
+        }
         if (fObj.baits && fObj.baits.some(function (b) { return normStr(b).indexOf(searchNorm) !== -1; })) return true;
         return false;
       });
@@ -948,6 +952,9 @@ function renderProfileBackyardCatalog(searchTerm) {
 
   if (q) {
     bBreedables = bBreedables.filter(function (f) {
+      if (window.FISHAO_I18N && typeof window.FISHAO_I18N.matchesFishSearch === 'function') {
+        return window.FISHAO_I18N.matchesFishSearch(f, q);
+      }
       var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
       return normStr(fName).indexOf(q) !== -1 || String(f.id) === q;
     });
@@ -1037,6 +1044,9 @@ function onBackyardSearchInput(val) {
   var matches = allFishes.filter(function (f) {
     if (!isBackyardBreedable(f)) return false;
     if (backyardFishIds.has(f.id)) return false;
+    if (window.FISHAO_I18N && typeof window.FISHAO_I18N.matchesFishSearch === 'function') {
+      return window.FISHAO_I18N.matchesFishSearch(f, q);
+    }
     var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
     return normStr(fName).indexOf(q) !== -1 || String(f.id) === q;
   }).slice(0, 10);

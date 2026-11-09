@@ -423,6 +423,8 @@ function renderTableBody(data) {
 
   var rowClickTitle = t('price_cell_detail_title');
   var activeNowLabel = t('time_active_now_short');
+  var searchInput = document.getElementById("search");
+  var searchQ = searchInput ? searchInput.value.trim() : "";
 
   if (currentView === "club") {
     tbody.innerHTML = data.map(function (f) {
@@ -441,6 +443,10 @@ function renderTableBody(data) {
       if (caughtFishIds.has(f.id)) rowClass.push("row-caught");
 
       var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
+      var altMatch = (searchQ && window.FISHAO_I18N && typeof window.FISHAO_I18N.getMatchingFishAltName === 'function')
+        ? window.FISHAO_I18N.getMatchingFishAltName(f, searchQ)
+        : "";
+      var altMatchHtml = altMatch ? '<div style="font-size: 11px; color: #38bdf8; font-weight: 500; margin-top: 2px;">' + escapeHtml(altMatch) + '</div>' : '';
       var waterType = getFishWater(f);
       var waterLabel = waterType === 'Slaná' ? ('🌊 ' + t('water_salt_short')) : ('🌿 ' + t('water_fresh_short'));
 
@@ -449,7 +455,7 @@ function renderTableBody(data) {
         '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
         '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + fishName + '" class="fish-img" onerror="this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'"></div></td>' +
         '<td><span class="badge ' + (waterType === 'Slaná' ? 'badge-salt' : 'badge-fresh') + '">' + waterLabel + '</span></td>' +
-        '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + fishName + '</div></td>' +
+        '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + fishName + '</div>' + altMatchHtml + '</td>' +
         '<td>' + renderRatingBadge(f.rating) + '</td>' +
         '<td>' + renderPriceCell(f.id) + '</td>' +
         '<td>' + f.baits.map(function (b) {
@@ -481,6 +487,10 @@ function renderTableBody(data) {
       }
       var rowClass = caughtFishIds.has(f.id) ? "row-caught" : "";
       var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
+      var altMatch = (searchQ && window.FISHAO_I18N && typeof window.FISHAO_I18N.getMatchingFishAltName === 'function')
+        ? window.FISHAO_I18N.getMatchingFishAltName(f, searchQ)
+        : "";
+      var altMatchHtml = altMatch ? '<div style="font-size: 11px; color: #38bdf8; font-weight: 500; margin-top: 2px;">' + escapeHtml(altMatch) + '</div>' : '';
       var locLabels = getFishLocationLabels(f);
 
       return '<tr class="' + rowClass + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + rowClickTitle + '">' +
@@ -489,7 +499,7 @@ function renderTableBody(data) {
         '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + fishName + '" class="fish-img" onerror="this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'"></div></td>' +
         '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + fishName +
         (f.is_club ? '<span class="badge-club-tag">' + clubTagText + '</span>' : '') +
-        '</div></td>' +
+        '</div>' + altMatchHtml + '</td>' +
         '<td>' + renderRatingBadge(f.rating) + '</td>' +
         '<td>' + renderPriceCell(f.id) + '</td>' +
         '<td style="max-width: 250px;">' +

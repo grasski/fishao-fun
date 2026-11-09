@@ -108,6 +108,80 @@
         return FISHAO_I18N.waters[water][lang];
       }
       return water;
+    },
+
+    getFishNames: function (fish) {
+      if (!fish) return [];
+      var id = (typeof fish === 'object') ? fish.id : fish;
+      var list = [];
+      function addName(n) {
+        if (n && typeof n === 'string') {
+          var trimmed = n.trim();
+          if (trimmed && list.indexOf(trimmed) === -1) {
+            list.push(trimmed);
+          }
+        }
+      }
+      if (typeof fish === 'object' && fish.name) {
+        addName(fish.name);
+      }
+      if (FISHAO_I18N.fishes && FISHAO_I18N.fishes[id]) {
+        var entry = FISHAO_I18N.fishes[id];
+        if (typeof entry === 'object') {
+          Object.keys(entry).forEach(function (k) {
+            addName(entry[k]);
+          });
+        }
+      }
+      return list;
+    },
+
+    matchesFishSearch: function (fish, query) {
+      if (!fish || !query) return false;
+      var q = (typeof normStr === 'function') ? normStr(query) : ((query || '').normalize ? (query || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim() : (query || '').toLowerCase().trim());
+      if (!q) return false;
+      var id = String((typeof fish === 'object') ? fish.id : fish);
+      if (id === q || ('#' + id) === q) return true;
+
+      var names = FISHAO_I18N.getFishNames(fish);
+      var tokens = q.split(/\s+/).filter(Boolean);
+
+      for (var i = 0; i < names.length; i++) {
+        var n = names[i];
+        var nNorm = (typeof normStr === 'function') ? normStr(n) : ((n || '').normalize ? (n || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim() : (n || '').toLowerCase().trim());
+        if (nNorm.indexOf(q) !== -1) return true;
+        if (tokens.length > 1 && tokens.every(function (tok) { return nNorm.indexOf(tok) !== -1; })) {
+          return true;
+        }
+      }
+      return false;
+    },
+
+    getMatchingFishAltName: function (fish, query) {
+      if (!fish || !query) return '';
+      var q = (typeof normStr === 'function') ? normStr(query) : ((query || '').normalize ? (query || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim() : (query || '').toLowerCase().trim());
+      if (!q) return '';
+      var curName = FISHAO_I18N.getFishName(fish);
+      var curNorm = (typeof normStr === 'function') ? normStr(curName) : ((curName || '').normalize ? (curName || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim() : (curName || '').toLowerCase().trim());
+      if (curNorm.indexOf(q) !== -1) return '';
+
+      var id = (typeof fish === 'object') ? fish.id : fish;
+      if (FISHAO_I18N.fishes && FISHAO_I18N.fishes[id]) {
+        var entry = FISHAO_I18N.fishes[id];
+        var curLang = FISHAO_I18N.currentLang || 'cs';
+        var otherLangs = Object.keys(entry).filter(function (k) { return k !== curLang; });
+        for (var i = 0; i < otherLangs.length; i++) {
+          var lk = otherLangs[i];
+          var alt = entry[lk];
+          if (alt) {
+            var altNorm = (typeof normStr === 'function') ? normStr(alt) : ((alt || '').normalize ? (alt || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim() : (alt || '').toLowerCase().trim());
+            if (altNorm.indexOf(q) !== -1) {
+              return lk.toUpperCase() + ': ' + alt;
+            }
+          }
+        }
+      }
+      return '';
     }
   };
 

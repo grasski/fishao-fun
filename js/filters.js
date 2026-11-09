@@ -63,7 +63,8 @@ function setCollectionFilter(mode, btn) {
 function applyFilters() {
   updateClubStats();
 
-  var q = document.getElementById("search").value.trim().toLowerCase();
+  var searchEl = document.getElementById("search");
+  var q = searchEl ? searchEl.value.trim() : "";
   var bait = document.getElementById("baitFilter").value;
   var rating = document.getElementById("ratingFilter").value;
   var water = document.getElementById("waterFilter").value;
@@ -93,8 +94,12 @@ function applyFilters() {
       }
     }
 
-    var localizedName = (window.FISHAO_I18N && window.FISHAO_I18N.getFishName) ? window.FISHAO_I18N.getFishName(f).toLowerCase() : '';
-    if (q && !f.name.toLowerCase().includes(q) && !localizedName.includes(q)) return false;
+    if (q) {
+      var isMatch = (window.FISHAO_I18N && typeof window.FISHAO_I18N.matchesFishSearch === 'function')
+        ? window.FISHAO_I18N.matchesFishSearch(f, q)
+        : (normStr(f.name).includes(normStr(q)));
+      if (!isMatch) return false;
+    }
 
     if (bait && !f.baits.includes(bait)) return false;
 
