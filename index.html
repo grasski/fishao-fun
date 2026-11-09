@@ -1238,6 +1238,23 @@
           </div>
         </div>
 
+        <!-- Admin Tools Section (visible only if currentUser is admin) -->
+        <div id="profileAdminSection" style="display: none; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 12px 14px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: #38bdf8; display: flex; align-items: center; gap: 6px;">
+                <span>🛡️</span> <span data-i18n="admin_tools_title">Správa a zálohování (Admin)</span>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" data-i18n="admin_backup_desc">
+                Stáhne kompletní data Firestore databáze (hráči, kluby, ceník) jako JSON soubor do tvého zařízení.
+              </div>
+            </div>
+            <button type="button" id="btnAdminExportBackup" class="pill-btn primary" onclick="window.fishaoApp.exportFirestoreBackup()" style="height: 32px; padding: 0 14px; font-size: 12px; font-weight: 700;">
+              📥 <span data-i18n="admin_backup_btn">Zálohovat databázi (JSON)</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Action buttons -->
         <div
           style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 10px;">

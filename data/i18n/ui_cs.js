@@ -6,6 +6,12 @@
 
   var dict = {
       "admin_badge": "Admin",
+      "admin_backup_btn": "Zálohovat databázi (JSON)",
+      "admin_backup_desc": "Stáhne kompletní data Firestore databáze (hráči, kluby, ceník) jako JSON soubor do tvého zařízení.",
+      "admin_backup_error": "Chyba při zálohování: {msg}",
+      "admin_backup_progress": "Zálohuji data...",
+      "admin_backup_success": "Záloha byla úspěšně stažena ({users} hráčů, {clubs} klubů).",
+      "admin_tools_title": "Správa a zálohování (Admin)",
       "app_desc": "Kompletní přehled 80 klubových &amp; 615 obecných ryb • Živý čas lovu • Ceník Fish Market • Osobní sbírka úlovků",
       "app_subtitle": "Tracker",
       "app_title": "FISHAO",

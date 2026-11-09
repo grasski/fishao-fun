@@ -466,6 +466,7 @@ window.fishaoApp = {
   onAvatarUrlInput: onAvatarUrlInput,
   saveProfile: saveProfile,
   deleteAccount: deleteAccount,
+  exportFirestoreBackup: exportFirestoreBackup,
   resolveConfirmModal: resolveConfirmModal,
   showToast: showToast,
   toggleCaughtFish: toggleCaughtFish,

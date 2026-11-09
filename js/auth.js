@@ -568,6 +568,11 @@ function openProfileModal() {
     renderBackyardProfilePicker();
   }
 
+  var adminSection = document.getElementById("profileAdminSection");
+  if (adminSection) {
+    adminSection.style.display = (userProfile && userProfile.role === 'admin') ? "block" : "none";
+  }
+
   if (overlay) overlay.style.display = "flex";
 }
 
@@ -793,5 +798,89 @@ async function deleteAccount() {
 
 function editNickname() {
   openProfileModal();
+}
+
+async function exportFirestoreBackup() {
+  if (!currentUser || !userProfile || userProfile.role !== 'admin') {
+    showToast(t('auth_notice_default'), 'error');
+    return;
+  }
+  if (!db) {
+    showToast(t('auth_need_config'), 'error');
+    return;
+  }
+
+  var btn = document.getElementById("btnAdminExportBackup");
+  var oldHtml = btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '⏳ ' + t('admin_backup_progress', 'Zálohuji data...');
+  }
+
+  try {
+    var firestoreModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+
+    // 1. Fetch Market Prices (/fishao_market/prices_history)
+    var marketDocRef = firestoreModule.doc(db, "fishao_market", "prices_history");
+    var marketSnap = await firestoreModule.getDoc(marketDocRef);
+    var marketData = marketSnap.exists() ? marketSnap.data() : null;
+
+    // 2. Fetch Clubs (/clubs)
+    var clubsColRef = firestoreModule.collection(db, "clubs");
+    var clubsSnap = await firestoreModule.getDocs(clubsColRef);
+    var clubsList = [];
+    clubsSnap.forEach(function (doc) {
+      clubsList.push(Object.assign({ id: doc.id }, doc.data()));
+    });
+
+    // 3. Fetch Users (/users)
+    var usersColRef = firestoreModule.collection(db, "users");
+    var usersSnap = await firestoreModule.getDocs(usersColRef);
+    var usersList = [];
+    usersSnap.forEach(function (doc) {
+      usersList.push(Object.assign({ id: doc.id }, doc.data()));
+    });
+
+    // Compile backup payload
+    var backupData = {
+      app: "FISHAO Tracker",
+      version: "1.0",
+      exportedAt: new Date().toISOString(),
+      stats: {
+        usersCount: usersList.length,
+        clubsCount: clubsList.length,
+        marketPricesCount: (marketData && marketData.prices) ? Object.keys(marketData.prices).length : 0
+      },
+      collections: {
+        fishao_market: {
+          prices_history: marketData
+        },
+        clubs: clubsList,
+        users: usersList
+      }
+    };
+
+    var jsonStr = JSON.stringify(backupData, null, 2);
+    var blob = new Blob([jsonStr], { type: "application/json;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    var dateStr = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = "fishao_firestore_backup_" + dateStr + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    showToast(t('admin_backup_success', { users: usersList.length, clubs: clubsList.length }), 'info');
+  } catch (err) {
+    console.error("Backup failed:", err);
+    showToast(t('admin_backup_error', { msg: err.message }), 'error');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = oldHtml;
+    }
+  }
 }
 

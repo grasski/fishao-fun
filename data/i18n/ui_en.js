@@ -6,6 +6,12 @@
 
   var dict = {
       "admin_badge": "Admin",
+      "admin_backup_btn": "Backup Database (JSON)",
+      "admin_backup_desc": "Download complete Firestore database data (players, clubs, market) as a JSON file to your device.",
+      "admin_backup_error": "Backup failed: {msg}",
+      "admin_backup_progress": "Backing up data...",
+      "admin_backup_success": "Backup successfully downloaded ({users} players, {clubs} clubs).",
+      "admin_tools_title": "Database Management & Backup (Admin)",
       "app_desc": "Complete overview of 80 club &amp; 615 standard fish • Live biting times • Fish Market prices • Personal catch collection",
       "app_subtitle": "Tracker",
       "app_title": "FISHAO",
