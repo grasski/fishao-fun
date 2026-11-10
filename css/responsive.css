@@ -462,6 +462,28 @@
   .milestones-grid {
     grid-template-columns: 1fr;
   }
+
+  /* Market Reset Alert Banner on Mobile */
+  .market-reset-alert-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 13px 14px;
+    gap: 10px;
+  }
+  .market-reset-alert-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 17px;
+  }
+  .market-reset-alert-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .market-reset-alert-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
 }
 
 /* Very Small Phones (<= 420px) */

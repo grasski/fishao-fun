@@ -358,6 +358,10 @@ function updateMarketTabStatus() {
     bannerSunday.style.display = (currentView === "market" && isSunday) ? "flex" : "none";
   }
 
+  if (typeof updateMarketResetAlertVisibility === 'function') {
+    updateMarketResetAlertVisibility();
+  }
+
   var descEl = document.getElementById("marketSundayNoticeDesc");
   if (descEl) {
     var windowText = (typeof getMarketClosedWindowText === 'function') ? getMarketClosedWindowText() : 'neděle 00:00 – 24:00 UTC';

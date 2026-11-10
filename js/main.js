@@ -527,6 +527,7 @@ window.fishaoApp = {
   getMaxPrice: getMaxPrice,
   updateMarketTabStatus: updateMarketTabStatus,
   updateMarketSundayCountdown: updateMarketSundayCountdown,
+  dismissMarketResetAlert: dismissMarketResetAlert,
   syncUrlRoute: syncUrlRoute,
   handleRoute: handleRoute,
   getHashOrQueryRoute: getHashOrQueryRoute,

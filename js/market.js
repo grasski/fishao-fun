@@ -1103,3 +1103,37 @@ async function resetPriceHistoryToDefault() {
   }
 }
 
+var MARKET_RESET_ALERT_STORAGE_KEY = 'fishao_market_reset_alert_dismissed_v1';
+
+/**
+ * Returns whether the Fish Market price reset notice has been dismissed locally.
+ */
+function isMarketResetAlertDismissed() {
+  try {
+    return localStorage.getItem(MARKET_RESET_ALERT_STORAGE_KEY) === '1';
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * Shows or hides the Fish Market price reset alert banner based on active view and dismissal state.
+ */
+function updateMarketResetAlertVisibility() {
+  var banner = document.getElementById("bannerMarketResetAlert");
+  if (!banner) return;
+  var shouldShow = (currentView === "market") && !isMarketResetAlertDismissed();
+  banner.style.display = shouldShow ? "flex" : "none";
+}
+
+/**
+ * Dismisses the Fish Market price reset alert banner and persists the choice in localStorage.
+ */
+function dismissMarketResetAlert() {
+  try {
+    localStorage.setItem(MARKET_RESET_ALERT_STORAGE_KEY, '1');
+  } catch (e) { }
+  updateMarketResetAlertVisibility();
+}
+
+
