@@ -1,25 +1,74 @@
 /**
  * FISHAO - Market & Price Management (js/market.js)
  * -------------------------------------------------------------
- * Fish Market price history, today price calculations,
- * single price submission/deletion, bulk text import with fuzzy search,
- * and JSON price export.
+ * Fish Market price history (variable community prices), single price
+ * submission/deletion through Firestore transactions, bulk text import with
+ * fuzzy search, duplicate price detection, and JSON price export.
  */
 
-async function persistPriceHistory() {
-  localStorage.setItem('fishao_price_history_v1', JSON.stringify(priceHistory));
-
-  if (db && firebaseDocRef && currentUser) {
-    try {
-      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-      await fsModule.setDoc(firebaseDocRef, {
-        prices: priceHistory,
-        lastUpdated: new Date().toISOString()
-      });
-    } catch (err) {
-      console.error("Failed to persist prices to Firestore:", err);
-    }
+function saveLocalPriceHistory() {
+  try {
+    localStorage.setItem('fishao_price_history_v1', JSON.stringify(priceHistory));
+  } catch (err) {
+    console.warn("Failed to save price history locally:", err);
   }
+}
+
+function clonePriceMap(map) {
+  var source = (map && typeof map === "object") ? map : {};
+  var copy = {};
+  Object.keys(source).forEach(function (key) {
+    var list = source[key];
+    copy[key] = Array.isArray(list)
+      ? list.map(function (item) {
+        return (item && typeof item === "object")
+          ? { date: item.date, price: item.price }
+          : item;
+      })
+      : [];
+  });
+  return copy;
+}
+
+function sortPriceEntriesNewestFirst(list) {
+  return list.slice().sort(function (a, b) {
+    return String(b.date || "").localeCompare(String(a.date || ""));
+  });
+}
+
+/**
+ * Single display-only normalization for known prices.
+ *
+ * Returns a new, newest-first array with exactly one entry per distinct
+ * numeric price (the newest date wins). Invalid entries are dropped.
+ * It never mutates its input and never writes to storage, so legacy duplicate
+ * rows stay untouched in Firestore/localStorage while every UI path shows a
+ * de-duplicated list.
+ */
+function normalizePriceEntries(list) {
+  if (!Array.isArray(list)) return [];
+
+  var valid = [];
+  list.forEach(function (item) {
+    if (!item || typeof item !== "object") return;
+    var price = Number(item.price);
+    var date = typeof item.date === "string" ? item.date : "";
+    if (!isFinite(price) || price <= 0 || !date) return;
+    valid.push({ date: date, price: price });
+  });
+
+  var sorted = sortPriceEntriesNewestFirst(valid);
+  var seen = Object.create(null);
+  var normalized = [];
+
+  sorted.forEach(function (entry) {
+    var key = String(entry.price);
+    if (seen[key]) return;
+    seen[key] = true;
+    normalized.push(entry);
+  });
+
+  return normalized;
 }
 
 function getFishPrices(fid) {
@@ -127,14 +176,6 @@ function updateMarketSundayCountdown() {
   }
 }
 
-function getTodayPrice(fid) {
-  if (isMarketClosedToday()) return null;
-  var list = getFishPrices(fid);
-  if (!list || list.length === 0) return null;
-  var tIso = getTodayISO();
-  return list.find(function (x) { return x.date === tIso; }) || null;
-}
-
 function formatPriceDate(isoDate) {
   if (!isoDate) return "";
   var parts = isoDate.split("-");
@@ -146,20 +187,21 @@ function formatPriceDate(isoDate) {
   }
 }
 
+/**
+ * Returns the newest distinct known price entry for a fish.
+ */
 function getLatestPrice(fid) {
-  var list = getFishPrices(fid);
-  if (!list || list.length === 0) return null;
-  return list[0];
+  var list = normalizePriceEntries(getFishPrices(fid));
+  return list.length ? list[0] : null;
 }
 
 /**
- * Returns the all-time highest recorded price entry for a fish.
- * The list is sorted newest-first, so on a tie the most recent record wins.
+ * Returns the highest distinct known price entry for a fish.
+ * The normalized list is newest-first, so on a tie the most recent record wins.
  */
 function getMaxPrice(fid) {
-  var list = getFishPrices(fid);
-  if (!list || list.length === 0) return null;
-  // List is newest-first, so ">" keeps the most recent entry on a price tie.
+  var list = normalizePriceEntries(getFishPrices(fid));
+  if (!list.length) return null;
   return list.reduce(function (best, item) {
     return item.price > best.price ? item : best;
   });
@@ -365,32 +407,17 @@ function closePriceModal(skipSync) {
 }
 
 function renderModalHistory(fid) {
-  var list = getFishPrices(fid);
+  // Display-only normalization: duplicate prices are shown once.
+  var list = normalizePriceEntries(getFishPrices(fid));
   var tbody = document.getElementById("modalPriceHistoryTbody");
   var locale = getLocale();
 
-  var todayPriceEl = document.getElementById("statTodayPrice");
   var minPriceEl = document.getElementById("statMinPrice");
   var maxPriceEl = document.getElementById("statMaxPrice");
+  var historyTitleEl = document.getElementById("modalHistoryTitle");
 
-  var isSunday = isMarketClosedToday();
-  var curTodayIso = getTodayISO();
-  var todayEntry = isSunday ? null : list.find(function (x) { return x.date === curTodayIso; });
-
-  if (isSunday) {
-    if (todayPriceEl) {
-      todayPriceEl.innerHTML = '<span style="color: #f59e0b; font-size: 13px; font-weight: 700;">🔒 ' + t('market_closed_sunday_short') + '</span>';
-    }
-  } else if (todayEntry) {
-    if (todayPriceEl) {
-      todayPriceEl.innerText = todayEntry.price.toLocaleString(locale) + " FB";
-      todayPriceEl.style.color = "#34d399";
-    }
-  } else {
-    if (todayPriceEl) {
-      todayPriceEl.innerText = "--";
-      todayPriceEl.style.color = "var(--text-muted)";
-    }
+  if (historyTitleEl) {
+    historyTitleEl.innerText = t('modal_history_title', { count: list.length });
   }
 
   if (list.length === 0) {
@@ -407,17 +434,13 @@ function renderModalHistory(fid) {
   if (minPriceEl) minPriceEl.innerText = minP.toLocaleString(locale) + " FB";
   if (maxPriceEl) maxPriceEl.innerText = maxP.toLocaleString(locale) + " FB";
 
-  tbody.innerHTML = list.map(function (item, idx) {
+  tbody.innerHTML = list.map(function (item) {
     var actionHtml = isAdmin
-      ? '<button class="btn-delete-price" title="' + t('price_delete_admin_title') + '" onclick="window.fishaoApp.deletePriceEntry(' + fid + ', ' + idx + ')">🗑️</button>'
+      ? '<button class="btn-delete-price" title="' + t('price_delete_admin_title') + '" onclick="window.fishaoApp.deletePriceEntry(' + fid + ', ' + item.price + ')">🗑️</button>'
       : '<span title="' + t('price_delete_locked_title') + '" style="color: var(--text-muted); font-size: 13px; cursor: default;">🔒</span>';
 
-    var isToday = (!isSunday && item.date === curTodayIso);
-    var rowStyle = isToday ? 'background: rgba(56, 189, 248, 0.08);' : '';
-    var todayTag = isToday ? ' <span style="font-size: 10px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; padding: 1px 5px; border-radius: 4px; font-weight: 700;">' + t('price_today_tag') + '</span>' : '';
-
-    return '<tr style="' + rowStyle + '">' +
-      '<td style="color: #cbd5e1; font-weight: 600;">' + formatPriceDate(item.date) + todayTag + '</td>' +
+    return '<tr>' +
+      '<td style="color: #cbd5e1; font-weight: 600;">' + formatPriceDate(item.date) + '</td>' +
       '<td style="color: #34d399; font-weight: 800;"><span class="cash-icon">💵</span> ' + item.price.toLocaleString(locale) + ' FB</td>' +
       '<td style="text-align: center;">' + actionHtml + '</td>' +
       '</tr>';
@@ -444,6 +467,15 @@ function onPriceDateChange(dateVal) {
   }
 }
 
+function applyCloudFishPriceList(fidStr, list) {
+  if (Array.isArray(list) && list.length > 0) {
+    priceHistory[fidStr] = list;
+  } else {
+    delete priceHistory[fidStr];
+  }
+  saveLocalPriceHistory();
+}
+
 async function submitNewPrice() {
   if (!selectedModalFishId) return;
 
@@ -453,61 +485,157 @@ async function submitNewPrice() {
   }
 
   var d = document.getElementById("newPriceDate").value;
-  var p = parseInt(document.getElementById("newPriceValue").value);
+  var p = parseInt(document.getElementById("newPriceValue").value, 10);
+
+  if (!d) {
+    alert(t('price_invalid_input'));
+    return;
+  }
 
   if (isDateSunday(d)) {
     alert(t('price_sunday_blocked'));
     return;
   }
 
-  if (!d || isNaN(p) || p <= 0) {
+  if (isNaN(p) || p <= 0) {
     alert(t('price_invalid_input'));
     return;
   }
 
   var fidStr = selectedModalFishId.toString();
-  if (!priceHistory[fidStr]) priceHistory[fidStr] = [];
+  var fid = selectedModalFishId;
 
-  var existingIdx = priceHistory[fidStr].findIndex(function (it) { return it.date === d; });
-  if (existingIdx !== -1) {
-    var existingPrice = priceHistory[fidStr][existingIdx].price;
-    if (!isAdmin) {
-      alert(t('price_exists_non_admin', { date: d, price: existingPrice }));
-      return;
-    }
-    if (!confirm(t('price_exists_admin_confirm', { date: d, price: existingPrice, newPrice: p }))) {
-      return;
-    }
-    priceHistory[fidStr][existingIdx].price = p;
-  } else {
-    priceHistory[fidStr].unshift({ date: d, price: p });
+  // Fast local duplicate check: a price value is stored only once per fish.
+  var localDuplicate = getFishPrices(fid).find(function (it) {
+    return Number(it.price) === p;
+  });
+  if (localDuplicate) {
+    alert(t('price_exists', { price: p.toLocaleString(getLocale()), date: formatPriceDate(localDuplicate.date) }));
+    return;
   }
 
-  priceHistory[fidStr].sort(function (a, b) { return b.date.localeCompare(a.date); });
+  // Local-only mode (no Firestore connection available).
+  if (!db || !firebaseDocRef || !window.FISHAO_FS_TX) {
+    var localMap = clonePriceMap(priceHistory);
+    var localList = Array.isArray(localMap[fidStr]) ? localMap[fidStr] : [];
+    localList.push({ date: d, price: p });
+    localMap[fidStr] = sortPriceEntriesNewestFirst(localList);
+    priceHistory = localMap;
+    saveLocalPriceHistory();
+    renderModalHistory(fid);
+    applyFilters();
+    document.getElementById("newPriceValue").value = "";
+    showToast(t('price_added', { price: p }), "success");
+    return;
+  }
 
-  await persistPriceHistory();
-  renderModalHistory(selectedModalFishId);
-  applyFilters();
-  document.getElementById("newPriceValue").value = "";
+  try {
+    var result = await window.FISHAO_FS_TX.readModifyWrite(db, firebaseDocRef, function (currentData) {
+      var prices = clonePriceMap(currentData && currentData.prices ? currentData.prices : {});
+      var list = Array.isArray(prices[fidStr]) ? prices[fidStr] : [];
+
+      var duplicate = list.find(function (it) {
+        return Number(it.price) === p;
+      });
+      if (duplicate) {
+        return {
+          write: false,
+          result: { status: "duplicate", entry: duplicate, list: sortPriceEntriesNewestFirst(list) }
+        };
+      }
+
+      list.push({ date: d, price: p });
+      prices[fidStr] = sortPriceEntriesNewestFirst(list);
+
+      return {
+        write: true,
+        data: { prices: prices, lastUpdated: new Date().toISOString() },
+        result: { status: "added", list: prices[fidStr] }
+      };
+    });
+
+    if (!result || result.status === "duplicate") {
+      var dupEntry = result && result.entry ? result.entry : null;
+      applyCloudFishPriceList(fidStr, (result && result.list) || []);
+      renderModalHistory(fid);
+      applyFilters();
+      alert(t('price_exists', {
+        price: p.toLocaleString(getLocale()),
+        date: dupEntry ? formatPriceDate(dupEntry.date) : "--"
+      }));
+      return;
+    }
+
+    applyCloudFishPriceList(fidStr, result.list);
+    renderModalHistory(fid);
+    applyFilters();
+    document.getElementById("newPriceValue").value = "";
+    showToast(t('price_added', { price: p }), "success");
+  } catch (err) {
+    console.error("Failed to save price to Firestore:", err);
+    showToast(t('price_sync_failed'), "error");
+  }
 }
 
-async function deletePriceEntry(fid, index) {
+async function deletePriceEntry(fid, price) {
   if (!isAdmin) {
     alert(t('price_delete_non_admin'));
     return;
   }
 
   var fidStr = fid.toString();
-  if (!priceHistory[fidStr]) return;
+  var priceNum = Number(price);
+  if (!priceHistory[fidStr] || !isFinite(priceNum)) return;
   if (!confirm(t('price_delete_confirm'))) return;
 
-  priceHistory[fidStr].splice(index, 1);
-  if (priceHistory[fidStr].length === 0) {
-    delete priceHistory[fidStr];
+  // Local-only mode (no Firestore connection available).
+  if (!db || !firebaseDocRef || !window.FISHAO_FS_TX) {
+    var localMap = clonePriceMap(priceHistory);
+    var localList = (localMap[fidStr] || []).filter(function (it) {
+      return Number(it.price) !== priceNum;
+    });
+    if (localList.length > 0) {
+      localMap[fidStr] = localList;
+    } else {
+      delete localMap[fidStr];
+    }
+    priceHistory = localMap;
+    saveLocalPriceHistory();
+    renderModalHistory(fid);
+    applyFilters();
+    return;
   }
-  await persistPriceHistory();
-  renderModalHistory(fid);
-  applyFilters();
+
+  try {
+    var result = await window.FISHAO_FS_TX.readModifyWrite(db, firebaseDocRef, function (currentData) {
+      var prices = clonePriceMap(currentData && currentData.prices ? currentData.prices : {});
+      var list = Array.isArray(prices[fidStr]) ? prices[fidStr] : [];
+
+      // Removing all raw rows with this price makes the normalized row disappear.
+      var filtered = list.filter(function (it) {
+        return Number(it.price) !== priceNum;
+      });
+
+      if (filtered.length > 0) {
+        prices[fidStr] = filtered;
+      } else {
+        delete prices[fidStr];
+      }
+
+      return {
+        write: true,
+        data: { prices: prices, lastUpdated: new Date().toISOString() },
+        result: { list: filtered }
+      };
+    });
+
+    applyCloudFishPriceList(fidStr, (result && result.list) || []);
+    renderModalHistory(fid);
+    applyFilters();
+  } catch (err) {
+    console.error("Failed to delete price from Firestore:", err);
+    showToast(t('price_sync_failed'), "error");
+  }
 }
 
 function onBulkDateChange(dateVal) {
@@ -772,8 +900,9 @@ async function processBulkImport() {
     }
   }
 
-  var matched = 0;
+  var additions = {};
   var skipped = 0;
+  var duplicates = 0;
   var lines = text.split(/\r?\n/);
 
   for (var li = 0; li < lines.length; li++) {
@@ -803,36 +932,127 @@ async function processBulkImport() {
 
     var n = normStr(fishName);
     var targetFish = nameToFish.get(n);
-    if (targetFish) {
-      var fidStr = targetFish.id.toString();
-      if (!priceHistory[fidStr]) priceHistory[fidStr] = [];
-
-      var existingDateIdx = priceHistory[fidStr].findIndex(function (x) { return x.date === dateVal; });
-      if (existingDateIdx !== -1) {
-        if (isAdmin) {
-          priceHistory[fidStr][existingDateIdx].price = priceNum;
-          matched++;
-        } else {
-          skipped++;
-        }
-      } else {
-        priceHistory[fidStr].unshift({ date: dateVal, price: priceNum });
-        priceHistory[fidStr].sort(function (a, b) { return b.date.localeCompare(a.date); });
-        matched++;
-      }
-    } else {
+    if (!targetFish) {
       skipped++;
+      continue;
     }
+
+    var fidStr = targetFish.id.toString();
+    var localList = Array.isArray(priceHistory[fidStr]) ? priceHistory[fidStr] : [];
+    var existsLocally = localList.some(function (it) {
+      return Number(it.price) === priceNum;
+    });
+
+    var bucket = additions[fidStr];
+    var seenInImport = !!(bucket && bucket.prices.indexOf(priceNum) !== -1);
+
+    // A price value is stored only once per fish, across all dates.
+    if (existsLocally || seenInImport) {
+      duplicates++;
+      continue;
+    }
+
+    if (!bucket) {
+      bucket = additions[fidStr] = { date: dateVal, prices: [] };
+    }
+    bucket.prices.push(priceNum);
   }
 
-  await persistPriceHistory();
-  applyFilters();
+  var planned = 0;
+  Object.keys(additions).forEach(function (key) {
+    planned += additions[key].prices.length;
+  });
+
+  var added = 0;
+
+  if (planned > 0) {
+    if (!db || !firebaseDocRef || !window.FISHAO_FS_TX) {
+      // Local-only mode.
+      var localMap = clonePriceMap(priceHistory);
+      Object.keys(additions).forEach(function (key) {
+        var bucket = additions[key];
+        var list = Array.isArray(localMap[key]) ? localMap[key] : [];
+        bucket.prices.forEach(function (price) {
+          list.push({ date: bucket.date, price: price });
+        });
+        localMap[key] = sortPriceEntriesNewestFirst(list);
+      });
+      priceHistory = localMap;
+      saveLocalPriceHistory();
+      added = planned;
+      applyFilters();
+    } else {
+      try {
+        var txResult = await window.FISHAO_FS_TX.readModifyWrite(db, firebaseDocRef, function (currentData) {
+          var prices = clonePriceMap(currentData && currentData.prices ? currentData.prices : {});
+          var cloudAdded = 0;
+          var cloudDuplicates = 0;
+
+          Object.keys(additions).forEach(function (key) {
+            var bucket = additions[key];
+            var list = Array.isArray(prices[key]) ? prices[key] : [];
+            var known = Object.create(null);
+            list.forEach(function (it) {
+              known[String(Number(it.price))] = true;
+            });
+
+            bucket.prices.forEach(function (price) {
+              if (known[String(price)]) {
+                cloudDuplicates++;
+                return;
+              }
+              known[String(price)] = true;
+              list.push({ date: bucket.date, price: price });
+              cloudAdded++;
+            });
+
+            if (list.length > 0) {
+              prices[key] = sortPriceEntriesNewestFirst(list);
+            }
+          });
+
+          if (cloudAdded === 0) {
+            return {
+              write: false,
+              result: {
+                prices: (currentData && currentData.prices) ? currentData.prices : {},
+                added: 0,
+                duplicates: cloudDuplicates
+              }
+            };
+          }
+
+          return {
+            write: true,
+            data: { prices: prices, lastUpdated: new Date().toISOString() },
+            result: { prices: prices, added: cloudAdded, duplicates: cloudDuplicates }
+          };
+        });
+
+        if (txResult && txResult.prices) {
+          priceHistory = txResult.prices;
+          saveLocalPriceHistory();
+        }
+        added = (txResult && txResult.added) || 0;
+        duplicates += (txResult && txResult.duplicates) || 0;
+        applyFilters();
+      } catch (err) {
+        console.error("Failed to import prices to Firestore:", err);
+        resEl.style.display = "block";
+        resEl.style.background = "rgba(239,68,68,0.2)";
+        resEl.style.color = "#f87171";
+        resEl.innerText = t('price_sync_failed');
+        return;
+      }
+    }
+  }
 
   resEl.style.display = "block";
   resEl.style.background = "rgba(16,185,129,0.2)";
   resEl.style.color = "#34d399";
+  var duplicatesPart = duplicates > 0 ? t('bulk_result_duplicates', { duplicates: duplicates }) : "";
   var skippedPart = skipped > 0 ? t('bulk_result_skipped', { skipped: skipped }) : "";
-  resEl.innerText = t('bulk_result_msg', { matched: matched, date: dateVal, skippedPart: skippedPart });
+  resEl.innerText = t('bulk_result_msg', { date: dateVal, added: added, duplicatesPart: duplicatesPart, skippedPart: skippedPart });
 }
 
 function exportPricesJson() {
@@ -851,8 +1071,28 @@ async function resetPriceHistoryToDefault() {
     return;
   }
   if (!confirm(t('reset_prices_confirm'))) return;
-  priceHistory = JSON.parse(JSON.stringify(initialPrices));
-  await persistPriceHistory();
+
+  var defaultPrices = JSON.parse(JSON.stringify(initialPrices));
+
+  if (db && firebaseDocRef) {
+    if (!window.FISHAO_FS_TX) {
+      showToast(t('price_sync_failed'), "error");
+      return;
+    }
+    try {
+      await window.FISHAO_FS_TX.setDocument(db, firebaseDocRef, {
+        prices: defaultPrices,
+        lastUpdated: new Date().toISOString()
+      });
+    } catch (err) {
+      console.error("Failed to reset prices in Firestore:", err);
+      showToast(t('price_sync_failed'), "error");
+      return;
+    }
+  }
+
+  priceHistory = defaultPrices;
+  saveLocalPriceHistory();
   applyFilters();
   var resEl = document.getElementById("bulkResultMsg");
   if (resEl) {

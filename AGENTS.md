@@ -17,6 +17,9 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
 4. **Fish Market Rules:**
    * The Fish Market is **strictly closed on Sundays** (`getDay() === 0`).
    * No prices can be entered or imported for Sunday dates.
+   * Prices are **variable per player**. One fish may have several distinct prices, including multiple entries on the same date, but a numeric price value is stored **only once per fish across all dates**. New submissions and bulk imports must reject/skip duplicate price values.
+   * All price add/delete/bulk/reset writes go through the generic Firestore transaction helpers in `js/firestore-tx.js` (`window.FISHAO_FS_TX`). Do not write the price document with ad-hoc `setDoc` calls from `market.js`.
+   * Never present a single "today's price" anywhere. Use `normalizePriceEntries()` from `js/market.js` for every display path (table range, modal min/max, counts). Existing duplicate rows are never merged or rewritten in storage; raw JSON export keeps them visible for manual review.
 5. **Bilingual Localization & Modular i18n (`data/i18n/`):**
    * Supported languages: Czech (`cs`, default) and English (`en`).
    * Dictionaries are separated into modular files:
@@ -42,7 +45,8 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
    * All action bar controls maintain a unified 32px height standard (`.pill-btn`, `.toggle-pill`, `.btn-subtle-link`, `.sign-in-btn.sm`).
 
 7. **Modular JavaScript Architecture (`js/`):**
-   * Code is organized into cohesive modules under `js/`: `state.js`, `table.js`, `clubs.js`, `market.js`, `filters.js`, `auth.js`, `players.js`, and `main.js`.
+   * Code is organized into cohesive modules under `js/`: `state.js`, `firestore-tx.js`, `table.js`, `clubs.js`, `market.js`, `filters.js`, `auth.js`, `players.js`, and `main.js`.
+   * `js/firestore-tx.js`: Generic Firestore transaction helpers (`window.FISHAO_FS_TX.readModifyWrite`, `window.FISHAO_FS_TX.setDocument`). Keep it free of app-specific collections, documents, and field names.
    * `js/players.js`: Community player list, friends management (`friendUids`), backyard fish breeding (`backyardFishIds`, strictly the 83 backyard species), universal player modal, reverse fish-to-player lookups.
    * Public browser handlers are exposed on `window.fishaoApp` in `js/main.js`. Do not edit the legacy monolithic `app.js`.
 

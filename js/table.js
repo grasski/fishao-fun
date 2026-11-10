@@ -158,43 +158,51 @@ function renderRatingBadge(r) {
 }
 
 function renderPriceCell(fid) {
-  var isSunday = isMarketClosedToday();
-  var todayEntry = getTodayPrice(fid);
-  var latest = getLatestPrice(fid);
-  var maxEntry = getMaxPrice(fid);
-  var list = getFishPrices(fid);
+  // Display-only normalization: one row per distinct known price value.
+  var list = normalizePriceEntries(getFishPrices(fid));
   var locale = getLocale();
-  var histCount = '<span class="price-history-count" title="' + t('price_history_count_title') + '">' + list.length + 'x</span>';
 
-  if (!latest) {
+  if (list.length === 0) {
     return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + t('price_cell_add_title') + '">' +
       '<span class="price-empty">+ ' + t('price_add_btn') + '</span></div>';
   }
 
-  var cellTitle = isSunday
-    ? t('price_cell_sunday_title', { price: latest.price.toLocaleString(locale), date: formatPriceDate(latest.date) })
-    : (todayEntry
-      ? t('price_cell_today_active_title', { price: todayEntry.price.toLocaleString(locale) })
-      : t('price_cell_past_title', { price: latest.price.toLocaleString(locale), date: formatPriceDate(latest.date) }));
+  var pricesNum = list.map(function (x) { return x.price; });
+  var minP = Math.min.apply(null, pricesNum);
+  var maxP = Math.max.apply(null, pricesNum);
+  var count = list.length;
 
-  var todayHtml = isSunday
-    ? '<span class="price-lock">🔒</span><span class="price-today-val is-none">--</span>'
-    : (todayEntry
-      ? '<span class="price-today-val">' + todayEntry.price.toLocaleString(locale) + '</span>'
-      : '<span class="price-today-val is-none">--</span>');
+  var histCount = '<span class="price-history-count" title="' + t('price_history_count_title') + '">' + count + 'x</span>';
 
-  var maxHtml = "";
-  if (maxEntry) {
-    var isRecord = !!(todayEntry && todayEntry.price === maxEntry.price);
-    var maxParams = { price: maxEntry.price.toLocaleString(locale), date: formatPriceDate(maxEntry.date) };
-    var maxTitle = isRecord ? t('price_max_record_title', maxParams) : t('price_max_title', maxParams);
-    maxHtml = '<span class="price-sep">/</span>' +
-      '<span class="price-max-val' + (isRecord ? ' is-record' : '') + '" title="' + maxTitle + '">' + maxParams.price + '</span>' +
+  var cellTitle;
+  var valuesHtml;
+  if (minP === maxP) {
+    cellTitle = t('price_cell_single_title', {
+      price: minP.toLocaleString(locale),
+      date: formatPriceDate(list[0].date)
+    });
+    valuesHtml = '<span class="price-range-single">' + minP.toLocaleString(locale) + '</span>' +
+      '<span class="price-unit">FB</span>';
+  } else {
+    cellTitle = t('price_cell_range_title', {
+      min: minP.toLocaleString(locale),
+      max: maxP.toLocaleString(locale),
+      count: count
+    });
+    valuesHtml = '<span class="price-range-min">' + minP.toLocaleString(locale) + '</span>' +
+      '<span class="price-range-sep">–</span>' +
+      '<span class="price-range-max">' + maxP.toLocaleString(locale) + '</span>' +
       '<span class="price-unit">FB</span>';
   }
 
   return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + cellTitle + '">' +
-    '<span class="price-inline">' + todayHtml + maxHtml + histCount + '</span></div>';
+    '<span class="price-inline">' + valuesHtml + histCount + '</span></div>';
+}
+
+function countDistinctRecordedPrices() {
+  return Object.keys(priceHistory).reduce(function (sum, fid) {
+    return sum + normalizePriceEntries(getFishPrices(fid)).length;
+  }, 0);
 }
 
 function renderCaughtBtn(fishId) {
@@ -325,7 +333,7 @@ function updateCaughtStats() {
 
   var marketSummary = document.getElementById("marketStatsSummary");
   if (marketSummary) {
-    var priceCount = Object.keys(priceHistory).length;
+    var priceCount = countDistinctRecordedPrices();
     marketSummary.innerText = t('market_recorded_prices', { count: priceCount });
   }
 }
@@ -358,7 +366,7 @@ function updateMarketTabStatus() {
 
   var marketSummary = document.getElementById("marketStatsSummary");
   if (marketSummary) {
-    var priceCount = Object.keys(priceHistory).length;
+    var priceCount = countDistinctRecordedPrices();
     var summaryText = t('market_recorded_prices', { count: priceCount });
     if (isSunday) {
       summaryText += ' • ' + t('market_closed_sunday_short');

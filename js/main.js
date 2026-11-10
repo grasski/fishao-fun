@@ -524,7 +524,6 @@ window.fishaoApp = {
   setLanguage: setLanguage,
   isMarketClosedToday: isMarketClosedToday,
   getMarketClosedWindowText: getMarketClosedWindowText,
-  getTodayPrice: getTodayPrice,
   getMaxPrice: getMaxPrice,
   updateMarketTabStatus: updateMarketTabStatus,
   updateMarketSundayCountdown: updateMarketSundayCountdown,

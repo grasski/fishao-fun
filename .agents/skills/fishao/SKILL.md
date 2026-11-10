@@ -83,7 +83,7 @@ milestones use this helper instead of a `water` field.
 > * **3 Monster Fishes:** `unlock_type: "monster"`, unlocked manually for the club.
 
 ### 2.2 Fish Market Pricing Schema (`prices_history.json` & Firestore)
-Prices are stored as a map from `fishId` (as string) to an array of price entries sorted descending by date (`YYYY-MM-DD`):
+Prices are stored as a map from `fishId` (as string) to an array of price entries sorted descending by date (`YYYY-MM-DD`). Each new write keeps the shape but enforces one entry per distinct numeric price value per fish; any duplicates are preserved in storage and hidden on display by `normalizePriceEntries`.
 
 ```javascript
 {
@@ -99,8 +99,10 @@ Prices are stored as a map from `fishId` (as string) to an array of price entrie
    * No prices can be entered for Sunday dates (validated in modal and bulk import).
    * Sunday date input shows a red warning and disables the submit button.
    * On Sundays, default input dates fall back to Saturday (the last open day).
-2. **User Daily Limit:** Authenticated players can submit at most 1 price per fish per day.
-3. **Admin Rights:** Administrators (`isAdmin === true`) can overwrite existing prices and delete historical entries.
+2. **Variable Community Prices:** Prices differ per player, so one fish can have several distinct prices. Multiple entries for the same fish and date are allowed when their price values differ.
+3. **Price-Value Dedupe:** A numeric `price` is stored only once per fish across **all dates**. Re-submitting a known price is rejected (single form and bulk import alike). Duplicate checks and writes happen inside a Firestore transaction (`window.FISHAO_FS_TX.readModifyWrite`) so concurrent submissions cannot create duplicates.
+4. **Display Normalization:** `normalizePriceEntries(list)` in `js/market.js` is the only display normalization. It returns a new newest-first array with one entry per distinct price and never mutates storage. Tables, the fish modal, counts and summaries use it; raw export keeps legacy duplicates visible.
+5. **Admin Rights:** Administrators (`isAdmin === true`) can delete a normalized price row, which removes **all** raw rows with that price value. There is no overwrite flow.
 
 ### 2.3 Cloud Firestore Collections
 
@@ -151,11 +153,12 @@ The monolithic `app.js` was refactored into modular, cohesive files loaded direc
 1. `js/state.js`: Global state variables, derived `clubFishes`, fish helpers (`getFishWater`, `getFishLocationLabels`), localization helper `t()`, date and string utilities (`getTodayISO`, `getYesterdayISO`, `isDateSunday`, `normStr`, `escapeHtml`), toast notification (`showToast`), and confirmation dialog (`showConfirmModal`, `resolveConfirmModal`).
 2. `js/table.js`: Fish table rendering (`renderTableHead`, `renderTableBody`), UTC-to-local time formatting (`formatCatchTime`, `isFishActiveNow`), rating badges (`renderRatingBadge`), price cells (`renderPriceCell`), and caught fish collection toggles (`toggleCaughtFish`, `updateCaughtStats`).
 3. `js/clubs.js`: Real-time club synchronization via Firestore (`bindClubListener`), deterministic member roster rendering (`renderClubMembers`), member profile modal (`openPlayerModal`), club search, creation, joining, and leaving, club points management, milestones roadmap (`renderClubMilestones`), and FC / Monster special fish unlocks.
-4. `js/market.js`: Fish market price history persistence (`persistPriceHistory`), Sunday detection, price lookups (`getTodayPrice`, `getLatestPrice`, `getMaxPrice` — all-time high, ties resolved to the most recent date), single price submission/deletion (`submitNewPrice`, `deletePriceEntry`), fish detail modal rendering (`openPriceModal`, including the `rarity_factor` → tier badge helpers `getRarityTier` / `formatRarityPercent`), modal price history rendering (`renderModalHistory`), bulk price import with autocomplete suggestions (`processBulkImport`), and JSON export (`exportPricesJson`).
+4. `js/market.js`: Fish market price history persistence (`saveLocalPriceHistory`), Sunday detection, display normalization (`normalizePriceEntries`), price lookups (`getLatestPrice`, `getMaxPrice` — highest distinct price, ties resolved to the most recent date), single price submission/deletion through Firestore transactions (`submitNewPrice`, `deletePriceEntry`), fish detail modal rendering (`openPriceModal`, including the `rarity_factor` → tier badge helpers `getRarityTier` / `formatRarityPercent`), normalized modal price history rendering (`renderModalHistory`), bulk price import with duplicate skipping and autocomplete suggestions (`processBulkImport`), default reset (`resetPriceHistoryToDefault`), and JSON export (`exportPricesJson`).
 5. `js/filters.js`: Multi-criteria fish filtering engine (`applyFilters`, `resetFilters`), mission size handlers (`setSizeFilter`, `onRangeSizeInput`), collection filters, and dropdown options initializers.
 6. `js/auth.js`: Firebase authentication (`signIn`, `signOut`), GDPR-compliant profile synchronization (`loadUserProfile`, `saveProfile`), and UI state synchronization (`updateAuthUI`).
 7. `js/players.js`: Community player list, backyard fish breeding (`backyardFishIds`), universal player modal, reverse fish-to-player lookups.
 8. `js/main.js`: Live clock and timezone switching (`setTimezone`, `updateClock`), view routing (`switchView`), static DOM translations (`setLanguage`, `updateStaticTranslations`), modal listeners, `window.fishaoApp` exports, and application boot.
+9. `js/firestore-tx.js`: Generic, app-agnostic Firestore transaction helpers exposed as `window.FISHAO_FS_TX` (`readModifyWrite(db, docRef, modifier)` and `setDocument(db, docRef, data)`). It contains no collection, document or field names; `js/market.js` supplies those.
 
 ### 2.6 Modular Stylesheets (`css/`)
 
@@ -213,4 +216,5 @@ View Key        | Tab Button       | Main Header Sub-Toolbar
 3. **Always syntax-check:** Validate any edited or created JavaScript files with `node --check "<filepath>"`.
 4. **Bilingual integrity:** When introducing new UI labels or messages, always provide both Czech (`cs`) and English (`en`) keys in `data/i18n.js`.
 5. **Enforce Sunday market rules:** Fish Market prices can never be submitted or imported for Sunday dates.
+6. **Enforce price-value dedupe:** A numeric price is stored only once per fish across all dates. New writes go through Firestore transactions in `js/firestore-tx.js`; never merge or rewrite existing duplicate rows during display or migration. Use `normalizePriceEntries` for every display path.
 

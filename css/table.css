@@ -327,7 +327,7 @@ tbody tr:hover .fish-img {
 .len-dim { color: #64748b; font-size: 11px; }
 .len-avg { color: #f8fafc; font-weight: 800; font-size: 13px; }
 
-/* PRICE CELLS - Today vs all-time max (mirrors the Length column) */
+/* PRICE CELLS - Known price range (min–max) plus distinct count */
 .price-cell {
   cursor: pointer;
   transition: all 0.2s;
@@ -338,40 +338,30 @@ tbody tr:hover .fish-img {
   align-items: baseline;
   gap: 3px;
 }
-.price-today-val {
-  color: #34d399;
+.price-range-min,
+.price-range-single {
+  color: #cbd5e1;
   font-weight: 800;
   font-size: 14px;
   line-height: 1.2;
 }
-.price-today-val.is-none {
-  color: #64748b;
-  font-size: 12px;
-  font-weight: 700;
-}
-.price-sep {
+.price-range-sep {
   color: #475569;
   font-size: 11px;
 }
-.price-max-val {
-  color: #94a3b8;
+.price-range-max {
+  color: #cbd5e1;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 12px;
 }
-.price-max-val.is-record { color: #fbbf24; }
 .price-unit {
   color: #64748b;
   font-size: 10px;
   font-weight: 600;
 }
-.price-lock {
-  color: #f59e0b;
-  font-size: 10px;
-  line-height: 1;
-}
-.price-cell:hover .price-today-val:not(.is-none) { color: #6ee7b7; }
-.price-cell:hover .price-max-val { color: #e2e8f0; }
-.price-cell:hover .price-max-val.is-record { color: #fbbf24; }
+.price-cell:hover .price-range-min,
+.price-cell:hover .price-range-single,
+.price-cell:hover .price-range-max { color: #e2e8f0; }
 
 .price-empty {
   display: inline-flex;

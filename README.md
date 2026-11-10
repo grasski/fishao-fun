@@ -37,7 +37,8 @@ fishao/
 │   ├── state.js        # Globální stav, lokalizační a datumové pomocné funkce, dialogy
 │   ├── table.js        # Vykreslování tabulky ryb, časové kalkulace a správa úlovků
 │   ├── clubs.js        # Reálná synchronizace klubu, správa členů, milníky a FC odemykání
-│   ├── market.js       # Fish Market ceník, historie, jednotlivé zadávání a hromadný import
+│   ├── market.js       # Fish Market známé ceny, deduplikace, transakce a hromadný import
+│   ├── firestore-tx.js # Obecné Firestore transakční pomocníky (bez znalosti kolekcí)
 │   ├── filters.js      # Filtrování (hledání, vody, lokace, čas, velikosti, řazení)
 │   ├── auth.js         # Firebase autentizace a GDPR-compliant synchronizace profilu
 │   ├── players.js      # Komunita, ryby za domem, univerzální profil a reverzní vyhledávání

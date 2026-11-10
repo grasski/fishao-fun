@@ -8,7 +8,7 @@
 
   <!-- SEO Primary Meta Tags -->
   <meta name="title" content="FISHAO Wiki & Encyklopedie – Ryby, Fish Market ceník a Kluby">
-  <meta name="description" id="metaDescription" content="Kompletní FISHAO wiki a encyklopedie: přehled všech ryb včetně klubových. Denní Fish Market ceník, lokace, časy lovu, kluby a chov ryb za domem.">
+  <meta name="description" id="metaDescription" content="Kompletní FISHAO wiki a encyklopedie: přehled všech ryb včetně klubových. Komunitní Fish Market ceny od hráčů, lokace, časy lovu, kluby a chov ryb za domem.">
   <meta name="keywords" content="fishao wiki, wiki, fishao ryby, fishao fishes, fishao club, fishao kluby, klubové ryby, fishao encyklopedie, encyclopedia, fish market ceník, fishao ceník, fish market, fish market prices, fishao návnady, fishao baits, fishao za domem, fishao backyard, ryby fishao, lov ryb, fishao tracker, fishao guide, fishao database, fishdex">
   <meta name="author" content="FISHAO Community">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -28,7 +28,7 @@
   <meta property="og:url" content="https://fishao-tracker.cz/">
   <meta property="og:site_name" content="FISHAO Wiki & Tracker">
   <meta property="og:title" content="FISHAO Wiki & Encyklopedie – Ryby, Fish Market ceník a Kluby">
-  <meta property="og:description" content="Kompletní FISHAO wiki a encyklopedie: přehled všech ryb včetně klubových. Denní Fish Market ceník, kluby a chov za domem.">
+  <meta property="og:description" content="Kompletní FISHAO wiki a encyklopedie: přehled všech ryb včetně klubových. Komunitní Fish Market ceny, kluby a chov za domem.">
   <meta property="og:image" content="https://fishao-tracker.cz/images/og-preview.png">
   <meta property="og:image:secure_url" content="https://fishao-tracker.cz/images/og-preview.png">
   <meta property="og:image:type" content="image/png">
@@ -42,7 +42,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://fishao-tracker.cz/">
   <meta name="twitter:title" content="FISHAO Wiki & Encyklopedie – Ryby, Fish Market ceník a Kluby">
-  <meta name="twitter:description" content="Kompletní FISHAO wiki a encyklopedie: přehled všech ryb včetně klubových. Denní Fish Market ceník, kluby a chov za domem.">
+  <meta name="twitter:description" content="Kompletní FISHAO wiki a encyklopedie: přehled všech ryb včetně klubových. Komunitní Fish Market ceny, kluby a chov za domem.">
   <meta name="twitter:image" content="https://fishao-tracker.cz/images/og-preview.png">
 
   <!-- Structured Data (Schema.org / JSON-LD) -->
@@ -71,7 +71,7 @@
         "@id": "https://fishao-tracker.cz/#website",
         "url": "https://fishao-tracker.cz/",
         "name": "FISHAO Wiki & Tracker",
-        "description": "Kompletní FISHAO wiki: přehled všech ryb včetně klubových a denní Fish Market ceník",
+        "description": "Kompletní FISHAO wiki: přehled všech ryb včetně klubových a komunitní Fish Market ceny",
         "inLanguage": ["cs", "en"]
       }
     ]
@@ -83,11 +83,11 @@
   <link rel="stylesheet" href="css/header.css?v=3.1">
   <link rel="stylesheet" href="css/nav.css?v=3.1">
   <link rel="stylesheet" href="css/filters.css?v=3.1">
-  <link rel="stylesheet" href="css/table.css?v=3.1">
+  <link rel="stylesheet" href="css/table.css?v=3.2">
   <link rel="stylesheet" href="css/clubs.css?v=3.1">
   <link rel="stylesheet" href="css/players.css?v=3.1">
-  <link rel="stylesheet" href="css/modals.css?v=3.1">
-  <link rel="stylesheet" href="css/responsive.css?v=3.1">
+  <link rel="stylesheet" href="css/modals.css?v=3.2">
+  <link rel="stylesheet" href="css/responsive.css?v=3.2">
 </head>
 
 <body>
@@ -298,8 +298,7 @@
     <div class="view-action-bar yellow" id="bannerMarket" style="display: none;">
       <div class="action-bar-left">
         <span class="action-bar-title" style="color: #34d399;" data-i18n="market_bar_title">💵 Fish Market:</span>
-        <span class="action-bar-hint" id="marketStatsSummary" data-i18n="market_bar_subtitle">Výkupní ceník ve fishměně
-          (FB)</span>
+        <span class="action-bar-hint" id="marketStatsSummary" data-i18n="market_bar_subtitle">Komunitní katalog známých výkupních cen (FB)</span>
       </div>
       <div class="action-bar-right">
         <button class="btn-action sm" onclick="window.fishaoApp.openBulkModal()"
@@ -313,7 +312,7 @@
       <div class="sunday-notice-icon">🚫</div>
       <div class="sunday-notice-content">
         <div class="sunday-notice-title" data-i18n="market_sunday_banner_title">Fish Market má každou neděli ZAVŘENO</div>
-        <div class="sunday-notice-desc" id="marketSundayNoticeDesc">Každou celou neděli je výkup ryb ve hře FISHAO uzavřen. Výkup se znovu otevře v pondělí. Níže jsou zobrazeny poslední známé ceny z předchozích dnů.</div>
+        <div class="sunday-notice-desc" id="marketSundayNoticeDesc">Každou celou neděli je výkup ryb ve hře FISHAO uzavřen. Výkup se znovu otevře v pondělí. Níže jsou zobrazeny známé ceny z předchozích dnů.</div>
         <div class="sunday-notice-pills-row">
           <div class="sunday-pill countdown">
             <span class="pill-icon">⏳</span>
@@ -790,8 +789,8 @@
             <select id="sortBy" class="filter-control" onchange="window.fishaoApp.applyFilters()">
               <option value="name_asc" selected>Název (A - Z)</option>
               <option value="name_desc">Název (Z - A)</option>
-              <option value="price_desc">Cena Fish Market (nejvyšší)</option>
-              <option value="price_asc">Cena Fish Market (nejnižší)</option>
+              <option value="price_desc">Nejvyšší cena (od nejvyšší)</option>
+              <option value="price_asc">Nejvyšší cena (od nejnižší)</option>
               <option value="rating_desc">Rating (nejvyšší)</option>
               <option value="avg_desc">Průměrná velikost (největší)</option>
               <option value="avg_asc">Průměrná velikost (nejmenší)</option>
@@ -983,10 +982,6 @@
 
         <div class="price-stats-grid">
           <div class="price-stat-card">
-            <div class="price-stat-label" data-i18n="modal_today_price">Dnešní cena</div>
-            <div class="price-stat-val" id="statTodayPrice">--</div>
-          </div>
-          <div class="price-stat-card">
             <div class="price-stat-label" data-i18n="modal_min_price">Minimální cena</div>
             <div class="price-stat-val" id="statMinPrice" style="color: #f87171;">--</div>
           </div>
@@ -1044,8 +1039,8 @@
         </div>
 
         <div>
-          <span style="font-size: 13px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 8px;"
-            data-i18n="modal_history_title"> Historie prodejů této ryby: </span>
+          <span id="modalHistoryTitle" style="font-size: 13px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 8px;"
+            data-i18n="modal_history_title">Známé ceny této ryby:</span>
           <table class="history-table">
             <thead>
               <tr>
@@ -1072,7 +1067,7 @@
         <button class="modal-close" onclick="window.fishaoApp.closeBulkModal()">&times;</button>
       </div>
       <div class="modal-body">
-        <p style="font-size: 13px; color: var(--text-muted);" data-i18n="bulk_desc"> Zde můžeš vložit seznam denních cen
+        <p style="font-size: 13px; color: var(--text-muted);" data-i18n="bulk_desc"> Zde můžeš vložit seznam cen
           (např. ve formátu jako v souboru <code>prices.txt</code>, tedy <em>Název ryby: cena</em>) a všechny ryby se
           automaticky přiřadí a uloží do historie ve fishměně (FB). </p>
 
@@ -1451,8 +1446,8 @@
   <div id="appToast" class="app-toast" style="display: none;"></div>
 
   <!-- Data scripts and localization -->
-  <script src="data/i18n/ui_cs.js?v=3.1"></script>
-  <script src="data/i18n/ui_en.js?v=3.1"></script>
+  <script src="data/i18n/ui_cs.js?v=3.2"></script>
+  <script src="data/i18n/ui_en.js?v=3.2"></script>
   <script src="data/i18n/taxonomies.js?v=3.1"></script>
   <script src="data/i18n/fish_names.js?v=3.1"></script>
   <script src="data/i18n.js?v=3.1"></script>
@@ -1461,13 +1456,14 @@
   <script src="firebase-config.js?v=3.1"></script>
   <!-- Modular FISHAO Application Logic -->
   <script src="js/state.js?v=3.1"></script>
-  <script src="js/table.js?v=3.1"></script>
+  <script src="js/firestore-tx.js?v=3.2"></script>
+  <script src="js/table.js?v=3.2"></script>
   <script src="js/clubs.js?v=3.1"></script>
-  <script src="js/market.js?v=3.1"></script>
-  <script src="js/filters.js?v=3.1"></script>
+  <script src="js/market.js?v=3.2"></script>
+  <script src="js/filters.js?v=3.2"></script>
   <script src="js/auth.js?v=3.1"></script>
   <script src="js/players.js?v=3.1"></script>
-  <script src="js/main.js?v=3.1"></script>
+  <script src="js/main.js?v=3.2"></script>
 
 </body>
 

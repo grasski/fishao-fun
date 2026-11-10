@@ -152,22 +152,16 @@ function applyFilters() {
 
   // Sorting
   var curLang = getLang();
-  if (sortBy === "today_price_desc") {
+  if (sortBy === "price_desc") {
     filtered.sort(function (a, b) {
-      var pa = (getTodayPrice(a.id) || {}).price || 0;
-      var pb = (getTodayPrice(b.id) || {}).price || 0;
-      return pb - pa || b.rating - a.rating;
-    });
-  } else if (sortBy === "price_desc") {
-    filtered.sort(function (a, b) {
-      var pa = (getLatestPrice(a.id) || {}).price || 0;
-      var pb = (getLatestPrice(b.id) || {}).price || 0;
+      var pa = (getMaxPrice(a.id) || {}).price || 0;
+      var pb = (getMaxPrice(b.id) || {}).price || 0;
       return pb - pa || b.rating - a.rating;
     });
   } else if (sortBy === "price_asc") {
     filtered.sort(function (a, b) {
-      var pa = (getLatestPrice(a.id) || {}).price || 999999;
-      var pb = (getLatestPrice(b.id) || {}).price || 999999;
+      var pa = (getMaxPrice(a.id) || {}).price || 999999;
+      var pb = (getMaxPrice(b.id) || {}).price || 999999;
       return pa - pb || b.rating - a.rating;
     });
   } else if (sortBy === "name_asc") {
@@ -412,15 +406,10 @@ function updateSortByOptions() {
   var select = document.getElementById("sortBy");
   if (!select) return;
   var curVal = select.value;
-  var isSunday = isMarketClosedToday();
-  var todaySortHtml = !isSunday
-    ? '<option value="today_price_desc">' + t('opt_sort_today_price_desc') + '</option>'
-    : '';
 
   select.innerHTML =
     '<option value="name_asc">' + t('opt_sort_name_asc') + '</option>' +
     '<option value="name_desc">' + t('opt_sort_name_desc') + '</option>' +
-    todaySortHtml +
     '<option value="price_desc">' + t('opt_sort_price_desc') + '</option>' +
     '<option value="price_asc">' + t('opt_sort_price_asc') + '</option>' +
     '<option value="rating_desc">' + t('opt_sort_rating_desc') + '</option>' +
