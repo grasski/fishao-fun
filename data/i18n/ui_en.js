@@ -162,7 +162,7 @@
       "market_recorded_prices": "Distinct prices recorded: {count}",
       "market_reset_alert_ack_btn": "✓ Got it",
       "market_reset_alert_close_title": "Dismiss notice",
-      "market_reset_alert_desc": "Due to a server-side nerf to fish selling prices in the game, all previous price records had to be reset so the catalog reflects current values. Feel free to submit new prices!",
+      "market_reset_alert_desc": "Due to a server-side reduction in fish selling prices in the game, all previous price records had to be reset so the catalog reflects current values. Feel free to submit new prices!",
       "market_reset_alert_tag": "Notice",
       "market_reset_alert_title": "Fish Market prices have been reset",
       "market_sunday_banner_desc": "Fish Market in FISHAO is closed every Sunday during {window}. Known prices from previous days are shown below.",

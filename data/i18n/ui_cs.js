@@ -162,7 +162,7 @@
       "market_recorded_prices": "Zaznamenáno různých cen: {count}",
       "market_reset_alert_ack_btn": "✓ Rozumím",
       "market_reset_alert_close_title": "Zavřít upozornění",
-      "market_reset_alert_desc": "Z důvodu nerfu výkupních cen na straně herního serveru musely být všechny dosavadní ceny resetovány, aby ceník opět odpovídal aktuální situaci ve hře. Budeme rádi za přidání nových cen!",
+      "market_reset_alert_desc": "Z důvodu snížení výkupních cen na straně herního serveru musely být všechny dosavadní ceny resetovány, aby ceník opět odpovídal aktuální situaci ve hře. Budeme rádi za přidání nových cen!",
       "market_reset_alert_tag": "Upozornění",
       "market_reset_alert_title": "Ceny ve Fish Marketu byly resetovány",
       "market_sunday_banner_desc": "Výkup ryb ve hře FISHAO je uzavřen každou neděli v čase {window}. Níže jsou zobrazeny známé ceny z předchozích dnů.",
