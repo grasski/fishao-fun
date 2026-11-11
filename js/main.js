@@ -5,8 +5,6 @@
  * modal dialog controls, window.fishaoApp exports, and application boot.
  */
 
-function updateSyncBadgeUI() {}
-
 function updateTzButtonsUI() {
   var tzLocalBtn = document.getElementById("tzLocalBtn");
   var tzUtcBtn = document.getElementById("tzUtcBtn");
@@ -428,14 +426,12 @@ document.addEventListener('click', function (e) {
 window.fishaoApp = {
   switchView: switchView,
   setTimezone: setTimezone,
-  onPointsChange: onPointsChange,
   applyFilters: applyFilters,
   resetFilters: resetFilters,
   onLocationFilterChange: onLocationFilterChange,
   updateAreaFilterOptions: updateAreaFilterOptions,
   setSizeFilter: setSizeFilter,
   onRangeSizeInput: onRangeSizeInput,
-  onExactSizeInput: onExactSizeInput,
   toggleNowActive: toggleNowActive,
   toggleOnlyPrice: toggleOnlyPrice,
   openPriceModal: openPriceModal,
@@ -454,7 +450,6 @@ window.fishaoApp = {
   exportPricesJson: exportPricesJson,
   signIn: signIn,
   signOut: signOut,
-  editNickname: editNickname,
   openProfileModal: openProfileModal,
   closeProfileModal: closeProfileModal,
   openPlayerModal: openPlayerModal,
@@ -483,9 +478,6 @@ window.fishaoApp = {
   toggleClubSpecialFish: toggleClubSpecialFish,
   filterSpecialFishes: filterSpecialFishes,
   renderClubSpecialFishes: renderClubSpecialFishes,
-  onClubNameChange: onClubNameChange,
-  syncClubName: syncClubName,
-  syncClubPoints: syncClubPoints,
   setCollectionFilter: setCollectionFilter,
   filterMilestones: filterMilestones,
   renderClubMilestones: renderClubMilestones,

@@ -82,11 +82,8 @@ function isMarketClosedToday() {
 }
 
 function getMarketClosedWindowText() {
-  var lang = (typeof getLang === 'function') ? getLang() : 'cs';
-  var isCz = (lang === 'cz' || lang === 'cs');
-
   if (typeof userTimezone === 'undefined' || userTimezone === 'utc') {
-    return isCz ? 'neděle 00:00 – 24:00 UTC' : 'Sunday 00:00 – 24:00 UTC';
+    return t('market_window_utc');
   }
 
   // Calculate Sunday 00:00 UTC to Monday 00:00 UTC converted to user local timezone
@@ -95,16 +92,14 @@ function getMarketClosedWindowText() {
   var sunUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - curUtcDay, 0, 0, 0, 0));
   var monUtc = new Date(sunUtc.getTime() + 24 * 60 * 60 * 1000);
 
-  var dayNamesCs = ['neděle', 'pondělí', 'úterý', 'středa', 'čtvrtek', 'pátek', 'sobota'];
-  var dayNamesEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  var days = isCz ? dayNamesCs : dayNamesEn;
+  var days = t('day_names').split(',');
 
-  var startDay = days[sunUtc.getDay()];
+  var startDay = days[sunUtc.getDay()] || '';
   var startH = String(sunUtc.getHours()).padStart(2, '0');
   var startM = String(sunUtc.getMinutes()).padStart(2, '0');
   var startTime = startH + ':' + startM;
 
-  var endDay = days[monUtc.getDay()];
+  var endDay = days[monUtc.getDay()] || '';
   var endH = String(monUtc.getHours()).padStart(2, '0');
   var endM = String(monUtc.getMinutes()).padStart(2, '0');
   var endTime = endH + ':' + endM;
@@ -116,8 +111,7 @@ function getMarketClosedWindowText() {
     localRange = startDay + ' ' + startTime + ' – ' + endDay + ' ' + endTime;
   }
 
-  var gameUtcRef = isCz ? 'herní čas: neděle 00:00 – 24:00 UTC' : 'game server: Sunday 00:00 – 24:00 UTC';
-  return localRange + ' (' + gameUtcRef + ')';
+  return localRange + ' (' + t('market_window_game_ref') + ')';
 }
 
 function updateMarketSundayCountdown() {
@@ -143,8 +137,9 @@ function updateMarketSundayCountdown() {
     countdownEl.innerText = String(h).padStart(2, '0') + "h " + String(m).padStart(2, '0') + "m " + String(s).padStart(2, '0') + "s";
   }
 
-  var isEn = (typeof getLang === 'function' && getLang() === 'en');
-  var city = (typeof getLocalizedTzCity === 'function') ? getLocalizedTzCity() : 'Praha';
+  var city = (typeof getLocalizedTzCity === 'function') ? getLocalizedTzCity() : t('tz_local_city_default');
+  var days = t('day_names').split(',');
+  var openLocalDay = days[monUtc.getDay()] || '';
 
   var localH = String(monUtc.getHours()).padStart(2, '0');
   var localM = String(monUtc.getMinutes()).padStart(2, '0');
@@ -157,19 +152,25 @@ function updateMarketSundayCountdown() {
 
   if (openTimeEl) {
     if (userTimezone === "utc") {
-      openTimeEl.innerText = isEn ? "Opens: Monday 00:00 UTC" : "Otevírá: pondělí 00:00 UTC";
+      openTimeEl.innerText = t('market_opens_utc');
     } else {
-      var dayName = isEn ? "Monday" : "pondělí";
-      openTimeEl.innerText = (isEn ? "Opens: " : "Otevírá: ") + dayName + " " + localTimeStr + " (" + city + ", " + tzOffsetStr + ")";
+      openTimeEl.innerText = t('market_opens_local', {
+        day: openLocalDay,
+        time: localTimeStr,
+        city: city,
+        tz: tzOffsetStr
+      });
     }
   }
 
   if (utcWarningEl && utcWarningTextEl) {
     if (userTimezone === "utc") {
       utcWarningEl.style.display = "flex";
-      utcWarningTextEl.innerText = isEn
-        ? "You have game server UTC time active. In your local time (" + city + "), the market opens on Monday at " + localTimeStr + "."
-        : "Máš aktivní herní čas UTC. Ve tvém místním čase (" + city + ") se trh otevře v pondělí v " + localTimeStr + ".";
+      utcWarningTextEl.innerText = t('market_utc_warning_text', {
+        city: city,
+        day: openLocalDay,
+        time: localTimeStr
+      });
     } else {
       utcWarningEl.style.display = "none";
     }
@@ -180,7 +181,7 @@ function formatPriceDate(isoDate) {
   if (!isoDate) return "";
   var parts = isoDate.split("-");
   if (parts.length !== 3) return isoDate;
-  if (getLang() === "cz" || getLang() === "cs") {
+  if (getLang() === "cs") {
     return parseInt(parts[2], 10) + ". " + parseInt(parts[1], 10) + ". " + parts[0];
   } else {
     return isoDate;
@@ -778,7 +779,7 @@ function onBulkSearchInput(e) {
   var html = "";
   matches.forEach(function (m, idx) {
     var priceHint = m.latestPrice ? '<span class="bulk-suggestion-meta">💵 ' + m.latestPrice.toLocaleString(getLocale()) + ' FB</span>' : '';
-    html += '<div class="bulk-suggestion-item" data-index="' + idx + '" onclick="window.fishaoApp.selectBulkFishSuggestion(\'' + escapeHtml(m.name).replace(/'/g, "\\'") + '\')">' +
+    html += '<div class="bulk-suggestion-item" data-index="' + idx + '" data-name="' + escapeHtml(m.name) + '" onclick="window.fishaoApp.selectBulkFishSuggestion(this.getAttribute(\'data-name\'))">' +
       '<span class="bulk-suggestion-name">' + escapeHtml(m.name) + (m.altName ? ' <small style="color:var(--text-muted);font-weight:normal;">(' + escapeHtml(m.altName) + ')</small>' : '') + '</span>' +
       priceHint +
     '</div>';
@@ -1088,50 +1089,6 @@ function exportPricesJson() {
   document.body.appendChild(a);
   a.click();
   a.remove();
-}
-
-async function resetPriceHistoryToDefault() {
-  if (!isAdmin) {
-    showToast(t('reset_prices_non_admin'), "error");
-    return;
-  }
-  var ok = await showConfirmModal(
-    t('market_btn_default', 'Výchozí ceník'),
-    t('reset_prices_confirm'),
-    t('confirm_btn', 'Potvrdit'),
-    true
-  );
-  if (!ok) return;
-
-  var defaultPrices = JSON.parse(JSON.stringify(initialPrices));
-
-  if (db && firebaseDocRef) {
-    if (!window.FISHAO_FS_TX) {
-      showToast(t('price_sync_failed'), "error");
-      return;
-    }
-    try {
-      await window.FISHAO_FS_TX.setDocument(db, firebaseDocRef, {
-        prices: defaultPrices,
-        lastUpdated: new Date().toISOString()
-      });
-    } catch (err) {
-      console.error("Failed to reset prices in Firestore:", err);
-      showToast(t('price_sync_failed'), "error");
-      return;
-    }
-  }
-
-  priceHistory = defaultPrices;
-  saveLocalPriceHistory();
-  applyFilters();
-  var resEl = document.getElementById("bulkResultMsg");
-  if (resEl) {
-    resEl.style.display = "block";
-    resEl.style.background = "rgba(56,189,248,0.2)";
-    resEl.style.color = "#38bdf8";
-    resEl.innerText = t('reset_prices_done');
-  }
 }
 
 var MARKET_RESET_ALERT_STORAGE_KEY = 'fishao_market_reset_alert_dismissed_v1';

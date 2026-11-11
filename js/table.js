@@ -117,6 +117,9 @@ function isFishActiveNow(rawTimes, rawDates) {
 }
 
 function isFishActiveAtLocalHour(rawTimes, testLocalHour) {
+  if (userTimezone === "utc") {
+    return isFishActiveAtUTCHour(rawTimes, testLocalHour);
+  }
   var d = new Date();
   d.setHours(testLocalHour, 0, 0, 0);
   var testUtcHour = d.getUTCHours();
@@ -246,7 +249,7 @@ async function toggleCaughtFish(fishId) {
 
   if (currentUser && db) {
     try {
-      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      var fsModule = await getFirestoreModule();
       var userDocRef = fsModule.doc(db, "users", currentUser.uid);
       await fsModule.updateDoc(userDocRef, {
         caughtFishIds: Array.from(caughtFishIds)
@@ -305,16 +308,7 @@ function updateCaughtStats() {
   if (progressEl) progressEl.style.width = pct.toFixed(1) + "%";
   if (pctTextEl) pctTextEl.innerText = pct.toFixed(0) + "%";
 
-  var clubPtsBadge = document.getElementById("navClubPtsBadge");
-  if (clubPtsBadge) {
-    if (!currentUser) {
-      clubPtsBadge.innerText = t('badge_locked');
-    } else if (currentClubName) {
-      clubPtsBadge.innerText = currentClubPoints.toLocaleString(getLocale()) + " " + t('unit_pts');
-    } else {
-      clubPtsBadge.innerText = t('badge_no_club');
-    }
-  }
+  updateNavClubBadge();
 
   var manageCaught = document.getElementById("manageCaughtClub");
   if (manageCaught) {
@@ -454,15 +448,16 @@ function renderTableBody(data) {
         ? window.FISHAO_I18N.getMatchingFishAltName(f, searchQ)
         : "";
       var altMatchHtml = altMatch ? '<div style="font-size: 11px; color: #38bdf8; font-weight: 500; margin-top: 2px;">' + escapeHtml(altMatch) + '</div>' : '';
+      var safeFishName = escapeHtml(fishName);
       var waterType = getFishWater(f);
       var waterLabel = waterType === 'Slaná' ? ('🌊 ' + t('water_salt_short')) : ('🌿 ' + t('water_fresh_short'));
 
       return '<tr class="' + rowClass.join(' ') + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + rowClickTitle + '">' +
         '<td style="color: var(--text-muted); font-weight: 600;">' + f.order + '</td>' +
         '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
-        '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + fishName + '" class="fish-img" onerror="this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'"></div></td>' +
+        '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + safeFishName + '" class="fish-img" onerror="this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'"></div></td>' +
         '<td><span class="badge ' + (waterType === 'Slaná' ? 'badge-salt' : 'badge-fresh') + '">' + waterLabel + '</span></td>' +
-        '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + fishName + '</div>' + altMatchHtml + '</td>' +
+        '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName + '</div>' + altMatchHtml + '</td>' +
         '<td>' + renderRatingBadge(f.rating) + '</td>' +
         '<td>' + renderPriceCell(f.id) + '</td>' +
         '<td>' + f.baits.map(function (b) {
@@ -498,13 +493,14 @@ function renderTableBody(data) {
         ? window.FISHAO_I18N.getMatchingFishAltName(f, searchQ)
         : "";
       var altMatchHtml = altMatch ? '<div style="font-size: 11px; color: #38bdf8; font-weight: 500; margin-top: 2px;">' + escapeHtml(altMatch) + '</div>' : '';
+      var safeFishName = escapeHtml(fishName);
       var locLabels = getFishLocationLabels(f);
 
       return '<tr class="' + rowClass + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + rowClickTitle + '">' +
         '<td style="color: var(--text-muted); font-weight: 600;">' + (idx + 1) + '</td>' +
         '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
-        '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + fishName + '" class="fish-img" onerror="this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'"></div></td>' +
-        '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + fishName +
+        '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + safeFishName + '" class="fish-img" onerror="this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'"></div></td>' +
+        '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName +
         (f.is_club ? '<span class="badge-club-tag">' + clubTagText + '</span>' : '') +
         '</div>' + altMatchHtml + '</td>' +
         '<td>' + renderRatingBadge(f.rating) + '</td>' +

@@ -11,7 +11,7 @@ var pendingMemberFetches = new Set();
 async function bindClubListener(clubId) {
   if (!db || !clubId) return;
   try {
-    var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var fsModule = await getFirestoreModule();
     if (clubUnsubscribe) {
       clubUnsubscribe();
       clubUnsubscribe = null;
@@ -119,7 +119,7 @@ async function fetchAndSyncMemberStats(uid) {
   if (!db || !uid || !currentUser || pendingMemberFetches.has(uid)) return;
   pendingMemberFetches.add(uid);
   try {
-    var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var fsModule = await getFirestoreModule();
     var uSnap = await fsModule.getDoc(fsModule.doc(db, "users", uid));
     if (!uSnap.exists()) {
       // User document does not exist (account deleted)!
@@ -154,6 +154,12 @@ async function fetchAndSyncMemberStats(uid) {
       var clubC = 0;
       uCaught.forEach(function (fid) { if (clubFishIdsSet.has(fid)) clubC++; });
 
+      var existingMem = (currentClubMembersMap && currentClubMembersMap[uid]) || {};
+      var needsUpdate = (existingMem.caughtCount !== totalC ||
+                         existingMem.caughtClubCount !== clubC ||
+                         (uData.displayName && existingMem.displayName !== uData.displayName) ||
+                         (uData.avatarUrl && existingMem.avatarUrl !== uData.avatarUrl));
+
       if (currentClubMembersMap) {
         if (!currentClubMembersMap[uid]) currentClubMembersMap[uid] = {};
         currentClubMembersMap[uid].caughtCount = totalC;
@@ -165,17 +171,18 @@ async function fetchAndSyncMemberStats(uid) {
       // Update member chip badge in active grid
       var badgeEl = document.getElementById("clubMemberCatchBadge_" + uid);
       if (badgeEl) {
-        badgeEl.innerText = "• 🎣 " + totalC + "/615";
+        badgeEl.innerText = "• 🎣 " + totalC + "/" + allFishes.length;
         badgeEl.style.display = "inline";
       }
 
       // If player modal is open for this player, update modal live
       var modalNameEl = document.getElementById("playerModalName");
       if (modalNameEl && modalNameEl.dataset.currentUid === uid) {
+        var totalClub = clubFishes.length || 80;
         var clubCountEl = document.getElementById("playerModalClubCount");
         var clubFillEl = document.getElementById("playerModalClubFill");
-        if (clubCountEl) clubCountEl.innerText = clubC + " / 80";
-        if (clubFillEl) clubFillEl.style.width = Math.min(100, Math.round((clubC / 80) * 100)) + "%";
+        if (clubCountEl) clubCountEl.innerText = clubC + " / " + totalClub;
+        if (clubFillEl) clubFillEl.style.width = Math.min(100, Math.round((clubC / totalClub) * 100)) + "%";
 
         var totalCountEl = document.getElementById("playerModalTotalCount");
         var totalFillEl = document.getElementById("playerModalTotalFill");
@@ -186,17 +193,11 @@ async function fetchAndSyncMemberStats(uid) {
         var avWrap = document.getElementById("playerModalAvatarWrap");
         var av = uData.avatarUrl || "🎣";
         if (avWrap) {
-          if (av && (av.startsWith("http://") || av.startsWith("https://"))) {
-            avWrap.innerHTML = '<div class="player-modal-avatar-large"><img src="' + escapeHtml(av) + '" alt="" onerror="this.parentElement.innerHTML=\'🎣\'"></div>';
-          } else {
-            avWrap.innerHTML = '<div class="player-modal-avatar-large">' + escapeHtml(av || "🎣") + '</div>';
-          }
+          avWrap.innerHTML = '<div class="player-modal-avatar-large">' + renderAvatarHtml(av, "🎣") + '</div>';
         }
       }
 
       // Cache into club doc only if values changed to avoid unnecessary Firestore updates
-      var existingMem = (currentClubMembersMap && currentClubMembersMap[uid]) || {};
-      var needsUpdate = (existingMem.caughtCount !== totalC || existingMem.caughtClubCount !== clubC || existingMem.displayName !== uData.displayName || existingMem.avatarUrl !== uData.avatarUrl);
       if (needsUpdate && currentClubId) {
         try {
           var cRef = fsModule.doc(db, "clubs", currentClubId);
@@ -298,19 +299,14 @@ function renderClubMembers(membersMap, creatorId) {
     var isCr = !!(m.isCreator || uid === activeCreatorUid);
     var isMe = (currentUser && uid === currentUser.uid);
 
-    var avatarHtml = "";
-    if (av && (av.startsWith("http://") || av.startsWith("https://"))) {
-      avatarHtml = '<div class="club-member-avatar"><img src="' + escapeHtml(av) + '" alt="" onerror="this.parentElement.innerHTML=\'🎣\'"></div>';
-    } else {
-      avatarHtml = '<div class="club-member-avatar">' + escapeHtml(av || "🎣") + '</div>';
-    }
+    var avatarHtml = '<div class="club-member-avatar">' + renderAvatarHtml(av, "🎣") + '</div>';
 
     var roleBadge = isCr
       ? '<span class="club-member-creator-badge">👑 ' + t('club_member_creator', 'Zakladatel') + '</span>'
       : '<span>🎣 ' + t('club_member_role', 'Člen') + '</span>';
 
     var cCount = isMe ? caughtFishIds.size : (typeof m.caughtCount === 'number' ? m.caughtCount : null);
-    var countBadge = '<span id="clubMemberCatchBadge_' + uid + '" style="color: #38bdf8; font-size: 11px; margin-left: 4px; font-weight: 600;">• 🎣 ' + (cCount !== null ? cCount : (typeof m.caughtCount === 'number' ? m.caughtCount : 0)) + '/615</span>';
+    var countBadge = '<span id="clubMemberCatchBadge_' + uid + '" style="color: #38bdf8; font-size: 11px; margin-left: 4px; font-weight: 600;">• 🎣 ' + (cCount !== null ? cCount : (typeof m.caughtCount === 'number' ? m.caughtCount : 0)) + '/' + allFishes.length + '</span>';
 
     html += '<div class="club-member-chip' + (isCr ? ' creator' : '') + '" onclick="window.fishaoApp.openPlayerModal(\'' + uid + '\')" title="' + escapeHtml(t('club_member_view_profile', 'Kliknutím zobrazíš detail hráče')) + '">' +
       avatarHtml +
@@ -357,6 +353,45 @@ function unbindClubListener() {
   applyFilters();
 }
 
+async function removeMemberFromClubDoc(fsModule, clubId, uid) {
+  if (!db || !clubId || !uid) return;
+  var clubRef = fsModule.doc(db, "clubs", clubId);
+  var snap = await fsModule.getDoc(clubRef);
+  if (!snap.exists()) return;
+  var cData = snap.data();
+  var cnt = cData.memberCount || 1;
+  var members = cData.members || {};
+  var wasMember = !!members[uid];
+  var remainingUids = Object.keys(members).filter(function (k) { return k !== uid; });
+
+  if (remainingUids.length === 0) {
+    try {
+      await fsModule.deleteDoc(clubRef);
+      return;
+    } catch (e) {
+      // Fallback to updateDoc if deleteDoc is not permitted
+    }
+  }
+
+  var leaveUpdate = {
+    memberCount: Math.max(0, wasMember ? (cnt - 1) : cnt),
+    updatedAt: new Date().toISOString(),
+    lastUpdatedBy: (currentUser && currentUser.uid) ? currentUser.uid : uid
+  };
+  leaveUpdate["members." + uid] = fsModule.deleteField();
+
+  if ((cData.createdBy === uid || (members[uid] && members[uid].isCreator)) && remainingUids.length > 0) {
+    remainingUids.sort(function (a, b) {
+      var ja = (members[a] && members[a].joinedAt) || "";
+      var jb = (members[b] && members[b].joinedAt) || "";
+      return ja.localeCompare(jb);
+    });
+    leaveUpdate["members." + remainingUids[0] + ".isCreator"] = true;
+  }
+
+  await fsModule.updateDoc(clubRef, leaveUpdate);
+}
+
 async function searchClubs(query) {
   if (!db) return;
   var searchInput = document.getElementById("clubSearchInput");
@@ -367,7 +402,7 @@ async function searchClubs(query) {
   resultsEl.innerHTML = '<div style="padding: 10px; color: var(--text-muted); font-size: 12px;">⏳ ' + t('club_btn_search') + '...</div>';
 
   try {
-    var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var fsModule = await getFirestoreModule();
     var clubsCol = fsModule.collection(db, "clubs");
     var qry;
 
@@ -407,7 +442,7 @@ async function searchClubs(query) {
         '<span>🪙 ' + unlockedFcCount + '/24</span>' +
         '</div>' +
         '</div>' +
-        '<button class="pill-btn purple" onclick="window.fishaoApp.joinClub(\'' + cId + '\', \'' + escapeHtml(name).replace(/'/g, "\\'") + '\')">' + t('club_btn_join') + '</button>' +
+        '<button class="pill-btn purple" data-club-id="' + escapeHtml(cId) + '" data-club-name="' + escapeHtml(name) + '" onclick="window.fishaoApp.joinClub(this.getAttribute(\'data-club-id\'), this.getAttribute(\'data-club-name\'))">' + t('club_btn_join') + '</button>' +
         '</div>';
     });
 
@@ -435,24 +470,13 @@ async function createClub(name) {
   }
 
   try {
-    var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var fsModule = await getFirestoreModule();
     var clubsCol = fsModule.collection(db, "clubs");
 
-    // Decrement previous club member count if user was in a club
+    // Remove user from previous club (and promote oldest remaining member if creator)
     if (currentClubId) {
       try {
-        var prevClubRef = fsModule.doc(db, "clubs", currentClubId);
-        var prevSnap = await fsModule.getDoc(prevClubRef);
-        if (prevSnap.exists()) {
-          var prevCount = prevSnap.data().memberCount || 1;
-          var prevUpdate = {
-            memberCount: Math.max(0, prevCount - 1),
-            updatedAt: new Date().toISOString(),
-            lastUpdatedBy: currentUser.uid
-          };
-          prevUpdate["members." + currentUser.uid] = fsModule.deleteField();
-          await fsModule.updateDoc(prevClubRef, prevUpdate);
-        }
+        await removeMemberFromClubDoc(fsModule, currentClubId, currentUser.uid);
       } catch (e) {
         console.warn("Could not decrement prev club:", e);
       }
@@ -461,7 +485,7 @@ async function createClub(name) {
     var myClubCount = 0;
     clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myClubCount++; });
     var memberData = {
-      displayName: (userProfile && userProfile.displayName) ? userProfile.displayName : "Rybář",
+      displayName: (userProfile && userProfile.displayName) ? userProfile.displayName : t('user_default_fisher'),
       avatarUrl: (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "🎣",
       isCreator: true,
       joinedAt: new Date().toISOString(),
@@ -510,7 +534,7 @@ async function joinClub(clubId, clubName) {
   }
 
   try {
-    var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var fsModule = await getFirestoreModule();
 
     if (currentClubId) {
       var targetClubName = clubName || "Klub";
@@ -523,18 +547,7 @@ async function joinClub(clubId, clubName) {
       if (!ok) return;
 
       try {
-        var oldClubRef = fsModule.doc(db, "clubs", currentClubId);
-        var oldSnap = await fsModule.getDoc(oldClubRef);
-        if (oldSnap.exists()) {
-          var oldCnt = oldSnap.data().memberCount || 1;
-          var oldUpdate = {
-            memberCount: Math.max(0, oldCnt - 1),
-            updatedAt: new Date().toISOString(),
-            lastUpdatedBy: currentUser.uid
-          };
-          oldUpdate["members." + currentUser.uid] = fsModule.deleteField();
-          await fsModule.updateDoc(oldClubRef, oldUpdate);
-        }
+        await removeMemberFromClubDoc(fsModule, currentClubId, currentUser.uid);
       } catch (e) {
         console.warn("Could not decrement old club:", e);
       }
@@ -550,7 +563,7 @@ async function joinClub(clubId, clubName) {
     var myJoinClubCount = 0;
     clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myJoinClubCount++; });
     var memberData = {
-      displayName: (userProfile && userProfile.displayName) ? userProfile.displayName : "Rybář",
+      displayName: (userProfile && userProfile.displayName) ? userProfile.displayName : t('user_default_fisher'),
       avatarUrl: (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "🎣",
       isCreator: false,
       joinedAt: new Date().toISOString(),
@@ -611,39 +624,11 @@ async function leaveClub() {
   }
 
   try {
-    var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-    
-    // 2. Remove member from club document and decrement count
+    var fsModule = await getFirestoreModule();
+
+    // 2. Remove member from club document and promote oldest member if creator
     try {
-      var clubRef = fsModule.doc(db, "clubs", clubToLeave);
-      var snap = await fsModule.getDoc(clubRef);
-      if (snap.exists()) {
-        var cData = snap.data();
-        var cnt = cData.memberCount || 1;
-        var members = cData.members || {};
-        var wasMember = !!members[currentUser.uid];
-        var leaveUpdate = {
-          memberCount: Math.max(0, wasMember ? (cnt - 1) : cnt),
-          updatedAt: new Date().toISOString(),
-          lastUpdatedBy: currentUser.uid
-        };
-        leaveUpdate["members." + currentUser.uid] = fsModule.deleteField();
-
-        // If creator left and other members remain, promote the oldest member
-        if (cData.createdBy === currentUser.uid || (members[currentUser.uid] && members[currentUser.uid].isCreator)) {
-          var remainingUids = Object.keys(members).filter(function (k) { return k !== currentUser.uid; });
-          if (remainingUids.length > 0) {
-            remainingUids.sort(function (a, b) {
-              var ja = (members[a] && members[a].joinedAt) || "";
-              var jb = (members[b] && members[b].joinedAt) || "";
-              return ja.localeCompare(jb);
-            });
-            leaveUpdate["members." + remainingUids[0] + ".isCreator"] = true;
-          }
-        }
-
-        await fsModule.updateDoc(clubRef, leaveUpdate);
-      }
+      await removeMemberFromClubDoc(fsModule, clubToLeave, currentUser.uid);
     } catch (e) {
       console.warn("Could not decrement club:", e);
     }
@@ -673,7 +658,7 @@ async function leaveClub() {
 async function kickMemberFromClub(targetUid) {
   if (!currentUser || !currentClubId || !targetUid || targetUid === currentUser.uid) return;
   var targetMem = (currentClubMembersMap && currentClubMembersMap[targetUid]) || {};
-  var targetName = targetMem.displayName || "tohoto hráče";
+  var targetName = targetMem.displayName || t('user_default_player');
   var ok = await showConfirmModal(
     t('club_btn_kick', 'Odebrat z klubu'),
     t('club_kick_confirm', { name: targetName }, 'Opravdu chceš odebrat hráče ' + targetName + ' z klubu?'),
@@ -683,7 +668,7 @@ async function kickMemberFromClub(targetUid) {
   if (!ok) return;
 
   try {
-    var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var fsModule = await getFirestoreModule();
     var clubRef = fsModule.doc(db, "clubs", currentClubId);
     var snap = await fsModule.getDoc(clubRef);
     if (snap.exists()) {
@@ -700,11 +685,18 @@ async function kickMemberFromClub(targetUid) {
       await fsModule.updateDoc(clubRef, update);
     }
 
-    try {
-      var uRef = fsModule.doc(db, "users", targetUid);
-      await fsModule.updateDoc(uRef, { clubId: "", clubName: "" });
-    } catch (e) {
-      // Ignored if permissions restrict
+    // Also update local allPlayersList cache immediately so community player list reflects the kick
+    var kickedPlayer = allPlayersList.find(function (p) { return p.uid === targetUid; });
+    if (kickedPlayer) {
+      kickedPlayer.clubId = "";
+      kickedPlayer.clubName = "";
+    }
+
+    if (isAdmin) {
+      try {
+        var uRef = fsModule.doc(db, "users", targetUid);
+        await fsModule.updateDoc(uRef, { clubId: "", clubName: "" });
+      } catch (e) {}
     }
 
     closePlayerModal();
@@ -726,7 +718,7 @@ async function setClubPoints(val) {
   }
   var num = Math.max(0, parseInt(val) || 0);
   try {
-    var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var fsModule = await getFirestoreModule();
     var clubRef = fsModule.doc(db, "clubs", currentClubId);
     await fsModule.updateDoc(clubRef, {
       points: num,
@@ -740,24 +732,6 @@ async function setClubPoints(val) {
 
 function addClubPoints(amount) {
   setClubPoints(currentClubPoints + amount);
-}
-
-function syncClubName(val) {
-  currentClubName = (val || "").trim();
-}
-
-function syncClubPoints(val) {
-  setClubPoints(val);
-}
-
-function onClubNameChange() {
-  var val = document.getElementById("clubNameInput") ? document.getElementById("clubNameInput").value : "";
-  syncClubName(val);
-}
-
-function onPointsChange() {
-  var val = document.getElementById("clubPointsInput") ? document.getElementById("clubPointsInput").value : 0;
-  setClubPoints(val);
 }
 
 async function toggleClubSpecialFish(fishId) {
@@ -778,7 +752,7 @@ async function toggleClubSpecialFish(fishId) {
   if (!isMonster && !isFc) return;
 
   try {
-    var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var fsModule = await getFirestoreModule();
     var clubRef = fsModule.doc(db, "clubs", currentClubId);
 
     if (isMonster) {
@@ -918,8 +892,6 @@ function renderClubMilestones() {
 
   var ptsInput = document.getElementById("clubPointsManageInput");
   if (ptsInput) ptsInput.value = currentClubPoints;
-  var nameInput = document.getElementById("clubNameManageInput");
-  if (nameInput) nameInput.value = currentClubName;
 
   var sorted = clubFishes.slice().sort(function (a, b) {
     if (a.unlock_type === 'points' && b.unlock_type === 'points') {
@@ -1107,13 +1079,14 @@ function updateClubStats() {
     }
   }
 
+  var totalClub = clubFishes.length || 80;
   var unlockedCountEl = document.getElementById("unlockedCount");
   if (unlockedCountEl) unlockedCountEl.innerText = unlockedCount;
 
   var tabClubBadge = document.getElementById("tabClubBadge");
-  if (tabClubBadge) tabClubBadge.innerText = unlockedCount + " / 80";
+  if (tabClubBadge) tabClubBadge.innerText = unlockedCount + " / " + totalClub;
 
-  var lockedCount = 80 - unlockedCount;
+  var lockedCount = totalClub - unlockedCount;
   var lockedNoticeEl = document.getElementById("lockedNotice");
   if (lockedNoticeEl) {
     lockedNoticeEl.innerText = lockedCount > 0 ? t('club_locked_count', { count: lockedCount }) : "";

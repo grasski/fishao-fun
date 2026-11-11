@@ -518,7 +518,7 @@ window.FISHAO_DATA = {
       "12:00-17:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 25,
     "avg_l": 50,
     "max_l": 130
@@ -3274,7 +3274,7 @@ window.FISHAO_DATA = {
       "07:00-11:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 21,
     "avg_l": 32,
     "max_l": 42
@@ -3417,7 +3417,7 @@ window.FISHAO_DATA = {
     "raw_dates": [
       "07.01-09.30"
     ],
-    "is_night": true,
+    "is_night": false,
     "min_l": 5,
     "avg_l": 6,
     "max_l": 8
@@ -4210,7 +4210,7 @@ window.FISHAO_DATA = {
       "08:00-18:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 11,
     "avg_l": 13,
     "max_l": 25
@@ -4254,7 +4254,7 @@ window.FISHAO_DATA = {
       "08:00-18:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 1,
     "avg_l": 3,
     "max_l": 6
@@ -4279,7 +4279,7 @@ window.FISHAO_DATA = {
       "08:00-18:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 5,
     "avg_l": 9,
     "max_l": 22
@@ -4303,7 +4303,7 @@ window.FISHAO_DATA = {
       "12:00-18:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 2,
     "avg_l": 3,
     "max_l": 7
@@ -4372,7 +4372,7 @@ window.FISHAO_DATA = {
       "08:00-18:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 5,
     "avg_l": 7,
     "max_l": 13
@@ -4420,7 +4420,7 @@ window.FISHAO_DATA = {
       "11:00-17:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 4,
     "avg_l": 6,
     "max_l": 12
@@ -4446,7 +4446,7 @@ window.FISHAO_DATA = {
     "raw_dates": [
       "04.01-06.30"
     ],
-    "is_night": true,
+    "is_night": false,
     "min_l": 30,
     "avg_l": 60,
     "max_l": 109
@@ -4469,7 +4469,7 @@ window.FISHAO_DATA = {
       "12:00-18:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 95,
     "avg_l": 250,
     "max_l": 610
@@ -4802,7 +4802,7 @@ window.FISHAO_DATA = {
       "05:30-06:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 82,
     "avg_l": 101,
     "max_l": 215
@@ -5144,7 +5144,7 @@ window.FISHAO_DATA = {
       "09:00-14:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 158,
     "avg_l": 210,
     "max_l": 617
@@ -5302,7 +5302,7 @@ window.FISHAO_DATA = {
     "raw_dates": [
       "05.01-12.31"
     ],
-    "is_night": true,
+    "is_night": false,
     "min_l": 115,
     "avg_l": 245,
     "max_l": 701
@@ -5495,7 +5495,7 @@ window.FISHAO_DATA = {
       "07:00-20:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 45,
     "avg_l": 72,
     "max_l": 151
@@ -5868,7 +5868,7 @@ window.FISHAO_DATA = {
       "05:00-09:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 45,
     "avg_l": 55,
     "max_l": 100
@@ -6983,7 +6983,7 @@ window.FISHAO_DATA = {
       "07:00-20:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 16,
     "avg_l": 44,
     "max_l": 91
@@ -7085,7 +7085,7 @@ window.FISHAO_DATA = {
       "07:00-18:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 16,
     "avg_l": 32,
     "max_l": 61
@@ -7361,7 +7361,7 @@ window.FISHAO_DATA = {
       "07:00-18:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 29,
     "avg_l": 55,
     "max_l": 120
@@ -7493,7 +7493,7 @@ window.FISHAO_DATA = {
       "14:00-19:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 3,
     "avg_l": 7,
     "max_l": 15
@@ -7620,7 +7620,7 @@ window.FISHAO_DATA = {
       "08:00-17:30"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 20,
     "avg_l": 45,
     "max_l": 106
@@ -7959,7 +7959,7 @@ window.FISHAO_DATA = {
       "10:00-17:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 17,
     "avg_l": 35,
     "max_l": 72
@@ -8038,7 +8038,7 @@ window.FISHAO_DATA = {
       "05:00-12:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 30,
     "avg_l": 52,
     "max_l": 105
@@ -8257,7 +8257,7 @@ window.FISHAO_DATA = {
       "07:00-19:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 18,
     "avg_l": 35,
     "max_l": 76
@@ -11973,7 +11973,7 @@ window.FISHAO_DATA = {
       "10:00-18:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 19,
     "avg_l": 40,
     "max_l": 80
@@ -12777,7 +12777,7 @@ window.FISHAO_DATA = {
       "12:00-15:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 13,
     "avg_l": 18,
     "max_l": 29
@@ -13456,7 +13456,7 @@ window.FISHAO_DATA = {
       "06:00-19:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 2,
     "avg_l": 4,
     "max_l": 8
@@ -13485,7 +13485,7 @@ window.FISHAO_DATA = {
       "06:00-20:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 3,
     "avg_l": 5,
     "max_l": 10
@@ -14172,7 +14172,7 @@ window.FISHAO_DATA = {
       "12:00-13:00"
     ],
     "raw_dates": [],
-    "is_night": true,
+    "is_night": false,
     "min_l": 8,
     "avg_l": 12,
     "max_l": 14

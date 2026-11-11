@@ -10,11 +10,7 @@ function onRangeSizeInput() {
   applyFilters();
 }
 
-function onExactSizeInput() {
-  applyFilters();
-}
-
-function setSizeFilter(min, exact, max, btn) {
+function setSizeFilter(min, max, btn) {
   var minEl = document.getElementById("minSizeInput");
   var maxEl = document.getElementById("maxSizeInput");
 
@@ -248,7 +244,9 @@ function applyFilters() {
   if (timeVal) {
     if (timeVal === "now") {
       var now = new Date();
-      var timeStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+      var nowH = userTimezone === "utc" ? now.getUTCHours() : now.getHours();
+      var nowM = userTimezone === "utc" ? now.getUTCMinutes() : now.getMinutes();
+      var timeStr = nowH.toString().padStart(2, '0') + ":" + nowM.toString().padStart(2, '0') + (userTimezone === "utc" ? " UTC" : "");
       filterNotes.push(t('filter_note_now', { time: timeStr }));
     } else if (timeVal === "seasonal") {
       filterNotes.push(t('filter_note_time_seasonal'));

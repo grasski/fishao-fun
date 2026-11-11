@@ -216,15 +216,15 @@
     },
     "Palm Island": {
         "cs": "Palm Island",
-        "en": "Palm island"
+        "en": "Palm Island"
     },
     "Palm island": {
         "cs": "Palm Island",
-        "en": "Palm island"
+        "en": "Palm Island"
     },
     "location_11": {
         "cs": "Palm Island",
-        "en": "Palm island"
+        "en": "Palm Island"
     },
     "Little Rio": {
         "cs": "Little Rio",
@@ -411,7 +411,7 @@
         "en": "Boat"
     },
     "EFPT_PANHEIRA_BEACH_JETTY": {
-        "cs": "Mol",
+        "cs": "Molo",
         "en": "Jetty"
     },
     "EFPT_COOL_MOUNTAIN_RAFT": {

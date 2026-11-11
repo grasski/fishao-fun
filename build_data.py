@@ -1,10 +1,9 @@
 """
 FISHAO - Data Generator (build_data.py)
 ---------------------------------------
-Parses raw game data (fish.json, lang_cz.json) and prices_history.json
+Parses raw game data (fish.json, lang_cz.json)
 to generate structured JavaScript data files:
   - data/fishes.js (615 fishes; club metadata embedded via is_club)
-  - data/prices.js (default market prices history)
 """
 
 import json
@@ -16,7 +15,6 @@ os.makedirs(DATA_DIR, exist_ok=True)
 
 FISH_JSON = os.path.join(BASE_DIR, "fish.json")
 LANG_JSON = os.path.join(BASE_DIR, "lang_cz.json")
-PRICES_JSON = os.path.join(BASE_DIR, "prices_history.json")
 
 print("-> Loading source data files...")
 with open(FISH_JSON, "r", encoding="utf-8") as f:
@@ -25,11 +23,6 @@ fishes = fish_raw.get("data", fish_raw)
 
 with open(LANG_JSON, "r", encoding="utf-8") as f:
     cz = json.load(f)
-
-default_prices = {}
-if os.path.exists(PRICES_JSON):
-    with open(PRICES_JSON, "r", encoding="utf-8") as f:
-        default_prices = json.load(f)
 
 # Game location names resolver using official localization (lang_cz.json)
 def get_location_name(lid):
@@ -89,6 +82,25 @@ bait_translations = {
     'marlin': 'Marlíní'
 }
 
+def is_night_time_window(times):
+    """Returns True if any catch time window touches night hours (20:00-05:00 UTC)."""
+    if not times:
+        return False
+    for part in times:
+        clean = part.strip()
+        if '-' not in clean:
+            continue
+        s_str, e_str = clean.split('-', 1)
+        sh, sm = [int(x) for x in s_str.split(':')]
+        eh, em = [int(x) for x in e_str.split(':')]
+        st = sh * 60 + sm
+        et = eh * 60 + em
+        if et == 0:
+            et = 24 * 60
+        if et <= st or st < 5 * 60 or et > 20 * 60:
+            return True
+    return False
+
 # 1. Build club metadata (salt/fresh ordering, unlock type, order) for the 80 club fishes.
 # The separate club array is no longer emitted; these fields are embedded in
 # the matching allFishes entries below and clubFishes is derived in js/state.js.
@@ -126,7 +138,7 @@ for f in fishes:
             'time': times_str,
             'raw_times': times,
             'raw_dates': dates,
-            'is_night': bool(times),
+            'is_night': is_night_time_window(times),
             'min_l': int(f.get('min_length', 0)),
             'avg_l': int(f.get('avg_length', 0)),
             'max_l': int(f.get('max_length', 0)),
@@ -155,7 +167,6 @@ for item in all_club_raw:
         order_fresh += 1
     club_data.append(item)
 
-club_ids_set = {item['id'] for item in club_data}
 club_map = {item['id']: item for item in club_data}
 
 # 2. Process all 615 fishes for encyclopedia
@@ -189,7 +200,7 @@ for f in fishes:
         'time': times_str,
         'raw_times': times,
         'raw_dates': dates,
-        'is_night': bool(times),
+        'is_night': is_night_time_window(times),
         'min_l': int(f.get('min_length', 0)),
         'avg_l': int(f.get('avg_length', 0)),
         'max_l': int(f.get('max_length', 0))
@@ -210,11 +221,5 @@ with open(fishes_file, "w", encoding="utf-8") as f:
     f.write(f"  allFishes: {json.dumps(all_fishes, ensure_ascii=False, indent=2)}\n")
     f.write("};\n")
 
-# Write data/prices.js
-prices_file = os.path.join(DATA_DIR, "prices.js")
-with open(prices_file, "w", encoding="utf-8") as f:
-    f.write("/**\n * FISHAO - Default Market Prices History\n */\n")
-    f.write(f"window.FISHAO_DEFAULT_PRICES = {json.dumps(default_prices, ensure_ascii=False, indent=2)};\n")
-
 print(f"-> Done: Generated {len(all_fishes)} fishes ({len(club_data)} club fishes embedded via is_club).")
-print(f"-> Saved to: {fishes_file} and {prices_file}")
+print(f"-> Saved to: {fishes_file}")

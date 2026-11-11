@@ -82,20 +82,45 @@ async function loadAllPlayers(force) {
   }
 
   try {
-    var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var fsModule = await getFirestoreModule();
     var usersCol = fsModule.collection(db, "users");
-    var snap = await fsModule.getDocs(usersCol);
+    var clubsCol = fsModule.collection(db, "clubs");
+    var snaps = await Promise.all([
+      fsModule.getDocs(usersCol),
+      fsModule.getDocs(clubsCol).catch(function () { return null; })
+    ]);
+    var snap = snaps[0];
+    var clubsSnap = snaps[1];
+    var clubsMap = null;
+    if (clubsSnap) {
+      clubsMap = {};
+      clubsSnap.forEach(function (cDoc) {
+        clubsMap[cDoc.id] = cDoc.data() || {};
+      });
+    }
+
     var list = [];
 
     snap.forEach(function (doc) {
       var d = doc.data();
+      var cId = d.clubId || "";
+      var cName = d.clubName || "";
+      if (cId && clubsMap) {
+        var cData = clubsMap[cId];
+        if (!cData || !cData.members || !cData.members[doc.id]) {
+          cId = "";
+          cName = "";
+        } else if (cData.name) {
+          cName = cData.name;
+        }
+      }
       list.push({
         uid: doc.id,
         displayName: d.displayName || t('user_default_player'),
         avatarUrl: d.avatarUrl || "🎣",
         role: d.role || "member",
-        clubId: d.clubId || "",
-        clubName: d.clubName || "",
+        clubId: cId,
+        clubName: cName,
         caughtFishIds: Array.isArray(d.caughtFishIds) ? d.caughtFishIds : [],
         backyardFishIds: Array.isArray(d.backyardFishIds) ? d.backyardFishIds : [],
         createdAt: d.createdAt || ""
@@ -184,38 +209,6 @@ function createRichBackyardFishCard(fObj, extraClass, isModal) {
  * Populate select dropdowns for player filtering (fishes & baits)
  */
 function populatePlayerFishFilterDropdown() {
-  var selectFish = document.getElementById("playerFishFilterSelect");
-  if (selectFish) {
-    var currentVal = selectFish.value;
-    var bredFishIdSet = new Set();
-    allPlayersList.forEach(function (p) {
-      if (p.backyardFishIds && Array.isArray(p.backyardFishIds)) {
-        p.backyardFishIds.forEach(function (fid) {
-          if (isBackyardBreedable(fid)) bredFishIdSet.add(fid);
-        });
-      }
-    });
-
-    var bredFishes = [];
-    bredFishIdSet.forEach(function (fid) {
-      var f = (typeof getFishById === 'function') ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
-      if (f) bredFishes.push(f);
-    });
-
-    bredFishes.sort(function (a, b) {
-      var nameA = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(a) : a.name;
-      var nameB = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(b) : b.name;
-      return nameA.localeCompare(nameB);
-    });
-
-    var htmlFish = '<option value="">' + t('players_filter_all_fishes', 'Všechny odchované ryby') + ' (' + bredFishes.length + ')</option>';
-    bredFishes.forEach(function (f) {
-      var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
-      htmlFish += '<option value="' + f.id + '"' + (String(f.id) === String(currentVal) ? ' selected' : '') + '>' + escapeHtml(fName) + ' (#' + f.id + ')</option>';
-    });
-    selectFish.innerHTML = htmlFish;
-  }
-
   var selectBait = document.getElementById("playerBaitFilterSelect");
   if (selectBait) {
     var currentBaitVal = selectBait.value || filterPlayerBait || "";
@@ -294,7 +287,7 @@ async function toggleFriend(uid, event) {
   // Sync to Firestore
   if (currentUser && db) {
     try {
-      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      var fsModule = await getFirestoreModule();
       var userRef = fsModule.doc(db, "users", currentUser.uid);
       await fsModule.updateDoc(userRef, {
         friendUids: Array.from(friendUids)
@@ -305,7 +298,7 @@ async function toggleFriend(uid, event) {
   }
 
   var targetPlayer = allPlayersList.find(function (p) { return p.uid === uid; });
-  var targetName = targetPlayer ? targetPlayer.displayName : 'Hráč';
+  var targetName = targetPlayer ? targetPlayer.displayName : t('user_default_player');
 
   if (isFriend) {
     showToast(t('friend_removed_toast', { name: targetName }), "info");
@@ -420,8 +413,6 @@ function resetPlayerFilters() {
   var fActiveBtn = document.getElementById("filterPlayerActiveNowBtn");
   if (fActiveBtn) fActiveBtn.classList.remove("active");
 
-  var sFish = document.getElementById("playerFishFilterSelect");
-  if (sFish) sFish.value = "";
   var sBait = document.getElementById("playerBaitFilterSelect");
   if (sBait) sBait.value = "";
   var sRating = document.getElementById("playerRatingFilterSelect");
@@ -592,12 +583,6 @@ function renderPlayersList() {
     countBadge.innerText = t('players_count_stat', { count: filtered.length });
   }
 
-  // Update clear button in search input
-  var clearBtn = document.getElementById("playerSearchClearBtn");
-  if (clearBtn) {
-    clearBtn.style.display = searchNorm ? "flex" : "none";
-  }
-
   var paginationEl = document.getElementById("playersPagination");
 
   if (filtered.length === 0) {
@@ -620,16 +605,12 @@ function renderPlayersList() {
   var pageItems = filtered.slice(startIndex, startIndex + PLAYERS_PER_PAGE);
 
   var html = "";
+  var totalClub = clubFishes.length || 80;
   pageItems.forEach(function (p) {
     var isMe = !!(currentUser && p.uid === currentUser.uid);
     var isFriend = friendUids.has(p.uid);
     var av = p.avatarUrl || "🎣";
-    var avatarHtml = "";
-    if (av.startsWith("http://") || av.startsWith("https://")) {
-      avatarHtml = '<div class="player-card-avatar-wrap"><img src="' + escapeHtml(av) + '" alt="" onerror="this.parentElement.innerHTML=\'🎣\'"></div>';
-    } else {
-      avatarHtml = '<div class="player-card-avatar-wrap">' + escapeHtml(av || "🎣") + '</div>';
-    }
+    var avatarHtml = '<div class="player-card-avatar-wrap">' + renderAvatarHtml(av, "🎣") + '</div>';
 
     var roleBadge = "";
     if (p.role === "admin") {
@@ -718,7 +699,7 @@ function renderPlayersList() {
           '</div>' +
           '<div class="player-card-stat-line">' +
             '<span class="player-card-stat-label">🏆 ' + t('player_card_stat_club_fish', 'Klubové ryby:') + '</span>' +
-            '<span class="player-card-stat-val" style="color: #34d399;">' + clubCatches + ' / 80</span>' +
+            '<span class="player-card-stat-val" style="color: #34d399;">' + clubCatches + ' / ' + totalClub + '</span>' +
           '</div>' +
         '</div>' +
 
@@ -807,7 +788,7 @@ async function toggleBackyardFish(fishId) {
   // Sync to Firestore
   if (currentUser && db) {
     try {
-      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      var fsModule = await getFirestoreModule();
       var userRef = fsModule.doc(db, "users", currentUser.uid);
       await fsModule.updateDoc(userRef, {
         backyardFishIds: Array.from(backyardFishIds)
@@ -1109,7 +1090,7 @@ async function openPlayerModal(uid) {
   // If not found in memory, try to load directly from Firestore
   if (!player && !clubMem && db) {
     try {
-      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      var fsModule = await getFirestoreModule();
       var snap = await fsModule.getDoc(fsModule.doc(db, "users", uid));
       if (snap.exists()) {
         var d = snap.data();
@@ -1133,7 +1114,7 @@ async function openPlayerModal(uid) {
   // If clicking on another player in the active club, verify that their user doc still exists
   if (!isMe && clubMem && db) {
     try {
-      var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      var fsModule = await getFirestoreModule();
       var snap = await fsModule.getDoc(fsModule.doc(db, "users", uid));
       if (!snap.exists()) {
         // Player has deleted their account: auto-clean ghost member from club!
@@ -1212,11 +1193,7 @@ async function openPlayerModal(uid) {
   // Avatar rendering
   var avatarWrap = document.getElementById("playerModalAvatarWrap");
   if (avatarWrap) {
-    if (av.startsWith("http://") || av.startsWith("https://")) {
-      avatarWrap.innerHTML = '<div class="player-modal-avatar-large"><img src="' + escapeHtml(av) + '" alt="" onerror="this.parentElement.innerHTML=\'🎣\'"></div>';
-    } else {
-      avatarWrap.innerHTML = '<div class="player-modal-avatar-large">' + escapeHtml(av || "🎣") + '</div>';
-    }
+    avatarWrap.innerHTML = '<div class="player-modal-avatar-large">' + renderAvatarHtml(av, "🎣") + '</div>';
   }
 
   var nameEl = document.getElementById("playerModalName");
@@ -1241,10 +1218,11 @@ async function openPlayerModal(uid) {
 
   updateModalFriendBtn(uid);
 
+  var totalClub = clubFishes.length || 80;
   var clubCountEl = document.getElementById("playerModalClubCount");
   var clubFillEl = document.getElementById("playerModalClubFill");
-  if (clubCountEl) clubCountEl.innerText = cClub + " / 80";
-  if (clubFillEl) clubFillEl.style.width = Math.min(100, Math.round((cClub / 80) * 100)) + "%";
+  if (clubCountEl) clubCountEl.innerText = cClub + " / " + totalClub;
+  if (clubFillEl) clubFillEl.style.width = Math.min(100, Math.round((cClub / totalClub) * 100)) + "%";
 
   var totalCountEl = document.getElementById("playerModalTotalCount");
   var totalFillEl = document.getElementById("playerModalTotalFill");

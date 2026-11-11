@@ -94,7 +94,6 @@ function getFishLocationLabels(fish) {
 
 // View & Navigation State
 var currentView = "all";
-var currentSyncState = "local"; // 'local' | 'live' | 'offline' | 'error'
 var selectedModalFishId = null;
 
 // Club State
@@ -143,7 +142,6 @@ var filterPlayerFishId = null;
 var filterPlayerBait = "";
 var filterPlayerRating = null;
 var filterPlayerSearchText = "";
-var expandedPlayerBackyardCards = new Set();
 var isProfileBackyardCatalogOpen = false;
 var isAdmin = false;
 
@@ -223,12 +221,39 @@ function t(key, params, fallback) {
 
 function formatClubMemberCount(count) {
   var num = Math.max(0, parseInt(count) || 0);
-  if (getLang() === 'en') {
-    return num + (num === 1 ? ' member' : ' members');
+  if (num === 1) return t('member_count_1');
+  if (num >= 2 && num <= 4) return t('member_count_2_4', { count: num });
+  return t('member_count_5', { count: num });
+}
+
+function getFirestoreModule() {
+  if (window.FISHAO_FS_TX && typeof window.FISHAO_FS_TX.loadFirestoreModule === 'function') {
+    return window.FISHAO_FS_TX.loadFirestoreModule();
   }
-  if (num === 1) return '1 člen';
-  if (num >= 2 && num <= 4) return num + ' členové';
-  return num + ' členů';
+  return import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+}
+
+function renderAvatarHtml(avatarVal, fallbackEmoji, imgCss) {
+  var fb = fallbackEmoji || "🎣";
+  var val = avatarVal || fb;
+  if (val.indexOf("http://") === 0 || val.indexOf("https://") === 0) {
+    var styleStr = imgCss || "width:100%; height:100%; object-fit:cover; border-radius:inherit;";
+    return '<img src="' + escapeHtml(val) + '" alt="" style="' + styleStr + '" onerror="this.style.display=\'none\'; this.parentElement.innerText=\'' + fb + '\';">';
+  }
+  return escapeHtml(val);
+}
+
+function updateNavClubBadge() {
+  var navClubPtsBadge = document.getElementById("navClubPtsBadge");
+  if (!navClubPtsBadge) return;
+  var locale = getLocale();
+  if (currentClubPoints > 0) {
+    navClubPtsBadge.innerText = currentClubPoints.toLocaleString(locale) + " " + t('unit_pts');
+  } else if (currentClubId || currentClubName) {
+    navClubPtsBadge.innerText = "0 " + t('unit_pts');
+  } else {
+    navClubPtsBadge.innerText = t('badge_no_club');
+  }
 }
 
 function getLocalizedTzCity() {

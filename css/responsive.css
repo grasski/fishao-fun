@@ -443,16 +443,6 @@
   }
 
   /* Active Club Management on Mobile */
-  .active-club-bar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 12px;
-  }
-  .active-club-actions {
-    width: 100%;
-    justify-content: flex-end;
-  }
   .club-members-grid {
     grid-template-columns: 1fr;
   }

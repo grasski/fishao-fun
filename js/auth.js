@@ -10,8 +10,6 @@ var analyticsModuleRef = null;
 
 async function initFirebaseSync() {
   if (!isFirebaseConfigured) {
-    currentSyncState = "local";
-    updateSyncBadgeUI();
     updateAuthUI();
     checkCookieConsentBanner();
     return;
@@ -19,16 +17,13 @@ async function initFirebaseSync() {
 
   try {
     var appModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
-    var firestoreModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var firestoreModule = await getFirestoreModule();
     var authModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
 
     firebaseApp = appModule.initializeApp(firebaseConfig);
     db = firestoreModule.getFirestore(firebaseApp);
     auth = authModule.getAuth(firebaseApp);
     firebaseDocRef = firestoreModule.doc(db, "fishao_market", "prices_history");
-
-    currentSyncState = "live";
-    updateSyncBadgeUI();
 
     checkCookieConsentBanner();
     if (localStorage.getItem("fishao_cookie_consent") === "granted") {
@@ -84,14 +79,10 @@ async function initFirebaseSync() {
       if (selectedModalFishId) renderModalHistory(selectedModalFishId);
     }, function (error) {
       console.warn("Firestore connection warning:", error);
-      currentSyncState = "offline";
-      updateSyncBadgeUI();
     });
 
   } catch (err) {
     console.error("Firebase initialization failed:", err);
-    currentSyncState = "error";
-    updateSyncBadgeUI();
     updateAuthUI();
     checkCookieConsentBanner();
   }
@@ -270,7 +261,7 @@ async function signOut() {
 async function loadUserProfile(user) {
   if (!db) return;
   try {
-    var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var fsModule = await getFirestoreModule();
     var userDocRef = fsModule.doc(db, "users", user.uid);
     var docSnap = await fsModule.getDoc(userDocRef);
 
@@ -393,16 +384,7 @@ function updateAuthUI() {
   var gateClub = document.getElementById("gateClubManage");
   var manageContent = document.getElementById("manageClubContent");
 
-  var clubPtsBadge = document.getElementById("navClubPtsBadge");
-  if (clubPtsBadge) {
-    if (!currentUser) {
-      clubPtsBadge.innerText = t('badge_locked');
-    } else if (currentClubId) {
-      clubPtsBadge.innerText = currentClubPoints.toLocaleString(getLocale()) + " " + t('unit_pts');
-    } else {
-      clubPtsBadge.innerText = t('badge_no_club');
-    }
-  }
+  updateNavClubBadge();
 
   var collBannerAuth = document.getElementById("collBannerAuth");
   var collBannerGuest = document.getElementById("collBannerGuest");
@@ -628,7 +610,7 @@ async function saveProfile() {
   }
 
   try {
-    var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var fsModule = await getFirestoreModule();
     var userDocRef = fsModule.doc(db, "users", currentUser.uid);
     await fsModule.updateDoc(userDocRef, {
       displayName: newNick,
@@ -677,7 +659,7 @@ async function deleteAccount() {
   if (!ok) return;
 
   try {
-    var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var fsModule = await getFirestoreModule();
     var uid = currentUser.uid;
     var clubIdToLeave = (userProfile && userProfile.clubId) || currentClubId;
 
@@ -699,37 +681,9 @@ async function deleteAccount() {
     }
 
     // 2. If user was in a club, clean up member entry from club document
-    if (clubIdToLeave) {
+    if (clubIdToLeave && typeof removeMemberFromClubDoc === 'function') {
       try {
-        var clubRef = fsModule.doc(db, "clubs", clubIdToLeave);
-        var snap = await fsModule.getDoc(clubRef);
-        if (snap.exists()) {
-          var cData = snap.data();
-          var cnt = cData.memberCount || 1;
-          var members = cData.members || {};
-          var wasMember = !!members[uid];
-          var leaveUpdate = {
-            memberCount: Math.max(0, wasMember ? (cnt - 1) : cnt),
-            updatedAt: new Date().toISOString(),
-            lastUpdatedBy: uid
-          };
-          leaveUpdate["members." + uid] = fsModule.deleteField();
-
-          // If deleting user was the creator and there are other members, promote the oldest member
-          if (cData.createdBy === uid || (members[uid] && members[uid].isCreator)) {
-            var remainingUids = Object.keys(members).filter(function (k) { return k !== uid; });
-            if (remainingUids.length > 0) {
-              remainingUids.sort(function (a, b) {
-                var ja = (members[a] && members[a].joinedAt) || "";
-                var jb = (members[b] && members[b].joinedAt) || "";
-                return ja.localeCompare(jb);
-              });
-              leaveUpdate["members." + remainingUids[0] + ".isCreator"] = true;
-            }
-          }
-
-          await fsModule.updateDoc(clubRef, leaveUpdate);
-        }
+        await removeMemberFromClubDoc(fsModule, clubIdToLeave, uid);
       } catch (e) {
         console.warn("Could not clean up club membership on account deletion:", e);
       }
@@ -782,10 +736,6 @@ async function deleteAccount() {
   }
 }
 
-function editNickname() {
-  openProfileModal();
-}
-
 async function exportFirestoreBackup() {
   if (!currentUser || !userProfile || userProfile.role !== 'admin') {
     showToast(t('auth_notice_default'), 'error');
@@ -804,7 +754,7 @@ async function exportFirestoreBackup() {
   }
 
   try {
-    var firestoreModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    var firestoreModule = await getFirestoreModule();
 
     // 1. Fetch Market Prices (/fishao_market/prices_history)
     var marketDocRef = firestoreModule.doc(db, "fishao_market", "prices_history");

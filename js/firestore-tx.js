@@ -82,6 +82,7 @@
   }
 
   window.FISHAO_FS_TX = {
+    loadFirestoreModule: loadFirestoreModule,
     readModifyWrite: readModifyWrite,
     setDocument: setDocument
   };

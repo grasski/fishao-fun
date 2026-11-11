@@ -158,12 +158,6 @@
   grid-template-columns: 1fr 1fr;
   gap: 24px;
 }
-@media (max-width: 768px) {
-  .club-finder-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-}
 .club-finder-col {
   display: flex;
   flex-direction: column;
@@ -171,14 +165,6 @@
 .club-create-col {
   border-left: 1px solid rgba(255, 255, 255, 0.08);
   padding-left: 24px;
-}
-@media (max-width: 768px) {
-  .club-create-col {
-    border-left: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding-left: 0;
-    padding-top: 18px;
-  }
 }
 .club-search-bar {
   display: flex;
@@ -230,37 +216,7 @@
   margin-top: 2px;
 }
 
-/* ACTIVE CLUB HEADER BAR */
-.active-club-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 18px;
-  background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), rgba(245, 158, 11, 0.1));
-  border: 1px solid rgba(139, 92, 246, 0.3);
-  border-radius: 12px;
-  margin-bottom: 16px;
-}
-.active-club-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.active-club-icon {
-  font-size: 28px;
-}
-.active-club-name {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: 0.3px;
-}
-.active-club-badge {
-  font-size: 11px;
-  color: #a78bfa;
-  font-weight: 600;
-}
+/* DANGER BUTTON VARIANT */
 .pill-btn.danger {
   background: rgba(239, 68, 68, 0.15);
   color: #f87171;
