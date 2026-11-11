@@ -191,9 +191,9 @@ function applyFilters() {
     filtered.sort(function (a, b) { return b.max_l - a.max_l; });
   } else if (sortBy === "max_asc" || sortBy === "length_asc") {
     filtered.sort(function (a, b) { return a.max_l - b.max_l; });
-  } else if (sortBy === "points_desc" && currentView === "club") {
+  } else if (sortBy === "points_desc") {
     filtered.sort(function (a, b) { return (b.points || 0) - (a.points || 0); });
-  } else if (sortBy === "points_asc" && currentView === "club") {
+  } else if (sortBy === "points_asc") {
     filtered.sort(function (a, b) { return (a.points || 999999) - (b.points || 999999); });
   } else {
     filtered.sort(function (a, b) {
@@ -487,7 +487,9 @@ function updateSortByOptions() {
     '<option value="max_desc">' + t('opt_sort_max_desc') + '</option>' +
     '<option value="max_asc">' + t('opt_sort_max_asc') + '</option>' +
     '<option value="avg_desc">' + t('opt_sort_avg_desc') + '</option>' +
-    '<option value="avg_asc">' + t('opt_sort_avg_asc') + '</option>';
+    '<option value="avg_asc">' + t('opt_sort_avg_asc') + '</option>' +
+    '<option value="points_asc">' + t('opt_sort_points_asc') + '</option>' +
+    '<option value="points_desc">' + t('opt_sort_points_desc') + '</option>';
   select.value = (curVal && curVal !== "default") ? curVal : "name_asc";
 }
 

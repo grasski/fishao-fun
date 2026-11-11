@@ -252,7 +252,7 @@ function openPriceModal(fid, skipSync) {
     }
   }
   try {
-    document.title = fishName + " – FISHAO Wiki & Ryby";
+    document.title = fishName + t('seo_fish_title_suffix', ' – FISHAO Wiki & Ryby');
   } catch (e) { }
 
   if (!skipSync && window.fishaoApp && typeof window.fishaoApp.syncUrlRoute === "function") {
@@ -857,12 +857,12 @@ function addFishToBulkList() {
   var priceVal = (priceInput.value || "").trim();
 
   if (!nameVal) {
-    showToast("Zadej nebo vyber název ryby.", "error");
+    showToast(t('bulk_err_no_fish', 'Zadej nebo vyber název ryby.'), "error");
     nameInput.focus();
     return;
   }
   if (!priceVal || isNaN(Number(priceVal)) || Number(priceVal) < 0) {
-    showToast("Zadej platnou cenu ryby.", "error");
+    showToast(t('bulk_err_no_price', 'Zadej platnou cenu ryby.'), "error");
     priceInput.focus();
     return;
   }
@@ -874,7 +874,7 @@ function addFishToBulkList() {
     textArea.value = newLine + "\n";
   }
 
-  showToast("Přidáno: " + newLine, "success");
+  showToast(t('bulk_added_line', { line: newLine }, "Přidáno: " + newLine), "success");
   nameInput.value = "";
   priceInput.value = "";
   var drop = document.getElementById("bulkFishSuggestions");

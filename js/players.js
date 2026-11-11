@@ -163,9 +163,9 @@ function createRichBackyardFishCard(fObj, extraClass, isModal) {
     ? 'window.fishaoApp.closePlayerModal(); window.fishaoApp.openFishDetail(' + fid + ');'
     : 'window.fishaoApp.openFishDetail(' + fid + ');');
 
-  return '<div class="player-backyard-fish-card ' + (extraClass || '') + '" onclick="' + clickAction + '" title="' + escapeHtml(fName) + ' (klikni pro detail)">' +
+  return '<div class="player-backyard-fish-card ' + (extraClass || '') + '" onclick="' + clickAction + '" title="' + escapeHtml(fName + t('click_for_detail_suffix', ' (klikni pro detail)')) + '">' +
     '<div class="pbfc-top">' +
-      '<img class="pbfc-img" src="images/fish_' + fid + '.png" alt="" onerror="this.src=\'images/fish_icon.png\'">' +
+      '<img class="pbfc-img" src="images/fish_' + fid + '.png" alt="" onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + fid + '_item.png\'">' +
       '<div class="pbfc-info">' +
         '<span class="pbfc-name">' + escapeHtml(fName) + '</span>' +
         '<span class="pbfc-stars">' + stars + '</span>' +
@@ -976,7 +976,7 @@ function renderProfileBackyardCatalog(searchTerm) {
 
     html += '<div class="catalog-fish-card ' + (isSelected ? 'selected' : '') + '" onclick="window.fishaoApp.toggleBackyardFish(' + fid + ')" title="' + escapeHtml(fName) + ' (' + stars + ')">' +
       (isSelected ? '<span class="catalog-fish-check">✓</span>' : '') +
-      '<img src="images/fish_' + fid + '.png" alt="" onerror="this.src=\'images/fish_icon.png\'">' +
+      '<img src="images/fish_' + fid + '.png" alt="" onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + fid + '_item.png\'">' +
       '<span class="catalog-fish-name">' + escapeHtml(fName) + '</span>' +
       '<span class="catalog-fish-stars">' + stars + '</span>' +
     '</div>';
@@ -1012,7 +1012,7 @@ function renderBackyardProfilePicker() {
       var fName = fObj ? (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name) : ('Ryba #' + fid);
       var stars = fObj ? '★'.repeat(fObj.rating || 1) : '';
       html += '<span class="profile-backyard-chip">' +
-        '<img src="images/fish_' + fid + '.png" alt="" onerror="this.src=\'images/fish_icon.png\'">' +
+        '<img src="images/fish_' + fid + '.png" alt="" onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + fid + '_item.png\'">' +
         '<span>' + escapeHtml(fName) + '</span>' +
         '<span class="chip-stars">' + stars + '</span>' +
         '<button type="button" class="profile-backyard-chip-remove" onclick="window.fishaoApp.removeBackyardFish(' + fid + ')" title="' + escapeHtml(t('profile_chip_remove_title', 'Odebrat')) + '">&times;</button>' +
@@ -1061,9 +1061,9 @@ function onBackyardSearchInput(val) {
   matches.forEach(function (f) {
     var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
     html += '<div class="profile-backyard-sugg-item" onclick="window.fishaoApp.selectBackyardSearchResult(' + f.id + ')">' +
-      '<img src="images/fish_' + f.id + '.png" alt="" onerror="this.src=\'images/fish_icon.png\'">' +
+      '<img src="images/fish_' + f.id + '.png" alt="" onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'">' +
       '<span style="font-weight: 600;">' + escapeHtml(fName) + '</span>' +
-      '<span style="font-size: 11px; color: #2dd4bf; margin-left: auto;">🏡 Za domem</span>' +
+      '<span style="font-size: 11px; color: #2dd4bf; margin-left: auto;">' + escapeHtml(t('modal_btn_backyard_no', '🏡 Za domem')) + '</span>' +
       '</div>';
   });
 

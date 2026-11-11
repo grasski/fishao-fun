@@ -240,6 +240,10 @@ async function toggleCaughtFish(fishId) {
     caughtFishIds.add(fishId);
   }
 
+  try {
+    localStorage.setItem('fishao_caught_fish_ids', JSON.stringify(Array.from(caughtFishIds)));
+  } catch (e) {}
+
   if (currentUser && db) {
     try {
       var fsModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
@@ -289,7 +293,6 @@ function updateCaughtStats() {
   var allCountEl = document.getElementById("caughtAllCount");
   var progressEl = document.getElementById("caughtProgressFill");
   var pctTextEl = document.getElementById("caughtPctText");
-  var navBadge = document.getElementById("navCaughtBadge");
 
   if (clubCountEl) clubCountEl.innerText = clubCount;
   if (allCountEl) allCountEl.innerText = allCount;
@@ -301,14 +304,6 @@ function updateCaughtStats() {
 
   if (progressEl) progressEl.style.width = pct.toFixed(1) + "%";
   if (pctTextEl) pctTextEl.innerText = pct.toFixed(0) + "%";
-
-  if (navBadge) {
-    if (!currentUser) {
-      navBadge.innerText = t('badge_locked');
-    } else {
-      navBadge.innerText = (currentView === "club" ? clubCount + " / 80" : allCount + " / 615");
-    }
-  }
 
   var clubPtsBadge = document.getElementById("navClubPtsBadge");
   if (clubPtsBadge) {

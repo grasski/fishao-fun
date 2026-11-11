@@ -313,19 +313,19 @@ function showConfirmModal(title, message, confirmText, isDanger) {
     var btnEl = document.getElementById("confirmModalBtnConfirm");
     var overlay = document.getElementById("confirmModalOverlay");
 
-    if (titleEl) titleEl.innerText = title || "Potvrzení";
+    if (titleEl) titleEl.innerText = title || t('confirm_btn', 'Potvrzení');
     if (msgEl) msgEl.innerText = message || "";
     if (btnEl) {
       btnEl.innerText = confirmText || t('confirm_btn');
       btnEl.className = "pill-btn active " + (isDanger ? "danger" : "purple");
     }
-    if (overlay) overlay.style.display = "flex";
+    if (overlay) overlay.classList.add("active");
   });
 }
 
 function resolveConfirmModal(result) {
   var overlay = document.getElementById("confirmModalOverlay");
-  if (overlay) overlay.style.display = "none";
+  if (overlay) overlay.classList.remove("active");
   if (typeof confirmModalResolver === "function") {
     confirmModalResolver(Boolean(result));
     confirmModalResolver = null;

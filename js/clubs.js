@@ -223,7 +223,10 @@ async function fetchAndSyncMemberStats(uid) {
 
 function renderClubMembers(membersMap, creatorId) {
   currentClubMembersMap = membersMap || {};
-  currentClubCreatorId = creatorId || "";
+  var activeCreatorUid = Object.keys(currentClubMembersMap).find(function (k) {
+    return currentClubMembersMap[k] && currentClubMembersMap[k].isCreator === true;
+  }) || creatorId || "";
+  currentClubCreatorId = activeCreatorUid;
 
   var grid = document.getElementById("clubMembersGrid");
   var countEl = document.getElementById("activeClubMembersCount");
@@ -233,13 +236,13 @@ function renderClubMembers(membersMap, creatorId) {
   if (memberKeys.length === 0 && currentUser) {
     var myClubCount = 0;
     clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myClubCount++; });
-    var myName = (userProfile && userProfile.displayName) ? userProfile.displayName : "Rybář";
+    var myName = (userProfile && userProfile.displayName) ? userProfile.displayName : t('user_default_fisher', 'Rybář');
     var myAv = (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "🎣";
     membersMap = {};
     membersMap[currentUser.uid] = {
       displayName: myName,
       avatarUrl: myAv,
-      isCreator: (creatorId === currentUser.uid),
+      isCreator: (activeCreatorUid === currentUser.uid),
       joinedAt: new Date().toISOString(),
       caughtCount: caughtFishIds.size,
       caughtClubCount: myClubCount
@@ -252,8 +255,8 @@ function renderClubMembers(membersMap, creatorId) {
   memberKeys.sort(function (a, b) {
     var mA = membersMap[a] || {};
     var mB = membersMap[b] || {};
-    var isCrA = !!(mA.isCreator || a === creatorId);
-    var isCrB = !!(mB.isCreator || b === creatorId);
+    var isCrA = !!(mA.isCreator || a === activeCreatorUid);
+    var isCrB = !!(mB.isCreator || b === activeCreatorUid);
 
     // 1. Creator ALWAYS first
     if (isCrA && !isCrB) return -1;
@@ -290,9 +293,9 @@ function renderClubMembers(membersMap, creatorId) {
   var html = "";
   memberKeys.forEach(function (uid) {
     var m = membersMap[uid] || {};
-    var dName = m.displayName || "Rybář";
+    var dName = m.displayName || t('user_default_fisher', 'Rybář');
     var av = m.avatarUrl || "🎣";
-    var isCr = (m.isCreator || uid === creatorId);
+    var isCr = !!(m.isCreator || uid === activeCreatorUid);
     var isMe = (currentUser && uid === currentUser.uid);
 
     var avatarHtml = "";
@@ -411,7 +414,7 @@ async function searchClubs(query) {
     resultsEl.innerHTML = html;
   } catch (err) {
     console.error("Error searching clubs:", err);
-    resultsEl.innerHTML = '<div style="padding: 10px; color: #f87171; font-size: 12px;">Chyba: ' + err.message + '</div>';
+    resultsEl.innerHTML = '<div style="padding: 10px; color: #f87171; font-size: 12px;">' + t('err_generic', 'Chyba: ') + err.message + '</div>';
   }
 }
 
@@ -427,7 +430,7 @@ async function createClub(name) {
     return;
   }
   if (clubName.length > 40) {
-    showToast("Název klubu může mít maximálně 40 znaků.", "error");
+    showToast(t('club_name_too_long', 'Název klubu může mít maximálně 40 znaků.'), "error");
     return;
   }
 
@@ -492,7 +495,7 @@ async function createClub(name) {
     bindClubListener(newDocRef.id);
   } catch (err) {
     console.error("Failed to create club:", err);
-    showToast("Chyba při vytváření klubu: " + err.message, "error");
+    showToast(t('club_err_create', 'Chyba při vytváření klubu: ') + err.message, "error");
   }
 }
 
@@ -502,7 +505,7 @@ async function joinClub(clubId, clubName) {
     return;
   }
   if (currentClubId === clubId) {
-    showToast("V tomto klubu již jsi!", "purple");
+    showToast(t('club_already_member', 'V tomto klubu již jsi!'), "purple");
     return;
   }
 
@@ -572,7 +575,7 @@ async function joinClub(clubId, clubName) {
     bindClubListener(clubId);
   } catch (err) {
     console.error("Failed to join club:", err);
-    showToast("Chyba při připojování ke klubu: " + err.message, "error");
+    showToast(t('club_err_join', 'Chyba při připojování ke klubu: ') + err.message, "error");
   }
 }
 
@@ -663,7 +666,7 @@ async function leaveClub() {
     searchClubs("");
   } catch (err) {
     console.error("Failed to leave club:", err);
-    showToast("Chyba při opouštění klubu: " + err.message, "error");
+    showToast(t('club_err_leave', 'Chyba při opouštění klubu: ') + err.message, "error");
   }
 }
 
@@ -708,7 +711,7 @@ async function kickMemberFromClub(targetUid) {
     showToast(t('club_member_kicked', 'Hráč byl odebrán z klubu.'), "info");
   } catch (err) {
     console.error("Failed to kick member:", err);
-    showToast("Chyba při odebírání člena: " + err.message, "error");
+    showToast(t('club_err_kick', 'Chyba při odebírání člena: ') + err.message, "error");
   }
 }
 
@@ -718,7 +721,7 @@ async function setClubPoints(val) {
     return;
   }
   if (!currentClubId) {
-    showToast("Pro nastavení bodů musíš být členem klubu!", "error");
+    showToast(t('club_err_points_member', 'Pro nastavení bodů musíš být členem klubu!'), "error");
     return;
   }
   var num = Math.max(0, parseInt(val) || 0);
@@ -763,7 +766,7 @@ async function toggleClubSpecialFish(fishId) {
     return;
   }
   if (!currentClubId) {
-    showToast("Pro odemykání speciálních ryb musíš být členem klubu!", "error");
+    showToast(t('club_err_special_member', 'Pro odemykání speciálních ryb musíš být členem klubu!'), "error");
     return;
   }
 
@@ -805,7 +808,7 @@ async function toggleClubSpecialFish(fishId) {
     }
   } catch (err) {
     console.error("Failed to toggle special fish:", err);
-    showToast("Chyba při ukládání: " + err.message, "error");
+    showToast(t('err_save', 'Chyba při ukládání: ') + err.message, "error");
   }
 }
 
@@ -848,7 +851,7 @@ function renderClubSpecialFishes() {
 
     return '<div class="special-fish-card ' + (isUnlocked ? 'unlocked' : '') + '">' +
       '<div class="special-fish-left" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" style="cursor: pointer;">' +
-      '<img src="images/fish_' + f.id + '.png" class="special-fish-img" alt="' + fishName + '" onerror="this.src=\'images/default-fish.png\'">' +
+      '<img src="images/fish_' + f.id + '.png" class="special-fish-img" alt="' + fishName + '" onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'">' +
       '<div class="special-fish-details">' +
       '<span class="special-fish-name" title="' + fishName + '">' + fishName + '</span>' +
       '<span class="special-fish-cost">' + costLabel + '</span>' +
@@ -983,7 +986,7 @@ function renderClubMilestones() {
         '<div class="dash-card-body">' +
         '<div class="milestone-fish-row" style="margin-top: 4px;">' +
         '<div class="milestone-fish-img-box" style="width: 84px; height: 52px;">' +
-        '<img src="images/fish_' + nextFish.id + '.png" class="milestone-fish-img" alt="' + nextFishName + '" onerror="this.src=\'images/default-fish.png\'">' +
+        '<img src="images/fish_' + nextFish.id + '.png" class="milestone-fish-img" alt="' + nextFishName + '" onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + nextFish.id + '_item.png\'">' +
         '</div>' +
         '<div class="milestone-fish-info">' +
         '<div class="milestone-fish-name" style="font-size: 14px;">' + nextFishName + '</div>' +
@@ -1062,7 +1065,7 @@ function renderClubMilestones() {
       '</div>' +
       '<div class="milestone-fish-row">' +
       '<div class="milestone-fish-img-box">' +
-      '<img src="images/fish_' + f.id + '.png" class="milestone-fish-img" alt="' + fishName + '" onerror="this.src=\'images/default-fish.png\'">' +
+      '<img src="images/fish_' + f.id + '.png" class="milestone-fish-img" alt="' + fishName + '" onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'">' +
       '</div>' +
       '<div class="milestone-fish-info">' +
       '<div class="milestone-fish-name" title="' + fishName + '">' + fishName + '</div>' +

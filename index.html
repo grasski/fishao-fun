@@ -80,14 +80,14 @@
 
   <!-- Modern Modular Stylesheets -->
   <link rel="stylesheet" href="css/base.css?v=3.1">
-  <link rel="stylesheet" href="css/header.css?v=3.1">
+  <link rel="stylesheet" href="css/header.css?v=3.2">
   <link rel="stylesheet" href="css/nav.css?v=3.1">
   <link rel="stylesheet" href="css/filters.css?v=3.2">
   <link rel="stylesheet" href="css/table.css?v=3.3">
   <link rel="stylesheet" href="css/clubs.css?v=3.1">
   <link rel="stylesheet" href="css/players.css?v=3.1">
   <link rel="stylesheet" href="css/modals.css?v=3.3">
-  <link rel="stylesheet" href="css/responsive.css?v=3.3">
+  <link rel="stylesheet" href="css/responsive.css?v=3.4">
 </head>
 
 <body>
@@ -118,7 +118,7 @@
               📍 Místní
             </button>
             <button class="tz-toggle" id="tzUtcBtn" onclick="window.fishaoApp.setTimezone('utc')"
-              title="Herní čas serveru (UTC)" data-i18n="tz_utc_btn">
+              title="Herní čas FISHAO (UTC+0)" data-i18n="tz_utc_btn" data-i18n-title="tz_utc_btn_title">
               🌐 UTC
             </button>
           </div>
@@ -135,7 +135,7 @@
         <!-- Auth panel -->
         <div class="auth-panel" id="authPanel">
           <button class="sign-in-btn" id="signInBtn" onclick="window.fishaoApp.signIn()" style="display: none;"
-            title="Přihlásit se přes Google účet">
+            title="Přihlásit se přes Google" data-i18n-title="sign_in_google">
             <svg width="16" height="16" viewBox="0 0 24 24">
               <path fill="#4285F4"
                 d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" />
@@ -471,7 +471,7 @@
           </div>
           <div style="display: flex; gap: 8px; align-items: center;">
             <button type="button" class="pill-btn" onclick="window.fishaoApp.refreshPlayersList()"
-              title="Aktualizovat hráče z databáze" style="height: 36px; padding: 0 12px; font-size: 13px;">
+              title="Obnovit seznam hráčů z databáze" data-i18n-title="players_btn_refresh_title" style="height: 36px; padding: 0 12px; font-size: 13px;">
               🔄 <span data-i18n="players_btn_refresh">Aktualizovat</span>
             </button>
             <button type="button" class="pill-btn teal" onclick="window.fishaoApp.openProfileModal()"
@@ -894,7 +894,7 @@
               🛡️ <span data-i18n="footer_privacy_link">Zásady ochrany soukromí &amp; GDPR</span>
             </button>
             <a href="https://www.fishao.net/" target="_blank" rel="noopener noreferrer" class="footer-link-btn">
-              🌐 <span data-i18n="footer_official_link">Oficiální web FISHAO</span> ↗
+              🌐 <span data-i18n="footer_official_link">Komunitní hra FISHAO</span> ↗
             </a>
           </div>
           <div class="footer-meta">
@@ -1209,7 +1209,7 @@
               Herní přezdívka (zobrazí se v klubu):
             </label>
             <input type="text" id="inputProfileNickname" class="dash-input" maxlength="40"
-              placeholder="Zadej svou přezdívku..." onkeydown="if(event.key==='Enter') window.fishaoApp.saveProfile()">
+              placeholder="Zadej svou přezdívku..." data-i18n-placeholder="profile_nick_placeholder" onkeydown="if(event.key==='Enter') window.fishaoApp.saveProfile()">
           </div>
         </div>
 
@@ -1263,7 +1263,7 @@
           style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 10px;">
           <button type="button" class="btn-subtle-link danger" onclick="window.fishaoApp.deleteAccount()"
             style="font-size: 12px; color: #f87171; background: none; border: none; cursor: pointer; padding: 4px 0;"
-            title="Trvale smazat můj herní profil a data">
+            title="Trvale smazat můj herní profil a data" data-i18n-title="profile_btn_delete_account_title">
             🗑️ <span data-i18n="profile_btn_delete_account">Smazat účet a data</span>
           </button>
           <div style="display: flex; gap: 10px;">
@@ -1456,21 +1456,21 @@
   <script src="data/i18n/ui_cs.js?v=3.5"></script>
   <script src="data/i18n/ui_en.js?v=3.5"></script>
   <script src="data/i18n/taxonomies.js?v=3.2"></script>
-  <script src="data/i18n/fish_names.js?v=3.1"></script>
+  <script src="data/i18n/fish_names.js?v=3.2"></script>
   <script src="data/i18n.js?v=3.1"></script>
   <script src="data/fishes.js?v=3.1"></script>
   <script src="data/prices.js?v=3.4"></script>
   <script src="firebase-config.js?v=3.1"></script>
   <!-- Modular FISHAO Application Logic -->
-  <script src="js/state.js?v=3.6"></script>
+  <script src="js/state.js?v=3.7"></script>
   <script src="js/firestore-tx.js?v=3.2"></script>
-  <script src="js/table.js?v=3.3"></script>
-  <script src="js/clubs.js?v=3.5"></script>
-  <script src="js/market.js?v=3.6"></script>
-  <script src="js/filters.js?v=3.6"></script>
-  <script src="js/auth.js?v=3.5"></script>
-  <script src="js/players.js?v=3.5"></script>
-  <script src="js/main.js?v=3.4"></script>
+  <script src="js/table.js?v=3.4"></script>
+  <script src="js/clubs.js?v=3.6"></script>
+  <script src="js/market.js?v=3.7"></script>
+  <script src="js/filters.js?v=3.7"></script>
+  <script src="js/auth.js?v=3.6"></script>
+  <script src="js/players.js?v=3.6"></script>
+  <script src="js/main.js?v=3.5"></script>
 
 </body>
 

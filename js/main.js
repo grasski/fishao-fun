@@ -351,7 +351,7 @@ function setLanguage(lang) {
   applyFilters();
 
   if (typeof populatePlayerFishFilterDropdown === 'function') populatePlayerFishFilterDropdown();
-  if (typeof renderPlayerActiveFilterChips === 'function') renderPlayerActiveFilterChips();
+  if (typeof renderPlayersActiveFiltersBar === 'function') renderPlayersActiveFiltersBar();
   if (typeof renderPlayersList === 'function' && currentView === 'players') renderPlayersList();
   if (typeof renderBackyardProfilePicker === 'function') renderBackyardProfilePicker();
 
@@ -516,7 +516,6 @@ window.fishaoApp = {
   refreshPlayersList: refreshPlayersList,
   setPlayerPage: setPlayerPage,
   kickMemberFromClub: kickMemberFromClub,
-  deleteAccount: deleteAccount,
   unbindClubListener: unbindClubListener,
   openFishDetail: openPriceModal,
   onPriceDateChange: onPriceDateChange,

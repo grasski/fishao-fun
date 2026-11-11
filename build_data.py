@@ -104,7 +104,7 @@ for f in fishes:
 
     if 'EFPT_CLUB_AREA_SALT' in places or 'EFPT_CLUB_AREA_FRESH' in places or 112 in locs:
         fid = int(f['id'])
-        name = cz.get(f'fish_{fid}', f"Klubová ryba #{fid}")
+        name = cz.get(f'fish_{fid}') or f.get('name') or f"Klubová ryba #{fid}"
         is_salt = 'EFPT_CLUB_AREA_SALT' in places
 
         rating_num = int(f.get('rating', 0))
@@ -163,7 +163,7 @@ print("-> Processing all 615 encyclopedia fishes...")
 all_fishes = []
 for f in fishes:
     fid = int(f['id'])
-    name = cz.get(f'fish_{fid}', f"Neznámá ryba #{fid}")
+    name = cz.get(f'fish_{fid}') or f.get('name') or f"Neznámá ryba #{fid}"
     req_raw = f.get('catch_req', '')
     req = json.loads(req_raw) if req_raw else {}
     rating_num = int(f.get('rating', 0))

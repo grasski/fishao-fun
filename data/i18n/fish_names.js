@@ -2447,23 +2447,23 @@
         "en": "Golden Gar"
     },
     "1199": {
-        "cs": "",
+        "cs": "Jehla harlekýnská",
         "en": "Bluestripe Pipefish"
     },
     "1200": {
-        "cs": "",
+        "cs": "Latimérie celebeská",
         "en": "Sulawesi Coelacanth"
     },
     "1201": {
-        "cs": "",
+        "cs": "Africký skvrnitý úhoř",
         "en": "African Mottled Eel"
     },
     "1202": {
-        "cs": "",
+        "cs": "Štikovec indický",
         "en": "Blue Panchax"
     },
     "1203": {
-        "cs": "",
+        "cs": "Jehla cejlonská",
         "en": "Crocodile-tooth Pipefish"
     }
   };

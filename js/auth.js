@@ -390,8 +390,6 @@ function updateAuthUI() {
   var userInfoBar = document.getElementById("userInfoBar");
   var adminBadge = document.getElementById("adminBadge");
 
-  var bannerClubAuth = document.getElementById("bannerClubAuth");
-  var bannerClubGuestNotice = document.getElementById("bannerClubGuestNotice");
   var gateClub = document.getElementById("gateClubManage");
   var manageContent = document.getElementById("manageClubContent");
 
@@ -457,15 +455,6 @@ function updateAuthUI() {
     var exportBtn = document.getElementById("btnExportPrices");
     if (exportBtn) exportBtn.style.display = isAdmin ? "inline-block" : "none";
 
-    if (bannerClubAuth) bannerClubAuth.style.display = "flex";
-    if (bannerClubGuestNotice) bannerClubGuestNotice.style.display = "none";
-
-    var collNotice = document.getElementById("collectionSyncNotice");
-    if (collNotice) {
-      var pName = (userProfile && userProfile.displayName) ? userProfile.displayName : t('user_default_player');
-      collNotice.innerHTML = t('coll_sync_google', { user: escapeHtml(pName) });
-    }
-
     if (currentView === "club_manage") {
       if (gateClub) gateClub.style.display = "none";
       if (manageContent) manageContent.style.display = "block";
@@ -504,14 +493,6 @@ function updateAuthUI() {
     if (adminBadge) adminBadge.style.display = "none";
     var exportBtnOff = document.getElementById("btnExportPrices");
     if (exportBtnOff) exportBtnOff.style.display = "none";
-
-    if (bannerClubAuth) bannerClubAuth.style.display = "none";
-    if (bannerClubGuestNotice) bannerClubGuestNotice.style.display = "block";
-
-    var collNoticeOff = document.getElementById("collectionSyncNotice");
-    if (collNoticeOff) {
-      collNoticeOff.innerHTML = t('coll_sync_logged_out');
-    }
 
     collectionFilterMode = "all";
     var collAll = document.getElementById("collFilterAll");
@@ -573,12 +554,12 @@ function openProfileModal() {
     adminSection.style.display = (userProfile && userProfile.role === 'admin') ? "block" : "none";
   }
 
-  if (overlay) overlay.style.display = "flex";
+  if (overlay) overlay.classList.add("active");
 }
 
 function closeProfileModal() {
   var overlay = document.getElementById("profileModalOverlay");
-  if (overlay) overlay.style.display = "none";
+  if (overlay) overlay.classList.remove("active");
 }
 
 function selectPresetAvatar(emoji) {
@@ -630,7 +611,7 @@ async function saveProfile() {
     return;
   }
   if (newNick.length > 40) {
-    showToast("Přezdívka může mít maximálně 40 znaků.", "error");
+    showToast(t('nick_too_long', 'Přezdívka může mít maximálně 40 znaků.'), "error");
     return;
   }
 
@@ -638,7 +619,7 @@ async function saveProfile() {
   var finalAvatar = "";
   if (avatarUrlVal.startsWith("http://") || avatarUrlVal.startsWith("https://")) {
     if (avatarUrlVal.length > 500) {
-      showToast("URL adresa je příliš dlouhá (max 500 znaků).", "error");
+      showToast(t('avatar_url_too_long', 'URL adresa je příliš dlouhá (max 500 znaků).'), "error");
       return;
     }
     finalAvatar = avatarUrlVal;
@@ -680,7 +661,7 @@ async function saveProfile() {
     showToast(t('profile_saved_success', 'Profil byl úspěšně uložen!'), "success");
   } catch (err) {
     console.error("Failed to save profile:", err);
-    showToast("Chyba při ukládání: " + err.message, "error");
+    showToast(t('err_save', 'Chyba při ukládání: ') + err.message, "error");
   }
 }
 
@@ -760,6 +741,7 @@ async function deleteAccount() {
 
     // 4. Clear local storage and caches
     try {
+      localStorage.removeItem('fishao_caught_fish_ids');
       localStorage.removeItem('fishao_backyard_fish_ids');
       localStorage.removeItem('fishao_friends_uids');
       localStorage.removeItem('fishao_nick_prompted_' + uid);
@@ -796,7 +778,7 @@ async function deleteAccount() {
     showToast(t('profile_deleted_success', 'Tvůj účet a veškerá herní data byla úspěšně smazána.'), "info");
   } catch (err) {
     console.error("Failed to delete account:", err);
-    showToast("Chyba při mazání účtu: " + err.message, "error");
+    showToast(t('err_delete_account', 'Chyba při mazání účtu: ') + err.message, "error");
   }
 }
 
