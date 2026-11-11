@@ -387,6 +387,11 @@ function onLocationFilterChange() {
   applyFilters();
 }
 
+function getPalmZoneLetter(place) {
+  var match = /^EFPT_PALM_ISLAND_ZONE_([A-H])$/.exec(String(place || ""));
+  return match ? match[1] : "";
+}
+
 function updateAreaFilterOptions() {
   var group = document.getElementById("areaFilterGroup");
   var select = document.getElementById("areaFilter");
@@ -415,6 +420,11 @@ function updateAreaFilterOptions() {
       label: window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(a) : a
     };
   }).sort(function (a, b) {
+    // Palm Island zones stay in A..H order even though their labels no longer
+    // carry the letter prefix.
+    var zoneA = getPalmZoneLetter(a.value);
+    var zoneB = getPalmZoneLetter(b.value);
+    if (zoneA && zoneB) return zoneA.localeCompare(zoneB);
     return a.label.localeCompare(b.label);
   });
 

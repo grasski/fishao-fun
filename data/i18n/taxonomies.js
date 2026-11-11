@@ -429,6 +429,38 @@
     "EFPT_CLUB_AREA_FRESH": {
         "cs": "Sladká",
         "en": "Freshwater"
+    },
+    "EFPT_PALM_ISLAND_ZONE_A": {
+        "cs": "Vnější oblast",
+        "en": "Outer area"
+    },
+    "EFPT_PALM_ISLAND_ZONE_B": {
+        "cs": "Vlevo nahoře",
+        "en": "Upper left"
+    },
+    "EFPT_PALM_ISLAND_ZONE_C": {
+        "cs": "Vpravo nahoře",
+        "en": "Upper right"
+    },
+    "EFPT_PALM_ISLAND_ZONE_D": {
+        "cs": "Pod lodí",
+        "en": "Under the boat"
+    },
+    "EFPT_PALM_ISLAND_ZONE_E": {
+        "cs": "Vnitřní oblast",
+        "en": "Inner area"
+    },
+    "EFPT_PALM_ISLAND_ZONE_F": {
+        "cs": "Vpravo od mostu",
+        "en": "Right of the bridge"
+    },
+    "EFPT_PALM_ISLAND_ZONE_G": {
+        "cs": "Dolní rohy",
+        "en": "Lower corners"
+    },
+    "EFPT_PALM_ISLAND_ZONE_H": {
+        "cs": "Malé ostrovy",
+        "en": "Small islands"
     }
     }
   };

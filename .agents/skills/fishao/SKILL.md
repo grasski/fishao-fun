@@ -55,8 +55,10 @@ Each fish object has the following structure:
 }
 ```
 
-**Supported specific fishing places (`places`):** 194 fish carry one of these
-EFPT identifiers. They are translated in `data/i18n/taxonomies.js`.
+**Supported specific fishing places (`places`):** 287 fish carry at least one of
+these EFPT identifiers. They are translated in `data/i18n/taxonomies.js`.
+Palm Island zones are list-style: one fish may carry several of the 8 zone
+identifiers (273 zone tags across 93 fish).
 The parent `locations` label is composed at render time: tables show the parent
 only, while the fish detail modal shows the parent plus a compact area chip.
 Filtering by a parent location matches its sub-location fish; the optional
@@ -72,6 +74,19 @@ Filtering by a parent location matches its sub-location fish; the optional
 | `EFPT_THOMBANI_TOWN_AFRICAN_LAKE` | Thombani Town | 6 |
 | `EFPT_CLUB_AREA_SALT` | Klubový revír | 49 |
 | `EFPT_CLUB_AREA_FRESH` | Klubový revír | 31 |
+| `EFPT_PALM_ISLAND_ZONE_A` | Palm Island | 35 |
+| `EFPT_PALM_ISLAND_ZONE_B` | Palm Island | 31 |
+| `EFPT_PALM_ISLAND_ZONE_C` | Palm Island | 37 |
+| `EFPT_PALM_ISLAND_ZONE_D` | Palm Island | 43 |
+| `EFPT_PALM_ISLAND_ZONE_E` | Palm Island | 35 |
+| `EFPT_PALM_ISLAND_ZONE_F` | Palm Island | 34 |
+| `EFPT_PALM_ISLAND_ZONE_G` | Palm Island | 29 |
+| `EFPT_PALM_ISLAND_ZONE_H` | Palm Island | 29 |
+
+Palm Island zone labels use the bare names (`Vnější oblast` cs / `Outer area` en);
+the area filter keeps A→H order via the identifier letter (`getPalmZoneLetter` in
+`js/filters.js`). The same 8 zones also appear on the 18 `Turnaj Moray` fish,
+which use the same physical fishing spots.
 
 **Water type is derived, not stored.** `getFishWater(fish)` in `js/state.js`
 returns `Slaná` for `EFPT_CLUB_AREA_SALT`, `Sladká` for

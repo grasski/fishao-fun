@@ -6947,7 +6947,13 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Rostlinné"
     ],
@@ -6991,7 +6997,10 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D"
+    ],
     "baits": [
       "Ryby"
     ],
@@ -7012,7 +7021,12 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F"
+    ],
     "baits": [
       "Ryby",
       "Hmyz",
@@ -7035,7 +7049,12 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_F"
+    ],
     "baits": [
       "Těsta",
       "Hmyz"
@@ -7080,7 +7099,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_D"
+    ],
     "baits": [
       "Rostlinné"
     ],
@@ -7103,7 +7124,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Ryby",
       "Hmyz"
@@ -7125,7 +7150,10 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Hmyz"
     ],
@@ -7171,7 +7199,13 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Těsta",
       "Rostlinné"
@@ -7193,7 +7227,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Hmyz",
       "Rostlinné"
@@ -7215,7 +7251,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_F"
+    ],
     "baits": [
       "Ryby",
       "Hmyz",
@@ -7238,7 +7276,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Ryby",
       "Hmyz"
@@ -7260,7 +7300,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A"
+    ],
     "baits": [
       "Těsta",
       "Hmyz",
@@ -7306,7 +7348,10 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_D"
+    ],
     "baits": [
       "Hmyz",
       "Rostlinné"
@@ -7330,7 +7375,13 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Ryby",
       "Hmyz",
@@ -7353,7 +7404,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Hmyz"
     ],
@@ -7374,7 +7427,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_E"
+    ],
     "baits": [
       "Ryby",
       "Hmyz",
@@ -7397,7 +7452,13 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Hmyz",
       "Rostlinné"
@@ -7419,7 +7480,10 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_D"
+    ],
     "baits": [
       "Hmyz",
       "Rostlinné"
@@ -7443,7 +7507,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_E"
+    ],
     "baits": [
       "Hmyz",
       "Nástrahy"
@@ -7488,7 +7554,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Ryby",
       "Hmyz"
@@ -7510,7 +7580,13 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Ryby"
     ],
@@ -7533,7 +7609,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_E"
+    ],
     "baits": [
       "Rostlinné"
     ],
@@ -7556,7 +7634,10 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_F"
+    ],
     "baits": [
       "Hmyz",
       "Nástrahy"
@@ -7580,7 +7661,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_E"
+    ],
     "baits": [
       "Hmyz",
       "Rostlinné"
@@ -7602,7 +7685,15 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Ryby",
       "Hmyz",
@@ -7627,7 +7718,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A"
+    ],
     "baits": [
       "Hmyz",
       "Rostlinné"
@@ -7649,7 +7742,15 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Žraločí"
     ],
@@ -7670,7 +7771,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_F"
+    ],
     "baits": [
       "Žraločí"
     ],
@@ -7691,7 +7796,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Žraločí"
     ],
@@ -7712,7 +7821,10 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F"
+    ],
     "baits": [
       "Žraločí"
     ],
@@ -7733,7 +7845,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Žraločí"
     ],
@@ -7756,7 +7872,15 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Žraločí"
     ],
@@ -7777,7 +7901,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_C"
+    ],
     "baits": [
       "Ryby",
       "Hmyz"
@@ -7799,7 +7925,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_F"
+    ],
     "baits": [
       "Hmyz"
     ],
@@ -7843,7 +7973,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Žraločí"
     ],
@@ -7889,7 +8023,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Hmyz",
       "Ryby",
@@ -7914,7 +8052,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Těsta",
       "Rostlinné"
@@ -7936,7 +8078,15 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Hmyz",
       "Ryby"
@@ -7960,7 +8110,16 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_G",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Hmyz",
       "Rostlinné"
@@ -7982,7 +8141,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_E"
+    ],
     "baits": [
       "Ryby",
       "Nástrahy"
@@ -8004,7 +8165,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_E"
+    ],
     "baits": [
       "Rostlinné"
     ],
@@ -8025,7 +8188,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_F"
+    ],
     "baits": [
       "Hmyz",
       "Nástrahy"
@@ -8047,7 +8212,16 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_G",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Těsta",
       "Rostlinné"
@@ -8071,7 +8245,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A"
+    ],
     "baits": [
       "Hmyz",
       "Nástrahy"
@@ -8095,7 +8271,10 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Hmyz",
       "Rostlinné"
@@ -8117,7 +8296,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_C"
+    ],
     "baits": [
       "Těsta",
       "Rostlinné",
@@ -8233,7 +8414,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_D"
+    ],
     "baits": [
       "Hmyz"
     ],
@@ -8254,7 +8437,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Hmyz",
       "Ryby"
@@ -8276,7 +8461,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_D"
+    ],
     "baits": [
       "Hmyz",
       "Ryby",
@@ -8299,7 +8488,10 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C"
+    ],
     "baits": [
       "Ryby",
       "Nástrahy"
@@ -8321,7 +8513,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_E"
+    ],
     "baits": [
       "Ryby"
     ],
@@ -8342,7 +8536,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Hmyz",
       "Ryby"
@@ -8364,7 +8562,10 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F"
+    ],
     "baits": [
       "Ryby",
       "Nástrahy"
@@ -8386,7 +8587,10 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F"
+    ],
     "baits": [
       "Ryby"
     ],
@@ -8407,7 +8611,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Hmyz",
       "Maso"
@@ -8429,7 +8635,14 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Hmyz",
       "Ryby",
@@ -8452,7 +8665,14 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_G",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Hmyz",
       "Ryby",
@@ -8475,7 +8695,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Nástrahy"
     ],
@@ -8496,7 +8720,10 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F"
+    ],
     "baits": [
       "Hmyz"
     ],
@@ -8517,7 +8744,10 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F"
+    ],
     "baits": [
       "Háčky"
     ],
@@ -8538,7 +8768,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Maso"
     ],
@@ -8559,7 +8791,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_F"
+    ],
     "baits": [
       "Hmyz",
       "Maso"
@@ -8581,7 +8817,10 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_C"
+    ],
     "baits": [
       "Hmyz",
       "Ryby"
@@ -8603,7 +8842,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Turnaj Moray"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_E"
+    ],
     "baits": [
       "Háčky"
     ],
@@ -8624,7 +8865,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Ryby",
       "Nástrahy"
@@ -8648,7 +8891,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_B"
+    ],
     "baits": [
       "Ryby",
       "Hmyz"
@@ -8670,7 +8915,16 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_G",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Ryby",
       "Nástrahy"
@@ -8694,7 +8948,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_C"
+    ],
     "baits": [
       "Ryby"
     ],
@@ -8715,7 +8971,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A"
+    ],
     "baits": [
       "Hmyz"
     ],
@@ -8760,7 +9018,12 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Hmyz"
     ],
@@ -10741,7 +11004,13 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Těsta",
       "Rostlinné"
@@ -10763,7 +11032,13 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Hmyz",
       "Rostlinné"
@@ -10785,7 +11060,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Hmyz",
       "Rostlinné"
@@ -10807,7 +11084,12 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Hmyz"
     ],
@@ -12878,7 +13160,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_F"
+    ],
     "baits": [
       "Hmyz"
     ],
@@ -12903,7 +13187,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Ryby",
       "Nástrahy"
@@ -12953,7 +13239,12 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F"
+    ],
     "baits": [
       "Žraločí"
     ],
@@ -12974,7 +13265,13 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Žraločí"
     ],
@@ -12997,7 +13294,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_C"
+    ],
     "baits": [
       "Žraločí"
     ],
@@ -13018,7 +13317,10 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Žraločí"
     ],
@@ -13041,7 +13343,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_D"
+    ],
     "baits": [
       "Žraločí"
     ],
@@ -13062,7 +13366,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Ryby",
       "Hmyz"
@@ -13084,7 +13390,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Žraločí"
     ],
@@ -13105,7 +13415,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Žraločí"
     ],
@@ -13126,7 +13440,13 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Těsta",
       "Rostlinné"
@@ -13150,7 +13470,12 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Hmyz",
       "Rostlinné"
@@ -13174,7 +13499,13 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Rostlinné",
       "Hmyz"
@@ -13196,7 +13527,16 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_G",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Rostlinné",
       "Hmyz"
@@ -13218,7 +13558,11 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_G"
+    ],
     "baits": [
       "Ryby",
       "Nástrahy"
@@ -13240,7 +13584,16 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_G",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Těsta",
       "Hmyz",
@@ -13263,7 +13616,16 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_A",
+      "EFPT_PALM_ISLAND_ZONE_B",
+      "EFPT_PALM_ISLAND_ZONE_C",
+      "EFPT_PALM_ISLAND_ZONE_D",
+      "EFPT_PALM_ISLAND_ZONE_E",
+      "EFPT_PALM_ISLAND_ZONE_F",
+      "EFPT_PALM_ISLAND_ZONE_G",
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Hmyz"
     ],
@@ -14148,7 +14510,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_C"
+    ],
     "baits": [
       "Ryby",
       "Hmyz"
@@ -14245,7 +14609,9 @@ window.FISHAO_DATA = {
     "locations": [
       "Palm Island"
     ],
-    "places": [],
+    "places": [
+      "EFPT_PALM_ISLAND_ZONE_H"
+    ],
     "baits": [
       "Ryby",
       "Hmyz"
