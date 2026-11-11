@@ -351,6 +351,10 @@ function updateMarketTabStatus() {
     updateMarketResetAlertVisibility();
   }
 
+  if (typeof updateMarketFloatingImportBtn === 'function') {
+    updateMarketFloatingImportBtn();
+  }
+
   var descEl = document.getElementById("marketSundayNoticeDesc");
   if (descEl) {
     var windowText = (typeof getMarketClosedWindowText === 'function') ? getMarketClosedWindowText() : 'neděle 00:00 – 24:00 UTC';

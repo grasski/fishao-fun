@@ -705,12 +705,14 @@ function openBulkModal() {
   document.getElementById("bulkResultMsg").style.display = "none";
   var fishInp = document.getElementById("bulkFishInput");
   var priceInp = document.getElementById("bulkFishPrice");
+  var textInp = document.getElementById("bulkInputText");
   var drop = document.getElementById("bulkFishSuggestions");
   if (fishInp) fishInp.value = "";
   if (priceInp) priceInp.value = "";
+  if (textInp) textInp.value = "";
   if (drop) { drop.style.display = "none"; drop.innerHTML = ""; }
   setTimeout(function () {
-    if (fishInp) fishInp.focus();
+    if (fishInp) fishInp.focus({ preventScroll: true });
   }, 100);
 }
 
@@ -801,7 +803,7 @@ function selectBulkFishSuggestion(name) {
   currentBulkSuggestions = [];
   bulkSelectedSuggestionIndex = -1;
   if (priceInput) {
-    priceInput.focus();
+    priceInput.focus({ preventScroll: true });
     priceInput.select();
   }
 }
@@ -812,7 +814,7 @@ function onBulkInputKeyDown(e) {
     if (e.key === "Enter") {
       e.preventDefault();
       var priceInput = document.getElementById("bulkFishPrice");
-      if (priceInput) priceInput.focus();
+      if (priceInput) priceInput.focus({ preventScroll: true });
     }
     return;
   }
@@ -859,12 +861,12 @@ function addFishToBulkList() {
 
   if (!nameVal) {
     showToast(t('bulk_err_no_fish', 'Zadej nebo vyber název ryby.'), "error");
-    nameInput.focus();
+    nameInput.focus({ preventScroll: true });
     return;
   }
   if (!priceVal || isNaN(Number(priceVal)) || Number(priceVal) < 0) {
     showToast(t('bulk_err_no_price', 'Zadej platnou cenu ryby.'), "error");
-    priceInput.focus();
+    priceInput.focus({ preventScroll: true });
     return;
   }
 
@@ -880,7 +882,7 @@ function addFishToBulkList() {
   priceInput.value = "";
   var drop = document.getElementById("bulkFishSuggestions");
   if (drop) drop.style.display = "none";
-  nameInput.focus();
+  nameInput.focus({ preventScroll: true });
 }
 
 async function processBulkImport() {
@@ -1006,7 +1008,9 @@ async function processBulkImport() {
       priceHistory = localMap;
       saveLocalPriceHistory();
       added = planned;
+      var prevScrollLocal = window.scrollY;
       applyFilters();
+      window.scrollTo(0, prevScrollLocal);
     } else {
       try {
         var txResult = await window.FISHAO_FS_TX.readModifyWrite(db, firebaseDocRef, function (currentData) {
@@ -1061,7 +1065,9 @@ async function processBulkImport() {
         }
         added = (txResult && txResult.added) || 0;
         duplicates += (txResult && txResult.duplicates) || 0;
+        var prevScrollCloud = window.scrollY;
         applyFilters();
+        window.scrollTo(0, prevScrollCloud);
       } catch (err) {
         console.error("Failed to import prices to Firestore:", err);
         resEl.style.display = "block";
@@ -1123,5 +1129,40 @@ function dismissMarketResetAlert() {
   } catch (e) { }
   updateMarketResetAlertVisibility();
 }
+
+/**
+ * Updates visibility of the floating Bulk Import button in the Fish Market view
+ * when the user scrolls past the top Market action bar.
+ */
+function updateMarketFloatingImportBtn() {
+  var btn = document.getElementById("marketFloatingImportBtn");
+  if (!btn) return;
+
+  if (currentView !== "market") {
+    btn.style.display = "none";
+    return;
+  }
+
+  var banner = document.getElementById("bannerMarket");
+  var isScrolledPastBanner = false;
+  if (banner && banner.style.display !== "none") {
+    var rect = banner.getBoundingClientRect();
+    isScrolledPastBanner = rect.bottom < 0;
+  } else {
+    isScrolledPastBanner = (window.scrollY || window.pageYOffset || 0) > 200;
+  }
+
+  if (isScrolledPastBanner) {
+    var cookieBanner = document.getElementById("cookieConsentBanner");
+    var cookieVisible = !!(cookieBanner && cookieBanner.style.display !== "none");
+    btn.classList.toggle("above-cookie", cookieVisible);
+    btn.style.display = "inline-flex";
+  } else {
+    btn.style.display = "none";
+  }
+}
+
+window.addEventListener("scroll", updateMarketFloatingImportBtn, { passive: true });
+
 
 
