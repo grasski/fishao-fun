@@ -82,11 +82,11 @@
   <link rel="stylesheet" href="css/base.css?v=3.1">
   <link rel="stylesheet" href="css/header.css?v=3.1">
   <link rel="stylesheet" href="css/nav.css?v=3.1">
-  <link rel="stylesheet" href="css/filters.css?v=3.1">
+  <link rel="stylesheet" href="css/filters.css?v=3.2">
   <link rel="stylesheet" href="css/table.css?v=3.3">
   <link rel="stylesheet" href="css/clubs.css?v=3.1">
   <link rel="stylesheet" href="css/players.css?v=3.1">
-  <link rel="stylesheet" href="css/modals.css?v=3.2">
+  <link rel="stylesheet" href="css/modals.css?v=3.3">
   <link rel="stylesheet" href="css/responsive.css?v=3.3">
 </head>
 
@@ -734,26 +734,17 @@
           </div>
 
           <div class="filter-group" id="locationFilterGroup">
-            <label class="filter-label" for="locationFilter" data-i18n="filter_loc_label">Lokace výskytu</label>
-            <select id="locationFilter" class="filter-control" onchange="window.fishaoApp.applyFilters()">
+            <label class="filter-label" for="locationFilter" data-i18n="filter_loc_label">Hlavní lokace</label>
+            <select id="locationFilter" class="filter-control"
+              onchange="window.fishaoApp.onLocationFilterChange()">
               <option value="">Všechny lokace</option>
-              <option value="Laketown">Laketown</option>
-              <option value="Rio Tropical">Rio Tropical</option>
-              <option value="Pinheira Beach">Pinheira Beach</option>
-              <option value="Cool Mountain">Cool Mountain</option>
-              <option value="Mystic Desert">Mystic Desert</option>
-              <option value="Sibiri City">Sibiri City</option>
-              <option value="Aquayama">Aquayama</option>
-              <option value="Little Shore">Little Shore</option>
-              <option value="Palm Island">Palm Island</option>
-              <option value="Seagull Harbor">Seagull Harbor</option>
-              <option value="Bonsai Island">Bonsai Island</option>
-              <option value="Thombani Island">Thombani Island</option>
-              <option value="Pirate Island">Pirate Island</option>
-              <option value="Lost Valley">Lost Valley</option>
-              <option value="Tiki Atoll">Tiki Atoll</option>
-              <option value="Marshlands">Marshlands</option>
-              <option value="Golden Fish">Golden Fish</option>
+            </select>
+          </div>
+
+          <div class="filter-group" id="areaFilterGroup">
+            <label class="filter-label" for="areaFilter" data-i18n="filter_area_label">Konkrétní místo</label>
+            <select id="areaFilter" class="filter-control" onchange="window.fishaoApp.applyFilters()">
+              <option value="">Všechna místa</option>
             </select>
           </div>
 
@@ -1462,24 +1453,24 @@
   <div id="appToast" class="app-toast" style="display: none;"></div>
 
   <!-- Data scripts and localization -->
-  <script src="data/i18n/ui_cs.js?v=3.4"></script>
-  <script src="data/i18n/ui_en.js?v=3.4"></script>
-  <script src="data/i18n/taxonomies.js?v=3.1"></script>
+  <script src="data/i18n/ui_cs.js?v=3.5"></script>
+  <script src="data/i18n/ui_en.js?v=3.5"></script>
+  <script src="data/i18n/taxonomies.js?v=3.2"></script>
   <script src="data/i18n/fish_names.js?v=3.1"></script>
   <script src="data/i18n.js?v=3.1"></script>
   <script src="data/fishes.js?v=3.1"></script>
   <script src="data/prices.js?v=3.4"></script>
   <script src="firebase-config.js?v=3.1"></script>
   <!-- Modular FISHAO Application Logic -->
-  <script src="js/state.js?v=3.5"></script>
+  <script src="js/state.js?v=3.6"></script>
   <script src="js/firestore-tx.js?v=3.2"></script>
   <script src="js/table.js?v=3.3"></script>
   <script src="js/clubs.js?v=3.5"></script>
-  <script src="js/market.js?v=3.5"></script>
-  <script src="js/filters.js?v=3.5"></script>
+  <script src="js/market.js?v=3.6"></script>
+  <script src="js/filters.js?v=3.6"></script>
   <script src="js/auth.js?v=3.5"></script>
   <script src="js/players.js?v=3.5"></script>
-  <script src="js/main.js?v=3.3"></script>
+  <script src="js/main.js?v=3.4"></script>
 
 </body>
 

@@ -56,9 +56,11 @@ Each fish object has the following structure:
 ```
 
 **Supported specific fishing places (`places`):** 194 fish carry one of these
-EFPT identifiers. They are translated in `data/i18n/taxonomies.js` and shown
-instead of the parent `locations` label when present. Filtering by a parent
-location still matches its sub-location fish.
+EFPT identifiers. They are translated in `data/i18n/taxonomies.js`.
+The parent `locations` label is composed at render time: tables show the parent
+only, while the fish detail modal shows the parent plus a compact area chip.
+Filtering by a parent location matches its sub-location fish; the optional
+"specific area" filter narrows the result to one `places` value.
 
 | EFPT identifier | Parent location | Fish |
 |---|---|---:|
@@ -149,11 +151,11 @@ Prices are stored as a map from `fishId` (as string) to an array of price entrie
 ### 2.5 Modular JavaScript Architecture (`js/`)
 
 The monolithic `app.js` was refactored into modular, cohesive files loaded directly without bundlers:
-1. `js/state.js`: Global state variables, derived `clubFishes`, fish helpers (`getFishWater`, `getFishLocationLabels`), localization helper `t()`, date and string utilities (`getTodayISO`, `getYesterdayISO`, `isDateSunday`, `normStr`, `escapeHtml`), toast notification (`showToast`), and confirmation dialog (`showConfirmModal`, `resolveConfirmModal`).
+1. `js/state.js`: Global state variables, derived `clubFishes`, fish helpers (`getFishWater`, `getFishParentLocationLabels`, `getFishAreaLabels`, `getFishAreasForLocation`, and the parent-only `getFishLocationLabels` alias), localization helper `t()`, date and string utilities (`getTodayISO`, `getYesterdayISO`, `isDateSunday`, `normStr`, `escapeHtml`), toast notification (`showToast`), and confirmation dialog (`showConfirmModal`, `resolveConfirmModal`).
 2. `js/table.js`: Fish table rendering (`renderTableHead`, `renderTableBody`), UTC-to-local time formatting (`formatCatchTime`, `isFishActiveNow`), rating badges (`renderRatingBadge`), price cells (`renderPriceCell`), and caught fish collection toggles (`toggleCaughtFish`, `updateCaughtStats`).
 3. `js/clubs.js`: Real-time club synchronization via Firestore (`bindClubListener`), deterministic member roster rendering (`renderClubMembers`), member profile modal (`openPlayerModal`), club search, creation, joining, and leaving, club points management, milestones roadmap (`renderClubMilestones`), and FC / Monster special fish unlocks.
 4. `js/market.js`: Fish market price history persistence (`saveLocalPriceHistory`), Sunday detection, display normalization (`normalizePriceEntries`), price lookups (`getLatestPrice`, `getMaxPrice` — highest distinct price, ties resolved to the most recent date), single price submission/deletion through Firestore transactions (`submitNewPrice`, `deletePriceEntry`), fish detail modal rendering (`openPriceModal`, including the `rarity_factor` → tier badge helpers `getRarityTier` / `formatRarityPercent`), normalized modal price history rendering (`renderModalHistory`), bulk price import with duplicate skipping and autocomplete suggestions (`processBulkImport`), default reset (`resetPriceHistoryToDefault`), and JSON export (`exportPricesJson`).
-5. `js/filters.js`: Multi-criteria fish filtering engine (`applyFilters`, `resetFilters`), mission size handlers (`setSizeFilter`, `onRangeSizeInput`), collection filters, and dropdown options initializers.
+5. `js/filters.js`: Multi-criteria fish filtering engine (`applyFilters`, `resetFilters`), parent-location and specific-area dropdown logic (`initLocationOptions`, `onLocationFilterChange`, `updateAreaFilterOptions`), mission size handlers (`setSizeFilter`, `onRangeSizeInput`), collection filters, and dropdown options initializers.
 6. `js/auth.js`: Firebase authentication (`signIn`, `signOut`), GDPR-compliant profile synchronization (`loadUserProfile`, `saveProfile`), and UI state synchronization (`updateAuthUI`).
 7. `js/players.js`: Community player list, backyard fish breeding (`backyardFishIds`), universal player modal, reverse fish-to-player lookups.
 8. `js/main.js`: Live clock and timezone switching (`setTimezone`, `updateClock`), view routing (`switchView`), static DOM translations (`setLanguage`, `updateStaticTranslations`), modal listeners, `window.fishaoApp` exports, and application boot.

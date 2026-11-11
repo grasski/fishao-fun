@@ -46,16 +46,50 @@ var clubFishes = allFishes.filter(function (f) {
 var initialPrices = window.FISHAO_DEFAULT_PRICES || {};
 
 /**
- * Resolve the location labels to display for a fish.
- * Specific fishing places (e.g. EFPT_LOST_VALLEY_POND_1) take precedence over
- * the parent location (e.g. Lost Valley).
+ * Resolve the parent location labels to display for a fish (e.g. Lost Valley).
+ * Tables show parent locations only; specific fishing areas are rendered
+ * separately and compactly in the fish detail modal.
  */
-function getFishLocationLabels(fish) {
+function getFishParentLocationLabels(fish) {
   if (!fish) return [];
-  var list = (fish.places && fish.places.length) ? fish.places : (fish.locations || []);
-  return list.map(function (loc) {
+  return (fish.locations || []).map(function (loc) {
     return window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(loc) : loc;
   });
+}
+
+/**
+ * Resolve the short specific-area labels for a fish
+ * (e.g. EFPT_COOL_MOUNTAIN_RAFT -> "Vor" / "Raft").
+ */
+function getFishAreaLabels(fish) {
+  if (!fish) return [];
+  return (fish.places || []).map(function (place) {
+    return window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(place) : place;
+  });
+}
+
+/**
+ * Resolve the specific fishing areas available under a parent location.
+ * Derived from the fish dataset so new EFPT places need no hardcoded map.
+ */
+function getFishAreasForLocation(location) {
+  var areas = new Set();
+  if (!location) return [];
+  allFishes.forEach(function (f) {
+    if ((f.locations || []).indexOf(location) === -1) return;
+    (f.places || []).forEach(function (place) {
+      if (place) areas.add(place);
+    });
+  });
+  return Array.from(areas);
+}
+
+/**
+ * Backwards-compatible helper. Now returns parent locations only; callers that
+ * need specific areas should use getFishAreaLabels().
+ */
+function getFishLocationLabels(fish) {
+  return getFishParentLocationLabels(fish);
 }
 
 // View & Navigation State

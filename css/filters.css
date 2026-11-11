@@ -34,6 +34,9 @@
 .filter-group.sm {
   flex: 0 1 125px;
 }
+#areaFilterGroup {
+  flex: 0 1 130px;
+}
 .filter-group.search-group {
   flex: 3 1 280px;
 }
@@ -99,6 +102,10 @@ select.filter-control {
 select.filter-control option {
   background: #0f172a;
   color: #fff;
+}
+.filter-control:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 /* Row 2: Size Filter Cluster & Quick Toggles */

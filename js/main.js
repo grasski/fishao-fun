@@ -337,6 +337,7 @@ function setLanguage(lang) {
   updateAuthUI();
   updateWaterFilterOptions();
   initLocationOptions();
+  updateAreaFilterOptions();
   initBaitOptions();
   updateTimeFilterOptions();
   updateSortByOptions();
@@ -430,6 +431,8 @@ window.fishaoApp = {
   onPointsChange: onPointsChange,
   applyFilters: applyFilters,
   resetFilters: resetFilters,
+  onLocationFilterChange: onLocationFilterChange,
+  updateAreaFilterOptions: updateAreaFilterOptions,
   setSizeFilter: setSizeFilter,
   onRangeSizeInput: onRangeSizeInput,
   onExactSizeInput: onExactSizeInput,

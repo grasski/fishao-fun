@@ -294,14 +294,33 @@ function openPriceModal(fid, skipSync) {
     renderModalBackyardOwners(fid);
   }
 
-  // Locations
+  // Locations: parent location tags plus a compact specific-area chip.
   var locEl = document.getElementById("modalFishLocations");
   if (locEl) {
-    var locLabels = getFishLocationLabels(f);
-    var locs = locLabels.length
-      ? locLabels.join(', ')
-      : (f.is_club ? (window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName('Klubový revír') : 'Klubový revír') : t('loc_unspecified'));
-    locEl.innerHTML = locs;
+    var parentLabels = getFishParentLocationLabels(f);
+    var areaLabels = getFishAreaLabels(f);
+    var locHtml = '';
+
+    if (parentLabels.length) {
+      locHtml += parentLabels.map(function (locName) {
+        return '<span class="loc-tag">' + escapeHtml(locName) + '</span>';
+      }).join(' ');
+    } else if (f.is_club) {
+      var clubLoc = window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName('Klubový revír') : 'Klubový revír';
+      locHtml += '<span class="loc-tag">' + escapeHtml(clubLoc) + '</span>';
+    } else {
+      locHtml += '<span style="color: var(--text-muted);">' + t('loc_unspecified') + '</span>';
+    }
+
+    if (areaLabels.length) {
+      locHtml += ' ' + areaLabels.map(function (areaName) {
+        return '<span class="loc-area-chip" title="' +
+          escapeHtml(t('modal_area_title', { name: areaName })) + '">📍 ' +
+          escapeHtml(areaName) + '</span>';
+      }).join(' ');
+    }
+
+    locEl.innerHTML = locHtml;
   }
 
   // Baits
