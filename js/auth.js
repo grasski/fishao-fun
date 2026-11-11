@@ -66,15 +66,18 @@ async function initFirebaseSync() {
     firestoreModule.onSnapshot(firebaseDocRef, function (docSnap) {
       if (docSnap.exists()) {
         var cloudData = docSnap.data();
-        if (cloudData && cloudData.prices) {
-          priceHistory = cloudData.prices;
-          localStorage.setItem('fishao_price_history_v1', JSON.stringify(priceHistory));
-          applyFilters();
-          if (selectedModalFishId) renderModalHistory(selectedModalFishId);
-        }
-      } else if (currentUser) {
-        firestoreModule.setDoc(firebaseDocRef, { prices: priceHistory });
+        priceHistory = (cloudData && cloudData.prices && typeof cloudData.prices === "object")
+          ? cloudData.prices
+          : {};
+      } else {
+        priceHistory = {};
       }
+      try {
+        localStorage.setItem('fishao_price_history_v1', JSON.stringify(priceHistory));
+      } catch (e) {}
+      applyFilters();
+      if (typeof updateMarketTabStatus === "function") updateMarketTabStatus();
+      if (selectedModalFishId) renderModalHistory(selectedModalFishId);
     }, function (error) {
       console.warn("Firestore connection warning:", error);
       currentSyncState = "offline";
