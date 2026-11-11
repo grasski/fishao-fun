@@ -142,7 +142,7 @@ function applyFilters() {
 
     if (filterUncaught && caughtFishIds.has(f.id)) return false;
 
-    if (currentView === "collection" || currentView === "all" || currentView === "market") {
+    if (currentView === "all" || currentView === "market") {
       if (collectionFilterMode === "caught" && !caughtFishIds.has(f.id)) return false;
       if (collectionFilterMode === "missing" && caughtFishIds.has(f.id)) return false;
     }
@@ -310,7 +310,14 @@ function resetFilters() {
   if (uncaughtCb) uncaughtCb.checked = false;
 
   var hideLockedCb = document.getElementById("hideLockedCheckbox");
-  if (hideLockedCb) hideLockedCb.checked = false;
+  if (hideLockedCb) {
+    try {
+      var savedHideLocked = localStorage.getItem('fishao_hide_locked');
+      hideLockedCb.checked = (savedHideLocked === 'true');
+    } catch (e) {
+      hideLockedCb.checked = false;
+    }
+  }
 
   collectionFilterMode = "all";
   var collAll = document.getElementById("collFilterAll");

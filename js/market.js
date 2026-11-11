@@ -228,7 +228,7 @@ function formatRarityPercent(factor) {
 
 function openPriceModal(fid, skipSync) {
   selectedModalFishId = fid;
-  var fishObj = allFishes.find(function (x) { return x.id === fid; });
+  var fishObj = (typeof getFishById === "function") ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
   if (!fishObj) return;
 
   var f = Object.assign({}, fishObj);
@@ -488,17 +488,17 @@ async function submitNewPrice() {
   var p = parseInt(document.getElementById("newPriceValue").value, 10);
 
   if (!d) {
-    alert(t('price_invalid_input'));
+    showToast(t('price_invalid_input'), "error");
     return;
   }
 
   if (isDateSunday(d)) {
-    alert(t('price_sunday_blocked'));
+    showToast(t('price_sunday_blocked'), "error");
     return;
   }
 
   if (isNaN(p) || p <= 0) {
-    alert(t('price_invalid_input'));
+    showToast(t('price_invalid_input'), "error");
     return;
   }
 
@@ -510,7 +510,7 @@ async function submitNewPrice() {
     return Number(it.price) === p;
   });
   if (localDuplicate) {
-    alert(t('price_exists', { price: p.toLocaleString(getLocale()), date: formatPriceDate(localDuplicate.date) }));
+    showToast(t('price_exists', { price: p.toLocaleString(getLocale()), date: formatPriceDate(localDuplicate.date) }), "error");
     return;
   }
 
@@ -559,10 +559,10 @@ async function submitNewPrice() {
       applyCloudFishPriceList(fidStr, (result && result.list) || []);
       renderModalHistory(fid);
       applyFilters();
-      alert(t('price_exists', {
+      showToast(t('price_exists', {
         price: p.toLocaleString(getLocale()),
         date: dupEntry ? formatPriceDate(dupEntry.date) : "--"
-      }));
+      }), "error");
       return;
     }
 
@@ -579,14 +579,20 @@ async function submitNewPrice() {
 
 async function deletePriceEntry(fid, price) {
   if (!isAdmin) {
-    alert(t('price_delete_non_admin'));
+    showToast(t('price_delete_non_admin'), "error");
     return;
   }
 
   var fidStr = fid.toString();
   var priceNum = Number(price);
   if (!priceHistory[fidStr] || !isFinite(priceNum)) return;
-  if (!confirm(t('price_delete_confirm'))) return;
+  var ok = await showConfirmModal(
+    t('price_delete_admin_title', 'Smazat záznam ceny'),
+    t('price_delete_confirm'),
+    t('confirm_btn', 'Smazat'),
+    true
+  );
+  if (!ok) return;
 
   // Local-only mode (no Firestore connection available).
   if (!db || !firebaseDocRef || !window.FISHAO_FS_TX) {
@@ -817,7 +823,7 @@ function onBulkInputKeyDown(e) {
 }
 
 function addFishToBulkList() {
-  var dateVal = document.getElementById("bulkImportDate").value || todayISO;
+  var dateVal = document.getElementById("bulkImportDate").value || getTodayISO();
   if (isDateSunday(dateVal)) {
     showToast(t('bulk_sunday_blocked'), "error");
     return;
@@ -862,7 +868,7 @@ async function processBulkImport() {
     showAuthNotice(t('auth_notice_bulk'));
     return;
   }
-  var dateVal = document.getElementById("bulkImportDate").value || todayISO;
+  var dateVal = document.getElementById("bulkImportDate").value || getTodayISO();
   var text = document.getElementById("bulkInputText").value.trim();
   var resEl = document.getElementById("bulkResultMsg");
 
@@ -1059,7 +1065,7 @@ function exportPricesJson() {
   var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(priceHistory, null, 2));
   var a = document.createElement('a');
   a.setAttribute("href", dataStr);
-  a.setAttribute("download", "fishao_prices_" + todayISO + ".json");
+  a.setAttribute("download", "fishao_prices_" + getTodayISO() + ".json");
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -1067,10 +1073,16 @@ function exportPricesJson() {
 
 async function resetPriceHistoryToDefault() {
   if (!isAdmin) {
-    alert(t('reset_prices_non_admin'));
+    showToast(t('reset_prices_non_admin'), "error");
     return;
   }
-  if (!confirm(t('reset_prices_confirm'))) return;
+  var ok = await showConfirmModal(
+    t('market_btn_default', 'Výchozí ceník'),
+    t('reset_prices_confirm'),
+    t('confirm_btn', 'Potvrdit'),
+    true
+  );
+  if (!ok) return;
 
   var defaultPrices = JSON.parse(JSON.stringify(initialPrices));
 

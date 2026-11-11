@@ -15,8 +15,8 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
    * Never store user emails or personal Google data in Firestore (GDPR-free: only store nickname and avatar).
    * Always wrap Firestore operations in `try...catch` and maintain `localStorage` fallback.
 4. **Fish Market Rules:**
-   * The Fish Market is **strictly closed on Sundays** (`getDay() === 0`).
-   * No prices can be entered or imported for Sunday dates.
+   * The Fish Market is **strictly closed on Sundays** (`getUTCDay() === 0`, UTC server time).
+   * No prices can be entered or imported for Sunday dates. On Sundays, price forms keep the Sunday date pre-filled (`getTodayISO()`) so the Sunday closed warning banner and disabled submit button are displayed immediately.
    * Prices are **variable per player**. One fish may have several distinct prices, including multiple entries on the same date, but a numeric price value is stored **only once per fish across all dates**. New submissions and bulk imports must reject/skip duplicate price values.
    * All price add/delete/bulk/reset writes go through the generic Firestore transaction helpers in `js/firestore-tx.js` (`window.FISHAO_FS_TX`). Do not write the price document with ad-hoc `setDoc` calls from `market.js`.
    * Never present a single "today's price" anywhere. Use `normalizePriceEntries()` from `js/market.js` for every display path (table range, modal min/max, counts). Existing duplicate rows are never merged or rewritten in storage; raw JSON export keeps them visible for manual review.

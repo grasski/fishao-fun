@@ -11,6 +11,16 @@ var isFirebaseConfigured = typeof window.isFirebaseConfigured === 'function' ? w
 
 // Fish & Market Data
 var allFishes = (window.FISHAO_DATA && window.FISHAO_DATA.allFishes) || [];
+var fishById = new Map();
+allFishes.forEach(function (f) {
+  if (f && f.id !== undefined) {
+    fishById.set(Number(f.id), f);
+  }
+});
+
+function getFishById(fid) {
+  return fishById.get(Number(fid)) || null;
+}
 
 /**
  * Resolve a fish's water type. Club fish encode salt/fresh in their specific
@@ -63,6 +73,7 @@ var currentClubUnlockedMonsterIds = new Set();
 var currentClubMembersMap = {};
 var currentClubCreatorId = "";
 var clubUnsubscribe = null;
+var userUnsubscribe = null;
 var currentSpecialFilter = "all"; // 'all' | 'fc' | 'monster'
 var currentMilestoneFilter = "all";
 
@@ -202,21 +213,21 @@ function getLocalizedTzCity() {
   return cityDictCs[detectedCityRaw] || detectedCityRaw;
 }
 
-// Date utilities for local date inputs
+// Date utilities for game-consistent (UTC) date inputs
 function getTodayISO() {
   var d = new Date();
-  var y = d.getFullYear();
-  var m = String(d.getMonth() + 1).padStart(2, '0');
-  var day = String(d.getDate()).padStart(2, '0');
+  var y = d.getUTCFullYear();
+  var m = String(d.getUTCMonth() + 1).padStart(2, '0');
+  var day = String(d.getUTCDate()).padStart(2, '0');
   return y + '-' + m + '-' + day;
 }
 
 function getYesterdayISO() {
   var d = new Date();
-  d.setDate(d.getDate() - 1);
-  var y = d.getFullYear();
-  var m = String(d.getMonth() + 1).padStart(2, '0');
-  var day = String(d.getDate()).padStart(2, '0');
+  d.setUTCDate(d.getUTCDate() - 1);
+  var y = d.getUTCFullYear();
+  var m = String(d.getUTCMonth() + 1).padStart(2, '0');
+  var day = String(d.getUTCDate()).padStart(2, '0');
   return y + '-' + m + '-' + day;
 }
 

@@ -12,7 +12,7 @@
  */
 function isBackyardBreedable(fish) {
   if (!fish) return false;
-  var fObj = (typeof fish === 'object') ? fish : allFishes.find(function (x) { return x.id === fish; });
+  var fObj = (typeof fish === 'object') ? fish : ((typeof getFishById === 'function') ? getFishById(fish) : allFishes.find(function (x) { return x.id === fish; }));
   if (!fObj || !fObj.locations || !Array.isArray(fObj.locations)) return false;
   return fObj.locations.some(function (l) {
     return l === 'Za domem' || l === 'Home backyard' || l === 'location_300' || (typeof l === 'string' && l.toLowerCase().indexOf('za dom') !== -1);
@@ -198,7 +198,7 @@ function populatePlayerFishFilterDropdown() {
 
     var bredFishes = [];
     bredFishIdSet.forEach(function (fid) {
-      var f = allFishes.find(function (x) { return x.id === fid; });
+      var f = (typeof getFishById === 'function') ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
       if (f) bredFishes.push(f);
     });
 
@@ -514,7 +514,7 @@ function renderPlayersList() {
     var effectiveTime = filterPlayerTime || (filterPlayerActiveNow ? "now" : "");
     if (effectiveTime) {
       var hasTime = pBackyard.some(function (fid) {
-        var fObj = allFishes.find(function (x) { return x.id === fid; });
+        var fObj = (typeof getFishById === 'function') ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
         if (!fObj) return false;
         if (effectiveTime === "now") return isFishActiveNow(fObj.raw_times, fObj.raw_dates);
         if (effectiveTime === "seasonal") return !!(fObj.raw_dates && fObj.raw_dates.length > 0);
@@ -530,14 +530,14 @@ function renderPlayersList() {
     }
     if (filterPlayerBait) {
       var hasBait = pBackyard.some(function (fid) {
-        var fObj = allFishes.find(function (x) { return x.id === fid; });
+        var fObj = (typeof getFishById === 'function') ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
         return fObj && fObj.baits && fObj.baits.indexOf(filterPlayerBait) !== -1;
       });
       if (!hasBait) return false;
     }
     if (filterPlayerRating) {
       var hasRating = pBackyard.some(function (fid) {
-        var fObj = allFishes.find(function (x) { return x.id === fid; });
+        var fObj = (typeof getFishById === 'function') ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
         if (!fObj) return false;
         var r = fObj.rating || 1;
         if (filterPlayerRating === "min3") return r >= 3;
@@ -550,7 +550,7 @@ function renderPlayersList() {
       var nameMatch = normStr(p.displayName).indexOf(searchNorm) !== -1;
       var clubMatch = normStr(p.clubName).indexOf(searchNorm) !== -1;
       var fishMatch = pBackyard.some(function (fid) {
-        var fObj = allFishes.find(function (x) { return x.id === fid; });
+        var fObj = (typeof getFishById === 'function') ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
         if (!fObj) return false;
         if (window.FISHAO_I18N && typeof window.FISHAO_I18N.matchesFishSearch === 'function') {
           if (window.FISHAO_I18N.matchesFishSearch(fObj, searchNorm)) return true;
@@ -658,7 +658,7 @@ function renderPlayersList() {
 
       backyardCardsHtml += '<div class="player-backyard-list">';
       showSlice.forEach(function (fid) {
-        var fObj = allFishes.find(function (x) { return x.id === fid; });
+        var fObj = (typeof getFishById === 'function') ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
         if (fObj) {
           backyardCardsHtml += createRichBackyardFishCard(fObj);
         }
@@ -678,7 +678,7 @@ function renderPlayersList() {
           '</div>' +
           '<div class="pbm-list">';
         bFishes.forEach(function (fid) {
-          var fObj = allFishes.find(function (x) { return x.id === fid; });
+          var fObj = (typeof getFishById === 'function') ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
           if (fObj) {
             backyardCardsHtml += createRichBackyardFishCard(fObj);
           }
@@ -817,7 +817,7 @@ async function toggleBackyardFish(fishId) {
     }
   }
 
-  var fObj = allFishes.find(function (x) { return x.id === fishId; });
+  var fObj = (typeof getFishById === 'function') ? getFishById(fishId) : allFishes.find(function (x) { return x.id === fishId; });
   var fName = fObj ? (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name) : ('Ryba #' + fishId);
 
   if (isBred) {
@@ -1008,7 +1008,7 @@ function renderBackyardProfilePicker() {
   } else {
     var html = "";
     ids.forEach(function (fid) {
-      var fObj = allFishes.find(function (x) { return x.id === fid; });
+      var fObj = (typeof getFishById === 'function') ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
       var fName = fObj ? (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name) : ('Ryba #' + fid);
       var stars = fObj ? '★'.repeat(fObj.rating || 1) : '';
       html += '<span class="profile-backyard-chip">' +
@@ -1283,7 +1283,7 @@ async function openPlayerModal(uid) {
     } else {
       backyardHtml += '<div class="player-modal-backyard-grid">';
       bFishes.forEach(function (fid) {
-        var fObj = allFishes.find(function (x) { return x.id === fid; });
+        var fObj = (typeof getFishById === 'function') ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
         if (fObj) {
           backyardHtml += createRichBackyardFishCard(fObj, '', true);
         }

@@ -95,10 +95,9 @@ Prices are stored as a map from `fishId` (as string) to an array of price entrie
 ```
 
 #### Fish Market Business Rules:
-1. **Sunday Closed:** Every Sunday (`getDay() === 0`), the Fish Market is **closed**.
+1. **Sunday Closed:** Every Sunday (`getUTCDay() === 0`), the Fish Market is **closed**.
    * No prices can be entered for Sunday dates (validated in modal and bulk import).
-   * Sunday date input shows a red warning and disables the submit button.
-   * On Sundays, default input dates fall back to Saturday (the last open day).
+   * Default input dates use the current UTC date (`getTodayISO()`), so on Sundays the Sunday date is pre-filled, immediately displaying the red Sunday warning and disabling the submit button.
 2. **Variable Community Prices:** Prices differ per player, so one fish can have several distinct prices. Multiple entries for the same fish and date are allowed when their price values differ.
 3. **Price-Value Dedupe:** A numeric `price` is stored only once per fish across **all dates**. Re-submitting a known price is rejected (single form and bulk import alike). Duplicate checks and writes happen inside a Firestore transaction (`window.FISHAO_FS_TX.readModifyWrite`) so concurrent submissions cannot create duplicates.
 4. **Display Normalization:** `normalizePriceEntries(list)` in `js/market.js` is the only display normalization. It returns a new newest-first array with one entry per distinct price and never mutates storage. Tables, the fish modal, counts and summaries use it; raw export keeps legacy duplicates visible.

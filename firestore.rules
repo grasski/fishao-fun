@@ -50,12 +50,20 @@ service cloud.firestore {
              'name', 'name_lower', 'points', 'unlockedFcFishIds', 
              'unlockedMonsterIds', 'memberCount', 'members', 'updatedAt', 'lastUpdatedBy'
            ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2
+        && request.resource.data.name.size() <= 40
         && request.resource.data.points is number
         && request.resource.data.points >= 0
         && request.resource.data.unlockedFcFishIds is list
         && request.resource.data.unlockedMonsterIds is list
         && request.resource.data.memberCount is number
-        && (!('members' in request.resource.data) || request.resource.data.members is map);
+        && (!('members' in request.resource.data) || request.resource.data.members is map)
+        && (
+          (resource.data.members is map && request.auth.uid in resource.data.members)
+          || (request.resource.data.members is map && request.auth.uid in request.resource.data.members)
+          || isAdmin()
+        );
 
       allow delete: if isAdmin();
     }

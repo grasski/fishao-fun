@@ -45,6 +45,10 @@ async function initFirebaseSync() {
         caughtFishIds = new Set();
         backyardFishIds = new Set();
         friendUids = new Set();
+        if (userUnsubscribe) {
+          userUnsubscribe();
+          userUnsubscribe = null;
+        }
         if (clubUnsubscribe) {
           clubUnsubscribe();
           clubUnsubscribe = null;
@@ -332,7 +336,12 @@ async function loadUserProfile(user) {
       }, 450);
     }
 
-    fsModule.onSnapshot(userDocRef, function (snap) {
+    if (userUnsubscribe) {
+      userUnsubscribe();
+      userUnsubscribe = null;
+    }
+
+    userUnsubscribe = fsModule.onSnapshot(userDocRef, function (snap) {
       if (snap.exists()) {
         var updated = snap.data();
         var oldClubId = userProfile ? userProfile.clubId : "";
@@ -358,6 +367,8 @@ async function loadUserProfile(user) {
         updateCaughtStats();
         applyFilters();
       }
+    }, function (err) {
+      console.warn("User profile snapshot warning:", err);
     });
 
   } catch (err) {
@@ -383,10 +394,6 @@ function updateAuthUI() {
   var bannerClubGuestNotice = document.getElementById("bannerClubGuestNotice");
   var gateClub = document.getElementById("gateClubManage");
   var manageContent = document.getElementById("manageClubContent");
-  var gateCollection = document.getElementById("gateCollection");
-  var bCollection = document.getElementById("bannerCollection");
-  var secTable = document.getElementById("sectionFishTable");
-  var filterCard = document.getElementById("filterCard");
 
   var clubPtsBadge = document.getElementById("navClubPtsBadge");
   if (clubPtsBadge) {
@@ -456,7 +463,7 @@ function updateAuthUI() {
     var collNotice = document.getElementById("collectionSyncNotice");
     if (collNotice) {
       var pName = (userProfile && userProfile.displayName) ? userProfile.displayName : t('user_default_player');
-      collNotice.innerHTML = t('coll_sync_google', { user: pName });
+      collNotice.innerHTML = t('coll_sync_google', { user: escapeHtml(pName) });
     }
 
     if (currentView === "club_manage") {
@@ -490,11 +497,6 @@ function updateAuthUI() {
       if (bPlayersOn) bPlayersOn.style.display = "flex";
       if (gatePlayersOn) gatePlayersOn.style.display = "none";
       if (playersContentOn) playersContentOn.style.display = "block";
-    } else if (currentView === "collection") {
-      if (gateCollection) gateCollection.style.display = "none";
-      if (bCollection) bCollection.style.display = "flex";
-      if (secTable) secTable.style.display = "block";
-      if (filterCard) filterCard.style.display = "flex";
     }
   } else {
     if (signInBtn) signInBtn.style.display = "inline-flex";
@@ -529,11 +531,6 @@ function updateAuthUI() {
       if (bPlayersOff) bPlayersOff.style.display = "none";
       if (gatePlayersOff) gatePlayersOff.style.display = "block";
       if (playersContentOff) playersContentOff.style.display = "none";
-    } else if (currentView === "collection") {
-      if (gateCollection) gateCollection.style.display = "block";
-      if (bCollection) bCollection.style.display = "none";
-      if (secTable) secTable.style.display = "none";
-      if (filterCard) filterCard.style.display = "none";
     }
   }
 }
@@ -703,8 +700,12 @@ async function deleteAccount() {
     var uid = currentUser.uid;
     var clubIdToLeave = (userProfile && userProfile.clubId) || currentClubId;
 
-    // 1. Immediately detach club real-time listener and clear local club state
+    // 1. Immediately detach club & user real-time listeners and clear local state
     // This CRITICALLY prevents the onSnapshot listener from executing any self-heal re-registration
+    if (userUnsubscribe) {
+      userUnsubscribe();
+      userUnsubscribe = null;
+    }
     if (typeof unbindClubListener === 'function') {
       unbindClubListener();
     }

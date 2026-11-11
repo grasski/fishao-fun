@@ -718,7 +718,7 @@ async function setClubPoints(val) {
     return;
   }
   if (!currentClubId) {
-    alert("Pro nastavení bodů musíš být členem klubu!");
+    showToast("Pro nastavení bodů musíš být členem klubu!", "error");
     return;
   }
   var num = Math.max(0, parseInt(val) || 0);
@@ -763,7 +763,7 @@ async function toggleClubSpecialFish(fishId) {
     return;
   }
   if (!currentClubId) {
-    alert("Pro odemykání speciálních ryb musíš být členem klubu!");
+    showToast("Pro odemykání speciálních ryb musíš být členem klubu!", "error");
     return;
   }
 
@@ -805,7 +805,7 @@ async function toggleClubSpecialFish(fishId) {
     }
   } catch (err) {
     console.error("Failed to toggle special fish:", err);
-    alert("Chyba při ukládání: " + err.message);
+    showToast("Chyba při ukládání: " + err.message, "error");
   }
 }
 
@@ -1082,7 +1082,9 @@ function renderClubMilestones() {
 function updateClubStats() {
   var hideLockedCheckbox = document.getElementById("hideLockedCheckbox");
   var hideLocked = hideLockedCheckbox ? hideLockedCheckbox.checked : false;
-  localStorage.setItem('fishao_hide_locked', hideLocked);
+  try {
+    localStorage.setItem('fishao_hide_locked', hideLocked);
+  } catch (e) {}
 
   var unlockedCount = 0;
   var nextFish = null;
