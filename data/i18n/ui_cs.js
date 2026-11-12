@@ -235,7 +235,6 @@
       "price_cell_single_title": "Známá cena: {price} FB ({date})",
       "price_delete_admin_title": "Smazat cenu (Admin)",
       "price_delete_confirm": "Opravdu chceš smazat tuto cenu z historie? Odstraněny budou všechny záznamy se stejnou cenou.",
-      "price_delete_locked_title": "Smazat záznam může pouze administrátor",
       "price_delete_non_admin": "Smazat záznam z historie cen může pouze administrátor.",
       "price_empty_history": "Zatím žádná zaznamenaná cena pro tuto rybu.",
       "price_exists": "Cena {price} FB je pro tuto rybu už zaznamenaná ({date}). Zadej jinou cenu.",

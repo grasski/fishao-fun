@@ -437,6 +437,12 @@ function updateAuthUI() {
     var exportBtn = document.getElementById("btnExportPrices");
     if (exportBtn) exportBtn.style.display = isAdmin ? "inline-block" : "none";
 
+    // Admin-only action column in the fish modal price history.
+    if (typeof syncPriceHistoryActionColumn === "function") syncPriceHistoryActionColumn();
+    if (selectedModalFishId && typeof renderModalHistory === "function") {
+      renderModalHistory(selectedModalFishId);
+    }
+
     if (currentView === "club_manage") {
       if (gateClub) gateClub.style.display = "none";
       if (manageContent) manageContent.style.display = "block";

@@ -426,11 +426,19 @@ function closePriceModal(skipSync) {
   }
 }
 
+function syncPriceHistoryActionColumn() {
+  var th = document.getElementById("modalPriceHistoryActionTh");
+  if (th) th.style.display = isAdmin ? "" : "none";
+}
+
 function renderModalHistory(fid) {
   // Display-only normalization: duplicate prices are shown once.
   var list = normalizePriceEntries(getFishPrices(fid));
   var tbody = document.getElementById("modalPriceHistoryTbody");
   var locale = getLocale();
+  var showActions = isAdmin;
+
+  syncPriceHistoryActionColumn();
 
   var minPriceEl = document.getElementById("statMinPrice");
   var maxPriceEl = document.getElementById("statMaxPrice");
@@ -441,7 +449,7 @@ function renderModalHistory(fid) {
   }
 
   if (list.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color: var(--text-muted); padding: 15px;">' + t('price_empty_history') + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="' + (showActions ? 3 : 2) + '" style="text-align:center; color: var(--text-muted); padding: 15px;">' + t('price_empty_history') + '</td></tr>';
     if (minPriceEl) minPriceEl.innerText = "--";
     if (maxPriceEl) maxPriceEl.innerText = "--";
     return;
@@ -455,14 +463,16 @@ function renderModalHistory(fid) {
   if (maxPriceEl) maxPriceEl.innerText = maxP.toLocaleString(locale) + " FB";
 
   tbody.innerHTML = list.map(function (item) {
-    var actionHtml = isAdmin
-      ? '<button class="btn-delete-price" title="' + t('price_delete_admin_title') + '" onclick="window.fishaoApp.deletePriceEntry(' + fid + ', ' + item.price + ')">🗑️</button>'
-      : '<span title="' + t('price_delete_locked_title') + '" style="color: var(--text-muted); font-size: 13px; cursor: default;">🔒</span>';
+    var actionCell = showActions
+      ? '<td style="text-align: center;">' +
+        '<button class="btn-delete-price" title="' + t('price_delete_admin_title') + '" onclick="window.fishaoApp.deletePriceEntry(' + fid + ', ' + item.price + ')">🗑️</button>' +
+        '</td>'
+      : '';
 
     return '<tr>' +
       '<td style="color: #cbd5e1; font-weight: 600;">' + formatPriceDate(item.date) + '</td>' +
       '<td style="color: #34d399; font-weight: 800;"><span class="cash-icon">💵</span> ' + item.price.toLocaleString(locale) + ' FB</td>' +
-      '<td style="text-align: center;">' + actionHtml + '</td>' +
+      actionCell +
       '</tr>';
   }).join('');
 }

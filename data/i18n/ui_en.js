@@ -235,7 +235,6 @@
       "price_cell_single_title": "Known price: {price} FB ({date})",
       "price_delete_admin_title": "Delete price (Admin)",
       "price_delete_confirm": "Are you sure you want to delete this price from history? All records with the same price will be removed.",
-      "price_delete_locked_title": "Only an administrator can delete entries",
       "price_delete_non_admin": "Only an administrator can delete price history records.",
       "price_empty_history": "No price recorded for this fish yet.",
       "price_exists": "The price {price} FB is already recorded for this fish ({date}). Enter a different price.",
