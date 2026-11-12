@@ -947,7 +947,7 @@ function renderClubMilestones() {
       var targetPct = span > 0 ? Math.min(100, (currentSpan / span * 100)) : 0;
       var nextFishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(nextFish) : nextFish.name;
       var nextWaterType = getFishWater(nextFish);
-      var nextWater = nextWaterType === 'Slaná' ? ('🌊 ' + t('water_salt_short')) : ('🌿 ' + t('water_fresh_short'));
+      var nextWater = t(nextWaterType === 'Slaná' ? 'water_salt_short' : 'water_fresh_short');
       var nextBaits = nextFish.baits ? nextFish.baits.map(function (b) { return window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(b) : b; }).join(', ') : '';
 
       nextCard.innerHTML =
@@ -1027,7 +1027,7 @@ function renderClubMilestones() {
     var isCaught = caughtFishIds.has(f.id);
     var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
     var waterType = getFishWater(f);
-    var waterLabel = waterType === 'Slaná' ? ('🌊 ' + t('water_salt_short')) : ('🌿 ' + t('water_fresh_short'));
+    var waterLabel = t(waterType === 'Slaná' ? 'water_salt_short' : 'water_fresh_short');
     var baitsLabel = f.baits ? f.baits.map(function (b) { return window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(b) : b; }).join(', ') : '';
 
     return '<div class="milestone-card ' + (isUnlocked ? 'unlocked' : 'locked') + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" style="cursor: pointer;">' +

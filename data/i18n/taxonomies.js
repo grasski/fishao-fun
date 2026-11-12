@@ -137,24 +137,24 @@
     },
     waters: {
     "Slaná": {
-        "cs": "Slaná",
-        "en": "Saltwater"
+        "cs": "Slaná (vlevo)",
+        "en": "Saltwater (left)"
     },
     "Sladká": {
-        "cs": "Sladká",
-        "en": "Freshwater"
+        "cs": "Sladká (vpravo)",
+        "en": "Freshwater (right)"
     },
     "Neznámá": {
         "cs": "Neznámá",
         "en": "Unknown"
     },
     "Saltwater": {
-        "cs": "Slaná",
-        "en": "Saltwater"
+        "cs": "Slaná (vlevo)",
+        "en": "Saltwater (left)"
     },
     "Freshwater": {
-        "cs": "Sladká",
-        "en": "Freshwater"
+        "cs": "Sladká (vpravo)",
+        "en": "Freshwater (right)"
     }
     },
     locations: {
@@ -423,12 +423,12 @@
         "en": "African Lake"
     },
     "EFPT_CLUB_AREA_SALT": {
-        "cs": "Slaná",
-        "en": "Saltwater"
+        "cs": "Slaná (vlevo)",
+        "en": "Saltwater (left)"
     },
     "EFPT_CLUB_AREA_FRESH": {
-        "cs": "Sladká",
-        "en": "Freshwater"
+        "cs": "Sladká (vpravo)",
+        "en": "Freshwater (right)"
     },
     "EFPT_PALM_ISLAND_ZONE_A": {
         "cs": "Vnější oblast",
