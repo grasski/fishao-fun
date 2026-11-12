@@ -1,7 +1,7 @@
 /**
  * FISHAO - Filtering, Search & Sorting Logic (js/filters.js)
  * -------------------------------------------------------------
- * Dynamic filtering of fish records by name, water, location,
+ * Dynamic filtering of fish records by name, location, specific area,
  * rarity/rating, active time, mission sizes, and market prices.
  */
 
@@ -63,7 +63,6 @@ function applyFilters() {
   var q = searchEl ? searchEl.value.trim() : "";
   var bait = document.getElementById("baitFilter").value;
   var rating = document.getElementById("ratingFilter").value;
-  var water = document.getElementById("waterFilter").value;
   var location = document.getElementById("locationFilter").value;
   var areaEl = document.getElementById("areaFilter");
   var area = areaEl ? areaEl.value : "";
@@ -107,7 +106,6 @@ function applyFilters() {
       if (rating.match(/^\d$/) && f.rating !== parseInt(rating)) return false;
     }
 
-    if (currentView === "club" && water && getFishWater(f) !== water) return false;
     if (location && currentView !== "club" &&
         !((f.locations && f.locations.includes(location)) ||
           (f.places && f.places.includes(location)))) return false;
@@ -221,10 +219,6 @@ function applyFilters() {
     var baitName = window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(bait) : bait;
     filterNotes.push(t('filter_note_bait', { name: baitName }));
   }
-  if (currentView === "club" && water) {
-    var waterName = window.FISHAO_I18N ? window.FISHAO_I18N.getWaterName(water) : water;
-    filterNotes.push(t('filter_note_water', { name: waterName }));
-  }
   if (rating) {
     var starStr = rating;
     if (rating === "min3") starStr = "3★+";
@@ -280,8 +274,6 @@ function resetFilters() {
   if (baitEl) baitEl.value = "";
   var ratingEl = document.getElementById("ratingFilter");
   if (ratingEl) ratingEl.value = "";
-  var waterEl = document.getElementById("waterFilter");
-  if (waterEl) waterEl.value = "";
   var loc = document.getElementById("locationFilter");
   if (loc) loc.value = "";
   var areaSelect = document.getElementById("areaFilter");
@@ -344,17 +336,6 @@ function resetFilters() {
   applyFilters();
 }
 
-function updateWaterFilterOptions() {
-  var select = document.getElementById("waterFilter");
-  if (!select) return;
-  var curVal = select.value;
-  select.innerHTML =
-    '<option value="">' + t('opt_water_all') + '</option>' +
-    '<option value="Slaná">' + t('opt_water_salt') + '</option>' +
-    '<option value="Sladká">' + t('opt_water_fresh') + '</option>';
-  select.value = curVal;
-}
-
 function initLocationOptions() {
   var locSet = new Set();
   allFishes.forEach(function (f) {
@@ -391,18 +372,17 @@ function getPalmZoneLetter(place) {
 }
 
 function updateAreaFilterOptions() {
-  var group = document.getElementById("areaFilterGroup");
   var select = document.getElementById("areaFilter");
   if (!select) return;
 
-  // Keep the field in a stable position so the filter row never jumps.
-  // It is only hidden in club views, where the location filter is hidden too.
-  var isClubView = currentView === "club" || currentView === "club_manage";
-  if (group) group.style.display = isClubView ? "none" : "flex";
-
+  // Club fishes all share the parent location "Klubový revír", so their areas
+  // are derived from the club dataset instead of the hidden location filter.
+  var isClubView = currentView === "club";
   var locationEl = document.getElementById("locationFilter");
   var location = locationEl ? locationEl.value : "";
-  var areas = location ? getFishAreasForLocation(location) : [];
+  var areas = isClubView
+    ? getClubAreas()
+    : (location ? getFishAreasForLocation(location) : []);
   var currentVal = select.value;
 
   if (!areas.length) {
@@ -417,14 +397,17 @@ function updateAreaFilterOptions() {
       value: a,
       label: window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(a) : a
     };
-  }).sort(function (a, b) {
-    // Palm Island zones stay in A..H order even though their labels no longer
-    // carry the letter prefix.
-    var zoneA = getPalmZoneLetter(a.value);
-    var zoneB = getPalmZoneLetter(b.value);
-    if (zoneA && zoneB) return zoneA.localeCompare(zoneB);
-    return a.label.localeCompare(b.label);
   });
+  if (!isClubView) {
+    sortedAreas.sort(function (a, b) {
+      // Palm Island zones stay in A..H order even though their labels no longer
+      // carry the letter prefix.
+      var zoneA = getPalmZoneLetter(a.value);
+      var zoneB = getPalmZoneLetter(b.value);
+      if (zoneA && zoneB) return zoneA.localeCompare(zoneB);
+      return a.label.localeCompare(b.label);
+    });
+  }
 
   select.innerHTML = '<option value="">' + t('opt_area_all') + '</option>' +
     sortedAreas.map(function (a) {

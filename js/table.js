@@ -389,7 +389,7 @@ function renderTableHead() {
       '<th style="width: 48px;">#</th>' +
       caughtCol +
       '<th style="width: 108px;">' + t('col_appearance') + '</th>' +
-      '<th>' + t('col_water') + '</th>' +
+      '<th>' + t('col_area') + '</th>' +
       '<th>' + t('col_fish') + '</th>' +
       '<th>' + t('col_rarity') + '</th>' +
       priceColHtml +
@@ -453,14 +453,15 @@ function renderTableBody(data) {
         : "";
       var altMatchHtml = altMatch ? '<div style="font-size: 11px; color: #38bdf8; font-weight: 500; margin-top: 2px;">' + escapeHtml(altMatch) + '</div>' : '';
       var safeFishName = escapeHtml(fishName);
-      var waterType = getFishWater(f);
-      var waterLabel = waterType === 'Slaná' ? ('🌊 ' + t('water_salt_short')) : ('🌿 ' + t('water_fresh_short'));
+      var areaName = getFishAreaLabels(f)[0] || "";
 
       return '<tr class="' + rowClass.join(' ') + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + rowClickTitle + '">' +
         '<td style="color: var(--text-muted); font-weight: 600;">' + f.order + '</td>' +
         '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
         '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + safeFishName + '" class="fish-img" onerror="this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'"></div></td>' +
-        '<td><span class="badge ' + (waterType === 'Slaná' ? 'badge-salt' : 'badge-fresh') + '">' + waterLabel + '</span></td>' +
+        '<td class="loc-box">' +
+        (areaName ? '<span class="loc-tag">' + areaName + '</span>' : '<span class="loc-unspecified">' + t('loc_unspecified') + '</span>') +
+        '</td>' +
         '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName + '</div>' + altMatchHtml + '</td>' +
         '<td>' + renderRatingBadge(f.rating) + '</td>' +
         '<td>' + renderPriceCell(f.id) + '</td>' +
@@ -509,10 +510,10 @@ function renderTableBody(data) {
         '</div>' + altMatchHtml + '</td>' +
         '<td>' + renderRatingBadge(f.rating) + '</td>' +
         '<td>' + renderPriceCell(f.id) + '</td>' +
-        '<td style="max-width: 250px;">' +
+        '<td class="loc-box">' +
         (locLabels.length ? locLabels.map(function (locName) {
           return '<span class="loc-tag">' + locName + '</span>';
-        }).join('') : '<span style="color:var(--text-muted); font-size:12px;">' + unspecText + '</span>') +
+        }).join('') : '<span class="loc-unspecified">' + unspecText + '</span>') +
         '</td>' +
         '<td>' + f.baits.map(function (b) {
           var bName = window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(b) : b;

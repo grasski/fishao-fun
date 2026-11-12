@@ -257,11 +257,9 @@ function switchView(view, skipSync) {
     if (filterCard) filterCard.style.display = "flex";
   }
 
-  var waterFilterGroup = document.getElementById("waterFilterGroup");
   var locationFilterGroup = document.getElementById("locationFilterGroup");
   var missionSizeRow = document.getElementById("missionSizeRow");
 
-  if (waterFilterGroup) waterFilterGroup.style.display = (view === "club") ? "flex" : "none";
   if (locationFilterGroup) locationFilterGroup.style.display = (view !== "club") ? "flex" : "none";
   if (missionSizeRow) missionSizeRow.style.display = (view === "all") ? "flex" : "none";
 
@@ -333,7 +331,6 @@ function setLanguage(lang) {
   updateTzButtonsUI();
   updateClock();
   updateAuthUI();
-  updateWaterFilterOptions();
   initLocationOptions();
   updateAreaFilterOptions();
   initBaitOptions();

@@ -85,6 +85,21 @@ function getFishAreasForLocation(location) {
 }
 
 /**
+ * Resolve the specific fishing areas of the club waters. Every club fish shares
+ * the parent location "Klubový revír", so the club view cannot derive its area
+ * filter options from a selected parent location.
+ */
+function getClubAreas() {
+  var areas = new Set();
+  clubFishes.forEach(function (f) {
+    (f.places || []).forEach(function (place) {
+      if (place) areas.add(place);
+    });
+  });
+  return Array.from(areas);
+}
+
+/**
  * Backwards-compatible helper. Now returns parent locations only; callers that
  * need specific areas should use getFishAreaLabels().
  */

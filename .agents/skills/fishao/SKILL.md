@@ -61,6 +61,8 @@ Palm Island zones are list-style: one fish may carry several of the 8 zone
 identifiers (273 zone tags across 93 fish).
 The parent `locations` label is composed at render time: tables show the parent
 only, while the fish detail modal shows the parent plus a compact area chip.
+The club fish table is the exception: its "Místo"/"Area" column lists the
+specific fishing areas (`places`) instead of the shared parent location.
 Filtering by a parent location matches its sub-location fish; the optional
 "specific area" filter narrows the result to one `places` value.
 
@@ -90,8 +92,9 @@ which use the same physical fishing spots.
 
 **Water type is derived, not stored.** `getFishWater(fish)` in `js/state.js`
 returns `Slaná` for `EFPT_CLUB_AREA_SALT`, `Sladká` for
-`EFPT_CLUB_AREA_FRESH`, and `''` for other fish. Club tables, filters and
-milestones use this helper instead of a `water` field.
+`EFPT_CLUB_AREA_FRESH`, and `''` for other fish. The club table shows the fish's `places` values under the "Místo"/"Area"
+header, and the shared "specific area" filter is populated from
+`getClubAreas()` (club fishes' `places`).
 
 > [!TIP]
 > **Club Fish Breakdown (80 total):**
@@ -170,7 +173,7 @@ The monolithic `app.js` was refactored into modular, cohesive files loaded direc
 2. `js/table.js`: Fish table rendering (`renderTableHead`, `renderTableBody`), UTC-to-local time formatting (`formatCatchTime`, `isFishActiveNow`), rating badges (`renderRatingBadge`), price cells (`renderPriceCell`), and caught fish collection toggles (`toggleCaughtFish`, `updateCaughtStats`).
 3. `js/clubs.js`: Real-time club synchronization via Firestore (`bindClubListener`), deterministic member roster rendering (`renderClubMembers`), member profile modal (`openPlayerModal`), club search, creation, joining, and leaving, club points management, milestones roadmap (`renderClubMilestones`), and FC / Monster special fish unlocks.
 4. `js/market.js`: Fish market price history persistence (`saveLocalPriceHistory`), Sunday detection, display normalization (`normalizePriceEntries`), price lookups (`getLatestPrice`, `getMaxPrice` — highest distinct price, ties resolved to the most recent date), single price submission/deletion through Firestore transactions (`submitNewPrice`, `deletePriceEntry`), fish detail modal rendering (`openPriceModal`, including the `rarity_factor` → tier badge helpers `getRarityTier` / `formatRarityPercent`), normalized modal price history rendering (`renderModalHistory`), bulk price import with duplicate skipping and autocomplete suggestions (`processBulkImport`), default reset (`resetPriceHistoryToDefault`), and JSON export (`exportPricesJson`).
-5. `js/filters.js`: Multi-criteria fish filtering engine (`applyFilters`, `resetFilters`), parent-location and specific-area dropdown logic (`initLocationOptions`, `onLocationFilterChange`, `updateAreaFilterOptions`), mission size handlers (`setSizeFilter`, `onRangeSizeInput`), collection filters, and dropdown options initializers.
+5. `js/filters.js`: Multi-criteria fish filtering engine (`applyFilters`, `resetFilters`), parent-location and specific-area dropdown logic (`initLocationOptions`, `onLocationFilterChange`, `updateAreaFilterOptions`), mission size handlers (`setSizeFilter`, `onRangeSizeInput`), collection filters, and dropdown options initializers. The specific-area dropdown follows the selected parent location in the fishdex/market views and falls back to `getClubAreas()` in the club view.
 6. `js/auth.js`: Firebase authentication (`signIn`, `signOut`), GDPR-compliant profile synchronization (`loadUserProfile`, `saveProfile`), and UI state synchronization (`updateAuthUI`).
 7. `js/players.js`: Community player list, backyard fish breeding (`backyardFishIds`), universal player modal, reverse fish-to-player lookups.
 8. `js/main.js`: Live clock and timezone switching (`setTimezone`, `updateClock`), view routing (`switchView`), static DOM translations (`setLanguage`, `updateStaticTranslations`), modal listeners, `window.fishaoApp` exports, and application boot.

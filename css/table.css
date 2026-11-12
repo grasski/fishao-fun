@@ -288,6 +288,15 @@ tbody tr:hover .fish-img {
   margin: 1px;
 }
 
+/* Location / area table cell (fishdex location column, club area column) */
+.loc-box {
+  max-width: 250px;
+}
+.loc-unspecified {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
 .time-cell {
   display: flex;
   flex-direction: column;
