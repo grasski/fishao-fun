@@ -399,12 +399,12 @@
         "en": "Thombani Town"
     },
     "EFPT_LOST_VALLEY_POND_1": {
-        "cs": "Jezero 1",
-        "en": "Pond 1"
+        "cs": "Údolí",
+        "en": "Lower area"
     },
     "EFPT_LOST_VALLEY_POND_2": {
-        "cs": "Jezero 2",
-        "en": "Pond 2"
+        "cs": "U vodopádu",
+        "en": "By the waterfall"
     },
     "EFPT_SEAGULL_HARBOR_BOAT": {
         "cs": "Loď",
