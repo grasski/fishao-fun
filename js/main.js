@@ -272,10 +272,8 @@ function updateStaticTranslations() {
   var lang = getLang();
   document.documentElement.lang = lang;
 
-  var csBtn = document.getElementById("langCsBtn");
-  var enBtn = document.getElementById("langEnBtn");
-  if (csBtn) csBtn.classList.toggle("active", lang === "cs");
-  if (enBtn) enBtn.classList.toggle("active", lang === "en");
+  var langSelect = document.getElementById("langSelect");
+  if (langSelect && langSelect.value !== lang) langSelect.value = lang;
 
   // Dynamic SEO title & meta description update on language change
   try {

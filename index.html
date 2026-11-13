@@ -126,10 +126,11 @@
 
         <!-- Language switcher -->
         <div class="lang-widget" id="langWidget">
-          <button class="lang-toggle active" id="langCsBtn" onclick="window.fishaoApp.setLanguage('cs')"
-            title="Čeština">🇨🇿 CZ</button>
-          <button class="lang-toggle" id="langEnBtn" onclick="window.fishaoApp.setLanguage('en')" title="English">🇬🇧
-            EN</button>
+          <select class="lang-select" id="langSelect" aria-label="Jazyk / Language"
+            onchange="window.fishaoApp.setLanguage(this.value)">
+            <option value="cs">🇨🇿 CZ</option>
+            <option value="en">🇬🇧 EN</option>
+          </select>
         </div>
 
         <!-- Auth panel -->
@@ -1468,7 +1469,7 @@
   <script src="js/filters.js?v=3.7"></script>
   <script src="js/auth.js?v=3.7"></script>
   <script src="js/players.js?v=3.6"></script>
-  <script src="js/main.js?v=3.5"></script>
+  <script src="js/main.js?v=3.6"></script>
 
 </body>
 
