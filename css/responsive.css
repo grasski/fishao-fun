@@ -16,49 +16,9 @@
     justify-content: flex-start;
   }
 
-  /* Modern 2x2 Grid Menu from 900px downwards (prevents squishing tabs in a single row) */
+  /* Main navigation wraps onto multiple lines when needed; tabs keep the desktop layout */
   .main-nav-bar {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    padding: 6px;
-    border-radius: 14px;
-    overflow-x: visible;
     margin-bottom: 12px;
-  }
-  .main-nav-bar .nav-tab:last-child:nth-child(odd) {
-    grid-column: span 2;
-  }
-  .nav-tab {
-    min-width: 0;
-    padding: 10px 12px;
-    font-size: 13px;
-    gap: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    border-radius: 10px;
-    white-space: normal;
-  }
-  .nav-tab .tab-icon {
-    font-size: 18px;
-    line-height: 1;
-  }
-  .nav-tab .tab-title {
-    font-size: 13px;
-    font-weight: 700;
-  }
-  .nav-tab .tab-pill {
-    font-size: 11px;
-    padding: 2px 8px;
-    font-weight: 800;
-  }
-  /* When club is not active (tabClub hidden), tabMarket neatly spans full bottom row */
-  .main-nav-bar:has(#tabClub[style*="none"]) #tabMarket,
-  .main-nav-bar:has(#tabClub:empty) #tabMarket {
-    grid-column: span 2;
-    padding: 10px 14px;
   }
 
   .filter-row-sub {
@@ -170,63 +130,9 @@
     padding: 6px;
   }
 
-  /* Compact 2x2 Grid Menu with vertical tab contents for phones */
+  /* Main navigation wraps onto multiple lines; tab internals stay identical to desktop */
   .main-nav-bar {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    padding: 6px;
-    border-radius: 14px;
-    overflow-x: visible;
     margin-bottom: 12px;
-  }
-  .main-nav-bar .nav-tab:last-child:nth-child(odd) {
-    grid-column: span 2;
-  }
-  .nav-tab {
-    min-width: 0;
-    padding: 10px 6px;
-    font-size: 12px;
-    gap: 4px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    border-radius: 10px;
-    white-space: normal;
-  }
-  .nav-tab .tab-icon {
-    font-size: 20px;
-    line-height: 1;
-    margin-bottom: 2px;
-  }
-  .nav-tab .tab-title {
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.25;
-  }
-  .nav-tab .tab-pill {
-    font-size: 10px;
-    padding: 2px 7px;
-    margin-top: 2px;
-    font-weight: 800;
-  }
-  /* When club is not joined (tabClub hidden), tabMarket spans full bottom row */
-  .main-nav-bar:has(#tabClub[style*="none"]) #tabMarket,
-  .main-nav-bar:has(#tabClub:empty) #tabMarket {
-    grid-column: span 2;
-    flex-direction: row;
-    gap: 8px;
-    padding: 10px 14px;
-  }
-  .main-nav-bar:has(#tabClub[style*="none"]) #tabMarket .tab-icon,
-  .main-nav-bar:has(#tabClub:empty) #tabMarket .tab-icon {
-    margin-bottom: 0;
-  }
-  .main-nav-bar:has(#tabClub[style*="none"]) #tabMarket .tab-pill,
-  .main-nav-bar:has(#tabClub:empty) #tabMarket .tab-pill {
-    margin-top: 0;
   }
 
   /* Compact View Action Bars */
@@ -493,12 +399,6 @@
   }
   .app-logo {
     font-size: 20px;
-  }
-  .nav-tab {
-    padding: 8px 4px;
-  }
-  .nav-tab .tab-title {
-    font-size: 11px;
   }
   #bannerCollection .btn-group-pills .pill-btn {
     font-size: 10px;

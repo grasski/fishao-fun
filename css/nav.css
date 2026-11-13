@@ -4,20 +4,22 @@
 
 .main-nav-bar {
   display: flex;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 4px;
   margin-bottom: 14px;
   background: #0d1424;
-  padding: 6px;
+  padding: 2px;
   border-radius: 14px;
   border: 1px solid var(--border);
-  overflow-x: auto;
-  scrollbar-width: none;
+  overflow: hidden;
 }
-.main-nav-bar::-webkit-scrollbar { display: none; }
 
 .nav-tab {
-  flex: 1;
+  /* Never shrink a tab below its content – the bar wraps to a new row instead */
+  flex: 1 0 auto;
   min-width: 130px;
+  max-width: 100%;
+  overflow: hidden;
   background: transparent;
   border: 1px solid transparent;
   color: var(--text-muted);
@@ -41,9 +43,17 @@
 .tab-icon {
   font-size: 16px;
   line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Labels always render in full; the bar wraps instead of truncating them */
+.tab-title {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .tab-pill {
+  flex-shrink: 0;
   padding: 2px 7px;
   border-radius: 999px;
   font-size: 11px;
