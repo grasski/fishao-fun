@@ -412,7 +412,7 @@ function renderLocationsView() {
         sortedPreview.map(function (f) {
           var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
           return '<button type="button" class="loc-fish-chip" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + escapeHtml(fName + t('click_for_detail_suffix')) + '">' +
-            '<img src="images/fish_' + f.id + '.png" alt="" onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'">' +
+            '<img src="images/fish_' + f.id + '.png" alt="" onerror="this.onerror=null;this.style.display=\'none\';">' +
             '<span class="loc-fish-chip-name">' + escapeHtml(fName) + '</span>' +
             '<span class="loc-fish-chip-stars">' + (f.rating || 1) + '★</span>' +
           '</button>';

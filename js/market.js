@@ -408,7 +408,7 @@ function renderModalBaitAdvisor(fid, precomputedRec) {
             ' onclick="window.fishaoApp.openPriceModal(' + Number(cf.id) + ')"' +
             ' title="' + escapeHtml(cfName + ' (' + cfStars + ') • ' + cfTime) + '">' +
             '<img src="images/fish_' + Number(cf.id) + '.png" alt="" loading="lazy"' +
-              ' onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + Number(cf.id) + '_item.png\'">' +
+              ' onerror="this.onerror=null;this.style.display=\'none\';">' +
             '<span class="comp-chip-name">' + escapeHtml(cfName) + '</span>' +
             '<span class="comp-chip-stars">' + escapeHtml(cfStars) + '</span>' +
             '<span class="comp-chip-time">' + escapeHtml(cfTime) + '</span>' +
@@ -518,9 +518,11 @@ function openPriceModal(fid, skipSync) {
 
   var imgEl = document.getElementById("modalFishImg");
   if (imgEl) {
+    imgEl.style.display = "";
     imgEl.src = "images/fish_" + f.id + ".png";
     imgEl.onerror = function () {
-      this.src = "https://play.fishao.net/data/image/fishes/fish255x85_" + f.id + "_item.png";
+      this.onerror = null;
+      this.style.display = "none";
     };
   }
 

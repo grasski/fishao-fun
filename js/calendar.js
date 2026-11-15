@@ -211,7 +211,7 @@ function renderFishYearTimelineBar(rawDates, refDate) {
     cellsHtml += '<div class="' + segClass + '">' +
       '<div class="cal-month-bar">' + fillsHtml + '</div>' +
       '<span class="cal-month-lbl">' + escapeHtml(mLabel) + '</span>' +
-    '</div>';
+      '</div>';
   }
 
   var todayPct = (((curMonth - 1) + (curDay - 0.5) / curMonthDays) / 12 * 100).toFixed(2);
@@ -221,7 +221,7 @@ function renderFishYearTimelineBar(rawDates, refDate) {
   return '<div class="cal-timeline-wrap" title="' + escapeHtml(todayTitle) + '">' +
     '<div class="cal-timeline-grid">' + cellsHtml + '</div>' +
     '<div class="cal-today-line" style="left:' + todayPct + '%;"></div>' +
-  '</div>';
+    '</div>';
 }
 
 function setCalStatusFilter(status) {
@@ -385,7 +385,7 @@ function renderCalendarView() {
         'onclick="window.fishaoApp.setCalMonthFilter(' + m + ')" title="' + escapeHtml(monthFulls[m - 1] || '') + '">' +
         '<span>' + escapeHtml(monthShorts[m - 1] || String(m)) + '</span>' +
         '<span class="cal-month-count">' + mCount + '</span>' +
-      '</button>';
+        '</button>';
     }
     monthsBar.innerHTML = monthHtml;
   }
@@ -494,39 +494,39 @@ function renderCalendarView() {
 
     return '<article class="' + cardClasses.join(' ') + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')">' +
       '<div class="cal-card-top">' +
-        '<div class="cal-card-caught-wrap" onclick="event.stopPropagation();">' + renderCaughtBtn(f.id) + '</div>' +
-        '<div class="cal-card-img-box">' +
-          '<img src="images/fish_' + f.id + '.png" alt="' + escapeHtml(fishName) + '" class="fish-img" onerror="this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'">' +
-        '</div>' +
-        '<div class="cal-card-title-wrap">' +
-          '<div class="cal-card-name-row">' +
-            '<h3 class="cal-card-name">' + escapeHtml(fishName) + '</h3>' +
-            (f.is_club ? '<span class="badge-club-tag">' + escapeHtml(t('badge_club_fish')) + '</span>' : '') +
-          '</div>' +
-          (altName ? '<div class="cal-card-alt-name">' + escapeHtml(altName) + '</div>' : '') +
-          '<div class="cal-card-badges">' +
-            renderRatingBadge(f.rating) +
-            '<div class="cal-price-wrap" onclick="event.stopPropagation();">' + renderPriceCell(f.id) + '</div>' +
-          '</div>' +
-        '</div>' +
+      '<div class="cal-card-caught-wrap" onclick="event.stopPropagation();">' + renderCaughtBtn(f.id) + '</div>' +
+      '<div class="cal-card-img-box">' +
+      '<img src="images/fish_' + f.id + '.png" alt="' + escapeHtml(fishName) + '" class="fish-img" onerror="this.onerror=null;this.style.display=\'none\';">' +
+      '</div>' +
+      '<div class="cal-card-title-wrap">' +
+      '<div class="cal-card-name-row">' +
+      '<h3 class="cal-card-name">' + escapeHtml(fishName) + '</h3>' +
+      (f.is_club ? '<span class="badge-club-tag">' + escapeHtml(t('badge_club_fish')) + '</span>' : '') +
+      '</div>' +
+      (altName ? '<div class="cal-card-alt-name">' + escapeHtml(altName) + '</div>' : '') +
+      '<div class="cal-card-badges">' +
+      renderRatingBadge(f.rating) +
+      '<div class="cal-price-wrap" onclick="event.stopPropagation();">' + renderPriceCell(f.id) + '</div>' +
+      '</div>' +
+      '</div>' +
       '</div>' +
       '<div class="cal-season-status-row">' +
-        '<span class="cal-status-pill ' + statusCls + '">' + escapeHtml(statusText) + '</span>' +
-        '<span class="cal-range-text">📅 ' + escapeHtml(mergedSeasonStr) + '</span>' +
+      '<span class="cal-status-pill ' + statusCls + '">' + escapeHtml(statusText) + '</span>' +
+      '<span class="cal-range-text">📅 ' + escapeHtml(mergedSeasonStr) + '</span>' +
       '</div>' +
       renderFishYearTimelineBar(f.raw_dates, now) +
       '<div class="cal-card-meta">' +
-        '<div class="cal-meta-row">' + locTagsHtml + '</div>' +
-        '<div class="cal-meta-row cal-meta-bottom">' +
-          '<div class="cal-baits-wrap">' + baitsHtml + '</div>' +
-          '<div class="cal-time-wrap">' +
-            '<span class="time-badge ' + (f.is_night ? 'time-night' : '') + '">' +
-              (f.is_night ? '🌙 ' : '☀️ ') + escapeHtml(timeInfo.primary) +
-              (st.isBitingNow ? '<span class="time-now-active">' + escapeHtml(t('time_active_now_short')) + '</span>' : '') +
-            '</span>' +
-          '</div>' +
-        '</div>' +
+      '<div class="cal-meta-row">' + locTagsHtml + '</div>' +
+      '<div class="cal-meta-row cal-meta-bottom">' +
+      '<div class="cal-baits-wrap">' + baitsHtml + '</div>' +
+      '<div class="cal-time-wrap">' +
+      '<span class="time-badge ' + (f.is_night ? 'time-night' : '') + '">' +
+      (f.is_night ? '🌙 ' : '☀️ ') + escapeHtml(timeInfo.primary) +
+      (st.isBitingNow ? '<span class="time-now-active">' + escapeHtml(t('time_active_now_short')) + '</span>' : '') +
+      '</span>' +
       '</div>' +
-    '</article>';
+      '</div>' +
+      '</div>' +
+      '</article>';
   }).join('');
 }

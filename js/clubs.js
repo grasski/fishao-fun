@@ -825,7 +825,7 @@ function renderClubSpecialFishes() {
 
     return '<div class="special-fish-card ' + (isUnlocked ? 'unlocked' : '') + '">' +
       '<div class="special-fish-left" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" style="cursor: pointer;">' +
-      '<img src="images/fish_' + f.id + '.png" class="special-fish-img" alt="' + fishName + '" onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'">' +
+      '<img src="images/fish_' + f.id + '.png" class="special-fish-img" alt="' + fishName + '" onerror="this.onerror=null;this.style.display=\'none\';">' +
       '<div class="special-fish-details">' +
       '<span class="special-fish-name" title="' + fishName + '">' + fishName + '</span>' +
       '<span class="special-fish-cost">' + costLabel + '</span>' +
@@ -966,7 +966,7 @@ function renderClubMilestones() {
         '<div class="dash-card-body">' +
         '<div class="milestone-fish-row" style="margin-top: 4px;">' +
         '<div class="milestone-fish-img-box" style="width: 84px; height: 52px;">' +
-        '<img src="images/fish_' + nextFish.id + '.png" class="milestone-fish-img" alt="' + nextFishName + '" onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + nextFish.id + '_item.png\'">' +
+        '<img src="images/fish_' + nextFish.id + '.png" class="milestone-fish-img" alt="' + nextFishName + '" onerror="this.onerror=null;this.style.display=\'none\';">' +
         '</div>' +
         '<div class="milestone-fish-info">' +
         '<div class="milestone-fish-name" style="font-size: 14px;">' + nextFishName + '</div>' +
@@ -1051,7 +1051,7 @@ function renderClubMilestones() {
       '</div>' +
       '<div class="milestone-fish-row">' +
       '<div class="milestone-fish-img-box">' +
-      '<img src="images/fish_' + f.id + '.png" class="milestone-fish-img" alt="' + fishName + '" onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'">' +
+      '<img src="images/fish_' + f.id + '.png" class="milestone-fish-img" alt="' + fishName + '" onerror="this.onerror=null;this.style.display=\'none\';">' +
       '</div>' +
       '<div class="milestone-fish-info">' +
       '<div class="milestone-fish-name" title="' + fishName + '">' + fishName + '</div>' +

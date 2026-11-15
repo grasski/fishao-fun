@@ -460,7 +460,7 @@ function renderTableBody(data) {
       return '<tr class="' + rowClass.join(' ') + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + rowClickTitle + '">' +
         '<td style="color: var(--text-muted); font-weight: 600;">' + f.order + '</td>' +
         '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
-        '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + safeFishName + '" class="fish-img" onerror="this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'"></div></td>' +
+        '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + safeFishName + '" class="fish-img" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
         '<td class="loc-box">' +
         (areaName ? '<span class="loc-tag">' + areaName + '</span>' : '<span class="loc-unspecified">' + t('loc_unspecified') + '</span>') +
         '</td>' +
@@ -505,7 +505,7 @@ function renderTableBody(data) {
       return '<tr class="' + rowClass + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + rowClickTitle + '">' +
         '<td style="color: var(--text-muted); font-weight: 600;">' + (idx + 1) + '</td>' +
         '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
-        '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + safeFishName + '" class="fish-img" onerror="this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'"></div></td>' +
+        '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + safeFishName + '" class="fish-img" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
         '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName +
         (f.is_club ? '<span class="badge-club-tag">' + clubTagText + '</span>' : '') +
         '</div>' + altMatchHtml + '</td>' +

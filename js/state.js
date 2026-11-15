@@ -405,24 +405,14 @@ function getBaitIconUrl(baitCode) {
   return 'images/bait_' + String(baitCode) + '.png';
 }
 
-function getBaitRemoteIconUrl(baitCode) {
-  var id = BAIT_ICON_IDS[baitCode];
-  if (!id) return '';
-  return 'https://play.fishao.net/data/image/baits/bait_56x56_' + id + '.png';
-}
-
 /**
- * Build an <img> tag for a bait category icon with automatic remote fallback.
+ * Build an <img> tag for a bait category icon from local images/.
  */
 function renderBaitIconImg(baitCode, iconClass, isLazy) {
   var localUrl = getBaitIconUrl(baitCode);
   if (!localUrl) return '';
-  var remoteUrl = getBaitRemoteIconUrl(baitCode);
-  var fallbackHandler = remoteUrl
-    ? "if(this.dataset.fb){this.style.display='none';}else{this.dataset.fb='1';this.src='" + escapeHtml(remoteUrl) + "';}"
-    : "this.style.display='none'";
   return '<img src="' + escapeHtml(localUrl) + '" alt="" class="' + iconClass + '"' +
-    (isLazy ? ' loading="lazy"' : '') + ' onerror="' + fallbackHandler + '">';
+    (isLazy ? ' loading="lazy"' : '') + ' onerror="this.onerror=null;this.style.display=\'none\';">';
 }
 
 /**
