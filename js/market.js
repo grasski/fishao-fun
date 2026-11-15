@@ -324,8 +324,7 @@ function openPriceModal(fid, skipSync) {
   if (baitsEl) {
     baitsEl.innerHTML = f.baits && f.baits.length
       ? f.baits.map(function (b) {
-        var bName = window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(b) : b;
-        return '<span class="bait-tag">' + bName + '</span>';
+        return renderBaitTag(b);
       }).join('')
       : '<span style="color: var(--text-muted);">' + t('bait_unknown') + '</span>';
   }

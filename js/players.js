@@ -176,13 +176,18 @@ function createRichBackyardFishCard(fObj, extraClass, isModal) {
   var seasonPill = dateInfo.isSeasonal
     ? '<span class="' + (dateInfo.inSeason ? 'date-badge in-season' : 'date-badge out-of-season') + '" style="margin-top:0; padding:1px 5px; font-size:10px;">📅 ' + dateInfo.text + '</span>'
     : '';
-  var baitsDisplay = (fObj.baits && fObj.baits.length > 0)
-    ? fObj.baits.map(function (b) {
-        return (window.FISHAO_I18N && window.FISHAO_I18N.getBaitName)
-          ? window.FISHAO_I18N.getBaitName(b)
-          : b;
-      }).join(', ')
+  var baitsArr = fObj.baits || [];
+  var baitsTitle = baitsArr.map(function (b) {
+    return (window.FISHAO_I18N && window.FISHAO_I18N.getBaitName)
+      ? window.FISHAO_I18N.getBaitName(b)
+      : b;
+  }).join(', ');
+  var baitsHtml = baitsArr.length > 0
+    ? baitsArr.map(function (b) { return renderBaitInline(b); }).join(' ')
     : '-';
+  if (!baitsTitle) {
+    baitsTitle = '-';
+  }
 
   var clickAction = 'event.stopPropagation(); ' + (isModal
     ? 'window.fishaoApp.closePlayerModal(); window.fishaoApp.openFishDetail(' + fid + ');'
@@ -200,7 +205,7 @@ function createRichBackyardFishCard(fObj, extraClass, isModal) {
     '<div class="pbfc-meta">' +
       '<span class="pbfc-time" title="' + escapeHtml(timeInfo.sub || timeDisplay) + '">⏰ ' + escapeHtml(timeDisplay) + '</span>' +
       seasonPill +
-      '<span class="pbfc-baits" title="' + escapeHtml(baitsDisplay) + '">' + escapeHtml(baitsDisplay) + '</span>' +
+      '<span class="pbfc-baits" title="' + escapeHtml(baitsTitle) + '">' + baitsHtml + '</span>' +
     '</div>' +
   '</div>';
 }
@@ -221,6 +226,7 @@ function populatePlayerFishFilterDropdown() {
       htmlBait += '<option value="' + b + '"' + (b === currentBaitVal ? ' selected' : '') + '>' + escapeHtml(bName) + '</option>';
     });
     selectBait.innerHTML = htmlBait;
+    syncBaitSelectIcon('playerBaitFilterSelect', 'playerBaitFilterIcon');
   }
 
   var selectRating = document.getElementById("playerRatingFilterSelect");
@@ -369,6 +375,7 @@ function onPlayerFishFilterChange(val) {
 
 function onPlayerBaitFilterChange(val) {
   filterPlayerBait = val || "";
+  syncBaitSelectIcon('playerBaitFilterSelect', 'playerBaitFilterIcon');
   playerCurrentPage = 1;
   renderPlayersList();
 }
@@ -415,6 +422,7 @@ function resetPlayerFilters() {
 
   var sBait = document.getElementById("playerBaitFilterSelect");
   if (sBait) sBait.value = "";
+  syncBaitSelectIcon('playerBaitFilterSelect', 'playerBaitFilterIcon');
   var sRating = document.getElementById("playerRatingFilterSelect");
   if (sRating) sRating.value = "";
   var sTime = document.getElementById("playerTimeFilterSelect");

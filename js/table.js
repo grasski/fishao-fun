@@ -462,8 +462,7 @@ function renderTableBody(data) {
         '<td>' + renderRatingBadge(f.rating) + '</td>' +
         '<td>' + renderPriceCell(f.id) + '</td>' +
         '<td>' + f.baits.map(function (b) {
-          var bName = window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(b) : b;
-          return '<span class="bait-tag">' + bName + '</span>';
+          return renderBaitTag(b);
         }).join('') + '</td>' +
         '<td><div class="time-cell"><span class="time-badge ' + (f.is_night ? 'time-night' : '') + '">' +
         (f.is_night ? '🌙 ' : '☀️ ') + timeInfo.primary +
@@ -512,8 +511,7 @@ function renderTableBody(data) {
         }).join('') : '<span class="loc-unspecified">' + unspecText + '</span>') +
         '</td>' +
         '<td>' + f.baits.map(function (b) {
-          var bName = window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(b) : b;
-          return '<span class="bait-tag">' + bName + '</span>';
+          return renderBaitTag(b);
         }).join('') + '</td>' +
         '<td><div class="time-cell"><span class="time-badge ' + (f.is_night ? 'time-night' : '') + '">' +
         (f.is_night ? '🌙 ' : '☀️ ') + timeInfo.primary +

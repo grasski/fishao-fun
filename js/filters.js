@@ -58,6 +58,7 @@ function setCollectionFilter(mode, btn) {
 
 function applyFilters() {
   updateClubStats();
+  syncBaitSelectIcon('baitFilter', 'baitFilterIcon');
 
   var searchEl = document.getElementById("search");
   var q = searchEl ? searchEl.value.trim() : "";
@@ -216,8 +217,7 @@ function applyFilters() {
     filterNotes.push(t('filter_note_area', { name: areaName }));
   }
   if (bait) {
-    var baitName = window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(bait) : bait;
-    filterNotes.push(t('filter_note_bait', { name: baitName }));
+    filterNotes.push('__BAIT_INLINE__');
   }
   if (rating) {
     var starStr = rating;
@@ -261,7 +261,15 @@ function applyFilters() {
 
   var activeDescEl = document.getElementById("activeFilterDesc");
   if (activeDescEl) {
-    activeDescEl.innerText = filterNotes.length ? t('filter_active_wrapper', { notes: filterNotes.join(', ') }) : "";
+    if (filterNotes.length) {
+      var baitHtml = bait
+        ? escapeHtml(t('filter_note_bait', { name: '__B__' })).replace('__B__', renderBaitInline(bait))
+        : '';
+      activeDescEl.innerHTML = escapeHtml(t('filter_active_wrapper', { notes: filterNotes.join(', ') }))
+        .replace('__BAIT_INLINE__', baitHtml);
+    } else {
+      activeDescEl.innerHTML = "";
+    }
   }
 
   renderTableBody(filtered);
@@ -272,6 +280,7 @@ function resetFilters() {
   if (searchEl) searchEl.value = "";
   var baitEl = document.getElementById("baitFilter");
   if (baitEl) baitEl.value = "";
+  syncBaitSelectIcon('baitFilter', 'baitFilterIcon');
   var ratingEl = document.getElementById("ratingFilter");
   if (ratingEl) ratingEl.value = "";
   var loc = document.getElementById("locationFilter");
@@ -436,6 +445,7 @@ function initBaitOptions() {
       return '<option value="' + b + '">' + bName + '</option>';
     }).join('');
   select.value = curVal;
+  syncBaitSelectIcon('baitFilter', 'baitFilterIcon');
 }
 
 function updateTimeFilterOptions() {

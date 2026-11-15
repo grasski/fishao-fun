@@ -89,6 +89,118 @@
   padding-left: 36px;
 }
 
+/* Custom bait category dropdown with icons in trigger & option menu */
+.bait-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.bait-native-select-hidden,
+.bait-select-icon {
+  display: none !important;
+}
+
+.bait-custom-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.bait-trigger-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 18px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.bait-trigger-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bait-trigger-arrow {
+  font-size: 9px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.bait-select-wrapper.open .bait-trigger-arrow {
+  transform: rotate(180deg);
+}
+
+.bait-select-wrapper.open .bait-custom-trigger {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+  background: #111a2c;
+}
+
+.bait-custom-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  min-width: 190px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: #0f172a;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 10px;
+  padding: 4px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65);
+  z-index: 200;
+}
+
+.bait-select-wrapper.open .bait-custom-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bait-custom-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.bait-custom-option:hover {
+  background: rgba(56, 189, 248, 0.15);
+  color: #fff;
+}
+
+.bait-custom-option.active {
+  background: rgba(2, 132, 199, 0.28);
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.bait-option-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
+}
+
 .filter-control:focus {
   outline: none;
   border-color: var(--border-focus);

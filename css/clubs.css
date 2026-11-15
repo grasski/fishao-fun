@@ -496,9 +496,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   margin-top: 4px;
   padding-top: 6px;
   border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.milestone-baits-list {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 6px;
+}
+
+.milestone-baits-list .bait-inline + .bait-inline {
+  margin-left: 0;
 }
 
 .btn-caught-milestone {

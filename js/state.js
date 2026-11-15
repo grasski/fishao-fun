@@ -380,3 +380,170 @@ function showAuthNotice(msg) {
   notice.style.zIndex = "9999";
   setTimeout(function () { notice.style.display = "none"; }, 4000);
 }
+
+var BAIT_ICON_IDS = {
+  insects: 10,
+  vegetal: 2,
+  fish: 5,
+  dough: 3,
+  lures: 22,
+  meat: 11,
+  shark: 44,
+  hook: 1,
+  monkfish: 47,
+  monster: 52,
+  pelican: 46,
+  prehistoric: 45,
+  star: 48,
+  tuna: 49,
+  barracuda: 51,
+  marlin: 50
+};
+
+function getBaitIconUrl(baitCode) {
+  if (!baitCode || !BAIT_ICON_IDS[baitCode]) return '';
+  return 'images/bait_' + String(baitCode) + '.png';
+}
+
+function getBaitRemoteIconUrl(baitCode) {
+  var id = BAIT_ICON_IDS[baitCode];
+  if (!id) return '';
+  return 'https://play.fishao.net/data/image/baits/bait_56x56_' + id + '.png';
+}
+
+/**
+ * Build an <img> tag for a bait category icon with automatic remote fallback.
+ */
+function renderBaitIconImg(baitCode, iconClass, isLazy) {
+  var localUrl = getBaitIconUrl(baitCode);
+  if (!localUrl) return '';
+  var remoteUrl = getBaitRemoteIconUrl(baitCode);
+  var fallbackHandler = remoteUrl
+    ? "if(this.dataset.fb){this.style.display='none';}else{this.dataset.fb='1';this.src='" + escapeHtml(remoteUrl) + "';}"
+    : "this.style.display='none'";
+  return '<img src="' + escapeHtml(localUrl) + '" alt="" class="' + iconClass + '"' +
+    (isLazy ? ' loading="lazy"' : '') + ' onerror="' + fallbackHandler + '">';
+}
+
+/**
+ * Render a bait category badge with its category icon and localized label.
+ */
+function renderBaitHtml(baitCode, containerClass, iconClass) {
+  var bName = window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(baitCode) : baitCode;
+  var imgHtml = renderBaitIconImg(baitCode, iconClass, true);
+  return '<span class="' + containerClass + '">' + imgHtml + '<span>' + escapeHtml(bName) + '</span></span>';
+}
+
+function renderBaitTag(baitCode) {
+  return renderBaitHtml(baitCode, 'bait-tag', 'bait-tag-icon');
+}
+
+function renderBaitInline(baitCode) {
+  return renderBaitHtml(baitCode, 'bait-inline', 'bait-inline-icon');
+}
+
+function closeAllBaitDropdowns(exceptWrapper) {
+  document.querySelectorAll('.bait-select-wrapper.open').forEach(function (w) {
+    if (exceptWrapper && w === exceptWrapper) return;
+    w.classList.remove('open');
+    var trig = w.querySelector('.bait-custom-trigger');
+    if (trig) trig.setAttribute('aria-expanded', 'false');
+  });
+}
+
+function bindGlobalBaitDropdownListeners() {
+  if (window._baitDropdownListenersBound || typeof document === 'undefined') return;
+  window._baitDropdownListenersBound = true;
+  document.addEventListener('click', function (e) {
+    var wrapper = e.target && e.target.closest ? e.target.closest('.bait-select-wrapper') : null;
+    if (!wrapper) closeAllBaitDropdowns(null);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeAllBaitDropdowns(null);
+  });
+}
+
+/**
+ * Render and sync an image-enabled custom dropdown inside .bait-select-wrapper.
+ */
+function syncBaitSelectIcon(selectId, iconId) {
+  var selectEl = document.getElementById(selectId);
+  if (!selectEl) return;
+  var wrapper = selectEl.closest('.bait-select-wrapper');
+  if (!wrapper) return;
+
+  bindGlobalBaitDropdownListeners();
+  selectEl.classList.add('bait-native-select-hidden');
+
+  var legacyIcon = iconId ? document.getElementById(iconId) : null;
+  if (legacyIcon) legacyIcon.style.display = 'none';
+
+  var triggerEl = wrapper.querySelector('.bait-custom-trigger');
+  var menuEl = wrapper.querySelector('.bait-custom-menu');
+
+  if (!triggerEl) {
+    triggerEl = document.createElement('button');
+    triggerEl.type = 'button';
+    triggerEl.className = 'filter-control bait-custom-trigger';
+    triggerEl.setAttribute('aria-haspopup', 'listbox');
+    triggerEl.setAttribute('aria-expanded', 'false');
+    triggerEl.onclick = function (e) {
+      e.stopPropagation();
+      var willOpen = !wrapper.classList.contains('open');
+      closeAllBaitDropdowns(willOpen ? wrapper : null);
+      wrapper.classList.toggle('open', willOpen);
+      triggerEl.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    };
+    wrapper.appendChild(triggerEl);
+  }
+
+  if (!menuEl) {
+    menuEl = document.createElement('div');
+    menuEl.className = 'bait-custom-menu';
+    menuEl.setAttribute('role', 'listbox');
+    menuEl.onclick = function (e) {
+      var optBtn = e.target && e.target.closest ? e.target.closest('.bait-custom-option') : null;
+      if (!optBtn) return;
+      e.stopPropagation();
+      var nextVal = optBtn.getAttribute('data-value') || '';
+      selectEl.value = nextVal;
+      closeAllBaitDropdowns(null);
+      selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+      syncBaitSelectIcon(selectId, iconId);
+    };
+    wrapper.appendChild(menuEl);
+  }
+
+  var ariaLabel = selectEl.getAttribute('aria-label');
+  if (ariaLabel) {
+    triggerEl.setAttribute('aria-label', ariaLabel);
+    menuEl.setAttribute('aria-label', ariaLabel);
+  }
+
+  var selectedOpt = selectEl.options[selectEl.selectedIndex] || selectEl.options[0];
+  var curVal = selectEl.value || '';
+  var curLabel = selectedOpt ? selectedOpt.textContent : '';
+  var curImg = renderBaitIconImg(curVal, 'bait-option-icon', false);
+
+  triggerEl.innerHTML =
+    '<span class="bait-trigger-content">' +
+      curImg +
+      '<span class="bait-trigger-label">' + escapeHtml(curLabel) + '</span>' +
+    '</span>' +
+    '<span class="bait-trigger-arrow" aria-hidden="true">▼</span>';
+
+  var optsHtml = '';
+  for (var i = 0; i < selectEl.options.length; i++) {
+    var opt = selectEl.options[i];
+    var optVal = opt.value || '';
+    var isSel = (optVal === curVal);
+    var optImg = renderBaitIconImg(optVal, 'bait-option-icon', false);
+    optsHtml += '<button type="button" role="option" class="bait-custom-option' +
+      (isSel ? ' active' : '') + '" data-value="' + escapeHtml(optVal) + '" aria-selected="' +
+      (isSel ? 'true' : 'false') + '">' +
+      optImg +
+      '<span>' + escapeHtml(opt.textContent) + '</span>' +
+    '</button>';
+  }
+  menuEl.innerHTML = optsHtml;
+}
