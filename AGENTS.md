@@ -4,7 +4,7 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
 
 ## Key Architecture & Data Rules
 1. **Never read raw 400KB data files in full:**
-   * Do NOT read `lang_cz.json`, `lang_en.json`, `data/fishes.js`, or `fish.json` from beginning to end.
+   * Do NOT read `lang_cz.json`, `lang_en.json`, `lang_pl.json`, `data/fishes.js`, or `fish.json` from beginning to end.
    * Full data schemas, object shapes, and Firestore collections are documented in [.agents/skills/fishao/SKILL.md](.agents/skills/fishao/SKILL.md).
 2. **Vanilla JavaScript & GitHub Pages:**
    * This project has no Node.js/npm build step or bundler. Files are loaded natively by the browser.
@@ -20,16 +20,18 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
    * Prices are **variable per player**. One fish may have several distinct prices, including multiple entries on the same date, but a numeric price value is stored **only once per fish across all dates**. New submissions and bulk imports must reject/skip duplicate price values.
    * All price add/delete/bulk/reset writes go through the generic Firestore transaction helpers in `js/firestore-tx.js` (`window.FISHAO_FS_TX`). Do not write the price document with ad-hoc `setDoc` calls from `market.js`.
    * Never present a single "today's price" anywhere. Use `normalizePriceEntries()` from `js/market.js` for every display path (table range, modal min/max, counts). Existing duplicate rows are never merged or rewritten in storage; raw JSON export keeps them visible for manual review.
-5. **Bilingual Localization & Modular i18n (`data/i18n/`):**
-   * Supported languages: Czech (`cs`, default) and English (`en`).
+5. **Multilingual Localization & Modular i18n (`data/i18n/`):**
+   * Supported languages: Czech (`cs`, default), English (`en`), and Polish (`pl`).
+   * Fallback chain is configured per language in `data/i18n.js` (`LANGUAGES` registry): `pl -> en -> cs` and `en -> cs`. Missing Polish fish names or UI strings automatically fall back to English, then Czech.
    * Dictionaries are separated into modular files:
      - `data/i18n/ui_cs.js`: Czech UI strings (`FISHAO_I18N_UI_CS`).
      - `data/i18n/ui_en.js`: English UI strings (`FISHAO_I18N_UI_EN`).
-     - `data/i18n/taxonomies.js`: Baits, waters, and location translations (`FISHAO_I18N_TAXONOMIES`).
-     - `data/i18n/fish_names.js`: 615 fish translations (`FISHAO_I18N_FISH_NAMES`).
-     - `data/i18n.js`: Core engine, methods `t()`, `getFishName()`, `getLocationName()`, `getBaitName()`, `getWaterName()`.
-   * Add all new text keys to `ui_cs.js` and `ui_en.js`.
-   * Use HTML attributes `data-i18n`, `data-i18n-placeholder`, and `data-i18n-title` for static elements.
+     - `data/i18n/ui_pl.js`: Polish UI strings (`FISHAO_I18N_UI_PL`).
+     - `data/i18n/taxonomies.js`: Baits, waters, locations, and timezone city translations (`FISHAO_I18N_TAXONOMIES`).
+     - `data/i18n/fish_names.js`: 615 fish translations (`FISHAO_I18N_FISH_NAMES`), auto-generated from `lang_cz.json`, `lang_en.json`, and `lang_pl.json` by `build_i18n.py`.
+     - `data/i18n.js`: Core engine, `LANGUAGES` registry, `Intl.PluralRules` support, and helpers (`t()`, `getFishName()`, `getAltFishName()`, `getLocationName()`, `getBaitName()`, `getWaterName()`, `getCityName()`, `formatDayMonth()`, `formatDate()`, `norm()`).
+   * Add all new text keys to `ui_cs.js`, `ui_en.js`, and `ui_pl.js`.
+   * Use HTML attributes `data-i18n`, `data-i18n-placeholder`, `data-i18n-title`, and `data-i18n-aria-label` for static elements.
 6. **Modular Stylesheets (`css/`):**
    * Styles are organized into modular files under `css/`:
      - `css/base.css`: Root variables (`:root`), resets, body, typography, layout container.

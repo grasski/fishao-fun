@@ -86,13 +86,13 @@ function getHashOrQueryRoute() {
     // 2. Check for tab route
     var rawTab = tabQuery || hash;
     if (rawTab) {
-      if (rawTab === 'market' || rawTab === 'trh') {
+      if (rawTab === 'market' || rawTab === 'trh' || rawTab === 'targ') {
         tab = 'market';
       } else if (rawTab === 'club' || rawTab === 'klub' || rawTab === 'club_manage' || rawTab === 'club-manage') {
         tab = 'club_manage';
-      } else if (rawTab === 'club-fishes' || rawTab === 'klubove-ryby') {
+      } else if (rawTab === 'club-fishes' || rawTab === 'klubove-ryby' || rawTab === 'ryby-klubowe') {
         tab = 'club';
-      } else if (rawTab === 'players' || rawTab === 'hraci' || rawTab === 'komunita' || rawTab === 'dvorek') {
+      } else if (rawTab === 'players' || rawTab === 'hraci' || rawTab === 'komunita' || rawTab === 'dvorek' || rawTab === 'gracze' || rawTab === 'podworko') {
         tab = 'players';
       } else if (rawTab === 'all' || rawTab === 'encyklopedie' || rawTab === 'ryby') {
         tab = 'all';
@@ -313,17 +313,24 @@ function updateStaticTranslations() {
     if (val && val !== key) el.title = val;
   });
 
+  document.querySelectorAll("[data-i18n-aria-label]").forEach(function (el) {
+    var key = el.getAttribute("data-i18n-aria-label");
+    var val = t(key);
+    if (val && val !== key) el.setAttribute("aria-label", val);
+  });
+
   updateMarketTabStatus();
 }
 
 function setLanguage(lang) {
-  if (lang !== 'cs' && lang !== 'en') lang = 'cs';
-  if (window.FISHAO_I18N) {
-    window.FISHAO_I18N.currentLang = lang;
+  if (window.FISHAO_I18N && typeof window.FISHAO_I18N.setLang === 'function') {
+    lang = window.FISHAO_I18N.setLang(lang);
+  } else {
+    if (!lang) lang = 'cs';
+    try {
+      localStorage.setItem('fishao_lang', lang);
+    } catch (e) { }
   }
-  try {
-    localStorage.setItem('fishao_lang', lang);
-  } catch (e) { }
 
   updateStaticTranslations();
   updateTzButtonsUI();

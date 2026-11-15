@@ -215,15 +215,21 @@ function escapeHtml(str) {
 }
 
 function normStr(s) {
-  return (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+  if (window.FISHAO_I18N && typeof window.FISHAO_I18N.norm === 'function') {
+    return window.FISHAO_I18N.norm(s);
+  }
+  return (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ł/g, "l").replace(/Ł/g, "L").toLowerCase().trim();
 }
 
 function getLang() {
-  return (window.FISHAO_I18N && window.FISHAO_I18N.currentLang === 'en') ? 'en' : 'cs';
+  return (window.FISHAO_I18N && window.FISHAO_I18N.currentLang) || 'cs';
 }
 
 function getLocale() {
-  return getLang() === 'en' ? 'en-US' : 'cs-CZ';
+  if (window.FISHAO_I18N && typeof window.FISHAO_I18N.getLocale === 'function') {
+    return window.FISHAO_I18N.getLocale();
+  }
+  return 'cs-CZ';
 }
 
 function t(key, params, fallback) {
@@ -273,18 +279,10 @@ function updateNavClubBadge() {
 
 function getLocalizedTzCity() {
   if (!detectedCityRaw) return t('tz_local_city_default');
-  if (getLang() === 'en') return detectedCityRaw;
-  var cityDictCs = {
-    "Prague": "Praha",
-    "Vienna": "Vídeň",
-    "Bratislava": "Bratislava",
-    "Warsaw": "Varšava",
-    "Berlin": "Berlín",
-    "London": "Londýn",
-    "Paris": "Paříž",
-    "Rome": "Řím"
-  };
-  return cityDictCs[detectedCityRaw] || detectedCityRaw;
+  if (window.FISHAO_I18N && typeof window.FISHAO_I18N.getCityName === 'function') {
+    return window.FISHAO_I18N.getCityName(detectedCityRaw);
+  }
+  return detectedCityRaw;
 }
 
 // Date utilities for game-consistent (UTC) date inputs

@@ -179,13 +179,10 @@ function updateMarketSundayCountdown() {
 
 function formatPriceDate(isoDate) {
   if (!isoDate) return "";
-  var parts = isoDate.split("-");
-  if (parts.length !== 3) return isoDate;
-  if (getLang() === "cs") {
-    return parseInt(parts[2], 10) + ". " + parseInt(parts[1], 10) + ". " + parts[0];
-  } else {
-    return isoDate;
+  if (window.FISHAO_I18N && typeof window.FISHAO_I18N.formatDate === 'function') {
+    return window.FISHAO_I18N.formatDate(isoDate);
   }
+  return isoDate;
 }
 
 /**
@@ -239,10 +236,8 @@ function openPriceModal(fid, skipSync) {
   if (nameEl) nameEl.innerText = fishName;
   var altNameEl = document.getElementById("modalFishAltName");
   if (altNameEl) {
-    var curLang = (window.FISHAO_I18N && window.FISHAO_I18N.currentLang) || 'cs';
-    var otherLang = curLang === 'cs' ? 'en' : 'cs';
-    var otherName = (window.FISHAO_I18N && typeof window.FISHAO_I18N.getFishName === 'function')
-      ? window.FISHAO_I18N.getFishName(f, otherLang)
+    var otherName = (window.FISHAO_I18N && typeof window.FISHAO_I18N.getAltFishName === 'function')
+      ? window.FISHAO_I18N.getAltFishName(f)
       : '';
     if (otherName && otherName !== fishName) {
       altNameEl.innerText = '(' + otherName + ')';
@@ -766,8 +761,9 @@ function onBulkSearchInput(e) {
       if (!seenNames.has(curName)) {
         seenNames.add(curName);
         var latestPr = getLatestPrice(f.id);
-        var curLang = (window.FISHAO_I18N && window.FISHAO_I18N.currentLang) || 'cs';
-        var alt = curLang === 'cs' ? nameEn : nameCz;
+        var alt = (window.FISHAO_I18N && typeof window.FISHAO_I18N.getAltFishName === 'function')
+          ? window.FISHAO_I18N.getAltFishName(f)
+          : '';
         matches.push({
           id: f.id,
           name: curName,
@@ -956,7 +952,7 @@ async function processBulkImport() {
       var match = parts[1].match(/\d+/);
       if (match) priceNum = parseInt(match[0]);
     } else {
-      var match2 = l.match(/^(.*?)\s+(\d+)\s*(?:fb|fishbuck|fishbucks|fishmena|fishměna|dolar|dolary|\$|minc|coins|kc|b)?$/i);
+      var match2 = l.match(/^(.*?)\s+(\d+)\s*(?:fb|fishbuck|fishbucks|fishmena|fishměna|fiszdolar|fiszdolary|fiszdolarów|fiszdolarow|dolar|dolary|\$|minc|coins|kc|b)?$/i);
       if (match2) {
         fishName = match2[1].trim();
         priceNum = parseInt(match2[2]);

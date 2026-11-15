@@ -65,20 +65,16 @@ function formatCatchDate(rawDates) {
     };
   }
 
-  var isEn = (window.FISHAO_I18N && window.FISHAO_I18N.currentLang === 'en');
-  var enMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
   var formatted = rawDates.map(function (dStr) {
     var clean = dStr.trim();
     if (!clean.includes('-')) return clean;
     var parts = clean.split('-');
     var s = parts[0].split('.').map(Number);
     var e = parts[1].split('.').map(Number);
-    if (isEn) {
-      return (enMonths[s[0] - 1] || s[0]) + " " + s[1] + " – " + (enMonths[e[0] - 1] || e[0]) + " " + e[1];
-    } else {
-      return s[1] + ". " + s[0] + ". – " + e[1] + ". " + e[0] + ".";
+    if (window.FISHAO_I18N && typeof window.FISHAO_I18N.formatDayMonth === 'function') {
+      return window.FISHAO_I18N.formatDayMonth(s[0], s[1]) + " – " + window.FISHAO_I18N.formatDayMonth(e[0], e[1]);
     }
+    return s[1] + ". " + s[0] + ". – " + e[1] + ". " + e[0] + ".";
   });
 
   var inSeason = isFishInSeasonNow(rawDates);

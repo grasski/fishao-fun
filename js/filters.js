@@ -346,13 +346,14 @@ function initLocationOptions() {
   var select = document.getElementById("locationFilter");
   if (!select) return;
   var currentVal = select.value;
+  var curLang = getLang();
   var sortedLocs = Array.from(locSet).map(function (l) {
     return {
       value: l,
       label: window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(l) : l
     };
   }).sort(function (a, b) {
-    return a.label.localeCompare(b.label);
+    return a.label.localeCompare(b.label, curLang);
   });
   select.innerHTML = '<option value="">' + t('opt_loc_all', { count: sortedLocs.length }) + '</option>' +
     sortedLocs.map(function (l) {
@@ -399,13 +400,14 @@ function updateAreaFilterOptions() {
     };
   });
   if (!isClubView) {
+    var areaLang = getLang();
     sortedAreas.sort(function (a, b) {
       // Palm Island zones stay in A..H order even though their labels no longer
       // carry the letter prefix.
       var zoneA = getPalmZoneLetter(a.value);
       var zoneB = getPalmZoneLetter(b.value);
       if (zoneA && zoneB) return zoneA.localeCompare(zoneB);
-      return a.label.localeCompare(b.label);
+      return a.label.localeCompare(b.label, areaLang);
     });
   }
 

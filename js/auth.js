@@ -312,7 +312,10 @@ async function loadUserProfile(user) {
     var hasDefaultNick = userProfile && userProfile.displayName && (
       userProfile.displayName.startsWith(t('user_default_player')) ||
       userProfile.displayName.startsWith("Rybář #") ||
-      userProfile.displayName.startsWith("Angler #")
+      userProfile.displayName.startsWith("Angler #") ||
+      userProfile.displayName.startsWith("Gracz #") ||
+      userProfile.displayName.startsWith("Wędkarz #") ||
+      userProfile.displayName.startsWith("Player #")
     );
     if (isNewUser || (hasDefaultNick && localStorage.getItem(nickStorageKey) !== '1')) {
       localStorage.setItem(nickStorageKey, '1');
