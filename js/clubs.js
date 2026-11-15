@@ -38,7 +38,7 @@ async function bindClubListener(clubId) {
               } catch (e) {}
             }
             unbindClubListener();
-            showToast(t('club_you_were_removed', 'Byl jsi odebrán z klubu.'), "info");
+            showToast(t('club_you_were_removed'), "info");
             return;
           }
         }
@@ -237,7 +237,7 @@ function renderClubMembers(membersMap, creatorId) {
   if (memberKeys.length === 0 && currentUser) {
     var myClubCount = 0;
     clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myClubCount++; });
-    var myName = (userProfile && userProfile.displayName) ? userProfile.displayName : t('user_default_fisher', 'Rybář');
+    var myName = (userProfile && userProfile.displayName) ? userProfile.displayName : t('user_default_fisher');
     var myAv = (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "🎣";
     membersMap = {};
     membersMap[currentUser.uid] = {
@@ -294,7 +294,7 @@ function renderClubMembers(membersMap, creatorId) {
   var html = "";
   memberKeys.forEach(function (uid) {
     var m = membersMap[uid] || {};
-    var dName = m.displayName || t('user_default_fisher', 'Rybář');
+    var dName = m.displayName || t('user_default_fisher');
     var av = m.avatarUrl || "🎣";
     var isCr = !!(m.isCreator || uid === activeCreatorUid);
     var isMe = (currentUser && uid === currentUser.uid);
@@ -302,16 +302,16 @@ function renderClubMembers(membersMap, creatorId) {
     var avatarHtml = '<div class="club-member-avatar">' + renderAvatarHtml(av, "🎣") + '</div>';
 
     var roleBadge = isCr
-      ? '<span class="club-member-creator-badge">👑 ' + t('club_member_creator', 'Zakladatel') + '</span>'
-      : '<span>🎣 ' + t('club_member_role', 'Člen') + '</span>';
+      ? '<span class="club-member-creator-badge">👑 ' + t('club_member_creator') + '</span>'
+      : '<span>🎣 ' + t('club_member_role') + '</span>';
 
     var cCount = isMe ? caughtFishIds.size : (typeof m.caughtCount === 'number' ? m.caughtCount : null);
     var countBadge = '<span id="clubMemberCatchBadge_' + uid + '" style="color: #38bdf8; font-size: 11px; margin-left: 4px; font-weight: 600;">• 🎣 ' + (cCount !== null ? cCount : (typeof m.caughtCount === 'number' ? m.caughtCount : 0)) + '/' + allFishes.length + '</span>';
 
-    html += '<div class="club-member-chip' + (isCr ? ' creator' : '') + '" onclick="window.fishaoApp.openPlayerModal(\'' + uid + '\')" title="' + escapeHtml(t('club_member_view_profile', 'Kliknutím zobrazíš detail hráče')) + '">' +
+    html += '<div class="club-member-chip' + (isCr ? ' creator' : '') + '" onclick="window.fishaoApp.openPlayerModal(\'' + uid + '\')" title="' + escapeHtml(t('club_member_view_profile')) + '">' +
       avatarHtml +
       '<div class="club-member-info">' +
-        '<div class="club-member-name">' + escapeHtml(dName) + (isMe ? ' <span style="font-size:11px;color:#a78bfa;">(' + t('player_card_me_tag', 'Ty') + ')</span>' : '') + '</div>' +
+        '<div class="club-member-name">' + escapeHtml(dName) + (isMe ? ' <span style="font-size:11px;color:#a78bfa;">(' + t('player_card_me_tag') + ')</span>' : '') + '</div>' +
         '<div class="club-member-tag">' +
           roleBadge + countBadge +
         '</div>' +
@@ -449,7 +449,7 @@ async function searchClubs(query) {
     resultsEl.innerHTML = html;
   } catch (err) {
     console.error("Error searching clubs:", err);
-    resultsEl.innerHTML = '<div style="padding: 10px; color: #f87171; font-size: 12px;">' + t('err_generic', 'Chyba: ') + err.message + '</div>';
+    resultsEl.innerHTML = '<div style="padding: 10px; color: #f87171; font-size: 12px;">' + t('err_generic') + err.message + '</div>';
   }
 }
 
@@ -465,7 +465,7 @@ async function createClub(name) {
     return;
   }
   if (clubName.length > 40) {
-    showToast(t('club_name_too_long', 'Název klubu může mít maximálně 40 znaků.'), "error");
+    showToast(t('club_name_too_long'), "error");
     return;
   }
 
@@ -519,7 +519,7 @@ async function createClub(name) {
     bindClubListener(newDocRef.id);
   } catch (err) {
     console.error("Failed to create club:", err);
-    showToast(t('club_err_create', 'Chyba při vytváření klubu: ') + err.message, "error");
+    showToast(t('club_err_create') + err.message, "error");
   }
 }
 
@@ -529,7 +529,7 @@ async function joinClub(clubId, clubName) {
     return;
   }
   if (currentClubId === clubId) {
-    showToast(t('club_already_member', 'V tomto klubu již jsi!'), "purple");
+    showToast(t('club_already_member'), "purple");
     return;
   }
 
@@ -537,10 +537,10 @@ async function joinClub(clubId, clubName) {
     var fsModule = await getFirestoreModule();
 
     if (currentClubId) {
-      var targetClubName = clubName || "Klub";
+      var targetClubName = clubName || "—";
       var ok = await showConfirmModal(
         t('club_btn_join'),
-        t('club_change_confirm', { current: currentClubName || 'Klub', target: targetClubName }),
+        t('club_change_confirm', { current: currentClubName || '—', target: targetClubName }),
         t('club_btn_join'),
         false
       );
@@ -588,7 +588,7 @@ async function joinClub(clubId, clubName) {
     bindClubListener(clubId);
   } catch (err) {
     console.error("Failed to join club:", err);
-    showToast(t('club_err_join', 'Chyba při připojování ke klubu: ') + err.message, "error");
+    showToast(t('club_err_join') + err.message, "error");
   }
 }
 
@@ -651,7 +651,7 @@ async function leaveClub() {
     searchClubs("");
   } catch (err) {
     console.error("Failed to leave club:", err);
-    showToast(t('club_err_leave', 'Chyba při opouštění klubu: ') + err.message, "error");
+    showToast(t('club_err_leave') + err.message, "error");
   }
 }
 
@@ -660,9 +660,9 @@ async function kickMemberFromClub(targetUid) {
   var targetMem = (currentClubMembersMap && currentClubMembersMap[targetUid]) || {};
   var targetName = targetMem.displayName || t('user_default_player');
   var ok = await showConfirmModal(
-    t('club_btn_kick', 'Odebrat z klubu'),
-    t('club_kick_confirm', { name: targetName }, 'Opravdu chceš odebrat hráče ' + targetName + ' z klubu?'),
-    t('club_btn_kick', 'Odebrat'),
+    t('club_btn_kick'),
+    t('club_kick_confirm', { name: targetName }),
+    t('club_btn_kick'),
     true
   );
   if (!ok) return;
@@ -700,10 +700,10 @@ async function kickMemberFromClub(targetUid) {
     }
 
     closePlayerModal();
-    showToast(t('club_member_kicked', 'Hráč byl odebrán z klubu.'), "info");
+    showToast(t('club_member_kicked'), "info");
   } catch (err) {
     console.error("Failed to kick member:", err);
-    showToast(t('club_err_kick', 'Chyba při odebírání člena: ') + err.message, "error");
+    showToast(t('club_err_kick') + err.message, "error");
   }
 }
 
@@ -713,7 +713,7 @@ async function setClubPoints(val) {
     return;
   }
   if (!currentClubId) {
-    showToast(t('club_err_points_member', 'Pro nastavení bodů musíš být členem klubu!'), "error");
+    showToast(t('club_err_points_member'), "error");
     return;
   }
   var num = Math.max(0, parseInt(val) || 0);
@@ -740,7 +740,7 @@ async function toggleClubSpecialFish(fishId) {
     return;
   }
   if (!currentClubId) {
-    showToast(t('club_err_special_member', 'Pro odemykání speciálních ryb musíš být členem klubu!'), "error");
+    showToast(t('club_err_special_member'), "error");
     return;
   }
 
@@ -782,7 +782,7 @@ async function toggleClubSpecialFish(fishId) {
     }
   } catch (err) {
     console.error("Failed to toggle special fish:", err);
-    showToast(t('err_save', 'Chyba při ukládání: ') + err.message, "error");
+    showToast(t('err_save') + err.message, "error");
   }
 }
 
@@ -947,7 +947,9 @@ function renderClubMilestones() {
       var targetPct = span > 0 ? Math.min(100, (currentSpan / span * 100)) : 0;
       var nextFishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(nextFish) : nextFish.name;
       var nextWaterType = getFishWater(nextFish);
-      var nextWater = t(nextWaterType === 'Slaná' ? 'water_salt_short' : 'water_fresh_short');
+      var nextWater = (window.FISHAO_I18N && window.FISHAO_I18N.getWaterName)
+        ? window.FISHAO_I18N.getWaterName(nextWaterType || 'fresh')
+        : t(nextWaterType === 'salt' ? 'water_salt_short' : 'water_fresh_short');
       var nextBaits = nextFish.baits ? nextFish.baits.map(function (b) { return window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(b) : b; }).join(', ') : '';
 
       nextCard.innerHTML =
@@ -1027,7 +1029,9 @@ function renderClubMilestones() {
     var isCaught = caughtFishIds.has(f.id);
     var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
     var waterType = getFishWater(f);
-    var waterLabel = t(waterType === 'Slaná' ? 'water_salt_short' : 'water_fresh_short');
+    var waterLabel = (window.FISHAO_I18N && window.FISHAO_I18N.getWaterName)
+      ? window.FISHAO_I18N.getWaterName(waterType || 'fresh')
+      : t(waterType === 'salt' ? 'water_salt_short' : 'water_fresh_short');
     var baitsLabel = f.baits ? f.baits.map(function (b) { return window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(b) : b; }).join(', ') : '';
 
     return '<div class="milestone-card ' + (isUnlocked ? 'unlocked' : 'locked') + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" style="cursor: pointer;">' +

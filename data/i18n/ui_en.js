@@ -310,6 +310,8 @@
       "club_not_found": "Club not found.",
       "club_no_search_results": "No club matched your search. You can create a new one!",
       "club_active_members": "{count} members",
+      "club_active_members_one": "{count} member",
+      "club_active_members_other": "{count} members",
       "unlock_club_fc_unlocked": "✓ Club Unlocked (FC)",
       "unlock_club_monster_unlocked": "✓ Club Fed (Monster)",
       "club_create_info": "Creating a club gives you your own community. All joined members will see shared points and unlocked fishes in real time.",
@@ -330,6 +332,8 @@
       "players_filter_backyard_only": "Only with backyard fish",
       "players_filter_friends_only": "Only friends",
       "players_count_stat": "{count} players",
+      "players_count_stat_one": "{count} player",
+      "players_count_stat_other": "{count} players",
       "players_manage_my_backyard": "My Backyard Fish",
       "players_empty_search": "No players found matching your filters.",
       "player_card_view_profile": "View profile &amp; backyard →",
@@ -449,9 +453,9 @@
       "market_opens_utc": "Opens: Monday 00:00 UTC",
       "market_opens_local": "Opens: {day} {time} ({city}, {tz})",
       "market_utc_warning_text": "You have game server UTC time active. In your local time ({city}), the market opens: {day} {time}.",
-      "member_count_1": "1 member",
-      "member_count_2_4": "{count} members",
-      "member_count_5": "{count} members"
+      "member_count": "{count} members",
+      "member_count_one": "{count} member",
+      "member_count_other": "{count} members"
   };
 
   if (typeof window !== 'undefined') {

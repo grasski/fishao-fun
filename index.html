@@ -372,14 +372,14 @@
           <select id="playerBaitFilterSelect" class="filter-control"
             onchange="window.fishaoApp.onPlayerBaitFilterChange(this.value)">
             <option value="" data-i18n="opt_bait_all">Všechny návnady</option>
-            <option value="Hmyz">Hmyz</option>
-            <option value="Rostlinné">Rostlinné</option>
-            <option value="Ryby">Ryby</option>
-            <option value="Těsta">Těsta</option>
-            <option value="Nástrahy">Nástrahy</option>
-            <option value="Maso">Maso</option>
-            <option value="Žraločí">Žraločí</option>
-            <option value="Háčky">Háčky</option>
+            <option value="insects">Hmyz</option>
+            <option value="vegetal">Rostlinné</option>
+            <option value="fish">Ryby</option>
+            <option value="dough">Těsta</option>
+            <option value="lures">Nástrahy</option>
+            <option value="meat">Maso</option>
+            <option value="shark">Žraločí</option>
+            <option value="hook">Háčky</option>
           </select>
         </div>
 
@@ -746,14 +746,14 @@
           <div class="filter-group">
             <label class="filter-label" for="baitFilter" data-i18n="filter_bait_label">Návnada</label>
             <select id="baitFilter" class="filter-control" onchange="window.fishaoApp.applyFilters()">
-              <option value="">Všechny návnady</option>
-              <option value="Hmyz">Hmyz</option>
-              <option value="Rostlinné">Rostlinné</option>
-              <option value="Ryby">Ryby</option>
-              <option value="Těsta">Těsta</option>
-              <option value="Nástrahy">Nástrahy</option>
-              <option value="Maso">Maso</option>
-              <option value="Žraločí">Žraločí</option>
+              <option value="" data-i18n="opt_bait_all">Všechny návnady</option>
+              <option value="insects">Hmyz</option>
+              <option value="vegetal">Rostlinné</option>
+              <option value="fish">Ryby</option>
+              <option value="dough">Těsta</option>
+              <option value="lures">Nástrahy</option>
+              <option value="meat">Maso</option>
+              <option value="shark">Žraločí</option>
             </select>
           </div>
 
@@ -1455,24 +1455,24 @@
   <div id="appToast" class="app-toast" style="display: none;"></div>
 
   <!-- Data scripts and localization -->
-  <script src="data/i18n/ui_cs.js?v=3.7"></script>
-  <script src="data/i18n/ui_en.js?v=3.7"></script>
-  <script src="data/i18n/ui_pl.js?v=3.7"></script>
-  <script src="data/i18n/taxonomies.js?v=3.3"></script>
+  <script src="data/i18n/ui_cs.js?v=3.8"></script>
+  <script src="data/i18n/ui_en.js?v=3.8"></script>
+  <script src="data/i18n/ui_pl.js?v=3.8"></script>
+  <script src="data/i18n/taxonomies.js?v=3.4"></script>
   <script src="data/i18n/fish_names.js?v=3.3"></script>
   <script src="data/i18n.js?v=3.2"></script>
-  <script src="data/fishes.js?v=3.1"></script>
+  <script src="data/fishes.js?v=3.2"></script>
   <script src="data/prices.js?v=3.4"></script>
   <script src="firebase-config.js?v=3.1"></script>
   <!-- Modular FISHAO Application Logic -->
-  <script src="js/state.js?v=3.8"></script>
+  <script src="js/state.js?v=3.9"></script>
   <script src="js/firestore-tx.js?v=3.2"></script>
-  <script src="js/table.js?v=3.5"></script>
-  <script src="js/clubs.js?v=3.6"></script>
-  <script src="js/market.js?v=3.9"></script>
-  <script src="js/filters.js?v=3.8"></script>
-  <script src="js/auth.js?v=3.8"></script>
-  <script src="js/players.js?v=3.7"></script>
+  <script src="js/table.js?v=3.6"></script>
+  <script src="js/clubs.js?v=3.7"></script>
+  <script src="js/market.js?v=4.0"></script>
+  <script src="js/filters.js?v=3.9"></script>
+  <script src="js/auth.js?v=3.9"></script>
+  <script src="js/players.js?v=3.8"></script>
   <script src="js/main.js?v=3.7"></script>
 
 </body>

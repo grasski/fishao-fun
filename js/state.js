@@ -29,8 +29,8 @@ function getFishById(fid) {
 function getFishWater(fish) {
   if (!fish) return '';
   var places = fish.places || [];
-  if (places.indexOf('EFPT_CLUB_AREA_SALT') !== -1) return 'Slaná';
-  if (places.indexOf('EFPT_CLUB_AREA_FRESH') !== -1) return 'Sladká';
+  if (places.indexOf('EFPT_CLUB_AREA_SALT') !== -1) return 'salt';
+  if (places.indexOf('EFPT_CLUB_AREA_FRESH') !== -1) return 'fresh';
   return '';
 }
 
@@ -39,8 +39,8 @@ function getFishWater(fish) {
 var clubFishes = allFishes.filter(function (f) {
   return f.is_club;
 }).sort(function (a, b) {
-  var aw = getFishWater(a) === 'Slaná' ? 0 : 1;
-  var bw = getFishWater(b) === 'Slaná' ? 0 : 1;
+  var aw = getFishWater(a) === 'salt' ? 0 : 1;
+  var bw = getFishWater(b) === 'salt' ? 0 : 1;
   return (aw - bw) || ((a.order || 0) - (b.order || 0));
 });
 var initialPrices = window.FISHAO_DEFAULT_PRICES || {};
@@ -242,9 +242,7 @@ function t(key, params, fallback) {
 
 function formatClubMemberCount(count) {
   var num = Math.max(0, parseInt(count) || 0);
-  if (num === 1) return t('member_count_1');
-  if (num >= 2 && num <= 4) return t('member_count_2_4', { count: num });
-  return t('member_count_5', { count: num });
+  return t('member_count', { count: num });
 }
 
 function getFirestoreModule() {
@@ -351,7 +349,7 @@ function showConfirmModal(title, message, confirmText, isDanger) {
     var btnEl = document.getElementById("confirmModalBtnConfirm");
     var overlay = document.getElementById("confirmModalOverlay");
 
-    if (titleEl) titleEl.innerText = title || t('confirm_btn', 'Potvrzení');
+    if (titleEl) titleEl.innerText = title || t('confirm_btn');
     if (msgEl) msgEl.innerText = message || "";
     if (btnEl) {
       btnEl.innerText = confirmText || t('confirm_btn');

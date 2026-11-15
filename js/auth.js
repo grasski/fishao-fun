@@ -160,7 +160,7 @@ function acceptCookieConsent(fromPrivacyModal) {
   }
   updatePrivacyConsentStatusUI();
   if (typeof showToast === "function") {
-    showToast(t("cookies_accepted_toast") || "Analytické cookies byly povoleny. Děkujeme!", "success");
+    showToast(t("cookies_accepted_toast"), "success");
   }
 }
 
@@ -173,7 +173,7 @@ function declineCookieConsent(fromPrivacyModal) {
   clearAnalyticsCookies();
   updatePrivacyConsentStatusUI();
   if (typeof showToast === "function") {
-    showToast(t("cookies_declined_toast") || "Analytické cookies byly odmítnuty.", "info");
+    showToast(t("cookies_declined_toast"), "info");
   }
 }
 
@@ -202,21 +202,21 @@ function updatePrivacyConsentStatusUI() {
 
   var consent = localStorage.getItem("fishao_cookie_consent");
   if (consent === "granted") {
-    badge.textContent = t("cookie_status_granted") || "Povoleno (aktivní)";
+    badge.textContent = t("cookie_status_granted");
     badge.style.background = "rgba(16, 185, 129, 0.2)";
     badge.style.color = "#34d399";
     badge.style.border = "1px solid rgba(16, 185, 129, 0.4)";
     if (btnAccept) btnAccept.style.display = "none";
     if (btnDecline) btnDecline.style.display = "inline-flex";
   } else if (consent === "denied") {
-    badge.textContent = t("cookie_status_denied") || "Odmítnuto (vypnuto)";
+    badge.textContent = t("cookie_status_denied");
     badge.style.background = "rgba(239, 68, 68, 0.15)";
     badge.style.color = "#f87171";
     badge.style.border = "1px solid rgba(239, 68, 68, 0.3)";
     if (btnAccept) btnAccept.style.display = "inline-flex";
     if (btnDecline) btnDecline.style.display = "none";
   } else {
-    badge.textContent = t("cookie_status_undecided") || "Zatím nenastaveno (vypnuto)";
+    badge.textContent = t("cookie_status_undecided");
     badge.style.background = "rgba(148, 163, 184, 0.15)";
     badge.style.color = "#94a3b8";
     badge.style.border = "1px solid rgba(148, 163, 184, 0.3)";
@@ -326,7 +326,7 @@ async function loadUserProfile(user) {
           nickInput.focus();
           nickInput.select();
         }
-        showToast(t('auth_welcome_new_user', 'Vítej ve FISHAO! Nastav si prosím svou herní přezdívku a avatar.'), 'info');
+        showToast(t('auth_welcome_new_user'), 'info');
       }, 450);
     }
 
@@ -602,7 +602,7 @@ async function saveProfile() {
     return;
   }
   if (newNick.length > 40) {
-    showToast(t('nick_too_long', 'Přezdívka může mít maximálně 40 znaků.'), "error");
+    showToast(t('nick_too_long'), "error");
     return;
   }
 
@@ -610,7 +610,7 @@ async function saveProfile() {
   var finalAvatar = "";
   if (avatarUrlVal.startsWith("http://") || avatarUrlVal.startsWith("https://")) {
     if (avatarUrlVal.length > 500) {
-      showToast(t('avatar_url_too_long', 'URL adresa je příliš dlouhá (max 500 znaků).'), "error");
+      showToast(t('avatar_url_too_long'), "error");
       return;
     }
     finalAvatar = avatarUrlVal;
@@ -649,10 +649,10 @@ async function saveProfile() {
 
     closeProfileModal();
     updateAuthUI();
-    showToast(t('profile_saved_success', 'Profil byl úspěšně uložen!'), "success");
+    showToast(t('profile_saved_success'), "success");
   } catch (err) {
     console.error("Failed to save profile:", err);
-    showToast(t('err_save', 'Chyba při ukládání: ') + err.message, "error");
+    showToast(t('err_save') + err.message, "error");
   }
 }
 
@@ -660,9 +660,9 @@ async function deleteAccount() {
   if (!currentUser || !db) return;
 
   var ok = await showConfirmModal(
-    t('profile_delete_title', 'Trvalé smazání účtu'),
-    t('profile_delete_confirm', 'Opravdu chceš trvale smazat svůj účet a veškerá herní data? Tato akce je nevratná: smaže tvůj herní profil, úlovky, ryby za domem, odebere tě z klubu a odhlásí tě.'),
-    t('profile_delete_btn', 'Smazat vše'),
+    t('profile_delete_title'),
+    t('profile_delete_confirm'),
+    t('profile_delete_btn'),
     true
   );
   if (!ok) return;
@@ -738,10 +738,10 @@ async function deleteAccount() {
     updateAuthUI();
     updateCaughtStats();
     applyFilters();
-    showToast(t('profile_deleted_success', 'Tvůj účet a veškerá herní data byla úspěšně smazána.'), "info");
+    showToast(t('profile_deleted_success'), "info");
   } catch (err) {
     console.error("Failed to delete account:", err);
-    showToast(t('err_delete_account', 'Chyba při mazání účtu: ') + err.message, "error");
+    showToast(t('err_delete_account') + err.message, "error");
   }
 }
 
@@ -759,7 +759,7 @@ async function exportFirestoreBackup() {
   var oldHtml = btn ? btn.innerHTML : '';
   if (btn) {
     btn.disabled = true;
-    btn.innerHTML = '⏳ ' + t('admin_backup_progress', 'Zálohuji data...');
+    btn.innerHTML = '⏳ ' + t('admin_backup_progress');
   }
 
   try {

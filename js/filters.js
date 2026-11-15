@@ -45,7 +45,7 @@ function toggleNowActive() {
 
 function setCollectionFilter(mode, btn) {
   if (mode !== 'all' && !currentUser) {
-    showAuthNotice(t('coll_gate_title', 'Sbírka úlovků vyžaduje přihlášení.'));
+    showAuthNotice(t('coll_gate_title'));
     return;
   }
   collectionFilterMode = mode;
@@ -426,9 +426,9 @@ function initBaitOptions() {
   if (!select) return;
   var curVal = select.value;
   var allBaits = [
-    'Hmyz', 'Rostlinné', 'Ryby', 'Těsta', 'Nástrahy', 'Maso', 'Žraločí',
-    'Háčky', 'Ďasí', 'Monstrum', 'Šírotlamčí', 'Prehistorické', 'Svítivčí',
-    'Tuňáčí', 'Soltýní', 'Marlíní'
+    'insects', 'vegetal', 'fish', 'dough', 'lures', 'meat', 'shark',
+    'hook', 'monkfish', 'monster', 'pelican', 'prehistoric', 'star',
+    'tuna', 'barracuda', 'marlin'
   ];
   select.innerHTML = '<option value="">' + t('opt_bait_all') + '</option>' +
     allBaits.map(function (b) {

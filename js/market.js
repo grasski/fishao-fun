@@ -248,7 +248,7 @@ function openPriceModal(fid, skipSync) {
     }
   }
   try {
-    document.title = fishName + t('seo_fish_title_suffix', ' – FISHAO Wiki & Ryby');
+    document.title = fishName + t('seo_fish_title_suffix');
   } catch (e) { }
 
   if (!skipSync && window.fishaoApp && typeof window.fishaoApp.syncUrlRoute === "function") {
@@ -302,7 +302,7 @@ function openPriceModal(fid, skipSync) {
         return '<span class="loc-tag">' + escapeHtml(locName) + '</span>';
       }).join(' ');
     } else if (f.is_club) {
-      var clubLoc = window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName('Klubový revír') : 'Klubový revír';
+      var clubLoc = window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName('location_112') : 'location_112';
       locHtml += '<span class="loc-tag">' + escapeHtml(clubLoc) + '</span>';
     } else {
       locHtml += '<span style="color: var(--text-muted);">' + t('loc_unspecified') + '</span>';
@@ -350,7 +350,7 @@ function openPriceModal(fid, skipSync) {
       seasonEl.innerHTML = '<span class="' + badgeClass + '"><span class="date-icon">📅</span> ' + dateInfo.text + '</span> ' +
         '<span style="font-size: 11px; margin-left: 4px; color: ' + (dateInfo.inSeason ? '#34d399' : '#fb923c') + ';">(' + statusText + ')</span>';
     } else {
-      seasonEl.innerHTML = '<span style="color: var(--text-muted);">' + (t('date_all_year') || 'Celoročně') + '</span>';
+      seasonEl.innerHTML = '<span style="color: var(--text-muted);">' + t('date_all_year') + '</span>';
     }
   }
 
@@ -410,7 +410,7 @@ function closePriceModal(skipSync) {
   document.getElementById("priceModalOverlay").classList.remove("active");
   selectedModalFishId = null;
   try {
-    var defTitle = (window.FISHAO_I18N && window.FISHAO_I18N.t) ? window.FISHAO_I18N.t("seo_page_title") : "FISHAO Wiki & Encyklopedie – Ryby, Fish Market ceník a Kluby";
+    var defTitle = t("seo_page_title");
     if (defTitle && defTitle !== "seo_page_title") {
       document.title = defTitle;
     }
@@ -612,9 +612,9 @@ async function deletePriceEntry(fid, price) {
   var priceNum = Number(price);
   if (!priceHistory[fidStr] || !isFinite(priceNum)) return;
   var ok = await showConfirmModal(
-    t('price_delete_admin_title', 'Smazat záznam ceny'),
+    t('price_delete_admin_title'),
     t('price_delete_confirm'),
-    t('confirm_btn', 'Smazat'),
+    t('confirm_btn'),
     true
   );
   if (!ok) return;
@@ -866,12 +866,12 @@ function addFishToBulkList() {
   var priceVal = (priceInput.value || "").trim();
 
   if (!nameVal) {
-    showToast(t('bulk_err_no_fish', 'Zadej nebo vyber název ryby.'), "error");
+    showToast(t('bulk_err_no_fish'), "error");
     nameInput.focus({ preventScroll: true });
     return;
   }
   if (!priceVal || isNaN(Number(priceVal)) || Number(priceVal) < 0) {
-    showToast(t('bulk_err_no_price', 'Zadej platnou cenu ryby.'), "error");
+    showToast(t('bulk_err_no_price'), "error");
     priceInput.focus({ preventScroll: true });
     return;
   }
@@ -883,7 +883,7 @@ function addFishToBulkList() {
     textArea.value = newLine + "\n";
   }
 
-  showToast(t('bulk_added_line', { line: newLine }, "Přidáno: " + newLine), "success");
+  showToast(t('bulk_added_line', { line: newLine }), "success");
   nameInput.value = "";
   priceInput.value = "";
   var drop = document.getElementById("bulkFishSuggestions");

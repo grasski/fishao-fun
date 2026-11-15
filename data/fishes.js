@@ -10,17 +10,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical",
-      "Marshville"
+      "location_2",
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Rostlinné",
-      "Hmyz"
+      "fish",
+      "meat",
+      "vegetal",
+      "insects"
     ],
-    "time": "14:00-22:00",
     "raw_times": [
       "14:00-22:00"
     ],
@@ -37,15 +36,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical",
-      "Aquayama"
+      "location_2",
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "20:00-11:00",
     "raw_times": [
       "20:00-11:00"
     ],
@@ -64,17 +62,16 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Laketown",
-      "Thombani Town"
+      "location_1",
+      "location_9"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "fish",
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -89,14 +86,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Laketown"
+      "location_1"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -111,16 +107,15 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Laketown",
-      "Cool Mountain"
+      "location_1",
+      "location_4"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -135,18 +130,17 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Laketown",
-      "Thombani Town",
-      "Marshville"
+      "location_1",
+      "location_9",
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Hmyz",
-      "Těsta",
-      "Rostlinné",
-      "Nástrahy"
+      "insects",
+      "dough",
+      "vegetal",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -161,15 +155,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "07.01-09.30"
@@ -186,18 +179,17 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Laketown",
-      "Rio Tropical",
-      "Cool Mountain",
-      "Marshville"
+      "location_1",
+      "location_2",
+      "location_4",
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -212,19 +204,18 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain"
+      "location_4"
     ],
     "places": [
       "EFPT_COOL_MOUNTAIN_RAFT"
     ],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Rostlinné",
-      "Hmyz",
-      "Těsta"
+      "fish",
+      "meat",
+      "vegetal",
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -239,15 +230,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain"
+      "location_4"
     ],
     "places": [
       "EFPT_COOL_MOUNTAIN_RAFT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -262,16 +252,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain"
+      "location_4"
     ],
     "places": [
       "EFPT_COOL_MOUNTAIN_RAFT"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "05:00-11:00, 18:00-00:00",
     "raw_times": [
       "05:00-11:00",
       "18:00-00:00"
@@ -292,14 +281,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "05:00-11:00, 18:00-00:00",
     "raw_times": [
       "05:00-11:00",
       "18:00-00:00"
@@ -317,15 +305,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -340,15 +327,14 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Lake Run"
+      "location_202"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -363,14 +349,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -385,15 +370,14 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Race"
+      "location_203"
     ],
     "places": [],
     "baits": [
-      "Hmyz",
-      "Těsta",
-      "Rostlinné"
+      "insects",
+      "dough",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -408,14 +392,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "05:00-00:00",
     "raw_times": [
       "05:00-00:00"
     ],
@@ -434,16 +417,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Laketown",
-      "Thombani Town"
+      "location_1",
+      "location_9"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Hmyz"
+      "fish",
+      "meat",
+      "insects"
     ],
-    "time": "23:00-04:00",
     "raw_times": [
       "23:00-04:00"
     ],
@@ -460,15 +442,14 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Thombani Town"
+      "location_9"
     ],
     "places": [
       "EFPT_THOMBANI_TOWN_AFRICAN_LAKE"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -483,14 +464,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Race"
+      "location_203"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -505,15 +485,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama",
-      "Marshville"
+      "location_7",
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "12:00-17:00",
     "raw_times": [
       "12:00-17:00"
     ],
@@ -530,15 +509,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Laketown"
+      "location_1"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "22:00-08:00",
     "raw_times": [
       "22:00-08:00"
     ],
@@ -555,17 +533,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Žraločí"
+      "fish",
+      "meat",
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "06.01-09.30"
@@ -582,13 +559,12 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -603,14 +579,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -625,13 +600,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -646,15 +620,14 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Race"
+      "location_203"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -669,14 +642,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -691,14 +663,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -713,14 +684,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -735,14 +705,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Lake Run"
+      "location_202"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -757,16 +726,15 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "07.01-08.31"
@@ -783,17 +751,16 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Pstruží farma",
-      "Cool Mountain"
+      "location_101",
+      "location_4"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Těsta",
-      "Hmyz"
+      "fish",
+      "lures",
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -808,15 +775,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach",
-      "Seagull Harbor"
+      "location_3",
+      "location_8"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -831,14 +797,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -853,14 +818,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -875,14 +839,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Maso",
-      "Žraločí"
+      "meat",
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -897,16 +860,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Laketown",
-      "Marshville"
+      "location_1",
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -921,14 +883,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Laketown"
+      "location_1"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -943,14 +904,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Laketown"
+      "location_1"
     ],
     "places": [],
     "baits": [
-      "Nástrahy",
-      "Hmyz"
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -965,14 +925,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -987,13 +946,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1008,15 +966,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1031,14 +988,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Marshville"
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso"
+      "fish",
+      "meat"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1053,14 +1009,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1075,14 +1030,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1097,14 +1051,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1119,14 +1072,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Hmyz"
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1141,15 +1093,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Těsta",
-      "Hmyz"
+      "fish",
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1164,16 +1115,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft",
-      "Turnaj Boat On Sea"
+      "location_12",
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Soltýní"
+      "fish",
+      "lures",
+      "barracuda"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1188,14 +1138,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1210,16 +1159,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "03.01-08.31"
@@ -1236,13 +1184,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1257,14 +1204,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1279,14 +1225,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1301,14 +1246,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1323,14 +1267,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1345,14 +1288,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1367,14 +1309,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1389,17 +1330,16 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "18:00-04:00",
     "raw_times": [
       "18:00-04:00"
     ],
@@ -1419,14 +1359,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1441,14 +1380,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1463,15 +1401,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Těsta",
-      "Hmyz"
+      "fish",
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1486,15 +1423,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Těsta",
-      "Hmyz"
+      "fish",
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1509,14 +1445,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1531,17 +1466,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Mystic Desert"
+      "location_5"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Rostlinné",
-      "Hmyz",
-      "Těsta"
+      "fish",
+      "meat",
+      "vegetal",
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1556,13 +1490,12 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Mystic Desert"
+      "location_5"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1577,15 +1510,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama",
-      "Marshville"
+      "location_7",
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Hmyz"
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1600,14 +1532,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pyramida"
+      "location_104"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1622,18 +1553,17 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Mystic Desert",
-      "Thombani Town"
+      "location_5",
+      "location_9"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Rostlinné",
-      "Hmyz",
-      "Těsta"
+      "fish",
+      "meat",
+      "vegetal",
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1648,16 +1578,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Mystic Desert",
-      "Thombani Town"
+      "location_5",
+      "location_9"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1672,15 +1601,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Mystic Desert",
-      "Thombani Town"
+      "location_5",
+      "location_9"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1695,14 +1623,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Mystic Desert",
-      "Thombani Town"
+      "location_5",
+      "location_9"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1717,18 +1644,17 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Mystic Desert",
-      "Thombani Town"
+      "location_5",
+      "location_9"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Rostlinné",
-      "Hmyz",
-      "Těsta"
+      "fish",
+      "meat",
+      "vegetal",
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1743,14 +1669,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Těsta"
+      "vegetal",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1765,15 +1690,14 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain"
+      "location_4"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1788,16 +1712,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Mystic Desert",
-      "Thombani Town"
+      "location_5",
+      "location_9"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1812,15 +1735,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain"
+      "location_4"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1835,14 +1757,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Lake Run"
+      "location_202"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1857,17 +1778,16 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Thombani Town"
+      "location_9"
     ],
     "places": [
       "EFPT_THOMBANI_TOWN_AFRICAN_LAKE"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1882,15 +1802,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain"
+      "location_4"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1905,15 +1824,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1928,14 +1846,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1950,14 +1867,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1972,13 +1888,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -1993,15 +1908,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2016,13 +1930,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Marshville"
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2037,14 +1950,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Sibiri City"
+      "location_6"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2059,14 +1971,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Sibiri City"
+      "location_6"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "18:00-04:00",
     "raw_times": [
       "18:00-04:00"
     ],
@@ -2083,15 +1994,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Sibiri City"
+      "location_6"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Rostlinné",
-      "Těsta"
+      "fish",
+      "vegetal",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2106,14 +2016,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Sibiri City"
+      "location_6"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2128,15 +2037,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Sibiri City"
+      "location_6"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Žraločí"
+      "fish",
+      "meat",
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2151,13 +2059,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Sibiri City"
+      "location_6"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2172,14 +2079,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Sibiri City"
+      "location_6"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2194,14 +2100,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Sibiri City"
+      "location_6"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2216,16 +2121,15 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Thombani Town"
+      "location_9"
     ],
     "places": [
       "EFPT_THOMBANI_TOWN_AFRICAN_LAKE"
     ],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2240,19 +2144,18 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Thombani Town"
+      "location_9"
     ],
     "places": [
       "EFPT_THOMBANI_TOWN_AFRICAN_LAKE"
     ],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Rostlinné",
-      "Hmyz",
-      "Těsta"
+      "fish",
+      "meat",
+      "vegetal",
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2267,17 +2170,16 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Pstruží farma",
-      "Marshville"
+      "location_101",
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Těsta",
-      "Hmyz"
+      "fish",
+      "lures",
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2292,15 +2194,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Marshville"
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Maso"
+      "fish",
+      "lures",
+      "meat"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2315,16 +2216,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2339,13 +2239,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Race"
+      "location_203"
     ],
     "places": [],
     "baits": [
-      "Háčky"
+      "hook"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2360,14 +2259,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Race"
+      "location_203"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2382,14 +2280,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné"
+      "dough",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2404,15 +2301,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Marshville"
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2427,14 +2323,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Race"
+      "location_203"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2449,16 +2344,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2473,14 +2367,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Lake Run"
+      "location_202"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2495,15 +2388,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Lake Run"
+      "location_202"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2518,15 +2410,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Marshville"
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2541,15 +2432,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Race"
+      "location_203"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2564,15 +2454,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2587,14 +2476,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Race"
+      "location_203"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2609,15 +2497,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Race"
+      "location_203"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2632,16 +2519,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2656,15 +2542,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Marshville"
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2679,17 +2564,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain"
+      "location_4"
     ],
     "places": [
       "EFPT_COOL_MOUNTAIN_RAFT"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2704,15 +2588,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Marshville"
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2727,14 +2610,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Marshville"
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Hmyz"
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2749,16 +2631,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Rostlinné",
-      "Těsta",
-      "Hmyz"
+      "fish",
+      "vegetal",
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2773,17 +2654,16 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Pstruží farma",
-      "Turnaj Lake Run"
+      "location_101",
+      "location_202"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Těsta",
-      "Hmyz"
+      "fish",
+      "lures",
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2798,17 +2678,16 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Pstruží farma",
-      "Turnaj Lake Run"
+      "location_101",
+      "location_202"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Těsta",
-      "Hmyz"
+      "fish",
+      "lures",
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2823,17 +2702,16 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Pstruží farma",
-      "Turnaj Race"
+      "location_101",
+      "location_203"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Těsta",
-      "Hmyz"
+      "fish",
+      "lures",
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2848,15 +2726,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "09.01-12.31",
@@ -2875,13 +2752,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "21:00-05:00",
     "raw_times": [
       "21:00-05:00"
     ],
@@ -2898,15 +2774,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain"
+      "location_4"
     ],
     "places": [
       "EFPT_COOL_MOUNTAIN_RAFT"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2921,14 +2796,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Hmyz"
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2943,15 +2817,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Mystic Desert",
-      "Aquayama"
+      "location_5",
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2966,14 +2839,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Sibiri City"
+      "location_6"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -2988,14 +2860,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Lake Run"
+      "location_202"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3010,13 +2881,12 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Lake Run"
+      "location_202"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3031,15 +2901,14 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Lake Run"
+      "location_202"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3054,15 +2923,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Lake Run",
-      "Pyramida"
+      "location_202",
+      "location_104"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Hmyz"
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3077,17 +2945,16 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Race"
+      "location_203"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Těsta",
-      "Rostlinné",
-      "Hmyz",
-      "Nástrahy"
+      "fish",
+      "dough",
+      "vegetal",
+      "insects",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3102,15 +2969,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Lake Run"
+      "location_202"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3125,17 +2991,16 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Lake Run"
+      "location_202"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Hmyz",
-      "Rostlinné",
-      "Těsta"
+      "fish",
+      "meat",
+      "insects",
+      "vegetal",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3150,15 +3015,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3173,15 +3037,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3196,15 +3059,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Race"
+      "location_203"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3219,14 +3081,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Lake Run"
+      "location_202"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Těsta"
+      "vegetal",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3241,13 +3102,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Laketown"
+      "location_1"
     ],
     "places": [],
     "baits": [
-      "Háčky"
+      "hook"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3262,14 +3122,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "07:00-11:00",
     "raw_times": [
       "07:00-11:00"
     ],
@@ -3286,14 +3145,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné"
+      "dough",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3308,13 +3166,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3329,14 +3186,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Sibiri City"
+      "location_6"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "20:00-05:00",
     "raw_times": [
       "20:00-05:00"
     ],
@@ -3355,17 +3211,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Lake Run"
+      "location_202"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Rostlinné",
-      "Hmyz",
-      "Těsta"
+      "fish",
+      "meat",
+      "vegetal",
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3380,15 +3235,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Lake Run"
+      "location_202"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3403,14 +3257,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "08:00-17:00",
     "raw_times": [
       "08:00-17:00"
     ],
@@ -3429,15 +3282,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Race"
+      "location_203"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3452,15 +3304,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Race"
+      "location_203"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3475,16 +3326,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3499,14 +3349,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3521,15 +3370,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "23:00-06:00",
     "raw_times": [
       "23:00-06:00"
     ],
@@ -3546,17 +3394,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Rostlinné",
-      "Hmyz",
-      "Těsta"
+      "fish",
+      "meat",
+      "vegetal",
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3571,15 +3418,14 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3594,14 +3440,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "08.01-12.31",
@@ -3619,14 +3464,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3641,14 +3485,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Těsta"
+      "vegetal",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3663,15 +3506,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3686,14 +3528,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 0.2,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné"
+      "dough",
+      "vegetal"
     ],
-    "time": "08:00-22:00",
     "raw_times": [
       "08:00-22:00"
     ],
@@ -3710,17 +3551,16 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Rostlinné",
-      "Hmyz",
-      "Těsta"
+      "fish",
+      "meat",
+      "vegetal",
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3735,15 +3575,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Hmyz",
-      "Těsta"
+      "vegetal",
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3758,16 +3597,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "fish",
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3782,15 +3620,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3805,14 +3642,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "10:00-22:00",
     "raw_times": [
       "10:00-22:00"
     ],
@@ -3831,14 +3667,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "04.01-10.31"
@@ -3855,14 +3690,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3877,14 +3711,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "01:00-05:00",
     "raw_times": [
       "01:00-05:00"
     ],
@@ -3903,17 +3736,16 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Rostlinné",
-      "Hmyz",
-      "Těsta"
+      "fish",
+      "meat",
+      "vegetal",
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3928,14 +3760,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso"
+      "fish",
+      "meat"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -3950,14 +3781,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "08:00-22:00",
     "raw_times": [
       "08:00-22:00"
     ],
@@ -3976,15 +3806,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Žraločí"
+      "fish",
+      "meat",
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "10.01-12.31",
@@ -4002,14 +3831,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "20:00-08:00",
     "raw_times": [
       "20:00-08:00"
     ],
@@ -4026,13 +3854,12 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4047,13 +3874,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "22:00-04:00",
     "raw_times": [
       "22:00-04:00"
     ],
@@ -4072,16 +3898,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Těsta",
-      "Nástrahy"
+      "fish",
+      "insects",
+      "dough",
+      "lures"
     ],
-    "time": "05:00-11:00, 17:00-23:00",
     "raw_times": [
       "05:00-11:00",
       "17:00-23:00"
@@ -4101,15 +3926,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Těsta"
+      "fish",
+      "insects",
+      "dough"
     ],
-    "time": "05:00-09:00, 18:00-22:00",
     "raw_times": [
       "05:00-09:00",
       "18:00-22:00"
@@ -4130,17 +3954,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Rostlinné",
-      "Těsta",
-      "Maso"
+      "fish",
+      "insects",
+      "vegetal",
+      "dough",
+      "meat"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4155,13 +3978,12 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4176,13 +3998,12 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4197,15 +4018,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Nástrahy"
+      "fish",
+      "insects",
+      "lures"
     ],
-    "time": "08:00-18:00",
     "raw_times": [
       "08:00-18:00"
     ],
@@ -4222,13 +4042,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4243,13 +4062,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Těsta"
+      "dough"
     ],
-    "time": "08:00-18:00",
     "raw_times": [
       "08:00-18:00"
     ],
@@ -4266,15 +4084,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz",
-      "Rostlinné"
+      "dough",
+      "insects",
+      "vegetal"
     ],
-    "time": "08:00-18:00",
     "raw_times": [
       "08:00-18:00"
     ],
@@ -4291,14 +4108,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Maso",
-      "Hmyz"
+      "meat",
+      "insects"
     ],
-    "time": "12:00-18:00",
     "raw_times": [
       "12:00-18:00"
     ],
@@ -4315,13 +4131,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "18:00-22:00",
     "raw_times": [
       "18:00-22:00"
     ],
@@ -4338,13 +4153,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "20:00-04:00",
     "raw_times": [
       "20:00-04:00"
     ],
@@ -4361,13 +4175,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "08:00-18:00",
     "raw_times": [
       "08:00-18:00"
     ],
@@ -4384,14 +4197,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "22:00-04:00",
     "raw_times": [
       "22:00-04:00"
     ],
@@ -4408,14 +4220,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "11:00-17:00",
     "raw_times": [
       "11:00-17:00"
     ],
@@ -4432,14 +4243,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "08:00-18:00",
     "raw_times": [
       "08:00-18:00"
     ],
@@ -4458,13 +4268,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "12:00-18:00",
     "raw_times": [
       "12:00-18:00"
     ],
@@ -4481,13 +4290,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "05:00-09:00, 18:00-22:00",
     "raw_times": [
       "05:00-09:00",
       "18:00-22:00"
@@ -4508,16 +4316,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach",
-      "Sibiri City",
-      "Seagull Harbor",
-      "Turnaj Boat On Sea"
+      "location_3",
+      "location_6",
+      "location_8",
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "01.01-06.30"
@@ -4534,14 +4341,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Hmyz"
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4556,14 +4362,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Hmyz"
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4578,18 +4383,17 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Rostlinné",
-      "Hmyz",
-      "Těsta",
-      "Žraločí"
+      "fish",
+      "meat",
+      "vegetal",
+      "insects",
+      "dough",
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "09.01-12.31",
@@ -4607,15 +4411,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Hmyz"
+      "fish",
+      "meat",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "02.16-08.31"
@@ -4632,15 +4435,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Hmyz"
+      "fish",
+      "meat",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4655,13 +4457,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4676,14 +4477,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4698,14 +4498,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4720,15 +4519,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "04:00-05:00",
     "raw_times": [
       "04:00-05:00"
     ],
@@ -4745,15 +4543,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Hmyz"
+      "fish",
+      "meat",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4768,13 +4565,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4789,15 +4585,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "05:30-06:00",
     "raw_times": [
       "05:30-06:00"
     ],
@@ -4814,15 +4609,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4837,15 +4631,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4860,13 +4653,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "21:00-06:00",
     "raw_times": [
       "21:00-06:00"
     ],
@@ -4883,13 +4675,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4904,13 +4695,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "23:00-05:00",
     "raw_times": [
       "23:00-05:00"
     ],
@@ -4929,15 +4719,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -4952,13 +4741,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "00:00-06:00",
     "raw_times": [
       "00:00-06:00"
     ],
@@ -4975,13 +4763,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "22:00-06:00",
     "raw_times": [
       "22:00-06:00"
     ],
@@ -5001,13 +4788,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5022,13 +4808,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5043,15 +4828,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5066,13 +4850,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5087,15 +4870,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5110,15 +4892,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5133,13 +4914,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Sibiri City"
+      "location_6"
     ],
     "places": [],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "09:00-14:00",
     "raw_times": [
       "09:00-14:00"
     ],
@@ -5156,15 +4936,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor",
-      "Turnaj Boat On Sea",
-      "Sibiri City"
+      "location_8",
+      "location_201",
+      "location_6"
     ],
     "places": [],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5179,13 +4958,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Sibiri City"
+      "location_6"
     ],
     "places": [],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5200,13 +4978,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5221,13 +4998,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Sibiri City"
+      "location_6"
     ],
     "places": [],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5242,15 +5018,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5265,16 +5040,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pstruží farma",
-      "Cool Mountain"
+      "location_101",
+      "location_4"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5289,13 +5063,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "14:00-15:00",
     "raw_times": [
       "14:00-15:00"
     ],
@@ -5314,15 +5087,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Thombani Town"
+      "location_9"
     ],
     "places": [
       "EFPT_THOMBANI_TOWN_AFRICAN_LAKE"
     ],
     "baits": [
-      "Maso"
+      "meat"
     ],
-    "time": "22:00-05:00",
     "raw_times": [
       "22:00-05:00"
     ],
@@ -5339,13 +5111,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Háčky"
+      "hook"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "07.01-09.30"
@@ -5362,15 +5133,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Rostlinné",
-      "Hmyz"
+      "fish",
+      "vegetal",
+      "insects"
     ],
-    "time": "01:00-01:30",
     "raw_times": [
       "01:00-01:30"
     ],
@@ -5389,17 +5159,16 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby",
-      "Rostlinné",
-      "Hmyz"
+      "fish",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5414,13 +5183,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5435,16 +5203,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "02.01-11.30"
@@ -5461,15 +5228,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5484,13 +5250,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "07:00-20:00",
     "raw_times": [
       "07:00-20:00"
     ],
@@ -5507,13 +5272,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5528,14 +5292,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Těsta"
+      "vegetal",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5550,15 +5313,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "23:00-06:00",
     "raw_times": [
       "23:00-06:00"
     ],
@@ -5575,17 +5337,16 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain"
+      "location_4"
     ],
     "places": [
       "EFPT_COOL_MOUNTAIN_RAFT"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5600,14 +5361,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5622,14 +5382,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Laketown"
+      "location_1"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "22:00-06:00",
     "raw_times": [
       "22:00-06:00"
     ],
@@ -5646,13 +5405,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5667,14 +5425,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5689,14 +5446,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Pyramida"
+      "location_104"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "10:00-10:15, 13:45-14:00, 03:15-03:30",
     "raw_times": [
       "10:00-10:15",
       "13:45-14:00",
@@ -5715,14 +5471,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5737,14 +5492,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "01:00-06:00",
     "raw_times": [
       "01:00-06:00"
     ],
@@ -5761,14 +5515,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5783,14 +5536,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "12.01-12.31",
@@ -5808,14 +5560,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "20:00-02:00",
     "raw_times": [
       "20:00-02:00"
     ],
@@ -5832,14 +5583,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "10.01-10.31"
@@ -5856,14 +5606,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "05:00-09:00",
     "raw_times": [
       "05:00-09:00"
     ],
@@ -5880,14 +5629,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "23:00-05:00",
     "raw_times": [
       "23:00-05:00"
     ],
@@ -5904,16 +5652,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Rostlinné",
-      "Hmyz"
+      "fish",
+      "meat",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5928,15 +5675,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_1"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5951,17 +5697,16 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_1"
     ],
     "baits": [
-      "Těsta",
-      "Hmyz",
-      "Rostlinné"
+      "dough",
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -5976,16 +5721,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_1"
     ],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6000,16 +5744,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_1"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6024,15 +5767,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_1"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6047,15 +5789,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_1"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6070,15 +5811,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_1"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6093,15 +5833,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_1"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6116,16 +5855,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_1"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6140,15 +5878,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6163,15 +5900,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6186,15 +5922,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6209,15 +5944,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6232,15 +5966,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6255,15 +5988,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6278,15 +6010,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6301,15 +6032,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6324,15 +6054,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6347,15 +6076,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6370,15 +6098,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6393,15 +6120,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6416,15 +6142,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6439,15 +6164,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6462,15 +6186,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6485,15 +6208,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6508,15 +6230,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6531,15 +6252,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6554,15 +6274,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6577,15 +6296,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6600,15 +6318,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6623,15 +6340,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6646,15 +6362,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6669,15 +6384,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6692,15 +6406,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6715,15 +6428,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6738,15 +6450,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6761,15 +6472,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6784,15 +6494,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6807,15 +6516,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6830,15 +6538,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6853,15 +6560,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6876,15 +6582,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6899,15 +6604,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6922,15 +6626,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6945,7 +6648,7 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -6955,9 +6658,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -6972,13 +6674,12 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "07:00-20:00",
     "raw_times": [
       "07:00-20:00"
     ],
@@ -6995,16 +6696,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_C",
       "EFPT_PALM_ISLAND_ZONE_D"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7019,7 +6719,7 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -7028,11 +6728,10 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_F"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Rostlinné"
+      "fish",
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7047,7 +6746,7 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -7056,10 +6755,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_F"
     ],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7074,13 +6772,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "07:00-18:00",
     "raw_times": [
       "07:00-18:00"
     ],
@@ -7097,15 +6794,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_D"
     ],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "22:00-04:30",
     "raw_times": [
       "22:00-04:30"
     ],
@@ -7122,7 +6818,7 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_B",
@@ -7130,10 +6826,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7148,16 +6843,15 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_D",
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7172,15 +6866,14 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Nástrahy"
+      "fish",
+      "insects",
+      "lures"
     ],
-    "time": "18:00-08:00",
     "raw_times": [
       "18:00-08:00"
     ],
@@ -7197,7 +6890,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -7207,10 +6900,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Těsta",
-      "Rostlinné"
+      "dough",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7225,16 +6917,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Hmyz",
-      "Rostlinné"
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7249,17 +6940,16 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_F"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Nástrahy"
+      "fish",
+      "insects",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7274,16 +6964,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7298,17 +6987,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A"
     ],
     "baits": [
-      "Těsta",
-      "Hmyz",
-      "Rostlinné"
+      "dough",
+      "insects",
+      "vegetal"
     ],
-    "time": "22:00-05:00",
     "raw_times": [
       "22:00-05:00"
     ],
@@ -7325,13 +7013,12 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7346,17 +7033,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
       "EFPT_PALM_ISLAND_ZONE_D"
     ],
     "baits": [
-      "Hmyz",
-      "Rostlinné"
+      "insects",
+      "vegetal"
     ],
-    "time": "07:00-18:00",
     "raw_times": [
       "07:00-18:00"
     ],
@@ -7373,7 +7059,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -7383,11 +7069,10 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Rostlinné"
+      "fish",
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7402,15 +7087,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7425,17 +7109,16 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_E"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Rostlinné"
+      "fish",
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7450,7 +7133,7 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -7460,10 +7143,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Hmyz",
-      "Rostlinné"
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7478,17 +7160,16 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
       "EFPT_PALM_ISLAND_ZONE_D"
     ],
     "baits": [
-      "Hmyz",
-      "Rostlinné"
+      "insects",
+      "vegetal"
     ],
-    "time": "14:00-19:00",
     "raw_times": [
       "14:00-19:00"
     ],
@@ -7505,16 +7186,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_E"
     ],
     "baits": [
-      "Hmyz",
-      "Nástrahy"
+      "insects",
+      "lures"
     ],
-    "time": "00:00-07:00",
     "raw_times": [
       "00:00-07:00"
     ],
@@ -7531,13 +7211,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7552,7 +7231,7 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_B",
@@ -7560,10 +7239,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7578,7 +7256,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -7588,9 +7266,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "23:00-14:00",
     "raw_times": [
       "23:00-14:00"
     ],
@@ -7607,15 +7284,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_E"
     ],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "08:00-17:30",
     "raw_times": [
       "08:00-17:30"
     ],
@@ -7632,17 +7308,16 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_D",
       "EFPT_PALM_ISLAND_ZONE_F"
     ],
     "baits": [
-      "Hmyz",
-      "Nástrahy"
+      "insects",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "02.01-10.30"
@@ -7659,16 +7334,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_E"
     ],
     "baits": [
-      "Hmyz",
-      "Rostlinné"
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7683,7 +7357,7 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -7695,11 +7369,10 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Rostlinné"
+      "fish",
+      "insects",
+      "vegetal"
     ],
-    "time": "23:00-05:00",
     "raw_times": [
       "23:00-05:00"
     ],
@@ -7716,16 +7389,15 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A"
     ],
     "baits": [
-      "Hmyz",
-      "Rostlinné"
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7740,7 +7412,7 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -7752,9 +7424,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7769,7 +7440,7 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_C",
@@ -7777,9 +7448,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_F"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7794,7 +7464,7 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_B",
@@ -7802,9 +7472,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7819,16 +7488,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_E",
       "EFPT_PALM_ISLAND_ZONE_F"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7843,7 +7511,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_B",
@@ -7851,9 +7519,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "23:00-04:00",
     "raw_times": [
       "23:00-04:00"
     ],
@@ -7870,7 +7537,7 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -7882,9 +7549,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7899,16 +7565,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_C"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7923,7 +7588,7 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_C",
@@ -7931,9 +7596,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_F"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -7948,13 +7612,12 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "10:00-17:00",
     "raw_times": [
       "10:00-17:00"
     ],
@@ -7971,7 +7634,7 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_B",
@@ -7979,9 +7642,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "02:00-02:30, 04:00-04:30, 06:00-06:15",
     "raw_times": [
       "02:00-02:30",
       "04:00-04:30",
@@ -8000,13 +7662,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8021,7 +7682,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_B",
@@ -8029,11 +7690,10 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Hmyz",
-      "Ryby",
-      "Nástrahy"
+      "insects",
+      "fish",
+      "lures"
     ],
-    "time": "05:00-12:00",
     "raw_times": [
       "05:00-12:00"
     ],
@@ -8050,7 +7710,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_D",
@@ -8058,10 +7718,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Těsta",
-      "Rostlinné"
+      "dough",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8076,7 +7735,7 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -8088,10 +7747,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Hmyz",
-      "Ryby"
+      "insects",
+      "fish"
     ],
-    "time": "23:00-06:00",
     "raw_times": [
       "23:00-06:00"
     ],
@@ -8108,7 +7766,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -8121,10 +7779,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Hmyz",
-      "Rostlinné"
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8139,16 +7796,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_E"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8163,15 +7819,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_E"
     ],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8186,16 +7841,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_F"
     ],
     "baits": [
-      "Hmyz",
-      "Nástrahy"
+      "insects",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8210,7 +7864,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -8223,10 +7877,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Těsta",
-      "Rostlinné"
+      "dough",
+      "vegetal"
     ],
-    "time": "22:00-05:00",
     "raw_times": [
       "22:00-05:00"
     ],
@@ -8243,16 +7896,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A"
     ],
     "baits": [
-      "Hmyz",
-      "Nástrahy"
+      "insects",
+      "lures"
     ],
-    "time": "07:00-19:00",
     "raw_times": [
       "07:00-19:00"
     ],
@@ -8269,17 +7921,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_E",
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Hmyz",
-      "Rostlinné"
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8294,18 +7945,17 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_C"
     ],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Ryby",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8320,16 +7970,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8344,13 +7993,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8365,15 +8013,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Maso",
-      "Rostlinné",
-      "Hmyz"
+      "meat",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8388,16 +8035,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8412,15 +8058,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_D"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8435,16 +8080,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Hmyz",
-      "Ryby"
+      "insects",
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8459,7 +8103,7 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -8467,11 +8111,10 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_D"
     ],
     "baits": [
-      "Hmyz",
-      "Ryby",
-      "Nástrahy"
+      "insects",
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8486,17 +8129,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_B",
       "EFPT_PALM_ISLAND_ZONE_C"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8511,15 +8153,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_E"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8534,7 +8175,7 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_B",
@@ -8542,10 +8183,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Hmyz",
-      "Ryby"
+      "insects",
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8560,17 +8200,16 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_E",
       "EFPT_PALM_ISLAND_ZONE_F"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8585,16 +8224,15 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_E",
       "EFPT_PALM_ISLAND_ZONE_F"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8609,16 +8247,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Hmyz",
-      "Maso"
+      "insects",
+      "meat"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8633,7 +8270,7 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -8644,11 +8281,10 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Hmyz",
-      "Ryby",
-      "Maso"
+      "insects",
+      "fish",
+      "meat"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8663,7 +8299,7 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -8674,11 +8310,10 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Hmyz",
-      "Ryby",
-      "Maso"
+      "insects",
+      "fish",
+      "meat"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8693,7 +8328,7 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -8701,9 +8336,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Nástrahy"
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8718,16 +8352,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_E",
       "EFPT_PALM_ISLAND_ZONE_F"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8742,16 +8375,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_E",
       "EFPT_PALM_ISLAND_ZONE_F"
     ],
     "baits": [
-      "Háčky"
+      "hook"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8766,15 +8398,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Maso"
+      "meat"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8789,7 +8420,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -8797,10 +8428,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_F"
     ],
     "baits": [
-      "Hmyz",
-      "Maso"
+      "insects",
+      "meat"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8815,17 +8445,16 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_D",
       "EFPT_PALM_ISLAND_ZONE_C"
     ],
     "baits": [
-      "Hmyz",
-      "Ryby"
+      "insects",
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8840,15 +8469,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.01,
     "locations": [
-      "Turnaj Moray"
+      "location_204"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_E"
     ],
     "baits": [
-      "Háčky"
+      "hook"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8863,16 +8491,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "21:00-06:00",
     "raw_times": [
       "21:00-06:00"
     ],
@@ -8889,16 +8516,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_B"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8913,7 +8539,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -8926,10 +8552,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "17:00-05:00",
     "raw_times": [
       "17:00-05:00"
     ],
@@ -8946,15 +8571,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_C"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -8969,15 +8593,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "23:00-05:30",
     "raw_times": [
       "23:00-05:30"
     ],
@@ -8994,14 +8617,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9016,7 +8638,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -9025,9 +8647,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9042,16 +8663,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 0.2,
     "locations": [
-      "Laketown",
-      "Marshville"
+      "location_1",
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz",
-      "Rostlinné"
+      "dough",
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9066,16 +8686,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain",
-      "Seagull Harbor"
+      "location_4",
+      "location_8"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9090,15 +8709,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 0.2,
     "locations": [
-      "Laketown",
-      "Marshville"
+      "location_1",
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "23:00-04:00",
     "raw_times": [
       "23:00-04:00"
     ],
@@ -9115,14 +8733,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.05,
     "locations": [
-      "Marshville"
+      "location_10"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "22:00-06:00",
     "raw_times": [
       "22:00-06:00"
     ],
@@ -9139,14 +8756,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "23:00-04:00",
     "raw_times": [
       "23:00-04:00"
     ],
@@ -9163,17 +8779,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain"
+      "location_4"
     ],
     "places": [
       "EFPT_COOL_MOUNTAIN_RAFT"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9188,16 +8803,15 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Laketown",
-      "Cool Mountain"
+      "location_1",
+      "location_4"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9212,17 +8826,16 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain"
+      "location_4"
     ],
     "places": [
       "EFPT_COOL_MOUNTAIN_RAFT"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9237,15 +8850,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "locations": [
-      "Seagull Harbor",
-      "Turnaj Boat On Sea"
+      "location_8",
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Maso"
+      "fish",
+      "meat"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9260,14 +8872,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Little Rio"
+      "location_110"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné"
+      "dough",
+      "vegetal"
     ],
-    "time": "17:00-06:00",
     "raw_times": [
       "17:00-06:00"
     ],
@@ -9284,14 +8895,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 0.1,
     "locations": [
-      "Little Rio"
+      "location_110"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné"
+      "dough",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9306,13 +8916,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Little Rio"
+      "location_110"
     ],
     "places": [],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9327,14 +8936,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Little Rio"
+      "location_110"
     ],
     "places": [],
     "baits": [
-      "Hmyz",
-      "Rostlinné"
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9349,14 +8957,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Little Rio"
+      "location_110"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9371,15 +8978,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Little Rio"
+      "location_110"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Těsta"
+      "fish",
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9394,14 +9000,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 0.01,
     "locations": [
-      "Little Rio"
+      "location_110"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "22:00-06:00",
     "raw_times": [
       "22:00-06:00"
     ],
@@ -9418,16 +9023,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Little Rio"
+      "location_110"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Rostlinné",
-      "Těsta"
+      "fish",
+      "insects",
+      "vegetal",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9442,13 +9046,12 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Little Rio"
+      "location_110"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9463,14 +9066,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Little Rio"
+      "location_110"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9485,13 +9087,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9506,15 +9107,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9529,14 +9129,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9551,15 +9150,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 0.1,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9574,14 +9172,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Hmyz"
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9596,14 +9193,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Hmyz"
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9618,13 +9214,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.5,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9639,14 +9234,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Hmyz"
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9661,14 +9255,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9683,13 +9276,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9704,13 +9296,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9725,14 +9316,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "23:00-04:00",
     "raw_times": [
       "23:00-04:00"
     ],
@@ -9749,13 +9339,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.1,
     "locations": [
-      "Pirate Cave"
+      "location_111"
     ],
     "places": [],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9770,13 +9359,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.5,
     "locations": [
-      "Pirate Cave"
+      "location_111"
     ],
     "places": [],
     "baits": [
-      "Šírotlamčí"
+      "pelican"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9791,13 +9379,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "locations": [
-      "Pirate Cave"
+      "location_111"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9812,13 +9399,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.05,
     "locations": [
-      "Pirate Cave"
+      "location_111"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9833,13 +9419,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Pirate Cave"
+      "location_111"
     ],
     "places": [],
     "baits": [
-      "Ďasí"
+      "monkfish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9854,13 +9439,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Pirate Cave"
+      "location_111"
     ],
     "places": [],
     "baits": [
-      "Svítivčí"
+      "star"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9875,13 +9459,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pirate Cave"
+      "location_111"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9896,16 +9479,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9924,15 +9506,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "22:00-05:00",
     "raw_times": [
       "22:00-05:00"
     ],
@@ -9953,17 +9534,16 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Hmyz",
-      "Maso",
-      "Rostlinné"
+      "insects",
+      "meat",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -9982,16 +9562,15 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Rostlinné",
-      "Hmyz"
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10010,15 +9589,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10037,16 +9615,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "21:00-08:00",
     "raw_times": [
       "21:00-08:00"
     ],
@@ -10067,17 +9644,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Rostlinné"
+      "fish",
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10096,16 +9672,15 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10124,15 +9699,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.1,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "00:00-04:00",
     "raw_times": [
       "00:00-04:00"
     ],
@@ -10153,16 +9727,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Hmyz",
-      "Ryby"
+      "insects",
+      "fish"
     ],
-    "time": "22:00-05:00",
     "raw_times": [
       "22:00-05:00"
     ],
@@ -10183,17 +9756,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10212,17 +9784,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Nástrahy"
+      "fish",
+      "insects",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10241,17 +9812,16 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.1,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Nástrahy"
+      "fish",
+      "insects",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10270,17 +9840,16 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Těsta",
-      "Hmyz",
-      "Rostlinné"
+      "dough",
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10299,15 +9868,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10326,16 +9894,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10354,15 +9921,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10381,15 +9947,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10408,16 +9973,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10436,16 +10000,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10464,15 +10027,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10491,15 +10053,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "03.01-09.30"
@@ -10520,18 +10081,17 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz",
-      "Rostlinné",
-      "Těsta"
+      "fish",
+      "insects",
+      "vegetal",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10550,16 +10110,15 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10578,16 +10137,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10606,16 +10164,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.02,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "00:00-05:00",
     "raw_times": [
       "00:00-05:00"
     ],
@@ -10638,16 +10195,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.05,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10666,17 +10222,16 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Těsta",
-      "Hmyz",
-      "Rostlinné"
+      "dough",
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10695,15 +10250,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10722,17 +10276,16 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Těsta",
-      "Hmyz",
-      "Rostlinné"
+      "dough",
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10751,15 +10304,14 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Rostlinné"
+      "vegetal"
     ],
-    "time": "10:00-23:00",
     "raw_times": [
       "10:00-23:00"
     ],
@@ -10780,16 +10332,15 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10808,16 +10359,15 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10836,16 +10386,15 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Rostlinné",
-      "Hmyz"
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10864,16 +10413,15 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10892,17 +10440,16 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Těsta",
-      "Hmyz",
-      "Rostlinné"
+      "dough",
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10921,15 +10468,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10948,15 +10494,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.5,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -10975,15 +10520,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11002,7 +10546,7 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -11012,10 +10556,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Těsta",
-      "Rostlinné"
+      "dough",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11030,7 +10573,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -11040,10 +10583,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Hmyz",
-      "Rostlinné"
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11058,16 +10600,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Hmyz",
-      "Rostlinné"
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11082,7 +10623,7 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_B",
@@ -11091,9 +10632,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "23:00-05:30",
     "raw_times": [
       "23:00-05:30"
     ],
@@ -11110,14 +10650,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11132,15 +10671,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "00:00-05:00",
     "raw_times": [
       "00:00-05:00"
     ],
@@ -11161,16 +10699,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Hmyz",
-      "Ryby"
+      "insects",
+      "fish"
     ],
-    "time": "00:00-05:00",
     "raw_times": [
       "00:00-05:00"
     ],
@@ -11191,17 +10728,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Hmyz",
-      "Těsta",
-      "Rostlinné"
+      "insects",
+      "dough",
+      "vegetal"
     ],
-    "time": "00:00-08:00",
     "raw_times": [
       "00:00-08:00"
     ],
@@ -11222,15 +10758,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11249,16 +10784,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11277,17 +10811,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Těsta",
-      "Hmyz",
-      "Rostlinné"
+      "dough",
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11306,17 +10839,16 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Hmyz",
-      "Těsta",
-      "Rostlinné"
+      "insects",
+      "dough",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11335,15 +10867,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.1,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11362,15 +10893,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11389,16 +10919,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11417,17 +10946,16 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Hmyz",
-      "Těsta",
-      "Rostlinné"
+      "insects",
+      "dough",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11446,16 +10974,15 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Těsta",
-      "Rostlinné"
+      "dough",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11474,15 +11001,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11501,15 +11027,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11528,16 +11053,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "01.01-02.28",
@@ -11559,13 +11083,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Tuňáčí"
+      "tuna"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11580,13 +11103,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 0.2,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Tuňáčí"
+      "tuna"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "03.01-05.31",
@@ -11604,13 +11126,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Tuňáčí"
+      "tuna"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "09.01-12.31",
@@ -11628,13 +11149,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Marlíní"
+      "marlin"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11649,13 +11169,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 0.1,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Marlíní"
+      "marlin"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11670,13 +11189,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Marlíní"
+      "marlin"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11691,13 +11209,12 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Soltýní"
+      "barracuda"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11712,13 +11229,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Soltýní"
+      "barracuda"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11733,13 +11249,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Soltýní"
+      "barracuda"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11754,13 +11269,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Soltýní"
+      "barracuda"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11775,16 +11289,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "01.01-02.28",
@@ -11806,17 +11319,16 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11835,16 +11347,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Těsta",
-      "Rostlinné"
+      "dough",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11863,17 +11374,16 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11892,16 +11402,15 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Těsta",
-      "Rostlinné"
+      "dough",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11920,13 +11429,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Soltýní"
+      "barracuda"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11941,13 +11449,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Soltýní"
+      "barracuda"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -11962,13 +11469,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Soltýní"
+      "barracuda"
     ],
-    "time": "10:00-18:00",
     "raw_times": [
       "10:00-18:00"
     ],
@@ -11985,13 +11491,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 0.5,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Soltýní"
+      "barracuda"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12006,13 +11511,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 0.5,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Soltýní"
+      "barracuda"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12027,15 +11531,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Monstrum"
+      "monster"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12054,15 +11557,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Monstrum"
+      "monster"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12081,15 +11583,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Monstrum"
+      "monster"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12108,15 +11609,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12135,17 +11635,16 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby",
-      "Maso",
-      "Hmyz"
+      "fish",
+      "meat",
+      "insects"
     ],
-    "time": "23:00-05:00",
     "raw_times": [
       "23:00-05:00"
     ],
@@ -12166,17 +11665,16 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy",
-      "Hmyz"
+      "fish",
+      "lures",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12195,15 +11693,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12222,15 +11719,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.5,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "07.01-12.31",
@@ -12252,16 +11748,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Těsta",
-      "Rostlinné"
+      "dough",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12280,16 +11775,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12308,15 +11802,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12335,17 +11828,16 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12364,16 +11856,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12392,18 +11883,17 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 0.1,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Ryby",
-      "Rostlinné",
-      "Maso",
-      "Hmyz"
+      "fish",
+      "vegetal",
+      "meat",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12422,17 +11912,16 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12451,15 +11940,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Továrna na nábytek"
+      "location_113"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz",
-      "Rostlinné"
+      "dough",
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12474,15 +11962,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Továrna na nábytek"
+      "location_113"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz",
-      "Rostlinné"
+      "dough",
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12497,14 +11984,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Továrna na nábytek"
+      "location_113"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12519,14 +12005,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Továrna na nábytek"
+      "location_113"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12541,14 +12026,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Továrna na nábytek"
+      "location_113"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12563,13 +12047,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Tuňáčí"
+      "tuna"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12584,13 +12067,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Tuňáčí"
+      "tuna"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12605,13 +12087,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Tuňáčí"
+      "tuna"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12626,13 +12107,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Tuňáčí"
+      "tuna"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12647,13 +12127,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lucky Raft"
+      "location_12"
     ],
     "places": [],
     "baits": [
-      "Tuňáčí"
+      "tuna"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12668,15 +12147,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "00:00-05:00",
     "raw_times": [
       "00:00-05:00"
     ],
@@ -12699,14 +12177,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "00:00-05:00",
     "raw_times": [
       "00:00-05:00"
     ],
@@ -12723,13 +12200,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Mystic Desert"
+      "location_5"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12744,14 +12220,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12766,13 +12241,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Mystic Desert"
+      "location_5"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "12:00-15:00",
     "raw_times": [
       "12:00-15:00"
     ],
@@ -12789,15 +12263,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "02:00-06:00",
     "raw_times": [
       "02:00-06:00"
     ],
@@ -12814,15 +12287,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Hmyz",
-      "Rostlinné",
-      "Těsta"
+      "insects",
+      "vegetal",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12837,15 +12309,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "00:00-04:00",
     "raw_times": [
       "00:00-04:00"
     ],
@@ -12862,14 +12333,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Hmyz",
-      "Těsta"
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12884,15 +12354,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Hmyz",
-      "Těsta"
+      "vegetal",
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12907,15 +12376,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 0.2,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12930,15 +12398,14 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Laketown"
+      "location_1"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12953,15 +12420,14 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain"
+      "location_4"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12976,15 +12442,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain"
+      "location_4"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -12999,15 +12464,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [
       "02.23-03.23"
@@ -13024,14 +12488,13 @@ window.FISHAO_DATA = {
     "rating": 1,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13046,14 +12509,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13068,13 +12530,12 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13089,15 +12550,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13112,15 +12572,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Rostlinné",
-      "Hmyz"
+      "dough",
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13135,15 +12594,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain"
+      "location_4"
     ],
     "places": [
       "EFPT_COOL_MOUNTAIN_RAFT"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13158,15 +12616,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_F"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "03:00-08:00",
     "raw_times": [
       "03:00-08:00"
     ],
@@ -13185,16 +12642,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13209,16 +12665,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "00:00-05:00",
     "raw_times": [
       "00:00-05:00"
     ],
@@ -13237,7 +12692,7 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -13246,9 +12701,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_F"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13263,7 +12717,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -13273,9 +12727,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "20:00-08:00",
     "raw_times": [
       "20:00-08:00"
     ],
@@ -13292,15 +12745,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_C"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13315,16 +12767,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_D",
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "23:00-05:30",
     "raw_times": [
       "23:00-05:30"
     ],
@@ -13341,15 +12792,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_D"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13364,16 +12814,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13388,7 +12837,7 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_B",
@@ -13396,9 +12845,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13413,7 +12861,7 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_B",
@@ -13421,9 +12869,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Žraločí"
+      "shark"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13438,7 +12885,7 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -13448,10 +12895,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Těsta",
-      "Rostlinné"
+      "dough",
+      "vegetal"
     ],
-    "time": "06:00-19:00",
     "raw_times": [
       "06:00-19:00"
     ],
@@ -13468,7 +12914,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_E",
@@ -13477,10 +12923,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Hmyz",
-      "Rostlinné"
+      "insects",
+      "vegetal"
     ],
-    "time": "06:00-20:00",
     "raw_times": [
       "06:00-20:00"
     ],
@@ -13497,7 +12942,7 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -13507,10 +12952,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Rostlinné",
-      "Hmyz"
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13525,7 +12969,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -13538,10 +12982,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Rostlinné",
-      "Hmyz"
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13556,7 +12999,7 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_B",
@@ -13564,10 +13007,9 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_G"
     ],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13582,7 +13024,7 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -13595,11 +13037,10 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Těsta",
-      "Hmyz",
-      "Rostlinné"
+      "dough",
+      "insects",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13614,7 +13055,7 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_A",
@@ -13627,9 +13068,8 @@ window.FISHAO_DATA = {
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13644,14 +13084,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Hmyz",
-      "Ryby"
+      "insects",
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13666,16 +13105,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Cool Mountain"
+      "location_4"
     ],
     "places": [
       "EFPT_COOL_MOUNTAIN_RAFT"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13690,14 +13128,13 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Hmyz",
-      "Těsta"
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13712,13 +13149,12 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Sibiri City"
+      "location_6"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13733,13 +13169,12 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Laketown"
+      "location_1"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13754,15 +13189,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13777,15 +13211,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13800,15 +13233,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13823,15 +13255,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13846,15 +13277,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13869,15 +13299,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13892,15 +13321,14 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13915,15 +13343,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13938,15 +13365,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13961,15 +13387,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Lost Valley"
+      "location_108"
     ],
     "places": [
       "EFPT_LOST_VALLEY_POND_2"
     ],
     "baits": [
-      "Prehistorické"
+      "prehistoric"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -13984,14 +13409,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14006,14 +13430,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14028,14 +13451,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14050,14 +13472,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Nástrahy"
+      "fish",
+      "lures"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14072,15 +13493,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Hmyz",
-      "Těsta"
+      "vegetal",
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14095,15 +13515,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.1,
     "locations": [
-      "Pyramida"
+      "location_104"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Hmyz",
-      "Těsta"
+      "vegetal",
+      "insects",
+      "dough"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14118,14 +13537,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Rostlinné",
-      "Hmyz"
+      "vegetal",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14140,13 +13558,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14161,13 +13578,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "12:00-13:00",
     "raw_times": [
       "12:00-13:00"
     ],
@@ -14184,15 +13600,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 0.2,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "02:00-05:00",
     "raw_times": [
       "02:00-05:00"
     ],
@@ -14211,13 +13626,12 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14232,15 +13646,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14255,14 +13668,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Rostlinné"
+      "fish",
+      "vegetal"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14277,15 +13689,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14300,15 +13711,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14323,14 +13733,13 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14345,14 +13754,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14367,14 +13775,13 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Rio Tropical"
+      "location_2"
     ],
     "places": [],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14389,15 +13796,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.1,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "00:00-06:00",
     "raw_times": [
       "00:00-06:00"
     ],
@@ -14414,15 +13820,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14437,15 +13842,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "00:00-05:00",
     "raw_times": [
       "00:00-05:00"
     ],
@@ -14462,15 +13866,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 0.1,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "23:00-06:00",
     "raw_times": [
       "23:00-06:00"
     ],
@@ -14487,13 +13890,12 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "locations": [
-      "Turnaj Boat On Sea"
+      "location_201"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14508,16 +13910,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_C"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14532,15 +13933,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.1,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "02:00-03:00",
     "raw_times": [
       "02:00-03:00"
     ],
@@ -14557,13 +13957,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Aquayama"
+      "location_7"
     ],
     "places": [],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "01:00-06:00",
     "raw_times": [
       "01:00-06:00"
     ],
@@ -14580,15 +13979,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "02:00-06:00",
     "raw_times": [
       "02:00-06:00"
     ],
@@ -14607,16 +14005,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Palm Island"
+      "location_11"
     ],
     "places": [
       "EFPT_PALM_ISLAND_ZONE_H"
     ],
     "baits": [
-      "Ryby",
-      "Hmyz"
+      "fish",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14631,14 +14028,13 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Za domem"
+      "location_300"
     ],
     "places": [],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14653,16 +14049,15 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 0.1,
     "locations": [
-      "Seagull Harbor"
+      "location_8"
     ],
     "places": [
       "EFPT_SEAGULL_HARBOR_BOAT"
     ],
     "baits": [
-      "Hmyz",
-      "Ryby"
+      "insects",
+      "fish"
     ],
-    "time": "02:00-02:15",
     "raw_times": [
       "02:00-02:15"
     ],
@@ -14679,15 +14074,14 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "01:00-05:00",
     "raw_times": [
       "01:00-05:00"
     ],
@@ -14708,16 +14102,15 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Těsta",
-      "Hmyz"
+      "dough",
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14736,15 +14129,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14763,16 +14155,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 1.0,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_SALT"
     ],
     "baits": [
-      "Hmyz",
-      "Ryby"
+      "insects",
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14791,16 +14182,15 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "locations": [
-      "Klubový revír"
+      "location_112"
     ],
     "places": [
       "EFPT_CLUB_AREA_FRESH"
     ],
     "baits": [
-      "Nástrahy",
-      "Ryby"
+      "lures",
+      "fish"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14819,15 +14209,14 @@ window.FISHAO_DATA = {
     "rating": 3,
     "rarity_factor": 1.0,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14842,15 +14231,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.2,
     "locations": [
-      "Pinheira Beach"
+      "location_3"
     ],
     "places": [
       "EFPT_PANHEIRA_BEACH_JETTY"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "00:00-05:00",
     "raw_times": [
       "00:00-05:00"
     ],
@@ -14867,15 +14255,14 @@ window.FISHAO_DATA = {
     "rating": 5,
     "rarity_factor": 0.1,
     "locations": [
-      "Thombani Town"
+      "location_9"
     ],
     "places": [
       "EFPT_THOMBANI_TOWN_AFRICAN_LAKE"
     ],
     "baits": [
-      "Ryby"
+      "fish"
     ],
-    "time": "22:00-04:00",
     "raw_times": [
       "22:00-04:00"
     ],
@@ -14892,13 +14279,12 @@ window.FISHAO_DATA = {
     "rating": 2,
     "rarity_factor": 1.0,
     "locations": [
-      "Little Rio"
+      "location_110"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,
@@ -14913,13 +14299,12 @@ window.FISHAO_DATA = {
     "rating": 4,
     "rarity_factor": 1.0,
     "locations": [
-      "Little Rio"
+      "location_110"
     ],
     "places": [],
     "baits": [
-      "Hmyz"
+      "insects"
     ],
-    "time": "Celý den",
     "raw_times": [],
     "raw_dates": [],
     "is_night": false,

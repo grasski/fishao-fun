@@ -24,22 +24,6 @@ fishes = fish_raw.get("data", fish_raw)
 with open(LANG_JSON, "r", encoding="utf-8") as f:
     cz = json.load(f)
 
-# Game location names resolver using official localization (lang_cz.json)
-def get_location_name(lid):
-    loc_key = f"location_{lid}"
-    if loc_key in cz and cz[loc_key]:
-        return cz[loc_key]
-    fallback_map = {
-        1: 'Laketown', 2: 'Rio Tropical', 3: 'Pinheira Beach', 4: 'Cool Mountain',
-        5: 'Mystic Desert', 6: 'Sibiri City', 7: 'Aquayama', 8: 'Seagull Harbor',
-        9: 'Thombani Town', 10: 'Marshville', 11: 'Palm Island', 12: 'Lucky Raft',
-        101: 'Pstruží farma', 104: 'Pyramida', 108: 'Lost Valley', 110: 'Little Rio',
-        111: 'Pirate Cave', 112: 'Klubový revír', 113: 'Továrna na nábytek',
-        201: 'Turnaj Boat On Sea', 202: 'Turnaj Lake Run', 203: 'Turnaj Race',
-        204: 'Turnaj Moray', 300: 'Za domem'
-    }
-    return fallback_map.get(lid, f"Lokace {lid}")
-
 # Supported specific fishing sub-locations (EFPT_* codes from catch_req.fishing_place).
 # These are stored as stable identifiers in data/fishes.js and translated in
 # data/i18n/taxonomies.js, so generated data stays language-neutral.
@@ -60,26 +44,6 @@ SUPPORTED_FISHING_PLACES = {
     'EFPT_PALM_ISLAND_ZONE_F',
     'EFPT_PALM_ISLAND_ZONE_G',
     'EFPT_PALM_ISLAND_ZONE_H',
-}
-
-# Bait category translations
-bait_translations = {
-    'dough': 'Těsta',
-    'fish': 'Ryby',
-    'hook': 'Háčky',
-    'insects': 'Hmyz',
-    'lures': 'Nástrahy',
-    'meat': 'Maso',
-    'shark': 'Žraločí',
-    'vegetal': 'Rostlinné',
-    'monkfish': 'Ďasí',
-    'monster': 'Monstrum',
-    'pelican': 'Šírotlamčí',
-    'prehistoric': 'Prehistorické',
-    'star': 'Svítivčí',
-    'tuna': 'Tuňáčí',
-    'barracuda': 'Soltýní',
-    'marlin': 'Marlíní'
 }
 
 def is_night_time_window(times):
@@ -121,9 +85,7 @@ for f in fishes:
 
         rating_num = int(f.get('rating', 0))
         baits = req.get('bait_category', [])
-        baits_cz = [bait_translations.get(b, b) for b in baits]
         times = req.get('caught_time', [])
-        times_str = ", ".join(times) if times else "Celý den"
         dates = req.get('caught_date', [])
 
         unlock_type = 'points' if pts is not None else ('fc' if fc is not None else 'monster')
@@ -134,8 +96,7 @@ for f in fishes:
             'is_salt': is_salt,
             'rating': rating_num,
             'rarity_factor': float(f.get('rarity_factor', 1)),
-            'baits': baits_cz,
-            'time': times_str,
+            'baits': baits,
             'raw_times': times,
             'raw_dates': dates,
             'is_night': is_night_time_window(times),
@@ -179,12 +140,10 @@ for f in fishes:
     req = json.loads(req_raw) if req_raw else {}
     rating_num = int(f.get('rating', 0))
     loc_ids = req.get('location_ids', [])
-    loc_names = [get_location_name(lid) for lid in loc_ids]
+    loc_names = [f"location_{lid}" for lid in loc_ids]
     place_ids = [pid for pid in req.get('fishing_place', []) if pid in SUPPORTED_FISHING_PLACES]
     baits = req.get('bait_category', [])
-    baits_cz = [bait_translations.get(b, b) for b in baits]
     times = req.get('caught_time', [])
-    times_str = ", ".join(times) if times else "Celý den"
     dates = req.get('caught_date', [])
 
     club_info = club_map.get(fid)
@@ -196,8 +155,7 @@ for f in fishes:
         'rarity_factor': float(f.get('rarity_factor', 1)),
         'locations': loc_names,
         'places': place_ids,
-        'baits': baits_cz,
-        'time': times_str,
+        'baits': baits,
         'raw_times': times,
         'raw_dates': dates,
         'is_night': is_night_time_window(times),

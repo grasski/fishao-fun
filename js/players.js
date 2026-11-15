@@ -15,7 +15,7 @@ function isBackyardBreedable(fish) {
   var fObj = (typeof fish === 'object') ? fish : ((typeof getFishById === 'function') ? getFishById(fish) : allFishes.find(function (x) { return x.id === fish; }));
   if (!fObj || !fObj.locations || !Array.isArray(fObj.locations)) return false;
   return fObj.locations.some(function (l) {
-    return l === 'Za domem' || l === 'Home backyard' || l === 'Domowe podwórko' || l === 'location_300' || (typeof l === 'string' && l.toLowerCase().indexOf('za dom') !== -1);
+    return l === 'location_300';
   });
 }
 
@@ -139,7 +139,7 @@ async function loadAllPlayers(force) {
     populatePlayerFishFilterDropdown();
     renderPlayersList();
     if (force) {
-      showToast(t('players_refresh_success', 'Seznam hráčů byl aktualizován.'), 'info');
+      showToast(t('players_refresh_success'), 'info');
     }
   } catch (err) {
     console.error("Failed to load community players:", err);
@@ -171,7 +171,7 @@ function createRichBackyardFishCard(fObj, extraClass, isModal) {
   var timeInfo = formatCatchTime(fObj.raw_times);
   var timeDisplay = (fObj.raw_times && fObj.raw_times.length > 0)
     ? timeInfo.primary
-    : t('time_all_day', 'Celý den (24h)');
+    : t('time_all_day');
   var dateInfo = formatCatchDate(fObj.raw_dates);
   var seasonPill = dateInfo.isSeasonal
     ? '<span class="' + (dateInfo.inSeason ? 'date-badge in-season' : 'date-badge out-of-season') + '" style="margin-top:0; padding:1px 5px; font-size:10px;">📅 ' + dateInfo.text + '</span>'
@@ -188,14 +188,14 @@ function createRichBackyardFishCard(fObj, extraClass, isModal) {
     ? 'window.fishaoApp.closePlayerModal(); window.fishaoApp.openFishDetail(' + fid + ');'
     : 'window.fishaoApp.openFishDetail(' + fid + ');');
 
-  return '<div class="player-backyard-fish-card ' + (extraClass || '') + '" onclick="' + clickAction + '" title="' + escapeHtml(fName + t('click_for_detail_suffix', ' (klikni pro detail)')) + '">' +
+  return '<div class="player-backyard-fish-card ' + (extraClass || '') + '" onclick="' + clickAction + '" title="' + escapeHtml(fName + t('click_for_detail_suffix')) + '">' +
     '<div class="pbfc-top">' +
       '<img class="pbfc-img" src="images/fish_' + fid + '.png" alt="" onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + fid + '_item.png\'">' +
       '<div class="pbfc-info">' +
         '<span class="pbfc-name">' + escapeHtml(fName) + '</span>' +
         '<span class="pbfc-stars">' + stars + '</span>' +
       '</div>' +
-      (isNow ? '<span class="pbfc-active-pill">⚡ ' + t('time_active_now_short', 'Bere teď') + '</span>' : '') +
+      (isNow ? '<span class="pbfc-active-pill">⚡ ' + t('time_active_now_short') + '</span>' : '') +
     '</div>' +
     '<div class="pbfc-meta">' +
       '<span class="pbfc-time" title="' + escapeHtml(timeInfo.sub || timeDisplay) + '">⏰ ' + escapeHtml(timeDisplay) + '</span>' +
@@ -212,8 +212,8 @@ function populatePlayerFishFilterDropdown() {
   var selectBait = document.getElementById("playerBaitFilterSelect");
   if (selectBait) {
     var currentBaitVal = selectBait.value || filterPlayerBait || "";
-    var backyardBaits = ['Hmyz', 'Rostlinné', 'Ryby', 'Těsta', 'Nástrahy', 'Maso', 'Žraločí', 'Háčky'];
-    var htmlBait = '<option value="">' + t('opt_bait_all', 'Všechny návnady') + '</option>';
+    var backyardBaits = ['insects', 'vegetal', 'fish', 'dough', 'lures', 'meat', 'shark', 'hook'];
+    var htmlBait = '<option value="">' + t('opt_bait_all') + '</option>';
     backyardBaits.forEach(function (b) {
       var bName = (window.FISHAO_I18N && window.FISHAO_I18N.getBaitName)
         ? window.FISHAO_I18N.getBaitName(b)
@@ -227,29 +227,29 @@ function populatePlayerFishFilterDropdown() {
   if (selectRating) {
     var curRating = selectRating.value || (filterPlayerRating !== null ? String(filterPlayerRating) : "");
     selectRating.innerHTML =
-      '<option value="">' + t('opt_rating_all', 'Všechny') + '</option>' +
+      '<option value="">' + t('opt_rating_all') + '</option>' +
       '<option value="5"' + (curRating === '5' ? ' selected' : '') + '>★★★★★ (5)</option>' +
       '<option value="4"' + (curRating === '4' ? ' selected' : '') + '>★★★★☆ (4)</option>' +
       '<option value="3"' + (curRating === '3' ? ' selected' : '') + '>★★★☆☆ (3)</option>' +
       '<option value="2"' + (curRating === '2' ? ' selected' : '') + '>★★☆☆☆ (2)</option>' +
       '<option value="1"' + (curRating === '1' ? ' selected' : '') + '>★☆☆☆☆ (1)</option>' +
-      '<option value="min3"' + (curRating === 'min3' ? ' selected' : '') + '>' + t('opt_rating_min3', 'Minimálně 3★') + '</option>' +
-      '<option value="min4"' + (curRating === 'min4' ? ' selected' : '') + '>' + t('opt_rating_min4', 'Minimálně 4★') + '</option>';
+      '<option value="min3"' + (curRating === 'min3' ? ' selected' : '') + '>' + t('opt_rating_min3') + '</option>' +
+      '<option value="min4"' + (curRating === 'min4' ? ' selected' : '') + '>' + t('opt_rating_min4') + '</option>';
   }
 
   var selectTime = document.getElementById("playerTimeFilterSelect");
   if (selectTime) {
     var curTime = selectTime.value || filterPlayerTime || (filterPlayerActiveNow ? "now" : "");
     selectTime.innerHTML =
-      '<option value="">' + t('opt_time_all', 'Celý den i noc') + '</option>' +
-      '<option value="now"' + (curTime === 'now' ? ' selected' : '') + '>' + t('opt_time_now', '⚡ PRÁVĚ BERE (ŽIVĚ)') + '</option>' +
-      '<option value="seasonal"' + (curTime === 'seasonal' ? ' selected' : '') + '>' + t('opt_time_seasonal', '📅 Ryby s datem (sezónní)') + '</option>' +
-      '<option value="night"' + (curTime === 'night' ? ' selected' : '') + '>' + t('opt_time_night', '🌙 Noční ryby') + '</option>' +
-      '<option value="day"' + (curTime === 'day' ? ' selected' : '') + '>' + t('opt_time_day', '☀️ Denní ryby') + '</option>' +
-      '<option value="morning"' + (curTime === 'morning' ? ' selected' : '') + '>' + t('opt_time_morning', '🌅 Ráno (06:00 - 12:00)') + '</option>' +
-      '<option value="afternoon"' + (curTime === 'afternoon' ? ' selected' : '') + '>' + t('opt_time_afternoon', '☀️ Odpoledne (12:00 - 18:00)') + '</option>' +
-      '<option value="evening"' + (curTime === 'evening' ? ' selected' : '') + '>' + t('opt_time_evening', '🌇 Večer (18:00 - 24:00)') + '</option>' +
-      '<option value="deepnight"' + (curTime === 'deepnight' ? ' selected' : '') + '>' + t('opt_time_deepnight', '🌌 Hluboká noc (00:00 - 06:00)') + '</option>';
+      '<option value="">' + t('opt_time_all') + '</option>' +
+      '<option value="now"' + (curTime === 'now' ? ' selected' : '') + '>' + t('opt_time_now') + '</option>' +
+      '<option value="seasonal"' + (curTime === 'seasonal' ? ' selected' : '') + '>' + t('opt_time_seasonal') + '</option>' +
+      '<option value="night"' + (curTime === 'night' ? ' selected' : '') + '>' + t('opt_time_night') + '</option>' +
+      '<option value="day"' + (curTime === 'day' ? ' selected' : '') + '>' + t('opt_time_day') + '</option>' +
+      '<option value="morning"' + (curTime === 'morning' ? ' selected' : '') + '>' + t('opt_time_morning') + '</option>' +
+      '<option value="afternoon"' + (curTime === 'afternoon' ? ' selected' : '') + '>' + t('opt_time_afternoon') + '</option>' +
+      '<option value="evening"' + (curTime === 'evening' ? ' selected' : '') + '>' + t('opt_time_evening') + '</option>' +
+      '<option value="deepnight"' + (curTime === 'deepnight' ? ' selected' : '') + '>' + t('opt_time_deepnight') + '</option>';
   }
 }
 
@@ -262,7 +262,7 @@ async function toggleFriend(uid, event) {
   }
 
   if (!currentUser) {
-    showAuthNotice(t('auth_notice_default', 'Pro tuto akci se musíš nejdříve přihlásit přes Google účet.'));
+    showAuthNotice(t('auth_notice_default'));
     return;
   }
 
@@ -592,7 +592,7 @@ function renderPlayersList() {
   if (filtered.length === 0) {
     grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 48px 16px; color: var(--text-muted);">' +
       '<div style="font-size: 36px; margin-bottom: 10px;">👥</div>' +
-      '<div>' + t('players_empty_search', 'Nenalezen žádný hráč odpovídající zadaným filtrům.') + '</div>' +
+      '<div>' + t('players_empty_search') + '</div>' +
       '</div>';
     if (paginationEl) {
       paginationEl.style.display = "none";
@@ -618,12 +618,12 @@ function renderPlayersList() {
 
     var roleBadge = "";
     if (p.role === "admin") {
-      roleBadge = '<span class="pill-btn danger active" style="font-size: 10px; padding: 1px 7px; height: auto;">🛡️ ' + t('admin_badge', 'Admin') + '</span>';
+      roleBadge = '<span class="pill-btn danger active" style="font-size: 10px; padding: 1px 7px; height: auto;">🛡️ ' + t('admin_badge') + '</span>';
     }
 
     var clubInfo = p.clubName
       ? '<span class="player-card-club-badge">🏆 ' + escapeHtml(p.clubName) + '</span>'
-      : '<span style="color: var(--text-muted);">' + t('player_card_no_club', 'Bez klubu') + '</span>';
+      : '<span style="color: var(--text-muted);">' + t('player_card_no_club') + '</span>';
 
     // Catch counts
     var totalCatches = (p.caughtFishIds && p.caughtFishIds.length) || 0;
@@ -659,7 +659,7 @@ function renderPlayersList() {
         backyardCardsHtml += '<div id="backyardMenu_' + p.uid + '" class="player-backyard-popover-menu" style="display: none;" onclick="event.stopPropagation();">' +
           '<div class="pbm-header">' +
             '<span class="pbm-title">🏡 ' + escapeHtml(p.displayName) + ' – ' + t('player_backyard_menu_title', { count: bFishes.length }) + '</span>' +
-            '<button type="button" class="pbm-close" onclick="window.fishaoApp.closeBackyardMenu(\'' + p.uid + '\', event)" title="' + t('action_close', 'Zavřít') + '">&times;</button>' +
+            '<button type="button" class="pbm-close" onclick="window.fishaoApp.closeBackyardMenu(\'' + p.uid + '\', event)" title="' + t('action_close') + '">&times;</button>' +
           '</div>' +
           '<div class="pbm-list">';
         bFishes.forEach(function (fid) {
@@ -671,13 +671,13 @@ function renderPlayersList() {
         backyardCardsHtml += '</div></div>';
       }
     } else {
-      backyardCardsHtml = '<div class="player-card-empty-backyard">' + t('player_card_backyard_empty', 'Žádné ryby za domem') + '</div>';
+      backyardCardsHtml = '<div class="player-card-empty-backyard">' + t('player_card_backyard_empty') + '</div>';
     }
 
     var friendBtnHtml = "";
     if (!isMe && currentUser) {
-      friendBtnHtml = '<button type="button" class="player-friend-star-btn ' + (isFriend ? 'active' : '') + '" onclick="window.fishaoApp.toggleFriend(\'' + p.uid + '\', event)" title="' + (isFriend ? t('btn_friend_remove_title', 'Odebrat z přátel') : t('btn_friend_add_title', 'Přidat do přátel')) + '">' +
-        (isFriend ? '⭐ ' + t('btn_friend_yes', 'Přítel') : '☆ ' + t('btn_friend_add', 'Přidat do přátel')) +
+      friendBtnHtml = '<button type="button" class="player-friend-star-btn ' + (isFriend ? 'active' : '') + '" onclick="window.fishaoApp.toggleFriend(\'' + p.uid + '\', event)" title="' + (isFriend ? t('btn_friend_remove_title') : t('btn_friend_add_title')) + '">' +
+        (isFriend ? '⭐ ' + t('btn_friend_yes') : '☆ ' + t('btn_friend_add')) +
         '</button>';
     }
 
@@ -688,7 +688,7 @@ function renderPlayersList() {
           '<div class="player-card-meta">' +
             '<div class="player-card-name-row">' +
               '<span class="player-card-name">' + escapeHtml(p.displayName) + '</span>' +
-              (isMe ? '<span class="player-card-me-tag">(' + t('player_card_me_tag', 'Ty') + ')</span>' : '') +
+              (isMe ? '<span class="player-card-me-tag">(' + t('player_card_me_tag') + ')</span>' : '') +
               roleBadge +
             '</div>' +
             '<div class="player-card-club-row">' + clubInfo + '</div>' +
@@ -698,11 +698,11 @@ function renderPlayersList() {
 
         '<div class="player-card-stats">' +
           '<div class="player-card-stat-line">' +
-            '<span class="player-card-stat-label">🎣 ' + t('player_card_stat_catches', 'Úlovky:') + '</span>' +
+            '<span class="player-card-stat-label">🎣 ' + t('player_card_stat_catches') + '</span>' +
             '<span class="player-card-stat-val" style="color: #38bdf8;">' + totalCatches + ' / ' + allFishes.length + '</span>' +
           '</div>' +
           '<div class="player-card-stat-line">' +
-            '<span class="player-card-stat-label">🏆 ' + t('player_card_stat_club_fish', 'Klubové ryby:') + '</span>' +
+            '<span class="player-card-stat-label">🏆 ' + t('player_card_stat_club_fish') + '</span>' +
             '<span class="player-card-stat-val" style="color: #34d399;">' + clubCatches + ' / ' + totalClub + '</span>' +
           '</div>' +
         '</div>' +
@@ -716,7 +716,7 @@ function renderPlayersList() {
       '</div>' +
 
       '<button type="button" class="player-card-btn" onclick="event.stopPropagation(); window.fishaoApp.openPlayerModal(\'' + p.uid + '\')">' +
-        '<span>' + t('player_card_view_profile', 'Zobrazit profil & dvorek →') + '</span>' +
+        '<span>' + t('player_card_view_profile') + '</span>' +
       '</button>' +
     '</div>';
   });
@@ -733,9 +733,9 @@ function renderPlayersList() {
       var prevDisabled = (playerCurrentPage <= 1) ? ' disabled style="opacity: 0.4; cursor: not-allowed;"' : '';
       var nextDisabled = (playerCurrentPage >= totalPages) ? ' disabled style="opacity: 0.4; cursor: not-allowed;"' : '';
 
-      var prevBtn = '<button type="button" class="pill-btn"' + prevDisabled + ' onclick="window.fishaoApp.setPlayerPage(' + (playerCurrentPage - 1) + ')">◀ ' + t('pagination_prev', 'Předchozí') + '</button>';
+      var prevBtn = '<button type="button" class="pill-btn"' + prevDisabled + ' onclick="window.fishaoApp.setPlayerPage(' + (playerCurrentPage - 1) + ')">◀ ' + t('pagination_prev') + '</button>';
       var pageText = '<span style="font-size: 13px; color: var(--text-muted); font-weight: 600;">' + t('pagination_page_of', { current: playerCurrentPage, total: totalPages }) + '</span>';
-      var nextBtn = '<button type="button" class="pill-btn"' + nextDisabled + ' onclick="window.fishaoApp.setPlayerPage(' + (playerCurrentPage + 1) + ')">' + t('pagination_next', 'Další') + ' ▶</button>';
+      var nextBtn = '<button type="button" class="pill-btn"' + nextDisabled + ' onclick="window.fishaoApp.setPlayerPage(' + (playerCurrentPage + 1) + ')">' + t('pagination_next') + ' ▶</button>';
 
       paginationEl.innerHTML = prevBtn + pageText + nextBtn;
     } else {
@@ -751,13 +751,13 @@ function renderPlayersList() {
 async function toggleBackyardFish(fishId) {
   if (!fishId) return;
   if (!currentUser) {
-    showAuthNotice(t('auth_notice_default', 'Pro tuto akci se musíš nejdříve přihlásit přes Google účet.'));
+    showAuthNotice(t('auth_notice_default'));
     return;
   }
 
   // Enforce backyard breeding restriction: only the 83 specific fish are allowed
   if (!isBackyardBreedable(fishId)) {
-    showToast(t('backyard_not_breedable', 'Tato ryba není určena pro chov za domem.'), "error");
+    showToast(t('backyard_not_breedable'), "error");
     return;
   }
 
@@ -803,7 +803,7 @@ async function toggleBackyardFish(fishId) {
   }
 
   var fObj = (typeof getFishById === 'function') ? getFishById(fishId) : allFishes.find(function (x) { return x.id === fishId; });
-  var fName = fObj ? (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name) : ('Ryba #' + fishId);
+  var fName = fObj ? (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name) : ('#' + fishId);
 
   if (isBred) {
     showToast(t('backyard_removed_toast', { name: fName }), "info");
@@ -853,7 +853,7 @@ function updateModalBackyardBtn(fishId) {
   btn.style.display = "inline-flex";
   var isBred = backyardFishIds.has(fishId);
   btn.className = "btn-backyard-pill " + (isBred ? "active" : "");
-  btn.innerHTML = isBred ? t('modal_btn_backyard_yes', '🏡 Za domem ✓') : t('modal_btn_backyard_no', '🏡 Za domem');
+  btn.innerHTML = isBred ? t('modal_btn_backyard_yes') : t('modal_btn_backyard_no');
 }
 
 /**
@@ -884,8 +884,8 @@ function renderModalBackyardOwners(fishId) {
   });
 
   if (owners.length === 0) {
-    box.innerHTML = '<div class="modal-backyard-owners-title">🏡 ' + t('modal_backyard_owners_title', 'Kdo má tuto rybu za domem:') + '</div>' +
-      '<div style="font-size: 11.5px; color: var(--text-muted);">' + t('modal_backyard_owners_none', 'Tuto rybu zatím nikdo nemá za domem.') + '</div>';
+    box.innerHTML = '<div class="modal-backyard-owners-title">🏡 ' + t('modal_backyard_owners_title') + '</div>' +
+      '<div style="font-size: 11.5px; color: var(--text-muted);">' + t('modal_backyard_owners_none') + '</div>';
     return;
   }
 
@@ -894,12 +894,12 @@ function renderModalBackyardOwners(fishId) {
     var isFriend = friendUids.has(p.uid);
     var av = p.avatarUrl || "🎣";
     var avIcon = (av.startsWith("http://") || av.startsWith("https://")) ? "🎣" : av;
-    pillsHtml += '<span class="modal-backyard-owner-pill' + (isFriend ? ' is-friend' : '') + '" onclick="window.fishaoApp.openPlayerModal(\'' + p.uid + '\')" title="' + escapeHtml(p.displayName) + (isFriend ? ' (' + t('btn_friend_yes', 'Přítel') + ')' : '') + '">' +
+    pillsHtml += '<span class="modal-backyard-owner-pill' + (isFriend ? ' is-friend' : '') + '" onclick="window.fishaoApp.openPlayerModal(\'' + p.uid + '\')" title="' + escapeHtml(p.displayName) + (isFriend ? ' (' + t('btn_friend_yes') + ')' : '') + '">' +
       (isFriend ? '⭐ ' : '') + avIcon + ' ' + escapeHtml(p.displayName) +
       '</span>';
   });
 
-  box.innerHTML = '<div class="modal-backyard-owners-title">🏡 ' + t('modal_backyard_owners_title', 'Kdo má tuto rybu za domem:') + ' (' + owners.length + ')</div>' +
+  box.innerHTML = '<div class="modal-backyard-owners-title">🏡 ' + t('modal_backyard_owners_title') + ' (' + owners.length + ')</div>' +
     '<div class="modal-backyard-owners-list">' + pillsHtml + '</div>';
 }
 
@@ -915,8 +915,8 @@ function toggleBackyardAllGrid() {
   }
   if (btnText) {
     btnText.innerText = isProfileBackyardCatalogOpen
-      ? t('profile_btn_catalog_hide', '📋 Skrýt katalog ryb ▴')
-      : t('profile_btn_catalog_show', '📋 Procházet všech 83 ryb k odchovu ▾');
+      ? t('profile_btn_catalog_hide')
+      : t('profile_btn_catalog_show');
   }
   if (isProfileBackyardCatalogOpen) {
     renderProfileBackyardCatalog();
@@ -948,9 +948,9 @@ function renderProfileBackyardCatalog(searchTerm) {
 
   var html = '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px;">' +
     '<span style="font-size: 11.5px; font-weight: 700; color: #2dd4bf;">' +
-      t('profile_catalog_header', { count: bBreedables.length }, 'Katalog 83 ryb k odchovu (' + bBreedables.length + ')') +
+      t('profile_catalog_header', { count: bBreedables.length }) +
     '</span>' +
-    '<input type="text" class="dash-input" style="height: 28px; font-size: 11px; padding: 2px 8px; width: 150px;" placeholder="' + escapeHtml(t('profile_catalog_filter_placeholder', 'Hledat v katalogu...')) + '" value="' + escapeHtml(searchTerm || '') + '" oninput="window.fishaoApp.filterBackyardCatalog(this.value)">' +
+    '<input type="text" class="dash-input" style="height: 28px; font-size: 11px; padding: 2px 8px; width: 150px;" placeholder="' + escapeHtml(t('profile_catalog_filter_placeholder')) + '" value="' + escapeHtml(searchTerm || '') + '" oninput="window.fishaoApp.filterBackyardCatalog(this.value)">' +
   '</div>';
 
   html += '<div class="profile-catalog-grid">';
@@ -989,19 +989,19 @@ function renderBackyardProfilePicker() {
 
   if (ids.length === 0) {
     container.innerHTML = '<span style="font-size: 11.5px; color: var(--text-muted);">' +
-      t('profile_backyard_empty_hint', 'Zatím nemáš vybrané žádné ryby. Můžeš je přidat vyhledáním níže.') +
+      t('profile_backyard_empty_hint') +
       '</span>';
   } else {
     var html = "";
     ids.forEach(function (fid) {
       var fObj = (typeof getFishById === 'function') ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
-      var fName = fObj ? (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name) : ('Ryba #' + fid);
+      var fName = fObj ? (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name) : ('#' + fid);
       var stars = fObj ? '★'.repeat(fObj.rating || 1) : '';
       html += '<span class="profile-backyard-chip">' +
         '<img src="images/fish_' + fid + '.png" alt="" onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + fid + '_item.png\'">' +
         '<span>' + escapeHtml(fName) + '</span>' +
         '<span class="chip-stars">' + stars + '</span>' +
-        '<button type="button" class="profile-backyard-chip-remove" onclick="window.fishaoApp.removeBackyardFish(' + fid + ')" title="' + escapeHtml(t('profile_chip_remove_title', 'Odebrat')) + '">&times;</button>' +
+        '<button type="button" class="profile-backyard-chip-remove" onclick="window.fishaoApp.removeBackyardFish(' + fid + ')" title="' + escapeHtml(t('profile_chip_remove_title')) + '">&times;</button>' +
         '</span>';
     });
     container.innerHTML = html;
@@ -1038,7 +1038,7 @@ function onBackyardSearchInput(val) {
   }).slice(0, 10);
 
   if (matches.length === 0) {
-    popup.innerHTML = '<div style="padding: 8px 12px; font-size: 12px; color: var(--text-muted);">' + t('bulk_no_fish_found', 'Žádná ryba nenalezena') + '</div>';
+    popup.innerHTML = '<div style="padding: 8px 12px; font-size: 12px; color: var(--text-muted);">' + t('bulk_no_fish_found') + '</div>';
     popup.style.display = "block";
     return;
   }
@@ -1049,7 +1049,7 @@ function onBackyardSearchInput(val) {
     html += '<div class="profile-backyard-sugg-item" onclick="window.fishaoApp.selectBackyardSearchResult(' + f.id + ')">' +
       '<img src="images/fish_' + f.id + '.png" alt="" onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + f.id + '_item.png\'">' +
       '<span style="font-weight: 600;">' + escapeHtml(fName) + '</span>' +
-      '<span style="font-size: 11px; color: #2dd4bf; margin-left: auto;">' + escapeHtml(t('modal_btn_backyard_no', '🏡 Za domem')) + '</span>' +
+      '<span style="font-size: 11px; color: #2dd4bf; margin-left: auto;">' + escapeHtml(t('modal_btn_backyard_no')) + '</span>' +
       '</div>';
   });
 
@@ -1079,7 +1079,7 @@ function updateModalFriendBtn(uid) {
   btn.style.display = "inline-flex";
   var isFriend = friendUids.has(uid);
   btn.className = "pill-btn " + (isFriend ? "gold active" : "");
-  btn.innerHTML = isFriend ? '⭐ ' + t('btn_friend_yes', 'Přítel') : '☆ ' + t('btn_friend_add', 'Přidat do přátel');
+  btn.innerHTML = isFriend ? '⭐ ' + t('btn_friend_yes') : '☆ ' + t('btn_friend_add');
 }
 
 /**
@@ -1142,7 +1142,7 @@ async function openPlayerModal(uid) {
             console.warn("Could not clean up ghost member:", e);
           }
         }
-        showToast(t('club_ghost_cleaned', 'Tento hráč již smazal svůj účet a byl automaticky odebrán z klubu.'), "info");
+        showToast(t('club_ghost_cleaned'), "info");
         closePlayerModal();
         return;
       } else {
@@ -1164,7 +1164,7 @@ async function openPlayerModal(uid) {
     }
   }
 
-  var defaultFisher = t('user_default_fisher', 'Rybář');
+  var defaultFisher = t('user_default_fisher');
   var dName = isMe
     ? ((userProfile && userProfile.displayName) ? userProfile.displayName : ((player && player.displayName) || defaultFisher))
     : ((player && player.displayName) || (clubMem && clubMem.displayName) || defaultFisher);
@@ -1203,7 +1203,7 @@ async function openPlayerModal(uid) {
 
   var nameEl = document.getElementById("playerModalName");
   if (nameEl) {
-    nameEl.innerText = dName + (isMe ? (" (" + t('player_card_me_tag', 'Ty') + ")") : "");
+    nameEl.innerText = dName + (isMe ? (" (" + t('player_card_me_tag') + ")") : "");
     nameEl.dataset.currentUid = uid;
   }
 
@@ -1211,12 +1211,12 @@ async function openPlayerModal(uid) {
   if (roleEl) {
     var badges = [];
     if (role === "admin") {
-      badges.push('<span class="pill-btn danger active" style="font-size: 11px; padding: 2px 10px;">🛡️ ' + t('admin_badge', 'Admin') + '</span>');
+      badges.push('<span class="pill-btn danger active" style="font-size: 11px; padding: 2px 10px;">🛡️ ' + t('admin_badge') + '</span>');
     }
     if (clubName) {
       badges.push('<span class="pill-btn gold active" style="font-size: 11px; padding: 2px 10px;">🏆 ' + escapeHtml(clubName) + '</span>');
     } else {
-      badges.push('<span class="pill-btn" style="font-size: 11px; padding: 2px 10px; cursor: default;">' + t('player_card_no_club', 'Bez klubu') + '</span>');
+      badges.push('<span class="pill-btn" style="font-size: 11px; padding: 2px 10px; cursor: default;">' + t('player_card_no_club') + '</span>');
     }
     roleEl.innerHTML = badges.join(' ');
   }
@@ -1256,12 +1256,12 @@ async function openPlayerModal(uid) {
     var backyardHtml = '<div class="player-modal-backyard-section">' +
       '<div class="player-modal-backyard-header">' +
         '<span>' + t('player_modal_backyard_title', { count: bFishes.length }) + '</span>' +
-        (isMe ? '<button type="button" class="btn-subtle-link" onclick="window.fishaoApp.closePlayerModal(); window.fishaoApp.openProfileModal();" style="font-size: 11.5px; color: #2dd4bf;">' + t('player_modal_edit_backyard', '🏡 Upravit mé ryby za domem') + '</button>' : '') +
+        (isMe ? '<button type="button" class="btn-subtle-link" onclick="window.fishaoApp.closePlayerModal(); window.fishaoApp.openProfileModal();" style="font-size: 11.5px; color: #2dd4bf;">' + t('player_modal_edit_backyard') + '</button>' : '') +
       '</div>';
 
     if (bFishes.length === 0) {
       backyardHtml += '<div style="font-size: 12px; color: var(--text-muted); font-style: italic; padding: 6px 0;">' +
-        t('player_modal_backyard_empty', 'Hráč zatím nemá nastavené žádné ryby za domem.') +
+        t('player_modal_backyard_empty') +
         '</div>';
     } else {
       backyardHtml += '<div class="player-modal-backyard-grid">';

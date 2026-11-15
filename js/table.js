@@ -59,7 +59,7 @@ function isFishInSeasonNow(rawDates) {
 function formatCatchDate(rawDates) {
   if (!rawDates || rawDates.length === 0) {
     return {
-      text: t('date_all_year') || 'Celoročně',
+      text: t('date_all_year'),
       isSeasonal: false,
       inSeason: true
     };
@@ -353,7 +353,7 @@ function updateMarketTabStatus() {
 
   var descEl = document.getElementById("marketSundayNoticeDesc");
   if (descEl) {
-    var windowText = (typeof getMarketClosedWindowText === 'function') ? getMarketClosedWindowText() : 'neděle 00:00 – 24:00 UTC';
+    var windowText = (typeof getMarketClosedWindowText === 'function') ? getMarketClosedWindowText() : t('market_window_utc');
     descEl.innerText = t('market_sunday_banner_desc', { window: windowText });
   }
 

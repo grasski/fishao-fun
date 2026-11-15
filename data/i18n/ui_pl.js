@@ -457,9 +457,11 @@
       "market_opens_utc": "Otwarcie: poniedziałek 00:00 UTC",
       "market_opens_local": "Otwarcie: {day} {time} ({city}, {tz})",
       "market_utc_warning_text": "Masz aktywny czas UTC serwera gry. W Twoim czasie lokalnym ({city}) targ otwiera się: {day} {time}.",
-      "member_count_1": "1 członek",
-      "member_count_2_4": "{count} członków",
-      "member_count_5": "{count} członków"
+      "member_count": "{count} członków",
+      "member_count_one": "{count} członek",
+      "member_count_few": "{count} członków",
+      "member_count_many": "{count} członków",
+      "member_count_other": "{count} członków"
   };
 
   if (typeof window !== 'undefined') {

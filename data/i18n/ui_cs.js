@@ -310,6 +310,10 @@
       "club_not_found": "Klub nebyl nalezen.",
       "club_no_search_results": "Žádný klub neodpovídá hledání. Můžeš vytvořit nový!",
       "club_active_members": "{count} členů",
+      "club_active_members_one": "{count} člen",
+      "club_active_members_few": "{count} členové",
+      "club_active_members_many": "{count} člena",
+      "club_active_members_other": "{count} členů",
       "unlock_club_fc_unlocked": "✓ Odemčeno klubem (FC)",
       "unlock_club_monster_unlocked": "✓ Nakrmeno klubem (Monstrum)",
       "club_create_info": "Založením klubu získáš vlastní komunitu. Všichni členové, kteří se připojí, uvidí společné body a odemčené ryby v reálném čase.",
@@ -330,6 +334,10 @@
       "players_filter_backyard_only": "Pouze s rybou za domem",
       "players_filter_friends_only": "Pouze přátelé",
       "players_count_stat": "{count} hráčů",
+      "players_count_stat_one": "{count} hráč",
+      "players_count_stat_few": "{count} hráči",
+      "players_count_stat_many": "{count} hráče",
+      "players_count_stat_other": "{count} hráčů",
       "players_manage_my_backyard": "Moje ryby za domem",
       "players_empty_search": "Nenalezen žádný hráč odpovídající zadaným filtrům.",
       "player_card_view_profile": "Zobrazit profil &amp; dvorek →",
@@ -449,9 +457,11 @@
       "market_opens_utc": "Otevírá: pondělí 00:00 UTC",
       "market_opens_local": "Otevírá: {day} {time} ({city}, {tz})",
       "market_utc_warning_text": "Máš aktivní herní čas UTC. Ve tvém místním čase ({city}) se trh otevře: {day} {time}.",
-      "member_count_1": "1 člen",
-      "member_count_2_4": "{count} členové",
-      "member_count_5": "{count} členů"
+      "member_count": "{count} členů",
+      "member_count_one": "{count} člen",
+      "member_count_few": "{count} členové",
+      "member_count_many": "{count} člena",
+      "member_count_other": "{count} členů"
   };
 
   if (typeof window !== 'undefined') {
