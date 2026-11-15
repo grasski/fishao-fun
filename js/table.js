@@ -272,7 +272,7 @@ async function toggleCaughtFish(fishId) {
   updateCaughtStats();
   if (currentView === 'club_manage') {
     renderClubMilestones();
-  } else {
+  } else if (currentView !== 'locations' && currentView !== 'calendar') {
     applyFilters();
   }
 }
@@ -320,6 +320,12 @@ function updateCaughtStats() {
   if (marketSummary) {
     var priceCount = countDistinctRecordedPrices();
     marketSummary.innerText = t('market_recorded_prices', { count: priceCount });
+  }
+
+  if (currentView === 'locations' && typeof renderLocationsView === 'function') {
+    renderLocationsView();
+  } else if (currentView === 'calendar' && typeof renderCalendarView === 'function') {
+    renderCalendarView();
   }
 }
 

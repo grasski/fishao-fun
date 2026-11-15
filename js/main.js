@@ -31,6 +31,8 @@ function setTimezone(tz) {
   updateClock();
   updateMarketTabStatus();
   applyFilters();
+  if (currentView === 'locations' && typeof renderLocationsView === 'function') renderLocationsView();
+  if (currentView === 'calendar' && typeof renderCalendarView === 'function') renderCalendarView();
 }
 
 function updateClock() {
@@ -94,6 +96,10 @@ function getHashOrQueryRoute() {
         tab = 'club';
       } else if (rawTab === 'players' || rawTab === 'hraci' || rawTab === 'komunita' || rawTab === 'dvorek' || rawTab === 'gracze' || rawTab === 'podworko') {
         tab = 'players';
+      } else if (rawTab === 'locations' || rawTab === 'lokace' || rawTab === 'mapa' || rawTab === 'lokalizacje') {
+        tab = 'locations';
+      } else if (rawTab === 'calendar' || rawTab === 'kalendar' || rawTab === 'sezona' || rawTab === 'seasonal' || rawTab === 'sezon' || rawTab === 'kalendarz') {
+        tab = 'calendar';
       } else if (rawTab === 'all' || rawTab === 'encyklopedie' || rawTab === 'ryby') {
         tab = 'all';
       }
@@ -175,10 +181,12 @@ function switchView(view, skipSync) {
     logAnalyticsEvent("screen_view", { screen_name: view });
   }
 
-  var tabs = ["tabClub", "tabAll", "tabClubManage", "tabMarket", "tabPlayers"];
+  var tabs = ["tabClub", "tabAll", "tabLocations", "tabCalendar", "tabClubManage", "tabMarket", "tabPlayers"];
   var tabMap = {
     "club": "tabClub",
     "all": "tabAll",
+    "locations": "tabLocations",
+    "calendar": "tabCalendar",
     "club_manage": "tabClubManage",
     "market": "tabMarket",
     "players": "tabPlayers"
@@ -196,6 +204,8 @@ function switchView(view, skipSync) {
   var secManage = document.getElementById("sectionClubManage");
   var secTable = document.getElementById("sectionFishTable");
   var secPlayers = document.getElementById("sectionPlayers");
+  var secLocations = document.getElementById("sectionLocations");
+  var secCalendar = document.getElementById("sectionCalendar");
   var filterCard = document.getElementById("filterCard");
   var gateClub = document.getElementById("gateClubManage");
   var manageContent = document.getElementById("manageClubContent");
@@ -213,9 +223,12 @@ function switchView(view, skipSync) {
   if (subNoticeClubs) subNoticeClubs.style.display = (view === "club_manage") ? "flex" : "none";
 
   updateMarketTabStatus();
+  if (typeof updateCalendarTabPill === 'function') updateCalendarTabPill();
 
   if (view === "players") {
     if (secPlayers) secPlayers.style.display = "block";
+    if (secLocations) secLocations.style.display = "none";
+    if (secCalendar) secCalendar.style.display = "none";
     if (secManage) secManage.style.display = "none";
     if (secTable) secTable.style.display = "none";
     if (filterCard) filterCard.style.display = "none";
@@ -237,6 +250,8 @@ function switchView(view, skipSync) {
 
   if (view === "club_manage") {
     if (secManage) secManage.style.display = "block";
+    if (secLocations) secLocations.style.display = "none";
+    if (secCalendar) secCalendar.style.display = "none";
     if (secTable) secTable.style.display = "none";
 
     if (!currentUser) {
@@ -253,9 +268,32 @@ function switchView(view, skipSync) {
     return;
   } else {
     if (secManage) secManage.style.display = "none";
-    if (secTable) secTable.style.display = "block";
-    if (filterCard) filterCard.style.display = "flex";
   }
+
+  if (view === "locations") {
+    if (secLocations) secLocations.style.display = "block";
+    if (secCalendar) secCalendar.style.display = "none";
+    if (secTable) secTable.style.display = "none";
+    if (filterCard) filterCard.style.display = "none";
+    updateCaughtStats();
+    return;
+  } else {
+    if (secLocations) secLocations.style.display = "none";
+  }
+
+  if (view === "calendar") {
+    if (secCalendar) secCalendar.style.display = "block";
+    if (secLocations) secLocations.style.display = "none";
+    if (secTable) secTable.style.display = "none";
+    if (filterCard) filterCard.style.display = "none";
+    updateCaughtStats();
+    return;
+  } else {
+    if (secCalendar) secCalendar.style.display = "none";
+  }
+
+  if (secTable) secTable.style.display = "block";
+  if (filterCard) filterCard.style.display = "flex";
 
   var locationFilterGroup = document.getElementById("locationFilterGroup");
   var missionSizeRow = document.getElementById("missionSizeRow");
@@ -354,6 +392,7 @@ function setLanguage(lang) {
   if (typeof renderPlayersActiveFiltersBar === 'function') renderPlayersActiveFiltersBar();
   if (typeof renderPlayersList === 'function' && currentView === 'players') renderPlayersList();
   if (typeof renderBackyardProfilePicker === 'function') renderBackyardProfilePicker();
+  if (typeof updateCalendarTabPill === 'function') updateCalendarTabPill();
 
   var pModal = document.getElementById("playerModalOverlay");
   if (pModal && pModal.classList.contains("active")) {
@@ -527,6 +566,20 @@ window.fishaoApp = {
   syncUrlRoute: syncUrlRoute,
   handleRoute: handleRoute,
   getHashOrQueryRoute: getHashOrQueryRoute,
+  setLocCategoryFilter: setLocCategoryFilter,
+  toggleLocIncompleteFilter: toggleLocIncompleteFilter,
+  onLocSearchInput: onLocSearchInput,
+  resetLocationsFilters: resetLocationsFilters,
+  openLocationInFishdex: openLocationInFishdex,
+  openLocationInCalendar: openLocationInCalendar,
+  renderLocationsView: renderLocationsView,
+  setCalStatusFilter: setCalStatusFilter,
+  setCalMonthFilter: setCalMonthFilter,
+  onCalLocationChange: onCalLocationChange,
+  onCalSearchInput: onCalSearchInput,
+  resetCalendarFilters: resetCalendarFilters,
+  renderCalendarView: renderCalendarView,
+  updateCalendarTabPill: updateCalendarTabPill,
   t: t
 };
 

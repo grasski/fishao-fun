@@ -129,6 +129,7 @@
   <link rel="stylesheet" href="css/clubs.css?v=3.3">
   <link rel="stylesheet" href="css/players.css?v=3.2">
   <link rel="stylesheet" href="css/modals.css?v=3.3">
+  <link rel="stylesheet" href="css/locations-calendar.css?v=1.0">
   <link rel="stylesheet" href="css/responsive.css?v=3.5">
 </head>
 
@@ -240,6 +241,16 @@
         <span class="tab-icon">👥</span>
         <span class="tab-title" data-i18n="nav_players">Hráči &amp; Dvorek</span>
         <span class="tab-pill" id="tabPlayersPill" data-i18n="nav_players_pill">Komunita</span>
+      </button>
+      <button class="nav-tab cyan" id="tabLocations" onclick="window.fishaoApp.switchView('locations')">
+        <span class="tab-icon">🗺️</span>
+        <span class="tab-title" data-i18n="nav_locations">Lokace</span>
+        <span class="tab-pill" id="tabLocationsPill" data-i18n="nav_locations_pill">24 lokací</span>
+      </button>
+      <button class="nav-tab orange" id="tabCalendar" onclick="window.fishaoApp.switchView('calendar')">
+        <span class="tab-icon">📅</span>
+        <span class="tab-title" data-i18n="nav_calendar">Sezónní kalendář</span>
+        <span class="tab-pill" id="tabCalendarPill" data-i18n="nav_calendar_pill">47 ryb</span>
       </button>
     </nav>
 
@@ -484,6 +495,92 @@
         </div>
       </div>
     </div>
+
+    <!-- Section: Locations Overview & Progress -->
+    <section id="sectionLocations" style="display: none; margin-bottom: 30px;">
+      <div class="view-action-bar cyan" id="bannerLocations">
+        <div class="action-bar-left">
+          <span class="action-bar-title" style="color: #22d3ee;" data-i18n="loc_view_title">🗺️ Přehled lokací &amp; Postup lovu:</span>
+          <div class="collection-stats-group">
+            <span class="stat-chip" id="locSummaryCompleted">Kompletní: 0 / 24</span>
+            <span class="stat-chip" id="locSummaryBiting" style="color: #34d399;">⚡ Právě bere: 0 ryb</span>
+            <span class="stat-chip" id="locSummaryMissingBiting" style="color: #fbbf24; display: none;">🎯 Bere &amp; chybí: 0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="loc-filter-bar">
+        <div class="loc-filter-top">
+          <div class="loc-cat-pills">
+            <button type="button" class="pill-btn active" id="locCatAll" onclick="window.fishaoApp.setLocCategoryFilter('all')">Všechny (24)</button>
+            <button type="button" class="pill-btn" id="locCatMain" onclick="window.fishaoApp.setLocCategoryFilter('main')">🗺️ Hlavní mapa (12)</button>
+            <button type="button" class="pill-btn" id="locCatSpecial" onclick="window.fishaoApp.setLocCategoryFilter('special')">🗝️ Tajné &amp; Klub (7)</button>
+            <button type="button" class="pill-btn" id="locCatEvents" onclick="window.fishaoApp.setLocCategoryFilter('events')">🏅 Turnaje &amp; Dvorek (5)</button>
+            <button type="button" class="pill-btn" id="locIncompleteBtn" onclick="window.fishaoApp.toggleLocIncompleteFilter()" data-i18n="loc_filter_incomplete">❓ Pouze nekompletní</button>
+          </div>
+          <div class="loc-search-cluster">
+            <div class="search-input-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="locSearchInput" class="filter-control search-input"
+                placeholder="Hledat lokaci, místo nebo rybu..." data-i18n-placeholder="loc_search_placeholder"
+                oninput="window.fishaoApp.onLocSearchInput(this.value)">
+            </div>
+            <button type="button" class="btn-reset sm" onclick="window.fishaoApp.resetLocationsFilters()" data-i18n="filter_btn_reset">↺ Obnovit filtry</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="locationsGrid" class="locations-grid"></div>
+    </section>
+
+    <!-- Section: Seasonal Fish Calendar -->
+    <section id="sectionCalendar" style="display: none; margin-bottom: 30px;">
+      <div class="view-action-bar orange" id="bannerCalendar">
+        <div class="action-bar-left">
+          <span class="action-bar-title" style="color: #fb923c;" data-i18n="cal_view_title">📅 Kalendář sezónních ryb:</span>
+          <div class="collection-stats-group">
+            <span class="stat-chip" id="calStatInSeason" style="color: #34d399;">🟢 V sezóně: 0</span>
+            <span class="stat-chip" id="calStatBitingNow" style="color: #38bdf8;">⚡ Bere teď: 0</span>
+            <span class="stat-chip" id="calStatEndingSoon" style="color: #fca5a5;">⏳ Končí brzy: 0</span>
+            <span class="stat-chip" id="calStatStartingSoon" style="color: #7dd3fc;">🔜 Začne brzy: 0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cal-filter-bar">
+        <div class="cal-filter-top">
+          <div class="cal-status-pills">
+            <button type="button" class="pill-btn active" id="calFilterAll" onclick="window.fishaoApp.setCalStatusFilter('all')">Všechny (47)</button>
+            <button type="button" class="pill-btn" id="calFilterInSeason" onclick="window.fishaoApp.setCalStatusFilter('in_season')">🟢 V sezóně (0)</button>
+            <button type="button" class="pill-btn" id="calFilterBitingNow" onclick="window.fishaoApp.setCalStatusFilter('biting_now')">⚡ Bere právě teď (0)</button>
+            <button type="button" class="pill-btn" id="calFilterEndingSoon" onclick="window.fishaoApp.setCalStatusFilter('ending_soon')">⏳ Končí do 14 dnů (0)</button>
+            <button type="button" class="pill-btn" id="calFilterStartingSoon" onclick="window.fishaoApp.setCalStatusFilter('starting_soon')">🔜 Začne do 30 dnů (0)</button>
+            <button type="button" class="pill-btn" id="calFilterMissing" onclick="window.fishaoApp.setCalStatusFilter('missing')" style="display: none;" data-i18n="cal_filter_missing">❓ Pouze nechycené</button>
+          </div>
+          <div class="cal-controls-cluster">
+            <select id="calLocationFilter" class="filter-control cal-loc-select" aria-label="Lokace"
+              data-i18n-aria-label="filter_loc_label" onchange="window.fishaoApp.onCalLocationChange(this.value)">
+              <option value="">Všechny lokace</option>
+            </select>
+            <div class="search-input-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="calSearchInput" class="filter-control search-input"
+                placeholder="Hledat sezónní rybu..." data-i18n-placeholder="cal_search_placeholder"
+                oninput="window.fishaoApp.onCalSearchInput(this.value)">
+            </div>
+            <button type="button" class="btn-reset sm" onclick="window.fishaoApp.resetCalendarFilters()" data-i18n="filter_btn_reset">↺ Obnovit filtry</button>
+          </div>
+        </div>
+        <div id="calMonthsBar" class="cal-months-bar"></div>
+      </div>
+
+      <div class="cal-counter-row">
+        <span id="calCounterText" class="counter-text">Zobrazeno 0 ryb</span>
+        <span class="counter-hint" data-i18n="counter_hint">💡 Kliknutím na rybu zobrazíš její detail a kompletní historii ve Fish Marketu.</span>
+      </div>
+
+      <div id="calendarGrid" class="calendar-grid"></div>
+    </section>
 
     <!-- Section: Community Players & Backyard -->
     <section id="sectionPlayers" style="display: none; margin-bottom: 30px;">
@@ -1516,13 +1613,15 @@
   <!-- Modular FISHAO Application Logic -->
   <script src="js/state.js?v=4.0"></script>
   <script src="js/firestore-tx.js?v=3.2"></script>
-  <script src="js/table.js?v=3.7"></script>
+  <script src="js/table.js?v=3.8"></script>
   <script src="js/clubs.js?v=3.9"></script>
   <script src="js/market.js?v=4.1"></script>
   <script src="js/filters.js?v=4.0"></script>
   <script src="js/auth.js?v=4.1"></script>
   <script src="js/players.js?v=3.9"></script>
-  <script src="js/main.js?v=3.7"></script>
+  <script src="js/locations.js?v=1.0"></script>
+  <script src="js/calendar.js?v=1.0"></script>
+  <script src="js/main.js?v=3.8"></script>
 
 </body>
 
