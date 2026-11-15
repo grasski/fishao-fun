@@ -12,6 +12,7 @@
   <meta name="keywords" content="fishao wiki, wiki, fishao ryby, fishao fishes, fishao club, fishao kluby, klubové ryby, fishao encyklopedie, encyclopedia, fish market ceník, fishao ceník, fish market, fish market prices, fishao návnady, fishao baits, fishao za domem, fishao backyard, ryby fishao, lov ryb, fishao tracker, fishao guide, fishao database, fishdex">
   <meta name="author" content="FISHAO Community">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="thumbnail" content="https://fishao-tracker.cz/images/og-preview.png">
   <meta name="theme-color" content="#1a2736">
 
   <!-- Canonical & Alternates -->
@@ -22,7 +23,11 @@
   <link rel="alternate" hreflang="x-default" href="https://fishao-tracker.cz/">
 
   <!-- Favicon & App Icons -->
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
   <!-- Open Graph / Facebook / Messenger / Discord -->
   <meta property="og:type" content="website">
@@ -53,6 +58,15 @@
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "ImageObject",
+        "@id": "https://fishao-tracker.cz/#primaryimage",
+        "url": "https://fishao-tracker.cz/images/og-preview.png",
+        "contentUrl": "https://fishao-tracker.cz/images/og-preview.png",
+        "width": 1200,
+        "height": 630,
+        "caption": "FISHAO Tracker & Fishdex"
+      },
+      {
         "@type": "WebApplication",
         "@id": "https://fishao-tracker.cz/#app",
         "name": "FISHAO Wiki & Encyklopedie – Ryby, Fish Market ceník a Kluby",
@@ -61,6 +75,10 @@
         "applicationCategory": "GameApplication, ReferenceApplication",
         "operatingSystem": "All",
         "inLanguage": ["cs", "en", "pl"],
+        "image": {
+          "@id": "https://fishao-tracker.cz/#primaryimage"
+        },
+        "thumbnailUrl": "https://fishao-tracker.cz/images/og-preview.png",
         "description": "Kompletní komunitní FISHAO wiki a encyklopedie: přehled všech ryb včetně klubových, Fish Market ceník, lokace, časy lovu a správa klubů.",
         "offers": {
           "@type": "Offer",
@@ -73,8 +91,28 @@
         "@id": "https://fishao-tracker.cz/#website",
         "url": "https://fishao-tracker.cz/",
         "name": "FISHAO Wiki & Tracker",
+        "image": {
+          "@id": "https://fishao-tracker.cz/#primaryimage"
+        },
+        "thumbnailUrl": "https://fishao-tracker.cz/images/og-preview.png",
         "description": "Kompletní FISHAO wiki: přehled všech ryb včetně klubových a komunitní Fish Market ceny",
-        "inLanguage": ["cs", "en"]
+        "inLanguage": ["cs", "en", "pl"]
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://fishao-tracker.cz/#webpage",
+        "url": "https://fishao-tracker.cz/",
+        "name": "FISHAO Wiki & Encyklopedie – Ryby, Fish Market ceník a Kluby",
+        "isPartOf": {
+          "@id": "https://fishao-tracker.cz/#website"
+        },
+        "primaryImageOfPage": {
+          "@id": "https://fishao-tracker.cz/#primaryimage"
+        },
+        "image": {
+          "@id": "https://fishao-tracker.cz/#primaryimage"
+        },
+        "thumbnailUrl": "https://fishao-tracker.cz/images/og-preview.png"
       }
     ]
   }
