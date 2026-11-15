@@ -21,6 +21,20 @@ async function initFirebaseSync() {
     var authModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
 
     firebaseApp = appModule.initializeApp(firebaseConfig);
+    if (firebaseConfig.recaptchaSiteKey) {
+      try {
+        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+          self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+        }
+        var appCheckModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js");
+        appCheckModule.initializeAppCheck(firebaseApp, {
+          provider: new appCheckModule.ReCaptchaV3Provider(firebaseConfig.recaptchaSiteKey),
+          isTokenAutoRefreshEnabled: true
+        });
+      } catch (appCheckErr) {
+        console.warn("[FISHAO AppCheck] Failed to initialize:", appCheckErr);
+      }
+    }
     db = firestoreModule.getFirestore(firebaseApp);
     auth = authModule.getAuth(firebaseApp);
     firebaseDocRef = firestoreModule.doc(db, "fishao_market", "prices_history");

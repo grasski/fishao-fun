@@ -388,6 +388,7 @@
       "club_ghost_cleaned": "This player has deleted their account and was automatically removed from the club.",
       "footer_fan_badge": "Fan Project",
       "footer_disclaimer": "FISHAO is a registered trademark of GamoVation B.V. This website is an unofficial community project made by players for players and is not affiliated with or endorsed by GamoVation. All in-game artwork and names belong to their respective owners.",
+      "footer_recaptcha_notice": "This site is protected by reCAPTCHA and the Google <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Privacy Policy</a> and <a href=\"https://policies.google.com/terms\" target=\"_blank\" rel=\"noopener noreferrer\">Terms of Service</a> apply.",
       "footer_privacy_link": "Privacy Policy & GDPR",
       "footer_official_link": "FISHAO Community Game",
       "footer_version": "Made with ❤️ for the fishing community",

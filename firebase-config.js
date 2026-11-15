@@ -12,7 +12,8 @@ window.FISHAO_FIREBASE_CONFIG = {
   storageBucket: "fishao-fun.firebasestorage.app",
   messagingSenderId: "296328872199",
   appId: "1:296328872199:web:536fd056974653812845a2",
-  measurementId: "G-5H57J3WS9V"
+  measurementId: "G-5H57J3WS9V",
+  recaptchaSiteKey: "6Le02iEuAAAAALoWs4tRho5nNqpdsyvJ5c57EiQa"
 };
 
 /**

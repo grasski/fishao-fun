@@ -131,6 +131,26 @@ body {
   margin: 0;
 }
 
+.footer-recaptcha {
+  color: #475569;
+  font-size: 10.5px;
+  line-height: 1.5;
+  margin: 6px 0 0 0;
+}
+
+.footer-recaptcha a {
+  color: #64748b;
+  text-decoration: underline;
+}
+
+.footer-recaptcha a:hover {
+  color: #94a3b8;
+}
+
+.grecaptcha-badge {
+  visibility: hidden !important;
+}
+
 .footer-right {
   display: flex;
   flex-direction: column;

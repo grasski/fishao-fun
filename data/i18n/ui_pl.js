@@ -392,6 +392,7 @@
       "club_ghost_cleaned": "Ten gracz usunął swoje konto i został automatycznie usunięty z klubu.",
       "footer_fan_badge": "Projekt fanowski",
       "footer_disclaimer": "FISHAO jest zarejestrowanym znakiem towarowym firmy GamoVation B.V. Ta strona jest nieoficjalnym projektem społecznościowym stworzonym przez graczy dla graczy i nie jest w żaden sposób powiązana z firmą GamoVation ani przez nią wspierana. Wszystkie grafiki i nazwy z gry należą do ich prawowitych właścicieli.",
+      "footer_recaptcha_notice": "Ta strona jest chroniona przez reCAPTCHA i obowiązują na niej <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Polityka prywatności</a> oraz <a href=\"https://policies.google.com/terms\" target=\"_blank\" rel=\"noopener noreferrer\">Warunki korzystania z usług</a> Google.",
       "footer_privacy_link": "Polityka prywatności & RODO",
       "footer_official_link": "Gra społecznościowa FISHAO",
       "footer_version": "Stworzone z ❤️ dla społeczności wędkarzy",
