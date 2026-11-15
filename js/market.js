@@ -347,10 +347,6 @@ function formatAdvisorChanceLabel(chancePct, competitorCount) {
   if (competitorCount === 0 || chancePct >= 100) {
     return t('advisor_chance_label_pure');
   }
-  if (chancePct > 0) {
-    var oneIn = Math.max(2, Math.round(100 / chancePct));
-    return t('advisor_chance_label_ratio', { pct: chancePct, oneIn: oneIn });
-  }
   return t('advisor_chance_label', { pct: chancePct });
 }
 
