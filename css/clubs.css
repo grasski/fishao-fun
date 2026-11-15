@@ -392,6 +392,14 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
+#nextMilestoneCard.clickable-card {
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+#nextMilestoneCard.clickable-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(245, 158, 11, 0.55);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
 .milestone-card.unlocked {
   border-color: rgba(16, 185, 129, 0.4);
   background: linear-gradient(180deg, rgba(16, 185, 129, 0.07) 0%, #101726 100%);

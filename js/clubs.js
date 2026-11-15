@@ -952,6 +952,12 @@ function renderClubMilestones() {
         : t(nextWaterType === 'salt' ? 'water_salt_short' : 'water_fresh_short');
       var nextBaits = nextFish.baits ? nextFish.baits.map(function (b) { return renderBaitInline(b); }).join(' ') : '';
 
+      nextCard.style.cursor = 'pointer';
+      nextCard.classList.add('clickable-card');
+      nextCard.title = nextFishName + t('click_for_detail_suffix');
+      nextCard.onclick = function () {
+        window.fishaoApp.openPriceModal(nextFish.id);
+      };
       nextCard.innerHTML =
         '<div class="dash-card-header">' +
         '<span class="dash-card-title" style="color: #fbbf24;">' + t('milestone_next_title') + '</span>' +
@@ -973,6 +979,10 @@ function renderClubMilestones() {
         '</div>' +
         '</div>';
     } else {
+      nextCard.style.cursor = '';
+      nextCard.classList.remove('clickable-card');
+      nextCard.removeAttribute('title');
+      nextCard.onclick = null;
       nextCard.innerHTML =
         '<div class="dash-card-header">' +
         '<span class="dash-card-title" style="color: #34d399;">' + t('milestone_all_title') + '</span>' +
