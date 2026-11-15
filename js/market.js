@@ -247,7 +247,6 @@ function renderModalHeaderBaits(fish, rec) {
     if (bestBaitSet[b]) {
       var bName = window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(b) : b;
       return '<span class="bait-tag bait-best" title="' + escapeHtml(t('advisor_best_badge')) + '">' +
-        '<span class="bait-best-star" aria-hidden="true">🎯</span>' +
         renderBaitIconImg(b, 'bait-tag-icon', true) +
         '<span>' + escapeHtml(bName) + '</span>' +
       '</span>';
