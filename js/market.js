@@ -224,8 +224,260 @@ function formatRarityPercent(factor) {
   return parseFloat((val * 100).toFixed(2)).toString() + '%';
 }
 
+var modalBaitAdvisorTimeMode = 'overlap'; // 'overlap' | 'now' | 'all'
+var modalBaitExpandedKeys = {};
+var modalBaitInfoOpen = false;
+
+function renderModalHeaderBaits(fish, rec) {
+  var baitsEl = document.getElementById("modalFishBaits");
+  if (!baitsEl) return;
+  if (!fish || !fish.baits || !fish.baits.length) {
+    baitsEl.innerHTML = '<span style="color: var(--text-muted);">' + t('bait_unknown') + '</span>';
+    return;
+  }
+  var bestBaitSet = {};
+  if (fish.baits.length > 1 && rec && Array.isArray(rec.spots)) {
+    rec.spots.forEach(function (sp) {
+      sp.baits.forEach(function (bi) {
+        if (bi.isBestOverall) bestBaitSet[bi.bait] = true;
+      });
+    });
+  }
+  baitsEl.innerHTML = fish.baits.map(function (b) {
+    if (bestBaitSet[b]) {
+      var bName = window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(b) : b;
+      return '<span class="bait-tag bait-best" title="' + escapeHtml(t('advisor_best_badge')) + '">' +
+        '<span class="bait-best-star" aria-hidden="true">🎯</span>' +
+        renderBaitIconImg(b, 'bait-tag-icon', true) +
+        '<span>' + escapeHtml(bName) + '</span>' +
+      '</span>';
+    }
+    return renderBaitTag(b);
+  }).join('');
+}
+
+function setModalBaitAdvisorTimeMode(mode) {
+  modalBaitAdvisorTimeMode = (mode === 'now' || mode === 'all') ? mode : 'overlap';
+  if (selectedModalFishId) {
+    var fishObj = (typeof getFishById === "function") ? getFishById(selectedModalFishId) : null;
+    var rec = renderModalBaitAdvisor(selectedModalFishId);
+    if (fishObj) renderModalHeaderBaits(fishObj, rec);
+  }
+}
+
+function toggleModalBaitAdvisorInfo() {
+  modalBaitInfoOpen = !modalBaitInfoOpen;
+  if (selectedModalFishId) {
+    var modalBody = document.querySelector('#priceModalOverlay .modal-body');
+    var prevScroll = modalBody ? modalBody.scrollTop : 0;
+    renderModalBaitAdvisor(selectedModalFishId);
+    if (modalBody) modalBody.scrollTop = prevScroll;
+  }
+}
+
+function toggleModalBaitCompetitors(spotBaitKey) {
+  if (!spotBaitKey) return;
+  modalBaitExpandedKeys[spotBaitKey] = !modalBaitExpandedKeys[spotBaitKey];
+  if (selectedModalFishId) {
+    var modalBody = document.querySelector('#priceModalOverlay .modal-body');
+    var prevScroll = modalBody ? modalBody.scrollTop : 0;
+    renderModalBaitAdvisor(selectedModalFishId);
+    if (modalBody) modalBody.scrollTop = prevScroll;
+  }
+}
+
+function openSpotBaitInFishdex(locKey, placeKey, baitCode) {
+  closePriceModal();
+  var timeArg = (modalBaitAdvisorTimeMode === 'now') ? 'now' : '';
+  if (typeof openLocationInFishdex === 'function') {
+    openLocationInFishdex(locKey, placeKey || '', timeArg, 'all');
+  }
+  if (baitCode) {
+    var baitSelect = document.getElementById('baitFilter');
+    if (baitSelect) baitSelect.value = baitCode;
+    if (typeof syncBaitSelectIcon === 'function') {
+      syncBaitSelectIcon('baitFilter', 'baitFilterIcon');
+    }
+    if (typeof applyFilters === 'function') {
+      applyFilters();
+    }
+  }
+}
+
+function renderModalBaitAdvisor(fid, precomputedRec) {
+  var box = document.getElementById("modalBaitAdvisorBox");
+  if (!box) return null;
+
+  var fish = (typeof getFishById === "function")
+    ? getFishById(fid)
+    : allFishes.find(function (x) { return x.id === fid; });
+  if (!fish || !Array.isArray(fish.baits) || fish.baits.length === 0 || typeof computeFishBaitRecommendations !== 'function') {
+    box.style.display = "none";
+    box.innerHTML = "";
+    return null;
+  }
+
+  var rec = precomputedRec || computeFishBaitRecommendations(fish, { timeMode: modalBaitAdvisorTimeMode });
+  if (!rec || !rec.spots || rec.spots.length === 0) {
+    box.style.display = "none";
+    box.innerHTML = "";
+    return rec;
+  }
+
+  box.style.display = "block";
+
+  var modes = [
+    { key: 'overlap', label: t('advisor_mode_overlap'), title: t('advisor_mode_overlap_title') },
+    { key: 'now', label: t('advisor_mode_now'), title: t('advisor_mode_now_title') },
+    { key: 'all', label: t('advisor_mode_all'), title: t('advisor_mode_all_title') }
+  ];
+
+  var modeBtnsHtml = modes.map(function (m) {
+    var isActive = (modalBaitAdvisorTimeMode === m.key);
+    return '<button type="button" class="bait-advisor-mode-btn' + (isActive ? ' active' : '') + '"' +
+      ' title="' + escapeHtml(m.title) + '"' +
+      ' onclick="window.fishaoApp.setModalBaitAdvisorTimeMode(\'' + m.key + '\')">' +
+      escapeHtml(m.label) +
+    '</button>';
+  }).join('');
+
+  var nowWarnHtml = '';
+  if (modalBaitAdvisorTimeMode === 'now' && typeof isFishActiveNow === 'function' && !isFishActiveNow(fish.raw_times, fish.raw_dates)) {
+    nowWarnHtml = '<div class="bait-advisor-now-warn">' + escapeHtml(t('advisor_inactive_now_warn')) + '</div>';
+  }
+
+  var topTipHtml = '';
+  if ((fish.baits.length > 1 || rec.spots.length > 1) && rec.bestOverall) {
+    var best = rec.bestOverall;
+    var bestSpotText = best.areaLabel ? (best.locLabel + ' · ' + best.areaLabel) : best.locLabel;
+    var bestCompText = formatCompetitorCountLabel(best.competitorCount);
+    topTipHtml = '<div class="bait-advisor-top-tip">' +
+      '<span class="bait-advisor-top-label">' + escapeHtml(t('advisor_top_tip_label')) + '</span> ' +
+      '<span class="bait-advisor-top-spot">' + escapeHtml(bestSpotText) + '</span> ' +
+      '<span class="bait-advisor-top-sep">→</span> ' +
+      renderBaitInline(best.bait) +
+      '<span class="bait-advisor-top-meta">(' + escapeHtml(bestCompText) + ' • ' +
+        escapeHtml(t('advisor_chance_label', { pct: best.chancePct })) + ')</span>' +
+    '</div>';
+  }
+
+  var spotsHtml = rec.spots.map(function (spot) {
+    var spotKey = spot.locKey + '|' + (spot.placeKey || 'general');
+    var bestBaitCode = spot.bestBait ? spot.bestBait.bait : '';
+    var safeLocArg = escapeHtml(spot.locKey).replace(/'/g, '&#39;');
+    var safePlaceArg = escapeHtml(spot.placeKey || '').replace(/'/g, '&#39;');
+    var safeBaitArg = escapeHtml(bestBaitCode).replace(/'/g, '&#39;');
+
+    var rowsHtml = spot.baits.map(function (bItem, bIdx) {
+      var rowKey = spotKey + '|' + bItem.bait;
+      var safeRowKey = escapeHtml(rowKey).replace(/'/g, '&#39;');
+      var isHighlight = bItem.isBestInSpot && (spot.baits.length > 1 || bItem.competitorCount === 0);
+      var compClass = bItem.competitorCount <= 3 ? 'low' : (bItem.competitorCount <= 8 ? 'med' : 'high');
+      var rareTotal = bItem.midCount + bItem.rareCount;
+      var isExpanded = Boolean(modalBaitExpandedKeys[rowKey]);
+
+      var rankBadge = isHighlight
+        ? '<span class="bait-advisor-rank best">' + escapeHtml(t('advisor_best_badge')) + '</span>'
+        : '<span class="bait-advisor-rank">#' + (bIdx + 1) + '</span>';
+
+      var breakdownHtml = bItem.competitorCount > 0
+        ? '<span class="bait-advisor-breakdown">' +
+            '<span class="breakdown-common">' + escapeHtml(t('advisor_breakdown_common', { count: bItem.commonCount })) + '</span>' +
+            '<span class="breakdown-sep">•</span>' +
+            '<span class="breakdown-rare">' + escapeHtml(t('advisor_breakdown_rare', { count: rareTotal })) + '</span>' +
+          '</span>'
+        : '';
+
+      var toggleBtnHtml = bItem.competitorCount > 0
+        ? '<button type="button" class="bait-advisor-comp-toggle' + (isExpanded ? ' open' : '') + '"' +
+            ' onclick="window.fishaoApp.toggleModalBaitCompetitors(\'' + safeRowKey + '\')">' +
+            '<span>👥 ' + escapeHtml(isExpanded ? t('advisor_hide_competitors') : t('advisor_show_competitors', { count: bItem.competitorCount })) + '</span>' +
+            '<span class="toggle-caret">' + (isExpanded ? '▲' : '▼') + '</span>' +
+          '</button>'
+        : '';
+
+      var compListHtml = '';
+      if (bItem.competitorCount > 0 && isExpanded) {
+        var chips = bItem.competitors.map(function (cf) {
+          var cfName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(cf) : cf.name;
+          var cfTime = (cf.raw_times && cf.raw_times.length && typeof formatCatchTime === 'function')
+            ? formatCatchTime(cf.raw_times).primary
+            : t('time_all_day');
+          var cfStars = (cf.rating || 1) + '★';
+          return '<button type="button" class="bait-advisor-comp-chip rate-' + (cf.rating || 1) + '"' +
+            ' onclick="window.fishaoApp.openPriceModal(' + Number(cf.id) + ')"' +
+            ' title="' + escapeHtml(cfName + ' (' + cfStars + ') • ' + cfTime) + '">' +
+            '<img src="images/fish_' + Number(cf.id) + '.png" alt="" loading="lazy"' +
+              ' onerror="this.onerror=null;this.src=\'https://play.fishao.net/data/image/fishes/fish255x85_' + Number(cf.id) + '_item.png\'">' +
+            '<span class="comp-chip-name">' + escapeHtml(cfName) + '</span>' +
+            '<span class="comp-chip-stars">' + escapeHtml(cfStars) + '</span>' +
+            '<span class="comp-chip-time">' + escapeHtml(cfTime) + '</span>' +
+          '</button>';
+        }).join('');
+        compListHtml = '<div class="bait-advisor-comp-list">' + chips + '</div>';
+      }
+
+      return '<div class="bait-advisor-row' + (isHighlight ? ' is-best' : '') + '">' +
+        '<div class="bait-advisor-row-main">' +
+          '<div class="bait-advisor-row-left">' +
+            rankBadge +
+            renderBaitTag(bItem.bait) +
+          '</div>' +
+          '<div class="bait-advisor-row-metrics">' +
+            '<span class="comp-pill ' + compClass + '">' + escapeHtml(formatCompetitorCountLabel(bItem.competitorCount)) + '</span>' +
+            breakdownHtml +
+            '<span class="chance-pill" title="' + escapeHtml(t('advisor_chance_tooltip')) + '">' +
+              escapeHtml(t('advisor_chance_label', { pct: bItem.chancePct })) +
+            '</span>' +
+          '</div>' +
+        '</div>' +
+        (toggleBtnHtml ? '<div class="bait-advisor-row-sub">' + toggleBtnHtml + compListHtml + '</div>' : '') +
+      '</div>';
+    }).join('');
+
+    return '<div class="bait-advisor-loc-card">' +
+      '<div class="bait-advisor-loc-header">' +
+        '<div class="bait-advisor-loc-title">' +
+          '<span class="loc-tag">' + escapeHtml(spot.locLabel) + '</span>' +
+          (spot.areaLabel ? '<span class="loc-area-chip">📍 ' + escapeHtml(spot.areaLabel) + '</span>' : '') +
+        '</div>' +
+        '<button type="button" class="bait-advisor-filter-btn"' +
+          ' onclick="window.fishaoApp.openSpotBaitInFishdex(\'' + safeLocArg + '\', \'' + safePlaceArg + '\', \'' + safeBaitArg + '\')">' +
+          escapeHtml(t('advisor_filter_in_table')) +
+        '</button>' +
+      '</div>' +
+      '<div class="bait-advisor-rows">' + rowsHtml + '</div>' +
+    '</div>';
+  }).join('');
+
+  var infoBoxHtml = modalBaitInfoOpen
+    ? '<div class="bait-advisor-info-box">' + t('advisor_info_desc') + '</div>'
+    : '';
+
+  box.innerHTML =
+    '<div class="bait-advisor-header">' +
+      '<div class="bait-advisor-title-group">' +
+        '<span class="bait-advisor-title">' + escapeHtml(t('advisor_title')) + '</span>' +
+        '<button type="button" class="bait-advisor-info-btn' + (modalBaitInfoOpen ? ' active' : '') + '"' +
+          ' aria-expanded="' + (modalBaitInfoOpen ? 'true' : 'false') + '"' +
+          ' title="' + escapeHtml(t('advisor_info_title')) + '"' +
+          ' onclick="window.fishaoApp.toggleModalBaitAdvisorInfo()">' +
+          escapeHtml(t('advisor_info_btn')) +
+        '</button>' +
+      '</div>' +
+      '<div class="bait-advisor-mode-pills">' + modeBtnsHtml + '</div>' +
+    '</div>' +
+    infoBoxHtml +
+    nowWarnHtml +
+    topTipHtml +
+    '<div class="bait-advisor-spots-grid">' + spotsHtml + '</div>';
+
+  return rec;
+}
+
 function openPriceModal(fid, skipSync) {
   selectedModalFishId = fid;
+  modalBaitExpandedKeys = {};
   var fishObj = (typeof getFishById === "function") ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
   if (!fishObj) return;
 
@@ -319,15 +571,9 @@ function openPriceModal(fid, skipSync) {
     locEl.innerHTML = locHtml;
   }
 
-  // Baits
-  var baitsEl = document.getElementById("modalFishBaits");
-  if (baitsEl) {
-    baitsEl.innerHTML = f.baits && f.baits.length
-      ? f.baits.map(function (b) {
-        return renderBaitTag(b);
-      }).join('')
-      : '<span style="color: var(--text-muted);">' + t('bait_unknown') + '</span>';
-  }
+  // Baits & Smart Bait Advisor
+  var advisorRec = renderModalBaitAdvisor(fid);
+  renderModalHeaderBaits(f, advisorRec);
 
   // Time
   var timeEl = document.getElementById("modalFishTime");

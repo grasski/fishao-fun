@@ -395,7 +395,7 @@ function renderTableHead() {
       '<th>' + t('col_fish') + '</th>' +
       '<th>' + t('col_rarity') + '</th>' +
       priceColHtml +
-      '<th>' + t('col_baits') + '</th>' +
+      '<th>' + t('col_baits') + ' <span class="th-info-badge" title="' + escapeHtml(t('col_baits_info_tooltip')) + '">ℹ️</span></th>' +
       '<th>' + t('col_time') + '</th>' +
       '<th>' + t('col_size') + '</th>' +
       '<th style="min-width: 140px;">' + t('col_unlock') + '</th>' +
@@ -410,7 +410,7 @@ function renderTableHead() {
       '<th>' + t('col_rarity') + '</th>' +
       priceColHtml +
       '<th>' + t('col_loc') + '</th>' +
-      '<th>' + t('col_baits') + '</th>' +
+      '<th>' + t('col_baits') + ' <span class="th-info-badge" title="' + escapeHtml(t('col_baits_info_tooltip')) + '">ℹ️</span></th>' +
       '<th>' + t('col_time') + '</th>' +
       '<th>' + t('col_size') + '</th>' +
       '</tr>';
@@ -467,9 +467,9 @@ function renderTableBody(data) {
         '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName + '</div>' + altMatchHtml + '</td>' +
         '<td>' + renderRatingBadge(f.rating) + '</td>' +
         '<td>' + renderPriceCell(f.id) + '</td>' +
-        '<td>' + f.baits.map(function (b) {
+        '<td>' + (typeof renderFishBaitsCell === 'function' ? renderFishBaitsCell(f) : f.baits.map(function (b) {
           return renderBaitTag(b);
-        }).join('') + '</td>' +
+        }).join('')) + '</td>' +
         '<td><div class="time-cell"><span class="time-badge ' + (f.is_night ? 'time-night' : '') + '">' +
         (f.is_night ? '🌙 ' : '☀️ ') + timeInfo.primary +
         (isNow ? '<span class="time-now-active">' + activeNowLabel + '</span>' : '') +
@@ -516,9 +516,9 @@ function renderTableBody(data) {
           return '<span class="loc-tag">' + locName + '</span>';
         }).join('') : '<span class="loc-unspecified">' + unspecText + '</span>') +
         '</td>' +
-        '<td>' + f.baits.map(function (b) {
+        '<td>' + (typeof renderFishBaitsCell === 'function' ? renderFishBaitsCell(f) : f.baits.map(function (b) {
           return renderBaitTag(b);
-        }).join('') + '</td>' +
+        }).join('')) + '</td>' +
         '<td><div class="time-cell"><span class="time-badge ' + (f.is_night ? 'time-night' : '') + '">' +
         (f.is_night ? '🌙 ' : '☀️ ') + timeInfo.primary +
         (isNow ? '<span class="time-now-active">' + activeNowLabel + '</span>' : '') +

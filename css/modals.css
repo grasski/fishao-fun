@@ -831,3 +831,431 @@ textarea.bulk-input {
   padding-top: 8px;
   border-top: 1px solid var(--border-color);
 }
+
+/* ===================================================================
+   SMART BAIT & CATCH CHANCE ADVISOR (Fish Detail Modal)
+   =================================================================== */
+
+.modal-bait-advisor-box {
+  background: #0a0f19;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  display: none;
+}
+
+.bait-advisor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.bait-advisor-title-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bait-advisor-title {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #34d399;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bait-advisor-info-btn {
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #7dd3fc;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.bait-advisor-info-btn:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.55);
+  color: #e0f2fe;
+}
+
+.bait-advisor-info-btn.active {
+  background: rgba(56, 189, 248, 0.24);
+  border-color: #38bdf8;
+  color: #fff;
+}
+
+.bait-advisor-info-box {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 8px;
+  padding: 9px 12px;
+  margin-bottom: 10px;
+  font-size: 11.5px;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+.bait-advisor-info-box ul {
+  margin: 0;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bait-advisor-info-box strong {
+  color: #f8fafc;
+}
+
+.bait-advisor-info-box code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  color: #6ee7b7;
+}
+
+.bait-advisor-mode-pills {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.bait-advisor-mode-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.bait-advisor-mode-btn:hover {
+  color: #e2e8f0;
+  border-color: rgba(148, 163, 184, 0.45);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.bait-advisor-mode-btn.active {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: rgba(16, 185, 129, 0.55);
+  color: #6ee7b7;
+}
+
+.bait-advisor-now-warn {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fcd34d;
+  font-size: 11px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.bait-advisor-top-tip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(56, 189, 248, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #e2e8f0;
+}
+
+.bait-advisor-top-label {
+  font-weight: 800;
+  color: #6ee7b7;
+}
+
+.bait-advisor-top-spot {
+  font-weight: 700;
+  color: #fff;
+}
+
+.bait-advisor-top-sep {
+  color: #64748b;
+}
+
+.bait-advisor-top-meta {
+  font-size: 11px;
+  color: #a7f3d0;
+  font-weight: 600;
+}
+
+.bait-advisor-spots-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bait-advisor-loc-card {
+  background: #0f1624;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 9px 10px;
+}
+
+.bait-advisor-loc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.bait-advisor-loc-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.bait-advisor-filter-btn {
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #7dd3fc;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.bait-advisor-filter-btn:hover {
+  background: rgba(56, 189, 248, 0.22);
+  border-color: #38bdf8;
+  color: #fff;
+}
+
+.bait-advisor-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bait-advisor-row {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 7px;
+  padding: 7px 9px;
+}
+
+.bait-advisor-row.is-best {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.bait-advisor-row-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bait-advisor-row-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.bait-advisor-rank {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.bait-advisor-rank.best {
+  background: rgba(16, 185, 129, 0.22);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.45);
+}
+
+.bait-advisor-row-metrics {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.comp-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.comp-pill.low {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #34d399;
+}
+
+.comp-pill.med {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+}
+
+.comp-pill.high {
+  background: rgba(239, 68, 68, 0.14);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #f87171;
+}
+
+.bait-advisor-breakdown {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.breakdown-sep {
+  opacity: 0.5;
+}
+
+.chance-pill {
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #7dd3fc;
+  white-space: nowrap;
+  cursor: help;
+}
+
+.bait-advisor-row-sub {
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.07);
+}
+
+.bait-advisor-comp-toggle {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.15s ease;
+}
+
+.bait-advisor-comp-toggle:hover,
+.bait-advisor-comp-toggle.open {
+  color: #e2e8f0;
+}
+
+.bait-advisor-comp-toggle .toggle-caret {
+  font-size: 9px;
+}
+
+.bait-advisor-comp-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 6px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.bait-advisor-comp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 3px 7px;
+  color: #e2e8f0;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  max-width: 100%;
+}
+
+.bait-advisor-comp-chip:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.45);
+  transform: translateY(-1px);
+}
+
+.bait-advisor-comp-chip img {
+  width: 28px;
+  height: 15px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.comp-chip-name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.comp-chip-stars {
+  font-size: 10px;
+  font-weight: 800;
+  color: #fbbf24;
+  flex-shrink: 0;
+}
+
+.comp-chip-time {
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .bait-advisor-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .bait-advisor-row-main {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .bait-advisor-row-metrics {
+    width: 100%;
+  }
+}

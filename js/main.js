@@ -593,6 +593,10 @@ window.fishaoApp = {
   resetCalendarFilters: resetCalendarFilters,
   renderCalendarView: renderCalendarView,
   updateCalendarTabPill: updateCalendarTabPill,
+  setModalBaitAdvisorTimeMode: setModalBaitAdvisorTimeMode,
+  toggleModalBaitAdvisorInfo: toggleModalBaitAdvisorInfo,
+  toggleModalBaitCompetitors: toggleModalBaitCompetitors,
+  openSpotBaitInFishdex: openSpotBaitInFishdex,
   t: t
 };
 

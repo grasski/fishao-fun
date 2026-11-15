@@ -547,3 +547,380 @@ function syncBaitSelectIcon(selectId, iconId) {
   }
   menuEl.innerHTML = optsHtml;
 }
+
+// -------------------------------------------------------------
+// Smart Bait Competition & Recommendation Engine
+// -------------------------------------------------------------
+
+var EFPT_PARENT_MAP = {
+  EFPT_LOST_VALLEY_POND_1: ['location_108'],
+  EFPT_LOST_VALLEY_POND_2: ['location_108'],
+  EFPT_SEAGULL_HARBOR_BOAT: ['location_8'],
+  EFPT_PANHEIRA_BEACH_JETTY: ['location_3'],
+  EFPT_COOL_MOUNTAIN_RAFT: ['location_4'],
+  EFPT_THOMBANI_TOWN_AFRICAN_LAKE: ['location_9'],
+  EFPT_CLUB_AREA_SALT: ['location_112'],
+  EFPT_CLUB_AREA_FRESH: ['location_112'],
+  EFPT_PALM_ISLAND_ZONE_A: ['location_11', 'location_204'],
+  EFPT_PALM_ISLAND_ZONE_B: ['location_11', 'location_204'],
+  EFPT_PALM_ISLAND_ZONE_C: ['location_11', 'location_204'],
+  EFPT_PALM_ISLAND_ZONE_D: ['location_11', 'location_204'],
+  EFPT_PALM_ISLAND_ZONE_E: ['location_11', 'location_204'],
+  EFPT_PALM_ISLAND_ZONE_F: ['location_11', 'location_204'],
+  EFPT_PALM_ISLAND_ZONE_G: ['location_11', 'location_204'],
+  EFPT_PALM_ISLAND_ZONE_H: ['location_11', 'location_204']
+};
+
+var RATING_SPAWN_WEIGHTS = { 1: 1.0, 2: 0.65, 3: 0.35, 4: 0.15, 5: 0.06 };
+
+function getFishPlacesForLocation(fish, locKey) {
+  if (!fish || !Array.isArray(fish.places) || fish.places.length === 0) return [null];
+  var matching = fish.places.filter(function (p) {
+    if (!p) return false;
+    var parents = EFPT_PARENT_MAP[p];
+    return !parents || parents.indexOf(locKey) !== -1;
+  });
+  return matching.length > 0 ? matching : [null];
+}
+
+function isFishInSpot(fish, locKey, placeKey) {
+  if (!fish) return false;
+  var hasLoc = (Array.isArray(fish.locations) && fish.locations.indexOf(locKey) !== -1) ||
+    (locKey === 'location_112' && Boolean(fish.is_club));
+  if (!hasLoc) return false;
+  var placesInLoc = getFishPlacesForLocation(fish, locKey);
+  return placesInLoc.indexOf(placeKey || null) !== -1;
+}
+
+function parseTimeWindowsToMinutes(rawTimes) {
+  if (!rawTimes || rawTimes.length === 0) return [[0, 1440]];
+  var ranges = [];
+  for (var i = 0; i < rawTimes.length; i++) {
+    var clean = String(rawTimes[i] || '').trim();
+    if (clean.indexOf('-') === -1) continue;
+    var parts = clean.split('-');
+    var sParts = parts[0].split(':').map(Number);
+    var eParts = parts[1].split(':').map(Number);
+    var st = (sParts[0] || 0) * 60 + (sParts[1] || 0);
+    var et = (eParts[0] || 0) * 60 + (eParts[1] || 0);
+    if (et === 0) et = 1440;
+    if (et <= st) {
+      ranges.push([st, 1440], [0, et]);
+    } else {
+      ranges.push([st, et]);
+    }
+  }
+  return ranges.length > 0 ? ranges : [[0, 1440]];
+}
+
+function parseDateWindowsToMMDD(rawDates) {
+  if (!rawDates || rawDates.length === 0) return [[101, 1231]];
+  var ranges = [];
+  for (var i = 0; i < rawDates.length; i++) {
+    var clean = String(rawDates[i] || '').trim();
+    if (clean.indexOf('-') === -1) continue;
+    var parts = clean.split('-');
+    var sParts = parts[0].split('.').map(Number);
+    var eParts = parts[1].split('.').map(Number);
+    var sVal = (sParts[0] || 1) * 100 + (sParts[1] || 1);
+    var eVal = (eParts[0] || 12) * 100 + (eParts[1] || 31);
+    if (eVal < sVal) {
+      ranges.push([sVal, 1231], [101, eVal]);
+    } else {
+      ranges.push([sVal, eVal]);
+    }
+  }
+  return ranges.length > 0 ? ranges : [[101, 1231]];
+}
+
+function doNumericRangesOverlap(rangesA, rangesB, inclusive) {
+  for (var i = 0; i < rangesA.length; i++) {
+    for (var j = 0; j < rangesB.length; j++) {
+      var s = Math.max(rangesA[i][0], rangesB[j][0]);
+      var e = Math.min(rangesA[i][1], rangesB[j][1]);
+      if (inclusive ? (s <= e) : (s < e)) return true;
+    }
+  }
+  return false;
+}
+
+function doFishTimesOverlap(timesA, timesB) {
+  if (!timesA || timesA.length === 0 || !timesB || timesB.length === 0) return true;
+  return doNumericRangesOverlap(parseTimeWindowsToMinutes(timesA), parseTimeWindowsToMinutes(timesB), false);
+}
+
+function doFishDatesOverlap(datesA, datesB) {
+  if (!datesA || datesA.length === 0 || !datesB || datesB.length === 0) return true;
+  return doNumericRangesOverlap(parseDateWindowsToMMDD(datesA), parseDateWindowsToMMDD(datesB), true);
+}
+
+/**
+ * Estimates relative spawn weight for a fish from its star rating and rarity_factor.
+ * Lower values mean rarer fish (less likely to appear as unwanted bycatch).
+ */
+function getFishSpawnWeight(fish) {
+  if (!fish) return 0.35;
+  var starWeight = RATING_SPAWN_WEIGHTS[fish.rating] || 0.35;
+  var rf = (typeof fish.rarity_factor === 'number') ? fish.rarity_factor : parseFloat(fish.rarity_factor);
+  var rarityFactor = (isFinite(rf) && rf > 0) ? Math.min(1, rf) : 1.0;
+  return starWeight * rarityFactor;
+}
+
+function formatCompetitorCountLabel(count) {
+  var num = Math.max(0, parseInt(count, 10) || 0);
+  if (num === 0) return t('advisor_comp_zero');
+  return t('advisor_comp_count', { count: num });
+}
+
+function compareBaitScores(a, b) {
+  return (a.competitorCount - b.competitorCount) ||
+    (a.competitorWeight - b.competitorWeight) ||
+    (a.commonCount - b.commonCount);
+}
+
+function isBaitScoreTied(a, b) {
+  return a && b &&
+    a.competitorCount === b.competitorCount &&
+    Math.abs(a.competitorWeight - b.competitorWeight) < 1e-6;
+}
+
+/**
+ * Ranks a fish's valid baits per location/sub-area by fewest competing fish
+ * and lowest competitor spawn weight.
+ */
+function computeFishBaitRecommendations(fish, options) {
+  var opts = options || {};
+  var timeMode = opts.timeMode || 'overlap';
+  var result = { spots: [], bestOverall: null, timeMode: timeMode };
+  if (!fish || !Array.isArray(allFishes)) return result;
+
+  var locKeys = (Array.isArray(fish.locations) && fish.locations.length)
+    ? fish.locations.slice()
+    : (fish.is_club ? ['location_112'] : []);
+  if (opts.filterLoc && locKeys.indexOf(opts.filterLoc) !== -1) {
+    locKeys = [opts.filterLoc];
+  }
+
+  var targetWeight = getFishSpawnWeight(fish);
+  var targetBaits = Array.isArray(fish.baits) ? fish.baits : [];
+  var spots = [];
+
+  locKeys.forEach(function (locKey) {
+    var places = getFishPlacesForLocation(fish, locKey);
+    if (opts.filterArea && places.indexOf(opts.filterArea) !== -1) {
+      places = [opts.filterArea];
+    }
+
+    places.forEach(function (placeKey) {
+      var spotFishes = allFishes.filter(function (other) {
+        if (!other || other.id === fish.id) return false;
+        if (!isFishInSpot(other, locKey, placeKey)) return false;
+        if (opts.onlyUnlockedClub && locKey === 'location_112' && typeof getUnlockStatus === 'function') {
+          if (!getUnlockStatus(other, currentClubPoints).isUnlocked) return false;
+        }
+        if (timeMode === 'now') {
+          return typeof isFishActiveNow === 'function' ? isFishActiveNow(other.raw_times, other.raw_dates) : true;
+        }
+        if (timeMode === 'overlap') {
+          return doFishTimesOverlap(fish.raw_times, other.raw_times) &&
+            doFishDatesOverlap(fish.raw_dates, other.raw_dates);
+        }
+        return true;
+      });
+
+      var baitResults = targetBaits.map(function (baitCode) {
+        var competitors = spotFishes.filter(function (other) {
+          return Array.isArray(other.baits) && other.baits.indexOf(baitCode) !== -1;
+        });
+
+        competitors.sort(function (a, b) {
+          return (getFishSpawnWeight(b) - getFishSpawnWeight(a)) || (a.rating - b.rating);
+        });
+
+        var commonCount = 0;
+        var midCount = 0;
+        var rareCount = 0;
+        var competitorWeight = 0;
+        for (var i = 0; i < competitors.length; i++) {
+          var c = competitors[i];
+          if (c.rating <= 2) commonCount++;
+          else if (c.rating === 3) midCount++;
+          else rareCount++;
+          competitorWeight += getFishSpawnWeight(c);
+        }
+
+        var competitorCount = competitors.length;
+        var rawChance = (targetWeight + competitorWeight) > 0
+          ? (targetWeight / (targetWeight + competitorWeight)) * 100
+          : 100;
+        var chancePct = competitorCount === 0
+          ? 100
+          : (rawChance >= 10 ? Math.round(rawChance) : Math.max(0.5, Math.round(rawChance * 10) / 10));
+
+        return {
+          bait: baitCode,
+          competitors: competitors,
+          competitorCount: competitorCount,
+          commonCount: commonCount,
+          midCount: midCount,
+          rareCount: rareCount,
+          competitorWeight: competitorWeight,
+          chancePct: chancePct,
+          isBestInSpot: false,
+          isBestOverall: false
+        };
+      });
+
+      baitResults.sort(compareBaitScores);
+
+      if (baitResults.length > 0) {
+        var topInSpot = baitResults[0];
+        baitResults.forEach(function (bItem) {
+          if (isBaitScoreTied(bItem, topInSpot)) {
+            bItem.isBestInSpot = true;
+          }
+        });
+      }
+
+      var locLabel = (window.FISHAO_I18N && window.FISHAO_I18N.getLocationName)
+        ? window.FISHAO_I18N.getLocationName(locKey)
+        : locKey;
+      var areaLabel = placeKey
+        ? ((window.FISHAO_I18N && window.FISHAO_I18N.getLocationName) ? window.FISHAO_I18N.getLocationName(placeKey) : placeKey)
+        : '';
+
+      spots.push({
+        locKey: locKey,
+        placeKey: placeKey,
+        locLabel: locLabel,
+        areaLabel: areaLabel,
+        baits: baitResults,
+        bestBait: baitResults.length ? baitResults[0] : null
+      });
+    });
+  });
+
+  spots.sort(function (a, b) {
+    if (!a.bestBait && !b.bestBait) return 0;
+    if (!a.bestBait) return 1;
+    if (!b.bestBait) return -1;
+    return compareBaitScores(a.bestBait, b.bestBait);
+  });
+
+  if (spots.length > 0 && spots[0].bestBait) {
+    var topSpotBest = spots[0].bestBait;
+    result.bestOverall = {
+      locKey: spots[0].locKey,
+      placeKey: spots[0].placeKey,
+      locLabel: spots[0].locLabel,
+      areaLabel: spots[0].areaLabel,
+      bait: topSpotBest.bait,
+      competitorCount: topSpotBest.competitorCount,
+      commonCount: topSpotBest.commonCount,
+      midCount: topSpotBest.midCount,
+      rareCount: topSpotBest.rareCount,
+      competitorWeight: topSpotBest.competitorWeight,
+      chancePct: topSpotBest.chancePct
+    };
+
+    spots.forEach(function (spot) {
+      spot.baits.forEach(function (bItem) {
+        if (isBaitScoreTied(bItem, topSpotBest)) {
+          bItem.isBestOverall = true;
+        }
+      });
+    });
+  }
+
+  result.spots = spots;
+  return result;
+}
+
+/**
+ * Renders the table bait cell with best-bait sorting, highlight, and competition counts
+ * evaluated in the active location/area/time filter context.
+ */
+function renderFishBaitsCell(fish) {
+  if (!fish || !Array.isArray(fish.baits) || fish.baits.length === 0) return '';
+
+  var locEl = document.getElementById('locationFilter');
+  var areaEl = document.getElementById('areaFilter');
+  var hideLockedEl = document.getElementById('hideLockedCheckbox');
+
+  var locFilter = (currentView === 'club') ? 'location_112' : ((locEl && locEl.value) || '');
+  var areaFilter = (areaEl && areaEl.value) || '';
+  var timeMode = filterNowActive ? 'now' : 'overlap';
+  var hideLocked = (currentView === 'club' && hideLockedEl && hideLockedEl.checked);
+
+  var rec = computeFishBaitRecommendations(fish, {
+    timeMode: timeMode,
+    filterLoc: locFilter,
+    filterArea: areaFilter,
+    onlyUnlockedClub: hideLocked
+  });
+
+  if (!rec.spots.length) {
+    return fish.baits.map(function (b) { return renderBaitTag(b); }).join('');
+  }
+
+  var baitSummaries = fish.baits.map(function (baitCode) {
+    var bestMatch = null;
+    rec.spots.forEach(function (spot) {
+      for (var i = 0; i < spot.baits.length; i++) {
+        var bItem = spot.baits[i];
+        if (bItem.bait !== baitCode) continue;
+        if (!bestMatch || compareBaitScores(bItem, bestMatch) < 0) {
+          bestMatch = {
+            bait: baitCode,
+            locLabel: spot.locLabel,
+            areaLabel: spot.areaLabel,
+            competitorCount: bItem.competitorCount,
+            commonCount: bItem.commonCount,
+            competitorWeight: bItem.competitorWeight,
+            chancePct: bItem.chancePct
+          };
+        }
+      }
+    });
+    return bestMatch;
+  }).filter(Boolean);
+
+  if (!baitSummaries.length) {
+    return fish.baits.map(function (b) { return renderBaitTag(b); }).join('');
+  }
+
+  var hasMultipleBaits = fish.baits.length > 1;
+  if (hasMultipleBaits) {
+    baitSummaries.sort(compareBaitScores);
+  }
+
+  var topSummary = baitSummaries[0];
+
+  return baitSummaries.map(function (item) {
+    var isBest = hasMultipleBaits
+      ? isBaitScoreTied(item, topSummary)
+      : (item.competitorCount === 0);
+
+    var bName = window.FISHAO_I18N ? window.FISHAO_I18N.getBaitName(item.bait) : item.bait;
+    var spotName = item.areaLabel ? (item.locLabel + ' – ' + item.areaLabel) : item.locLabel;
+    var compStr = formatCompetitorCountLabel(item.competitorCount);
+    var tooltip = t(isBest ? 'bait_best_tooltip' : 'bait_comp_tooltip', {
+      loc: spotName,
+      bait: bName,
+      comp: compStr,
+      pct: item.chancePct
+    });
+
+    var imgHtml = renderBaitIconImg(item.bait, 'bait-tag-icon', true);
+    var compBadgeVal = item.competitorCount === 0 ? '0' : ('+' + item.competitorCount);
+    var compBadgeCls = 'bait-comp-count' + (isBest ? '' : ' muted');
+    var bestIcon = (isBest && hasMultipleBaits) ? '<span class="bait-best-star" aria-hidden="true">🎯</span>' : '';
+
+    return '<span class="bait-tag' + (isBest ? ' bait-best' : '') + '" title="' + escapeHtml(tooltip) + '">' +
+      bestIcon +
+      imgHtml +
+      '<span>' + escapeHtml(bName) + '</span>' +
+      '<span class="' + compBadgeCls + '">' + compBadgeVal + '</span>' +
+    '</span>';
+  }).join('');
+}
