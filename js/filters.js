@@ -43,6 +43,17 @@ function toggleNowActive() {
   applyFilters();
 }
 
+function toggleBestChanceSort() {
+  var sortEl = document.getElementById("sortBy");
+  if (!sortEl) return;
+  if (sortEl.value === "chance_desc") {
+    sortEl.value = (currentView === "market") ? "price_desc" : "name_asc";
+  } else {
+    sortEl.value = "chance_desc";
+  }
+  applyFilters();
+}
+
 function setCollectionFilter(mode, btn) {
   if (mode !== 'all' && !currentUser) {
     showAuthNotice(t('coll_gate_title'));
@@ -81,6 +92,9 @@ function applyFilters() {
   filterNowActive = (timeVal === "now");
   var btnNow = document.getElementById("btnNow");
   if (btnNow) btnNow.classList.toggle("active", filterNowActive);
+
+  var btnBestChance = document.getElementById("btnBestChance");
+  if (btnBestChance) btnBestChance.classList.toggle("active", sortBy === "chance_desc");
 
   var dataset = currentView === "club" ? clubFishes : allFishes;
 
@@ -150,7 +164,53 @@ function applyFilters() {
 
   // Sorting
   var curLang = getLang();
-  if (sortBy === "price_desc") {
+  if (sortBy === "chance_desc" || sortBy === "chance_asc") {
+    var chanceMap = new Map();
+    var timeModeForSort = filterNowActive ? 'now' : 'overlap';
+    var locForSort = (currentView === "club") ? "location_112" : (location || "");
+    var getChanceData = function (f) {
+      if (chanceMap.has(f.id)) return chanceMap.get(f.id);
+      var rec = (typeof computeFishBaitRecommendations === "function")
+        ? computeFishBaitRecommendations(f, {
+            timeMode: timeModeForSort,
+            filterLoc: locForSort,
+            filterArea: area || "",
+            onlyUnlockedClub: (currentView === "club" && hideLocked)
+          })
+        : null;
+      var topSpot = (rec && rec.spots && rec.spots.length) ? rec.spots[0] : null;
+      var topBait = (topSpot && topSpot.bestBait) ? topSpot.bestBait : null;
+      var data = {
+        chancePct: topBait ? topBait.chancePct : 0,
+        competitorCount: topBait ? topBait.competitorCount : 999,
+        competitorWeight: topBait ? topBait.competitorWeight : 999
+      };
+      chanceMap.set(f.id, data);
+      return data;
+    };
+
+    if (sortBy === "chance_desc") {
+      filtered.sort(function (a, b) {
+        var ca = getChanceData(a);
+        var cb = getChanceData(b);
+        return (cb.chancePct - ca.chancePct) ||
+          (ca.competitorCount - cb.competitorCount) ||
+          (ca.competitorWeight - cb.competitorWeight) ||
+          (b.rating - a.rating) ||
+          (b.id - a.id);
+      });
+    } else {
+      filtered.sort(function (a, b) {
+        var ca = getChanceData(a);
+        var cb = getChanceData(b);
+        return (ca.chancePct - cb.chancePct) ||
+          (cb.competitorCount - ca.competitorCount) ||
+          (cb.competitorWeight - ca.competitorWeight) ||
+          (a.rating - b.rating) ||
+          (a.id - b.id);
+      });
+    }
+  } else if (sortBy === "price_desc") {
     filtered.sort(function (a, b) {
       var pa = (getMaxPrice(a.id) || {}).price || 0;
       var pb = (getMaxPrice(b.id) || {}).price || 0;
@@ -201,6 +261,7 @@ function applyFilters() {
   // Localized active filter summary
   var filterNotes = [];
   if (currentView === "club" && hideLocked) filterNotes.push(t('filter_note_unlocked'));
+  if (sortBy === "chance_desc") filterNotes.push(t('filter_note_sort_chance'));
   if (filterOnlyPrice) {
     if (isMarketClosedToday()) {
       filterNotes.push(t('filter_note_priced_sunday'));
@@ -304,6 +365,9 @@ function resetFilters() {
   filterNowActive = false;
   var btnNow = document.getElementById("btnNow");
   if (btnNow) btnNow.classList.remove("active");
+
+  var btnBestChance = document.getElementById("btnBestChance");
+  if (btnBestChance) btnBestChance.classList.remove("active");
 
   if (currentView === "market") {
     filterOnlyPrice = true;
@@ -473,6 +537,8 @@ function updateSortByOptions() {
   select.innerHTML =
     '<option value="name_asc">' + t('opt_sort_name_asc') + '</option>' +
     '<option value="name_desc">' + t('opt_sort_name_desc') + '</option>' +
+    '<option value="chance_desc">' + t('opt_sort_chance_desc') + '</option>' +
+    '<option value="chance_asc">' + t('opt_sort_chance_asc') + '</option>' +
     '<option value="price_desc">' + t('opt_sort_price_desc') + '</option>' +
     '<option value="price_asc">' + t('opt_sort_price_asc') + '</option>' +
     '<option value="rating_desc">' + t('opt_sort_rating_desc') + '</option>' +

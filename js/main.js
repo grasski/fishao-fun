@@ -487,6 +487,7 @@ window.fishaoApp = {
   setSizeFilter: setSizeFilter,
   onRangeSizeInput: onRangeSizeInput,
   toggleNowActive: toggleNowActive,
+  toggleBestChanceSort: toggleBestChanceSort,
   toggleOnlyPrice: toggleOnlyPrice,
   openPriceModal: openPriceModal,
   closePriceModal: closePriceModal,

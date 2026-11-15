@@ -579,6 +579,7 @@ function isFishInSpot(fish, locKey, placeKey) {
     (locKey === 'location_112' && Boolean(fish.is_club));
   if (!hasLoc) return false;
   var placesInLoc = getFishPlacesForLocation(fish, locKey);
+  if (placesInLoc.indexOf(null) !== -1) return true;
   return placesInLoc.indexOf(placeKey || null) !== -1;
 }
 
@@ -904,13 +905,15 @@ function renderFishBaitsCell(fish) {
     var imgHtml = renderBaitIconImg(item.bait, 'bait-tag-icon', true);
     var compBadgeVal = item.competitorCount === 0 ? '0' : ('+' + item.competitorCount);
     var compBadgeCls = 'bait-comp-count' + (isBest ? '' : ' muted');
-    var bestIcon = (isBest && hasMultipleBaits) ? '<span class="bait-best-star" aria-hidden="true">🎯</span>' : '';
+    var chanceBadge = isBest
+      ? '<span class="bait-chance-pct">' + (item.chancePct === 100 ? '100%' : ('~' + item.chancePct + '%')) + '</span>'
+      : '';
 
     return '<span class="bait-tag' + (isBest ? ' bait-best' : '') + '" title="' + escapeHtml(tooltip) + '">' +
-      bestIcon +
       imgHtml +
       '<span>' + escapeHtml(bName) + '</span>' +
       '<span class="' + compBadgeCls + '">' + compBadgeVal + '</span>' +
+      chanceBadge +
     '</span>';
   }).join('');
 }

@@ -310,6 +310,13 @@ select.filter-control option {
   box-shadow: none;
 }
 
+#btnBestChance.active {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  border-color: #34d399 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3) !important;
+}
+
 /* Reset button */
 .filter-group-reset {
   flex: 0 0 auto;

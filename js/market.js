@@ -224,7 +224,7 @@ function formatRarityPercent(factor) {
   return parseFloat((val * 100).toFixed(2)).toString() + '%';
 }
 
-var modalBaitAdvisorTimeMode = 'overlap'; // 'overlap' | 'now' | 'all'
+var modalBaitAdvisorTimeMode = 'now'; // 'now' | 'overlap'
 var modalBaitExpandedKeys = {};
 var modalBaitInfoOpen = false;
 
@@ -257,7 +257,11 @@ function renderModalHeaderBaits(fish, rec) {
 }
 
 function setModalBaitAdvisorTimeMode(mode) {
-  modalBaitAdvisorTimeMode = (mode === 'now' || mode === 'all') ? mode : 'overlap';
+  if (mode === 'now') {
+    modalBaitAdvisorTimeMode = (modalBaitAdvisorTimeMode === 'now') ? 'overlap' : 'now';
+  } else {
+    modalBaitAdvisorTimeMode = 'overlap';
+  }
   if (selectedModalFishId) {
     var fishObj = (typeof getFishById === "function") ? getFishById(selectedModalFishId) : null;
     var rec = renderModalBaitAdvisor(selectedModalFishId);
@@ -326,20 +330,12 @@ function renderModalBaitAdvisor(fid, precomputedRec) {
 
   box.style.display = "block";
 
-  var modes = [
-    { key: 'overlap', label: t('advisor_mode_overlap'), title: t('advisor_mode_overlap_title') },
-    { key: 'now', label: t('advisor_mode_now'), title: t('advisor_mode_now_title') },
-    { key: 'all', label: t('advisor_mode_all'), title: t('advisor_mode_all_title') }
-  ];
-
-  var modeBtnsHtml = modes.map(function (m) {
-    var isActive = (modalBaitAdvisorTimeMode === m.key);
-    return '<button type="button" class="bait-advisor-mode-btn' + (isActive ? ' active' : '') + '"' +
-      ' title="' + escapeHtml(m.title) + '"' +
-      ' onclick="window.fishaoApp.setModalBaitAdvisorTimeMode(\'' + m.key + '\')">' +
-      escapeHtml(m.label) +
-    '</button>';
-  }).join('');
+  var isNowActive = (modalBaitAdvisorTimeMode === 'now');
+  var modeBtnsHtml = '<button type="button" class="bait-advisor-mode-btn' + (isNowActive ? ' active' : '') + '"' +
+    ' title="' + escapeHtml(t('advisor_mode_now_title')) + '"' +
+    ' onclick="window.fishaoApp.setModalBaitAdvisorTimeMode(\'now\')">' +
+    escapeHtml(t('advisor_mode_now')) +
+  '</button>';
 
   var nowWarnHtml = '';
   if (modalBaitAdvisorTimeMode === 'now' && typeof isFishActiveNow === 'function' && !isFishActiveNow(fish.raw_times, fish.raw_dates)) {
@@ -347,6 +343,17 @@ function renderModalBaitAdvisor(fid, precomputedRec) {
   }
 
   var topTipHtml = '';
+function formatAdvisorChanceLabel(chancePct, competitorCount) {
+  if (competitorCount === 0 || chancePct >= 100) {
+    return t('advisor_chance_label_pure');
+  }
+  if (chancePct > 0) {
+    var oneIn = Math.max(2, Math.round(100 / chancePct));
+    return t('advisor_chance_label_ratio', { pct: chancePct, oneIn: oneIn });
+  }
+  return t('advisor_chance_label', { pct: chancePct });
+}
+
   if ((fish.baits.length > 1 || rec.spots.length > 1) && rec.bestOverall) {
     var best = rec.bestOverall;
     var bestSpotText = best.areaLabel ? (best.locLabel + ' · ' + best.areaLabel) : best.locLabel;
@@ -357,7 +364,7 @@ function renderModalBaitAdvisor(fid, precomputedRec) {
       '<span class="bait-advisor-top-sep">→</span> ' +
       renderBaitInline(best.bait) +
       '<span class="bait-advisor-top-meta">(' + escapeHtml(bestCompText) + ' • ' +
-        escapeHtml(t('advisor_chance_label', { pct: best.chancePct })) + ')</span>' +
+        escapeHtml(formatAdvisorChanceLabel(best.chancePct, best.competitorCount)) + ')</span>' +
     '</div>';
   }
 
@@ -427,7 +434,7 @@ function renderModalBaitAdvisor(fid, precomputedRec) {
             '<span class="comp-pill ' + compClass + '">' + escapeHtml(formatCompetitorCountLabel(bItem.competitorCount)) + '</span>' +
             breakdownHtml +
             '<span class="chance-pill" title="' + escapeHtml(t('advisor_chance_tooltip')) + '">' +
-              escapeHtml(t('advisor_chance_label', { pct: bItem.chancePct })) +
+              escapeHtml(formatAdvisorChanceLabel(bItem.chancePct, bItem.competitorCount)) +
             '</span>' +
           '</div>' +
         '</div>' +
