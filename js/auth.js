@@ -28,7 +28,7 @@ async function initFirebaseSync() {
         }
         var appCheckModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js");
         appCheckModule.initializeAppCheck(firebaseApp, {
-          provider: new appCheckModule.ReCaptchaV3Provider(firebaseConfig.recaptchaSiteKey),
+          provider: new appCheckModule.ReCaptchaEnterpriseProvider(firebaseConfig.recaptchaSiteKey),
           isTokenAutoRefreshEnabled: true
         });
       } catch (appCheckErr) {
