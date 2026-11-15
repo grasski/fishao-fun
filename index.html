@@ -129,7 +129,7 @@
   <link rel="stylesheet" href="css/clubs.css?v=3.3">
   <link rel="stylesheet" href="css/players.css?v=3.2">
   <link rel="stylesheet" href="css/modals.css?v=3.3">
-  <link rel="stylesheet" href="css/locations-calendar.css?v=1.0">
+  <link rel="stylesheet" href="css/locations-calendar.css?v=1.2">
   <link rel="stylesheet" href="css/responsive.css?v=3.5">
 </head>
 
@@ -215,44 +215,63 @@
       </div>
     </header>
 
-    <!-- Main Navigation Bar -->
+    <!-- Main Navigation Bar (4 Primary Pillars) -->
     <nav class="main-nav-bar" id="mainNavBar">
       <button class="nav-tab blue active" id="tabAll" onclick="window.fishaoApp.switchView('all')">
         <span class="tab-icon">🌐</span>
         <span class="tab-title" data-i18n="nav_all">Fishdex</span>
         <span class="tab-pill" data-i18n="nav_all_pill">615 ryb</span>
       </button>
-      <button class="nav-tab gold" id="tabClub" onclick="window.fishaoApp.switchView('club')" style="display: none;">
-        <span class="tab-icon">🏆</span>
-        <span class="tab-title" data-i18n="nav_club">Klubové ryby</span>
-        <span class="tab-pill" id="tabClubBadge" data-i18n="nav_club_pill">80 ryb</span>
+      <button class="nav-tab yellow" id="tabMarket" onclick="window.fishaoApp.switchView('market')">
+        <span class="tab-icon">💵</span>
+        <span class="tab-title" data-i18n="nav_market">Fish Market</span>
+        <span class="tab-pill" id="tabMarketPill" data-i18n="nav_market_pill">Výkup</span>
       </button>
       <button class="nav-tab purple" id="tabClubManage" onclick="window.fishaoApp.switchView('club_manage')">
         <span class="tab-icon">🏰</span>
         <span class="tab-title" data-i18n="nav_manage">Můj Klub &amp; Milníky</span>
         <span class="tab-pill" id="navClubPtsBadge">Zamčeno 🔒</span>
       </button>
-      <button class="nav-tab yellow" id="tabMarket" onclick="window.fishaoApp.switchView('market')">
-        <span class="tab-icon">💵</span>
-        <span class="tab-title" data-i18n="nav_market">Fish Market</span>
-        <span class="tab-pill" id="tabMarketPill" data-i18n="nav_market_pill">Výkup</span>
-      </button>
       <button class="nav-tab teal" id="tabPlayers" onclick="window.fishaoApp.switchView('players')">
         <span class="tab-icon">👥</span>
         <span class="tab-title" data-i18n="nav_players">Hráči &amp; Dvorek</span>
         <span class="tab-pill" id="tabPlayersPill" data-i18n="nav_players_pill">Komunita</span>
       </button>
-      <button class="nav-tab cyan" id="tabLocations" onclick="window.fishaoApp.switchView('locations')">
+    </nav>
+
+    <!-- Sub-Navigation Bar: Encyclopedia Views -->
+    <div class="sub-nav-bar" id="subNavEncyclopedia">
+      <span class="sub-nav-label" data-i18n="subnav_view_label">Zobrazení:</span>
+      <button class="sub-nav-tab blue active" id="subTabAll" onclick="window.fishaoApp.switchView('all')">
+        <span class="tab-icon">📋</span>
+        <span class="tab-title" data-i18n="subnav_all_fishes">Seznam ryb</span>
+        <span class="tab-pill" data-i18n="nav_all_pill">615 ryb</span>
+      </button>
+      <button class="sub-nav-tab cyan" id="tabLocations" onclick="window.fishaoApp.switchView('locations')">
         <span class="tab-icon">🗺️</span>
         <span class="tab-title" data-i18n="nav_locations">Lokace</span>
         <span class="tab-pill" id="tabLocationsPill" data-i18n="nav_locations_pill">24 lokací</span>
       </button>
-      <button class="nav-tab orange" id="tabCalendar" onclick="window.fishaoApp.switchView('calendar')">
+      <button class="sub-nav-tab orange" id="tabCalendar" onclick="window.fishaoApp.switchView('calendar')">
         <span class="tab-icon">📅</span>
         <span class="tab-title" data-i18n="nav_calendar">Sezónní kalendář</span>
         <span class="tab-pill" id="tabCalendarPill" data-i18n="nav_calendar_pill">47 ryb</span>
       </button>
-    </nav>
+    </div>
+
+    <!-- Sub-Navigation Bar: Club Views (shown when user belongs to a club) -->
+    <div class="sub-nav-bar" id="subNavClub" style="display: none;">
+      <span class="sub-nav-label" data-i18n="subnav_view_label">Zobrazení:</span>
+      <button class="sub-nav-tab purple active" id="subTabClubManage" onclick="window.fishaoApp.switchView('club_manage')">
+        <span class="tab-icon">🏰</span>
+        <span class="tab-title" data-i18n="subnav_club_overview">Přehled &amp; Milníky</span>
+      </button>
+      <button class="sub-nav-tab gold" id="tabClub" onclick="window.fishaoApp.switchView('club')">
+        <span class="tab-icon">🏆</span>
+        <span class="tab-title" data-i18n="nav_club">Klubové ryby</span>
+        <span class="tab-pill" id="tabClubBadge" data-i18n="nav_club_pill">80 ryb</span>
+      </button>
+    </div>
 
     <!-- Inline Sub-Nav Notices (Clubs & Players views) -->
     <div class="nav-sub-notice" id="subNoticePlayers" style="display: none;">
@@ -1601,9 +1620,9 @@
   <div id="appToast" class="app-toast" style="display: none;"></div>
 
   <!-- Data scripts and localization -->
-  <script src="data/i18n/ui_cs.js?v=4.3"></script>
-  <script src="data/i18n/ui_en.js?v=4.3"></script>
-  <script src="data/i18n/ui_pl.js?v=4.3"></script>
+  <script src="data/i18n/ui_cs.js?v=4.4"></script>
+  <script src="data/i18n/ui_en.js?v=4.4"></script>
+  <script src="data/i18n/ui_pl.js?v=4.4"></script>
   <script src="data/i18n/taxonomies.js?v=3.4"></script>
   <script src="data/i18n/fish_names.js?v=3.3"></script>
   <script src="data/i18n.js?v=3.2"></script>
@@ -1617,11 +1636,11 @@
   <script src="js/clubs.js?v=3.9"></script>
   <script src="js/market.js?v=4.1"></script>
   <script src="js/filters.js?v=4.0"></script>
-  <script src="js/auth.js?v=4.1"></script>
+  <script src="js/auth.js?v=4.2"></script>
   <script src="js/players.js?v=3.9"></script>
-  <script src="js/locations.js?v=1.0"></script>
+  <script src="js/locations.js?v=1.1"></script>
   <script src="js/calendar.js?v=1.0"></script>
-  <script src="js/main.js?v=3.8"></script>
+  <script src="js/main.js?v=3.9"></script>
 
 </body>
 

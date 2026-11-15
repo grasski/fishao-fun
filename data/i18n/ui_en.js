@@ -508,7 +508,10 @@
       "cal_status_starting_soon": "🔜 Starts in {days}d (from {date})",
       "cal_status_out_of_season": "🟠 Out of season (starts in {days}d – {date})",
       "cal_empty_state": "❌ No seasonal fish match the selected filters.",
-      "cal_search_placeholder": "Search seasonal fish..."
+      "cal_search_placeholder": "Search seasonal fish...",
+      "subnav_view_label": "View:",
+      "subnav_all_fishes": "Fish List",
+      "subnav_club_overview": "Overview & Milestones"
   };
 
   if (typeof window !== 'undefined') {

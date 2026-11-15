@@ -514,7 +514,10 @@
       "cal_status_starting_soon": "🔜 Začne za {days} d. (od {date})",
       "cal_status_out_of_season": "🟠 Mimo sezónu (začne za {days} d. – od {date})",
       "cal_empty_state": "❌ Žádná sezónní ryba neodpovídá zadaným filtrům.",
-      "cal_search_placeholder": "Hledat sezónní rybu..."
+      "cal_search_placeholder": "Hledat sezónní rybu...",
+      "subnav_view_label": "Zobrazení:",
+      "subnav_all_fishes": "Seznam ryb",
+      "subnav_club_overview": "Přehled & Milníky"
   };
 
   if (typeof window !== 'undefined') {

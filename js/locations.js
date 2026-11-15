@@ -37,6 +37,21 @@ var LOCATION_ICONS = {
   location_300: '🏡'
 };
 
+var LOCATION_PREVIEW_IMAGE_IDS = {
+  1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true, 11: true,
+  12: true, 104: true, 108: true, 110: true, 112: true, 201: true, 202: true, 204: true, 300: true
+};
+
+function getLocationPreviewImage(locKey) {
+  var num = getLocationNumericId(locKey);
+  if (!LOCATION_PREVIEW_IMAGE_IDS[num]) return null;
+  var isSquareIcon = (num === 12);
+  return {
+    src: 'images/location_preview_' + num + '.png',
+    isIconImg: isSquareIcon
+  };
+}
+
 function getLocationNumericId(locKey) {
   var match = /^location_(\d+)$/.exec(String(locKey || ''));
   return match ? parseInt(match[1], 10) : 9999;
@@ -160,6 +175,7 @@ function computeLocationsData() {
       category: info.category,
       badgeKey: info.badgeKey,
       icon: info.icon,
+      image: getLocationPreviewImage(locKey),
       fishes: locFishes,
       total: total,
       caughtCount: caughtCount,
@@ -436,10 +452,23 @@ function renderLocationsView() {
         escapeHtml(t('loc_btn_show_missing', { count: loc.missingCount })) + '</button>';
     }
 
+    var thumbHtml;
+    if (loc.image) {
+      thumbHtml = '<div class="loc-card-thumb' + (loc.image.isIconImg ? ' is-icon-img' : '') + '">' +
+        '<img class="loc-card-thumb-img" src="' + escapeHtml(loc.image.src) + '" alt="' + safeLocName + '" ' +
+        'onerror="this.parentElement.classList.add(\'fallback-icon\');this.remove();">' +
+        '<span class="loc-card-thumb-fallback" aria-hidden="true">' + loc.icon + '</span>' +
+      '</div>';
+    } else {
+      thumbHtml = '<div class="loc-card-thumb fallback-icon">' +
+        '<span class="loc-card-thumb-fallback" aria-hidden="true">' + loc.icon + '</span>' +
+      '</div>';
+    }
+
     return '<article class="location-card' + (loc.isComplete ? ' is-complete' : '') + '">' +
       '<div class="loc-card-header">' +
         '<div class="loc-card-title-row">' +
-          '<span class="loc-card-icon">' + loc.icon + '</span>' +
+          thumbHtml +
           '<div class="loc-card-titles">' +
             '<h3 class="loc-card-name">' + safeLocName + '</h3>' +
             '<span class="loc-category-badge cat-' + loc.category + '">' + badgeLabel + '</span>' +
@@ -463,3 +492,36 @@ function renderLocationsView() {
     '</article>';
   }).join('');
 }
+
+var locationImagesPreloaded = false;
+
+/**
+ * Preload local location preview thumbnails into the browser cache
+ * after initial page load so switching to Locations renders instantly.
+ */
+function preloadLocationImages() {
+  if (locationImagesPreloaded || typeof Image === 'undefined') return;
+  locationImagesPreloaded = true;
+
+  Object.keys(LOCATION_PREVIEW_IMAGE_IDS).forEach(function (id) {
+    var img = new Image();
+    img.decoding = 'async';
+    img.src = 'images/location_preview_' + id + '.png';
+  });
+}
+
+(function scheduleLocationImagePreload() {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+  var runPreload = function () {
+    if (typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(preloadLocationImages, { timeout: 2500 });
+    } else if (typeof setTimeout === 'function') {
+      setTimeout(preloadLocationImages, 800);
+    }
+  };
+  if (document.readyState === 'complete') {
+    runPreload();
+  } else if (typeof window.addEventListener === 'function') {
+    window.addEventListener('load', runPreload, { once: true });
+  }
+})();

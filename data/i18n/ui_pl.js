@@ -514,7 +514,10 @@
       "cal_status_starting_soon": "🔜 Zaczyna się za {days} d. (od {date})",
       "cal_status_out_of_season": "🟠 Poza sezonem (za {days} d. – od {date})",
       "cal_empty_state": "❌ Żadna ryba sezonowa nie spełnia wybranych filtrów.",
-      "cal_search_placeholder": "Szukaj ryby sezonowej..."
+      "cal_search_placeholder": "Szukaj ryby sezonowej...",
+      "subnav_view_label": "Widok:",
+      "subnav_all_fishes": "Lista ryb",
+      "subnav_club_overview": "Przegląd i kamienie milowe"
   };
 
   if (typeof window !== 'undefined') {

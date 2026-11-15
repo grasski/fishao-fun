@@ -181,21 +181,34 @@ function switchView(view, skipSync) {
     logAnalyticsEvent("screen_view", { screen_name: view });
   }
 
-  var tabs = ["tabClub", "tabAll", "tabLocations", "tabCalendar", "tabClubManage", "tabMarket", "tabPlayers"];
-  var tabMap = {
-    "club": "tabClub",
-    "all": "tabAll",
+  var isEncyclopediaView = (view === "all" || view === "locations" || view === "calendar");
+  var isClubView = (view === "club_manage" || view === "club");
+
+  var tabAllEl = document.getElementById("tabAll");
+  var tabMarketEl = document.getElementById("tabMarket");
+  var tabClubManageEl = document.getElementById("tabClubManage");
+  var tabPlayersEl = document.getElementById("tabPlayers");
+  if (tabAllEl) tabAllEl.classList.toggle("active", isEncyclopediaView);
+  if (tabMarketEl) tabMarketEl.classList.toggle("active", view === "market");
+  if (tabClubManageEl) tabClubManageEl.classList.toggle("active", isClubView);
+  if (tabPlayersEl) tabPlayersEl.classList.toggle("active", view === "players");
+
+  var subTabMap = {
+    "all": "subTabAll",
     "locations": "tabLocations",
     "calendar": "tabCalendar",
-    "club_manage": "tabClubManage",
-    "market": "tabMarket",
-    "players": "tabPlayers"
+    "club_manage": "subTabClubManage",
+    "club": "tabClub"
   };
-
-  tabs.forEach(function (tId) {
+  ["subTabAll", "tabLocations", "tabCalendar", "subTabClubManage", "tabClub"].forEach(function (tId) {
     var el = document.getElementById(tId);
-    if (el) el.classList.toggle("active", tabMap[view] === tId);
+    if (el) el.classList.toggle("active", subTabMap[view] === tId);
   });
+
+  var subNavEncyclopedia = document.getElementById("subNavEncyclopedia");
+  var subNavClub = document.getElementById("subNavClub");
+  if (subNavEncyclopedia) subNavEncyclopedia.style.display = isEncyclopediaView ? "flex" : "none";
+  if (subNavClub) subNavClub.style.display = (isClubView && isInClub) ? "flex" : "none";
 
   var bClub = document.getElementById("bannerClub");
   var bCollection = document.getElementById("bannerCollection");
@@ -220,7 +233,7 @@ function switchView(view, skipSync) {
   var subNoticePlayers = document.getElementById("subNoticePlayers");
   var subNoticeClubs = document.getElementById("subNoticeClubs");
   if (subNoticePlayers) subNoticePlayers.style.display = (view === "players") ? "flex" : "none";
-  if (subNoticeClubs) subNoticeClubs.style.display = (view === "club_manage") ? "flex" : "none";
+  if (subNoticeClubs) subNoticeClubs.style.display = isClubView ? "flex" : "none";
 
   updateMarketTabStatus();
   if (typeof updateCalendarTabPill === 'function') updateCalendarTabPill();

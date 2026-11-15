@@ -386,9 +386,13 @@ async function loadUserProfile(user) {
 
 function updateAuthUI() {
   var tabClub = document.getElementById("tabClub");
+  var subNavClub = document.getElementById("subNavClub");
   var isInClub = !!(currentUser && currentClubId);
   if (tabClub) {
     tabClub.style.display = isInClub ? "" : "none";
+  }
+  if (subNavClub) {
+    subNavClub.style.display = (isInClub && (currentView === "club_manage" || currentView === "club")) ? "flex" : "none";
   }
   if (!isInClub && currentView === "club") {
     switchView("all");
