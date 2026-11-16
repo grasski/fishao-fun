@@ -60,15 +60,19 @@
   background: var(--surface-input);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 6px 12px;
+  padding: 6px 10px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 5px;
 }
 
 .time-clock-box {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
+  gap: 7px;
 }
 
 .clock-face {
@@ -270,4 +274,79 @@
   transition: all 0.2s;
 }
 .sign-out-btn:hover { color: var(--rose-light); border-color: var(--rose); background: rgba(244, 63, 94, 0.15); }
+
+/* REMINDERS BELL BUTTON */
+.reminders-bell-btn {
+  position: relative;
+  height: 44px;
+  min-width: 44px;
+  padding: 0 11px;
+  background: var(--surface-input);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-main);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.reminders-bell-btn:hover {
+  background: #22314a;
+  border-color: rgba(56, 189, 248, 0.5);
+  transform: translateY(-1px);
+}
+
+.reminders-bell-btn.has-due {
+  border-color: rgba(245, 158, 11, 0.7);
+  background: rgba(245, 158, 11, 0.12);
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.22);
+}
+
+.reminders-bell-btn.has-today {
+  border-color: rgba(56, 189, 248, 0.6);
+  background: rgba(56, 189, 248, 0.1);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.18);
+}
+
+.reminders-bell-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.reminders-bell-btn.has-due .reminders-bell-icon {
+  animation: reminderBellPulse 2.2s ease-in-out infinite;
+}
+
+.reminders-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #101726;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.reminders-badge.is-today-only {
+  background: #0284c7;
+}
+
+@keyframes reminderBellPulse {
+  0%, 100% { transform: rotate(0deg); }
+  10% { transform: rotate(12deg); }
+  20% { transform: rotate(-10deg); }
+  30% { transform: rotate(8deg); }
+  40% { transform: rotate(0deg); }
+}
 

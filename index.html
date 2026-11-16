@@ -151,10 +151,6 @@
       <div class="header-right">
         <!-- Time widget with automatic timezone detection -->
         <div class="time-widget">
-          <div class="time-clock-box">
-            <span class="clock-face" id="liveClock">--:--:--</span>
-            <span class="clock-label" id="clockLabel" data-i18n="clock_local_label">Místní čas</span>
-          </div>
           <div class="tz-btn-group">
             <button class="tz-toggle active" id="tzLocalBtn" onclick="window.fishaoApp.setTimezone('local')"
               title="Automaticky podle tvého zařízení" data-i18n="tz_local_btn" data-i18n-title="tz_local_btn_title">
@@ -164,6 +160,10 @@
               title="Herní čas FISHAO (UTC+0)" data-i18n="tz_utc_btn" data-i18n-title="tz_utc_btn_title">
               🌐 UTC
             </button>
+          </div>
+          <div class="time-clock-box">
+            <span class="clock-face" id="liveClock">--:--:--</span>
+            <span class="clock-label" id="clockLabel" data-i18n="clock_local_label">Místní čas</span>
           </div>
         </div>
 
@@ -176,6 +176,15 @@
             <option value="pl">🇵🇱 PL</option>
           </select>
         </div>
+
+        <!-- Reminders Bell -->
+        <button type="button" class="reminders-bell-btn" id="remindersBellBtn"
+          onclick="window.fishaoApp.openRemindersModal()"
+          title="Herní upomínky" data-i18n-title="reminders_bell_title"
+          aria-label="Herní upomínky" data-i18n-aria-label="reminders_bell_title">
+          <span class="reminders-bell-icon" aria-hidden="true">🔔</span>
+          <span class="reminders-badge" id="remindersBadge" style="display: none;">0</span>
+        </button>
 
         <!-- Auth panel -->
         <div class="auth-panel" id="authPanel">
@@ -1610,6 +1619,112 @@
     </div>
   </div>
 
+  <!-- Reminders Modal -->
+  <div class="modal-overlay" id="remindersModalOverlay" onclick="window.fishaoApp.onModalOverlayClick(event, 'remindersModalOverlay')">
+    <div class="modal-box reminders-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="remindersModalTitle">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="reminders-hero-icon">🔔</span>
+          <h3 id="remindersModalTitle" data-i18n="reminders_modal_title">Herní upomínky</h3>
+        </div>
+        <button type="button" class="modal-close" onclick="window.fishaoApp.closeRemindersModal()" aria-label="Zavřít">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="reminders-presets-row">
+          <span class="reminders-presets-label" data-i18n="reminders_presets_label">Rychlé šablony:</span>
+          <button type="button" class="reminders-preset-btn" onclick="window.fishaoApp.applyReminderPreset('bob_fc')" data-i18n="reminders_preset_bob_btn">🎲 Bobova minihra v Rio Tropical (7 dní)</button>
+          <button type="button" class="reminders-preset-btn" onclick="window.fishaoApp.applyReminderPreset('desert_furniture')" data-i18n="reminders_preset_desert_btn">🪑 Továrna na nábytek v Mystic Desert (2 dny)</button>
+        </div>
+
+        <form class="reminders-form" onsubmit="window.fishaoApp.submitReminderForm(event)">
+          <div class="reminders-form-title" id="reminderFormTitle" data-i18n="reminders_form_add_title">Nová upomínka</div>
+          <div class="reminders-form-grid">
+            <div class="reminders-field reminders-field-wide">
+              <label for="reminderTitleInput" data-i18n="reminders_field_title">Název události</label>
+              <input type="text" id="reminderTitleInput" maxlength="80" required
+                placeholder="Např. Bobova minihra v Rio Tropical" data-i18n-placeholder="reminders_field_title_ph">
+            </div>
+            <div class="reminders-field">
+              <label for="reminderDatetimeInput" data-i18n="reminders_field_datetime">Datum a čas připomenutí</label>
+              <input type="datetime-local" id="reminderDatetimeInput" required>
+              <div class="reminders-quick-chips">
+                <button type="button" class="reminders-chip-btn" onclick="window.fishaoApp.setReminderQuickTime(0)" data-i18n="reminders_qt_now">Teď</button>
+                <button type="button" class="reminders-chip-btn" onclick="window.fishaoApp.setReminderQuickTime(2)" data-i18n="reminders_qt_2h">+2 hod</button>
+                <button type="button" class="reminders-chip-btn" onclick="window.fishaoApp.setReminderQuickTime(24)" data-i18n="reminders_qt_1d">Zítra</button>
+                <button type="button" class="reminders-chip-btn" onclick="window.fishaoApp.setReminderQuickTime(48)" data-i18n="reminders_qt_2d">+2 dny</button>
+                <button type="button" class="reminders-chip-btn" onclick="window.fishaoApp.setReminderQuickTime(168)" data-i18n="reminders_qt_7d">+7 dní</button>
+              </div>
+            </div>
+            <div class="reminders-field">
+              <label for="reminderIntervalInput" data-i18n="reminders_field_interval">Opakovat každých (dní)</label>
+              <input type="number" id="reminderIntervalInput" min="0" max="365" value="7" required>
+              <div class="reminders-quick-chips">
+                <button type="button" class="reminders-chip-btn" onclick="window.fishaoApp.setReminderQuickInterval(0)" data-i18n="reminders_qi_0">Jednorázově</button>
+                <button type="button" class="reminders-chip-btn" onclick="window.fishaoApp.setReminderQuickInterval(2)" data-i18n="reminders_qi_2">2 dny</button>
+                <button type="button" class="reminders-chip-btn" onclick="window.fishaoApp.setReminderQuickInterval(7)" data-i18n="reminders_qi_7">7 dní</button>
+              </div>
+            </div>
+          </div>
+          <div class="reminders-form-actions">
+            <button type="submit" class="pill-btn primary" id="reminderSubmitBtn" data-i18n="reminders_btn_add">Přidat upomínku</button>
+            <button type="button" class="pill-btn" id="reminderCancelEditBtn" style="display: none;"
+              onclick="window.fishaoApp.resetReminderForm()" data-i18n="reminders_btn_cancel_edit">Zrušit úpravu</button>
+          </div>
+        </form>
+
+        <div id="remindersListContainer" class="reminders-list"></div>
+        <div id="remindersSyncHint" class="reminders-sync-hint"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- First-time Feature Intro Modal: Reminders -->
+  <div class="modal-overlay" id="remindersIntroModalOverlay" onclick="window.fishaoApp.onModalOverlayClick(event, 'remindersIntroModalOverlay')">
+    <div class="modal-box reminders-intro-dialog" role="dialog" aria-modal="true" aria-labelledby="remindersIntroTitle">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="reminders-hero-icon">🔔</span>
+          <h3 id="remindersIntroTitle" data-i18n="reminders_intro_title">Novinka: Herní upomínky!</h3>
+        </div>
+        <button type="button" class="modal-close" onclick="window.fishaoApp.closeRemindersIntroModal(false)" aria-label="Zavřít">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="reminders-intro-desc" data-i18n="reminders_intro_desc">
+          Nově si můžeš nastavit osobní upozornění na pravidelné herní akce s přesným datem i časem (například Bobovu minihru v Rio Tropical každých 7 dní nebo Továrnu na nábytek v Mystic Desert každé 2 dny).
+        </p>
+        <ul class="reminders-intro-list">
+          <li data-i18n="reminders_intro_point_1">⏰ Upozornění se zobrazí automaticky při otevření webu v daný den i po vypršení nastaveného času.</li>
+          <li data-i18n="reminders_intro_point_2">🔄 Kliknutím na „Splněno“ se další termín posune přesně o nastavený počet dní od chvíle splnění.</li>
+          <li data-i18n="reminders_intro_point_3">☁️ Přihlášeným hráčům se upomínky ukládají přímo do profilu ve Firestore.</li>
+        </ul>
+      </div>
+      <div class="modal-footer reminders-intro-footer">
+        <button type="button" class="pill-btn" onclick="window.fishaoApp.closeRemindersIntroModal(false)" data-i18n="reminders_intro_later">Rozumím</button>
+        <button type="button" class="pill-btn primary" onclick="window.fishaoApp.closeRemindersIntroModal(true)" data-i18n="reminders_intro_open">Nastavit upomínky</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Focused Due / Today Reminders Alert Modal (shown automatically on startup) -->
+  <div class="modal-overlay" id="remindersAlertModalOverlay" onclick="window.fishaoApp.onModalOverlayClick(event, 'remindersAlertModalOverlay')">
+    <div class="modal-box reminders-alert-dialog" role="dialog" aria-modal="true" aria-labelledby="remindersAlertTitle">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="reminders-hero-icon">🔔</span>
+          <h3 id="remindersAlertTitle" data-i18n="reminders_alert_title">Připomenutí událostí</h3>
+        </div>
+        <button type="button" class="modal-close" onclick="window.fishaoApp.closeRemindersAlertModal(false)" aria-label="Zavřít">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="remindersAlertListContainer" class="reminders-list"></div>
+      </div>
+      <div class="modal-footer reminders-alert-footer">
+        <button type="button" class="pill-btn" onclick="window.fishaoApp.closeRemindersAlertModal(true)" data-i18n="reminders_btn_manage">⚙️ Spravovat upomínky</button>
+        <button type="button" class="pill-btn primary" onclick="window.fishaoApp.closeRemindersAlertModal(false)" data-i18n="action_close">Zavřít</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Floating Action Button: Fish Market Bulk Price Import (shown when scrolling in Market view) -->
   <button type="button" id="marketFloatingImportBtn" class="market-fab-btn" onclick="window.fishaoApp.openBulkModal()"
     title="Hromadný import cen do Fish Marketu" data-i18n="market_btn_import" data-i18n-title="market_btn_import"
@@ -1656,7 +1771,8 @@
   <script src="js/players.js?v=3.9"></script>
   <script src="js/locations.js?v=1.1"></script>
   <script src="js/calendar.js?v=1.0"></script>
-  <script src="js/main.js?v=4.5"></script>
+  <script src="js/reminders.js?v=1.0"></script>
+  <script src="js/main.js?v=4.6"></script>
 
 </body>
 

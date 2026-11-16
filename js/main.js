@@ -33,6 +33,14 @@ function setTimezone(tz) {
   applyFilters();
   if (currentView === 'locations' && typeof renderLocationsView === 'function') renderLocationsView();
   if (currentView === 'calendar' && typeof renderCalendarView === 'function') renderCalendarView();
+  var remModal = document.getElementById("remindersModalOverlay");
+  if (remModal && remModal.classList.contains("active") && typeof renderRemindersModal === 'function') {
+    renderRemindersModal();
+  }
+  var remAlert = document.getElementById("remindersAlertModalOverlay");
+  if (remAlert && remAlert.classList.contains("active") && typeof renderRemindersAlertModal === 'function') {
+    renderRemindersAlertModal();
+  }
 }
 
 function updateClock() {
@@ -425,6 +433,15 @@ function setLanguage(lang) {
   if (typeof updatePrivacyConsentStatusUI === 'function') {
     updatePrivacyConsentStatusUI();
   }
+
+  var remModal = document.getElementById("remindersModalOverlay");
+  if (remModal && remModal.classList.contains("active") && typeof renderRemindersModal === 'function') {
+    renderRemindersModal();
+  }
+  var remAlert = document.getElementById("remindersAlertModalOverlay");
+  if (remAlert && remAlert.classList.contains("active") && typeof renderRemindersAlertModal === 'function') {
+    renderRemindersAlertModal();
+  }
 }
 
 function openPrivacyModal() {
@@ -446,6 +463,18 @@ function closeAllModals() {
   closeProfileModal();
   closePlayerModal();
   closePrivacyModal();
+  var remModal = document.getElementById("remindersModalOverlay");
+  if (remModal && remModal.classList.contains("active") && typeof closeRemindersModal === 'function') {
+    closeRemindersModal();
+  }
+  var remIntro = document.getElementById("remindersIntroModalOverlay");
+  if (remIntro && remIntro.classList.contains("active") && typeof closeRemindersIntroModal === 'function') {
+    closeRemindersIntroModal(false);
+  }
+  var remAlert = document.getElementById("remindersAlertModalOverlay");
+  if (remAlert && remAlert.classList.contains("active") && typeof closeRemindersAlertModal === 'function') {
+    closeRemindersAlertModal(false);
+  }
   resolveConfirmModal(false);
 }
 
@@ -456,6 +485,9 @@ function onModalOverlayClick(e, id) {
     if (id === 'profileModalOverlay') closeProfileModal();
     if (id === 'playerModalOverlay') closePlayerModal();
     if (id === 'privacyModalOverlay') closePrivacyModal();
+    if (id === 'remindersModalOverlay' && typeof closeRemindersModal === 'function') closeRemindersModal();
+    if (id === 'remindersIntroModalOverlay' && typeof closeRemindersIntroModal === 'function') closeRemindersIntroModal(false);
+    if (id === 'remindersAlertModalOverlay' && typeof closeRemindersAlertModal === 'function') closeRemindersAlertModal(false);
     if (id === 'confirmModalOverlay') resolveConfirmModal(false);
   }
 }
@@ -601,6 +633,20 @@ window.fishaoApp = {
   toggleModalBaitAdvisorInfo: toggleModalBaitAdvisorInfo,
   toggleModalBaitCompetitors: toggleModalBaitCompetitors,
   openSpotBaitInFishdex: openSpotBaitInFishdex,
+  openRemindersModal: openRemindersModal,
+  closeRemindersModal: closeRemindersModal,
+  openRemindersAlertModal: openRemindersAlertModal,
+  closeRemindersAlertModal: closeRemindersAlertModal,
+  openRemindersIntroModal: openRemindersIntroModal,
+  closeRemindersIntroModal: closeRemindersIntroModal,
+  applyReminderPreset: applyReminderPreset,
+  setReminderQuickTime: setReminderQuickTime,
+  setReminderQuickInterval: setReminderQuickInterval,
+  submitReminderForm: submitReminderForm,
+  completeReminder: completeReminder,
+  editReminder: editReminder,
+  resetReminderForm: resetReminderForm,
+  deleteReminder: deleteReminder,
   t: t
 };
 
@@ -623,6 +669,13 @@ if (initialRoute.fishId) {
 // Setup popstate & hashchange listeners for back/forward browser navigation
 window.addEventListener('popstate', handleRoute);
 window.addEventListener('hashchange', handleRoute);
+
+if (typeof updateRemindersBellBadge === 'function') {
+  updateRemindersBellBadge();
+}
+if (typeof checkRemindersOnStartup === 'function') {
+  checkRemindersOnStartup(false);
+}
 
 initFirebaseSync();
 

@@ -54,6 +54,12 @@ async function initFirebaseSync() {
         caughtFishIds = new Set();
         backyardFishIds = new Set();
         friendUids = new Set();
+        if (typeof loadLocalReminders === 'function') {
+          userReminders = loadLocalReminders();
+        }
+        if (typeof updateRemindersBellBadge === 'function') {
+          updateRemindersBellBadge();
+        }
         if (userUnsubscribe) {
           userUnsubscribe();
           userUnsubscribe = null;
@@ -294,6 +300,7 @@ async function loadUserProfile(user) {
         caughtFishIds: Array.from(caughtFishIds),
         backyardFishIds: Array.from(backyardFishIds),
         friendUids: Array.from(friendUids),
+        reminders: (typeof userReminders !== 'undefined' && Array.isArray(userReminders)) ? userReminders : [],
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString()
       };
@@ -309,6 +316,9 @@ async function loadUserProfile(user) {
     }
     if (userProfile.friendUids && Array.isArray(userProfile.friendUids)) {
       friendUids = new Set(userProfile.friendUids);
+    }
+    if (typeof syncRemindersFromProfile === 'function') {
+      syncRemindersFromProfile(userProfile);
     }
 
     if (userProfile.clubId) {
@@ -363,6 +373,9 @@ async function loadUserProfile(user) {
         }
         if (userProfile.friendUids && Array.isArray(userProfile.friendUids)) {
           friendUids = new Set(userProfile.friendUids);
+        }
+        if (typeof syncRemindersFromProfile === 'function') {
+          syncRemindersFromProfile(userProfile);
         }
         if (userProfile.clubId !== oldClubId) {
           if (userProfile.clubId) {

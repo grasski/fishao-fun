@@ -78,7 +78,7 @@ service cloud.firestore {
         && request.auth.uid == userId
         && request.resource.data.keys().hasOnly([
              'displayName', 'role', 'clubId', 'clubName', 
-             'caughtFishIds', 'backyardFishIds', 'friendUids', 'createdAt', 'lastLogin', 'avatarUrl'
+             'caughtFishIds', 'backyardFishIds', 'friendUids', 'reminders', 'createdAt', 'lastLogin', 'avatarUrl'
            ])
         && request.resource.data.role == 'member'
         && request.resource.data.displayName is string
@@ -87,14 +87,15 @@ service cloud.firestore {
         && request.resource.data.caughtFishIds is list
         && request.resource.data.caughtFishIds.size() <= 1000
         && (!('backyardFishIds' in request.resource.data) || (request.resource.data.backyardFishIds is list && request.resource.data.backyardFishIds.size() <= 300))
-        && (!('friendUids' in request.resource.data) || (request.resource.data.friendUids is list && request.resource.data.friendUids.size() <= 300));
+        && (!('friendUids' in request.resource.data) || (request.resource.data.friendUids is list && request.resource.data.friendUids.size() <= 300))
+        && (!('reminders' in request.resource.data) || (request.resource.data.reminders is list && request.resource.data.reminders.size() <= 100));
 
       // Profile update by owner: forbidden from modifying 'role' or 'createdAt'
       // Note: evaluated with short-circuiting so normal users don't trigger extra isAdmin read!
       allow update: if (request.auth != null
         && request.auth.uid == userId
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-             'displayName', 'clubId', 'clubName', 'caughtFishIds', 'backyardFishIds', 'friendUids', 'lastLogin', 'avatarUrl'
+             'displayName', 'clubId', 'clubName', 'caughtFishIds', 'backyardFishIds', 'friendUids', 'reminders', 'lastLogin', 'avatarUrl'
            ])
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() <= 40
@@ -102,7 +103,8 @@ service cloud.firestore {
         && request.resource.data.caughtFishIds is list
         && request.resource.data.caughtFishIds.size() <= 1000
         && (!('backyardFishIds' in request.resource.data) || (request.resource.data.backyardFishIds is list && request.resource.data.backyardFishIds.size() <= 300))
-        && (!('friendUids' in request.resource.data) || (request.resource.data.friendUids is list && request.resource.data.friendUids.size() <= 300)))
+        && (!('friendUids' in request.resource.data) || (request.resource.data.friendUids is list && request.resource.data.friendUids.size() <= 300))
+        && (!('reminders' in request.resource.data) || (request.resource.data.reminders is list && request.resource.data.reminders.size() <= 100)))
         || isAdmin();
 
       // Users can delete their own profile (GDPR self-service deletion), or admins
