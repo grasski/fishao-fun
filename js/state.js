@@ -128,7 +128,6 @@ var currentMilestoneFilter = "all";
 // Filters & Collection State
 var filterNowActive = false;
 var filterOnlyPrice = false;
-var filterNeedsPrice = false; // Market: fish with 0 known (normalized) price entries
 var collectionFilterMode = "all"; // 'all' | 'caught' | 'missing'
 
 // Authentication & User Profile State

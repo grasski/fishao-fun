@@ -33,45 +33,6 @@ function setSizeFilter(min, max, btn) {
 function toggleOnlyPrice() {
   filterOnlyPrice = !filterOnlyPrice;
   document.getElementById("btnOnlyPrice").classList.toggle("active", filterOnlyPrice);
-  // "Only priced" and "needs price" are mutually exclusive.
-  if (filterOnlyPrice && filterNeedsPrice) {
-    filterNeedsPrice = false;
-    syncNeedsPriceButton();
-  }
-  applyFilters();
-}
-
-/** Number of distinct known prices for a fish (display-normalized). */
-function getKnownPriceCount(fid) {
-  return normalizePriceEntries(getFishPrices(fid)).length;
-}
-
-/** A fish "needs a price" when the community has no known price entry yet. */
-function fishNeedsPrice(fid) {
-  return getKnownPriceCount(fid) === 0;
-}
-
-function syncNeedsPriceButton() {
-  var btn = document.getElementById("btnNeedsPrice");
-  if (btn) btn.classList.toggle("active", filterNeedsPrice);
-}
-
-function updateNeedsPriceCount() {
-  var el = document.getElementById("needsPriceCount");
-  if (!el) return;
-  var count = 0;
-  allFishes.forEach(function (f) { if (fishNeedsPrice(f.id)) count++; });
-  el.textContent = count.toLocaleString(getLocale());
-}
-
-function toggleNeedsPrice() {
-  filterNeedsPrice = !filterNeedsPrice;
-  if (filterNeedsPrice && filterOnlyPrice) {
-    filterOnlyPrice = false;
-    var btnOnlyPrice = document.getElementById("btnOnlyPrice");
-    if (btnOnlyPrice) btnOnlyPrice.classList.remove("active");
-  }
-  syncNeedsPriceButton();
   applyFilters();
 }
 
@@ -191,8 +152,6 @@ function applyFilters() {
       if (!latest) return false;
     }
 
-    if (filterNeedsPrice && currentView === "market" && !fishNeedsPrice(f.id)) return false;
-
     if (filterUncaught && caughtFishIds.has(f.id)) return false;
 
     if (currentView === "all" || currentView === "market") {
@@ -310,7 +269,6 @@ function applyFilters() {
       filterNotes.push(t('filter_note_priced'));
     }
   }
-  if (filterNeedsPrice && currentView === "market") filterNotes.push(t('filter_note_needs_price'));
   if (location && currentView !== "club") {
     var locName = window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(location) : location;
     filterNotes.push(t('filter_note_location', { name: locName }));
@@ -376,7 +334,6 @@ function applyFilters() {
   }
 
   renderTableBody(filtered);
-  if (currentView === "market") updateNeedsPriceCount();
 }
 
 function resetFilters() {
@@ -424,9 +381,6 @@ function resetFilters() {
 
   var uncaughtCb = document.getElementById("filterUncaughtCheckbox");
   if (uncaughtCb) uncaughtCb.checked = false;
-
-  filterNeedsPrice = false;
-  syncNeedsPriceButton();
 
   var hideLockedCb = document.getElementById("hideLockedCheckbox");
   if (hideLockedCb) {

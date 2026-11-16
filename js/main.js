@@ -521,7 +521,6 @@ window.fishaoApp = {
   toggleNowActive: toggleNowActive,
   toggleBestChanceSort: toggleBestChanceSort,
   toggleOnlyPrice: toggleOnlyPrice,
-  toggleNeedsPrice: toggleNeedsPrice,
   openPriceModal: openPriceModal,
   togglePriceChartVisibility: togglePriceChartVisibility,
   closePriceModal: closePriceModal,
