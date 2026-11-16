@@ -38,6 +38,7 @@ async function initFirebaseSync() {
     db = firestoreModule.getFirestore(firebaseApp);
     auth = authModule.getAuth(firebaseApp);
     firebaseDocRef = firestoreModule.doc(db, "fishao_market", "prices_history");
+    estimatedPricesDocRef = firestoreModule.doc(db, "fishao_market", "estimated_prices");
 
     checkCookieConsentBanner();
     if (localStorage.getItem("fishao_cookie_consent") === "granted") {
@@ -99,6 +100,22 @@ async function initFirebaseSync() {
       if (selectedModalFishId) renderModalHistory(selectedModalFishId);
     }, function (error) {
       console.warn("Firestore connection warning:", error);
+    });
+
+    firestoreModule.onSnapshot(estimatedPricesDocRef, function (docSnap) {
+      if (docSnap.exists()) {
+        var estData = docSnap.data();
+        if (estData && estData.prices && typeof estData.prices === "object" && Object.keys(estData.prices).length > 0) {
+          estimatedPrices = estData.prices;
+          try {
+            localStorage.setItem('fishao_estimated_prices_v1', JSON.stringify(estimatedPrices));
+          } catch (e) {}
+          applyFilters();
+          if (selectedModalFishId) renderModalHistory(selectedModalFishId);
+        }
+      }
+    }, function (error) {
+      console.warn("Firestore estimated prices warning:", error);
     });
 
   } catch (err) {
@@ -801,6 +818,10 @@ async function exportFirestoreBackup() {
     var marketSnap = await firestoreModule.getDoc(marketDocRef);
     var marketData = marketSnap.exists() ? marketSnap.data() : null;
 
+    var estDocRef = firestoreModule.doc(db, "fishao_market", "estimated_prices");
+    var estSnap = await firestoreModule.getDoc(estDocRef);
+    var estData = estSnap.exists() ? estSnap.data() : null;
+
     // 2. Fetch Clubs (/clubs)
     var clubsColRef = firestoreModule.collection(db, "clubs");
     var clubsSnap = await firestoreModule.getDocs(clubsColRef);
@@ -829,7 +850,8 @@ async function exportFirestoreBackup() {
       },
       collections: {
         fishao_market: {
-          prices_history: marketData
+          prices_history: marketData,
+          estimated_prices: estData
         },
         clubs: clubsList,
         users: usersList

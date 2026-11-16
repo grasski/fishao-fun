@@ -475,6 +475,23 @@ tbody tr:hover .fish-img {
   transition: all 0.2s;
 }
 .price-empty:hover { color: #94a3b8; border-color: #64748b; }
+.price-cell-empty-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+.price-est-sub {
+  font-size: 11px;
+  color: rgba(251, 191, 36, 0.88);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  padding-left: 2px;
+  line-height: 1.2;
+}
+.price-cell:hover .price-est-sub {
+  color: #fcd34d;
+}
 
 .price-history-count {
   font-size: 9px;

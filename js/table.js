@@ -160,10 +160,19 @@ function renderPriceCell(fid) {
   // Display-only normalization: one row per distinct known price value.
   var list = normalizePriceEntries(getFishPrices(fid));
   var locale = getLocale();
+  var est = (typeof getEstimatedPrice === "function") ? getEstimatedPrice(fid) : null;
+  var estRangeStr = est ? (est.min.toLocaleString(locale) + '–' + est.max.toLocaleString(locale)) : '';
+  var estTitleSuffix = est ? ('\n' + t('price_est_cell_title', { min: est.min.toLocaleString(locale), max: est.max.toLocaleString(locale) })) : '';
 
   if (list.length === 0) {
-    return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + t('price_cell_add_title') + '">' +
-      '<span class="price-empty">+ ' + t('price_add_btn') + '</span></div>';
+    var emptyTitle = t('price_cell_add_title') + estTitleSuffix;
+    var estSubHtml = est
+      ? '<span class="price-est-sub" title="' + escapeHtml(t('price_est_cell_title', { min: est.min.toLocaleString(locale), max: est.max.toLocaleString(locale) })) + '">~ ' + estRangeStr + ' FB</span>'
+      : '';
+    return '<div class="price-cell price-cell-empty-wrap" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + escapeHtml(emptyTitle) + '">' +
+      '<span class="price-empty">+ ' + t('price_add_btn') + '</span>' +
+      estSubHtml +
+      '</div>';
   }
 
   var pricesNum = list.map(function (x) { return x.price; });
@@ -179,7 +188,7 @@ function renderPriceCell(fid) {
     cellTitle = t('price_cell_single_title', {
       price: minP.toLocaleString(locale),
       date: formatPriceDate(list[0].date)
-    });
+    }) + estTitleSuffix;
     valuesHtml = '<span class="price-range-single">' + minP.toLocaleString(locale) + '</span>' +
       '<span class="price-unit">FB</span>';
   } else {
@@ -187,14 +196,14 @@ function renderPriceCell(fid) {
       min: minP.toLocaleString(locale),
       max: maxP.toLocaleString(locale),
       count: count
-    });
+    }) + estTitleSuffix;
     valuesHtml = '<span class="price-range-min">' + minP.toLocaleString(locale) + '</span>' +
       '<span class="price-range-sep">–</span>' +
       '<span class="price-range-max">' + maxP.toLocaleString(locale) + '</span>' +
       '<span class="price-unit">FB</span>';
   }
 
-  return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + cellTitle + '">' +
+  return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + escapeHtml(cellTitle) + '">' +
     '<span class="price-inline">' + valuesHtml + histCount + '</span></div>';
 }
 

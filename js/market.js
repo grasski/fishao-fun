@@ -524,6 +524,8 @@ function openPriceModal(fid, skipSync) {
   var nameEl = document.getElementById("modalFishName");
   var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
   if (nameEl) nameEl.innerText = fishName;
+  var modalTitleFishEl = document.getElementById("modalTitleFishName");
+  if (modalTitleFishEl) modalTitleFishEl.innerText = fishName ? (" – " + fishName) : "";
   var altNameEl = document.getElementById("modalFishAltName");
   if (altNameEl) {
     var otherName = (window.FISHAO_I18N && typeof window.FISHAO_I18N.getAltFishName === 'function')
@@ -906,6 +908,18 @@ function renderModalHistory(fid) {
   var minPriceEl = document.getElementById("statMinPrice");
   var maxPriceEl = document.getElementById("statMaxPrice");
   var historyTitleEl = document.getElementById("modalHistoryTitle");
+  var estBoxEl = document.getElementById("modalEstimatedPriceBox");
+  var estValEl = document.getElementById("modalEstimatedPriceVal");
+
+  if (estBoxEl && estValEl) {
+    var est = (typeof getEstimatedPrice === "function") ? getEstimatedPrice(fid) : null;
+    if (est) {
+      estValEl.innerText = est.min.toLocaleString(locale) + " – " + est.max.toLocaleString(locale) + " FB";
+      estBoxEl.style.display = "block";
+    } else {
+      estBoxEl.style.display = "none";
+    }
+  }
 
   if (historyTitleEl) {
     historyTitleEl.innerText = t('modal_history_title', { count: list.length });
@@ -1639,6 +1653,7 @@ function updateMarketFloatingImportBtn() {
 }
 
 window.addEventListener("scroll", updateMarketFloatingImportBtn, { passive: true });
+
 
 
 

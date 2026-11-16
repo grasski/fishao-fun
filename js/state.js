@@ -165,6 +165,7 @@ var isAdmin = false;
 var db = null;
 var auth = null;
 var firebaseDocRef = null;
+var estimatedPricesDocRef = null;
 var firebaseApp = null;
 
 // Market price history
@@ -174,6 +175,30 @@ try {
   priceHistory = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(initialPrices));
 } catch (e) {
   priceHistory = JSON.parse(JSON.stringify(initialPrices));
+}
+
+// Estimated min/max fish prices (loaded from Firestore /fishao_market/estimated_prices with static fallback)
+var estimatedPrices = (window.FISHAO_ESTIMATED_PRICES && typeof window.FISHAO_ESTIMATED_PRICES === "object")
+  ? window.FISHAO_ESTIMATED_PRICES
+  : {};
+try {
+  var savedEst = localStorage.getItem('fishao_estimated_prices_v1');
+  if (savedEst) {
+    var parsedEst = JSON.parse(savedEst);
+    if (parsedEst && typeof parsedEst === "object" && Object.keys(parsedEst).length > 0) {
+      estimatedPrices = parsedEst;
+    }
+  }
+} catch (e) {}
+
+function getEstimatedPrice(fid) {
+  if (!estimatedPrices || fid === undefined || fid === null) return null;
+  var entry = estimatedPrices[String(fid)];
+  if (!entry || typeof entry !== "object") return null;
+  var mn = Number(entry.min);
+  var mx = Number(entry.max);
+  if (!isFinite(mn) || !isFinite(mx) || mn <= 0 || mx < mn) return null;
+  return { min: mn, max: mx };
 }
 
 // Timezone Detection

@@ -1095,6 +1095,7 @@
       <div class="modal-header">
         <div class="modal-title">
           <span data-i18n="modal_fish_detail">🐟 Detail ryby &amp; Fish Market</span>
+          <span id="modalTitleFishName" style="color: #cbd5e1; font-weight: 700;"></span>
         </div>
         <button class="modal-close" onclick="window.fishaoApp.closePriceModal()">&times;</button>
       </div>
@@ -1177,6 +1178,21 @@
           <div class="price-stat-card">
             <div class="price-stat-label" data-i18n="modal_max_price">Maximální cena</div>
             <div class="price-stat-val" id="statMaxPrice" style="color: #34d399;">--</div>
+          </div>
+        </div>
+
+        <!-- Subtle estimated min/max price hint (calculated, non-official) -->
+        <div id="modalEstimatedPriceBox" class="estimated-price-box" style="display: none;">
+          <div class="estimated-price-row">
+            <span class="estimated-price-label">
+              <span class="estimated-price-tilde">~</span>
+              <span data-i18n="modal_est_price_label">Odhadované rozpětí (výpočet):</span>
+            </span>
+            <span class="estimated-price-val" id="modalEstimatedPriceVal">--</span>
+            <span class="estimated-price-badge" data-i18n="modal_est_price_badge">Pouze odhad</span>
+          </div>
+          <div class="estimated-price-note" data-i18n="modal_est_price_note">
+            Orientační výpočet podle vzácnosti (★), nejnižší úrovně lokace a 10% snížení cen. Nejde o oficiální cenu.
           </div>
         </div>
 
@@ -1759,6 +1775,7 @@
   <script src="data/i18n.js?v=3.2"></script>
   <script src="data/fishes.js?v=3.2"></script>
   <script src="data/prices.js?v=3.4"></script>
+  <script src="data/estimated_prices.js?v=1.0"></script>
   <script src="firebase-config.js?v=3.2"></script>
   <!-- Modular FISHAO Application Logic -->
   <script src="js/state.js?v=4.7"></script>
