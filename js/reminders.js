@@ -354,6 +354,10 @@ function applyReminderPreset(presetKey) {
     if (titleEl) titleEl.value = t('reminders_preset_desert_title');
     if (intEl) intEl.value = '2';
     if (dtEl) dtEl.value = toLocalDatetimeInputValue(new Date(Date.now() + 2 * 86400000));
+  } else if (presetKey === 'sid_meat') {
+    if (titleEl) titleEl.value = t('reminders_preset_sid_title');
+    if (intEl) intEl.value = '10';
+    if (dtEl) dtEl.value = toLocalDatetimeInputValue(new Date(Date.now() + 10 * 86400000));
   }
 
   if (titleEl) titleEl.focus();
