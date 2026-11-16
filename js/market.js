@@ -39,11 +39,11 @@ function sortPriceEntriesNewestFirst(list) {
 /**
  * Single display-only normalization for known prices.
  *
- * Returns a new, newest-first array with exactly one entry per distinct
- * numeric price (the newest date wins). Invalid entries are dropped.
- * It never mutates its input and never writes to storage, so legacy duplicate
- * rows stay untouched in Firestore/localStorage while every UI path shows a
- * de-duplicated list.
+ * Returns a new, newest-first array with at most one entry per (date, price)
+ * pair. Invalid entries are dropped.
+ * It never mutates its input and never writes to storage, so legacy same-day
+ * duplicate rows stay untouched in Firestore/localStorage while every UI path
+ * shows a de-duplicated daily list.
  */
 function normalizePriceEntries(list) {
   if (!Array.isArray(list)) return [];
@@ -62,7 +62,7 @@ function normalizePriceEntries(list) {
   var normalized = [];
 
   sorted.forEach(function (entry) {
-    var key = String(entry.price);
+    var key = entry.date + "|" + String(entry.price);
     if (seen[key]) return;
     seen[key] = true;
     normalized.push(entry);
@@ -897,7 +897,7 @@ function renderModalPriceScale(list) {
 }
 
 function renderModalHistory(fid) {
-  // Display-only normalization: duplicate prices are shown once.
+  // Display-only normalization: same-day duplicate prices are shown once.
   var list = normalizePriceEntries(getFishPrices(fid));
   var tbody = document.getElementById("modalPriceHistoryTbody");
   var locale = getLocale();
@@ -944,7 +944,7 @@ function renderModalHistory(fid) {
   tbody.innerHTML = list.map(function (item) {
     var actionCell = showActions
       ? '<td style="text-align: center;">' +
-        '<button class="btn-delete-price" title="' + t('price_delete_admin_title') + '" onclick="window.fishaoApp.deletePriceEntry(' + fid + ', ' + item.price + ')">🗑️</button>' +
+        '<button class="btn-delete-price" title="' + t('price_delete_admin_title') + '" onclick="window.fishaoApp.deletePriceEntry(' + fid + ', ' + item.price + ', \'' + escapeHtml(item.date) + '\')">🗑️</button>' +
         '</td>'
       : '';
 
@@ -1014,9 +1014,9 @@ async function submitNewPrice() {
   var fidStr = selectedModalFishId.toString();
   var fid = selectedModalFishId;
 
-  // Fast local duplicate check: a price value is stored only once per fish.
+  // Fast local duplicate check: same price cannot be stored twice on the same date.
   var localDuplicate = getFishPrices(fid).find(function (it) {
-    return Number(it.price) === p;
+    return it.date === d && Number(it.price) === p;
   });
   if (localDuplicate) {
     showToast(t('price_exists', { price: p.toLocaleString(getLocale()), date: formatPriceDate(localDuplicate.date) }), "error");
@@ -1044,7 +1044,7 @@ async function submitNewPrice() {
       var list = Array.isArray(prices[fidStr]) ? prices[fidStr] : [];
 
       var duplicate = list.find(function (it) {
-        return Number(it.price) === p;
+        return it.date === d && Number(it.price) === p;
       });
       if (duplicate) {
         return {
@@ -1086,7 +1086,7 @@ async function submitNewPrice() {
   }
 }
 
-async function deletePriceEntry(fid, price) {
+async function deletePriceEntry(fid, price, date) {
   if (!isAdmin) {
     showToast(t('price_delete_non_admin'), "error");
     return;
@@ -1094,6 +1094,7 @@ async function deletePriceEntry(fid, price) {
 
   var fidStr = fid.toString();
   var priceNum = Number(price);
+  var targetDate = typeof date === "string" && date ? date : null;
   if (!priceHistory[fidStr] || !isFinite(priceNum)) return;
   var ok = await showConfirmModal(
     t('price_delete_admin_title'),
@@ -1103,12 +1104,15 @@ async function deletePriceEntry(fid, price) {
   );
   if (!ok) return;
 
+  var shouldKeep = function (it) {
+    if (Number(it.price) !== priceNum) return true;
+    return targetDate ? it.date !== targetDate : false;
+  };
+
   // Local-only mode (no Firestore connection available).
   if (!db || !firebaseDocRef || !window.FISHAO_FS_TX) {
     var localMap = clonePriceMap(priceHistory);
-    var localList = (localMap[fidStr] || []).filter(function (it) {
-      return Number(it.price) !== priceNum;
-    });
+    var localList = (localMap[fidStr] || []).filter(shouldKeep);
     if (localList.length > 0) {
       localMap[fidStr] = localList;
     } else {
@@ -1126,10 +1130,8 @@ async function deletePriceEntry(fid, price) {
       var prices = clonePriceMap(currentData && currentData.prices ? currentData.prices : {});
       var list = Array.isArray(prices[fidStr]) ? prices[fidStr] : [];
 
-      // Removing all raw rows with this price makes the normalized row disappear.
-      var filtered = list.filter(function (it) {
-        return Number(it.price) !== priceNum;
-      });
+      // Removing matching (date, price) rows makes the normalized row disappear.
+      var filtered = list.filter(shouldKeep);
 
       if (filtered.length > 0) {
         prices[fidStr] = filtered;
@@ -1458,13 +1460,13 @@ async function processBulkImport() {
     var fidStr = targetFish.id.toString();
     var localList = Array.isArray(priceHistory[fidStr]) ? priceHistory[fidStr] : [];
     var existsLocally = localList.some(function (it) {
-      return Number(it.price) === priceNum;
+      return it.date === dateVal && Number(it.price) === priceNum;
     });
 
     var bucket = additions[fidStr];
     var seenInImport = !!(bucket && bucket.prices.indexOf(priceNum) !== -1);
 
-    // A price value is stored only once per fish, across all dates.
+    // A price value is stored at most once per fish per date.
     if (existsLocally || seenInImport) {
       duplicates++;
       continue;
@@ -1513,7 +1515,9 @@ async function processBulkImport() {
             var list = Array.isArray(prices[key]) ? prices[key] : [];
             var known = Object.create(null);
             list.forEach(function (it) {
-              known[String(Number(it.price))] = true;
+              if (it.date === bucket.date) {
+                known[String(Number(it.price))] = true;
+              }
             });
 
             bucket.prices.forEach(function (price) {

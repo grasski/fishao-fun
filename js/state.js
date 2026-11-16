@@ -127,7 +127,8 @@ var currentMilestoneFilter = "all";
 
 // Filters & Collection State
 var filterNowActive = false;
-var filterOnlyPrice = false;
+var filterTodayHighPrice = false;
+var filterOnlyCaught = false;
 var collectionFilterMode = "all"; // 'all' | 'caught' | 'missing'
 
 // Authentication & User Profile State

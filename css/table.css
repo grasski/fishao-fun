@@ -492,6 +492,15 @@ tbody tr:hover .fish-img {
 .price-cell:hover .price-est-sub {
   color: #fcd34d;
 }
+.price-today-val {
+  color: #34d399;
+}
+.price-today-val.is-high {
+  color: #6ee7b7;
+}
+.price-cell:hover .price-today-val {
+  color: #a7f3d0;
+}
 
 .price-history-count {
   font-size: 9px;

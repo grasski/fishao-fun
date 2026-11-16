@@ -30,9 +30,21 @@ function setSizeFilter(min, max, btn) {
   applyFilters();
 }
 
-function toggleOnlyPrice() {
-  filterOnlyPrice = !filterOnlyPrice;
-  document.getElementById("btnOnlyPrice").classList.toggle("active", filterOnlyPrice);
+function toggleTodayHighPrice() {
+  filterTodayHighPrice = !filterTodayHighPrice;
+  var btn = document.getElementById("btnTodayHighPrice");
+  if (btn) btn.classList.toggle("active", filterTodayHighPrice);
+  applyFilters();
+}
+
+function toggleOnlyCaught() {
+  if (!currentUser) {
+    showAuthNotice(t('coll_gate_title'));
+    return;
+  }
+  filterOnlyCaught = !filterOnlyCaught;
+  var btn = document.getElementById("btnOnlyCaught");
+  if (btn) btn.classList.toggle("active", filterOnlyCaught);
   applyFilters();
 }
 
@@ -97,6 +109,7 @@ function applyFilters() {
   if (btnBestChance) btnBestChance.classList.toggle("active", sortBy === "chance_desc");
 
   var dataset = currentView === "club" ? clubFishes : allFishes;
+  var todayISO = filterTodayHighPrice ? getTodayISO() : "";
 
   var filtered = dataset.filter(function (f) {
     if (currentView === "club") {
@@ -147,12 +160,19 @@ function applyFilters() {
       if (!isFishActiveAtLocalHour(f.raw_times, 3)) return false;
     }
 
-    if (filterOnlyPrice) {
-      var latest = getLatestPrice(f.id);
-      if (!latest) return false;
+    if (filterTodayHighPrice) {
+      var est = (typeof getEstimatedPrice === "function") ? getEstimatedPrice(f.id) : null;
+      if (!est || !(est.max > 0)) return false;
+      var threshold = est.max * 0.9;
+      var entries = normalizePriceEntries(getFishPrices(f.id));
+      var hasTodayHigh = entries.some(function (entry) {
+        return entry.date === todayISO && entry.price >= threshold;
+      });
+      if (!hasTodayHigh) return false;
     }
 
     if (filterUncaught && caughtFishIds.has(f.id)) return false;
+    if (filterOnlyCaught && !caughtFishIds.has(f.id)) return false;
 
     if (currentView === "all" || currentView === "market") {
       if (collectionFilterMode === "caught" && !caughtFishIds.has(f.id)) return false;
@@ -262,12 +282,11 @@ function applyFilters() {
   var filterNotes = [];
   if (currentView === "club" && hideLocked) filterNotes.push(t('filter_note_unlocked'));
   if (sortBy === "chance_desc") filterNotes.push(t('filter_note_sort_chance'));
-  if (filterOnlyPrice) {
-    if (isMarketClosedToday()) {
-      filterNotes.push(t('filter_note_priced_sunday'));
-    } else {
-      filterNotes.push(t('filter_note_priced'));
-    }
+  if (filterTodayHighPrice) {
+    filterNotes.push(t('filter_note_today_high_price'));
+  }
+  if (filterOnlyCaught) {
+    filterNotes.push(t('filter_note_only_caught'));
   }
   if (location && currentView !== "club") {
     var locName = window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(location) : location;
@@ -369,15 +388,13 @@ function resetFilters() {
   var btnBestChance = document.getElementById("btnBestChance");
   if (btnBestChance) btnBestChance.classList.remove("active");
 
-  if (currentView === "market") {
-    filterOnlyPrice = true;
-    var btnOnlyPrice = document.getElementById("btnOnlyPrice");
-    if (btnOnlyPrice) btnOnlyPrice.classList.add("active");
-  } else {
-    filterOnlyPrice = false;
-    var btnOnlyPrice2 = document.getElementById("btnOnlyPrice");
-    if (btnOnlyPrice2) btnOnlyPrice2.classList.remove("active");
-  }
+  filterTodayHighPrice = false;
+  var btnTodayHighPrice = document.getElementById("btnTodayHighPrice");
+  if (btnTodayHighPrice) btnTodayHighPrice.classList.remove("active");
+
+  filterOnlyCaught = false;
+  var btnOnlyCaught = document.getElementById("btnOnlyCaught");
+  if (btnOnlyCaught) btnOnlyCaught.classList.remove("active");
 
   var uncaughtCb = document.getElementById("filterUncaughtCheckbox");
   if (uncaughtCb) uncaughtCb.checked = false;

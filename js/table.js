@@ -168,6 +168,9 @@ function renderPriceCell(fid) {
     ? '<span class="price-est-sub" title="' + escapeHtml(t('price_est_cell_title', { min: est.min.toLocaleString(locale), max: est.max.toLocaleString(locale) })) + '">~ ' + estRangeStr + ' FB</span>'
     : '';
 
+  var todayISO = (typeof getTodayISO === "function") ? getTodayISO() : "";
+  var todayEntries = todayISO ? list.filter(function (x) { return x.date === todayISO; }) : [];
+
   if (list.length === 0) {
     var emptyTitle = t('price_cell_add_title') + estTitleSuffix;
     return '<div class="price-cell price-cell-stack" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + escapeHtml(emptyTitle) + '">' +
@@ -185,7 +188,23 @@ function renderPriceCell(fid) {
 
   var cellTitle;
   var valuesHtml;
-  if (minP === maxP) {
+  if (todayEntries.length > 0) {
+    var todayPrices = todayEntries.map(function (x) { return x.price; });
+    var minT = Math.min.apply(null, todayPrices);
+    var maxT = Math.max.apply(null, todayPrices);
+    var todayPriceStr = (minT === maxT)
+      ? minT.toLocaleString(locale)
+      : (minT.toLocaleString(locale) + '–' + maxT.toLocaleString(locale));
+    var isHighToday = !!(est && est.max > 0 && maxT >= est.max * 0.9);
+    cellTitle = t('price_today_sub', { price: todayPriceStr }) + '\n' +
+      t('price_cell_range_title', {
+        min: minP.toLocaleString(locale),
+        max: maxP.toLocaleString(locale),
+        count: count
+      }) + estTitleSuffix;
+    valuesHtml = '<span class="price-range-single price-today-val' + (isHighToday ? ' is-high' : '') + '">' + todayPriceStr + '</span>' +
+      '<span class="price-unit">FB</span>';
+  } else if (minP === maxP) {
     cellTitle = t('price_cell_single_title', {
       price: minP.toLocaleString(locale),
       date: formatPriceDate(list[0].date)

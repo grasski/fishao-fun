@@ -2,7 +2,7 @@
  * FISHAO - Daily Fish Market Price Sync (scripts/sync-market-prices.mjs)
  * ----------------------------------------------------------------------
  * Fetches daily Fish Market prices from https://www.fishao.net/wiki/fish/<id>/__data.json
- * for all fish IDs in fish.json and merges any new distinct prices into
+ * for all fish IDs in fish.json and merges daily market prices into
  * Firestore document `fishao_market/prices_history`.
  *
  * Usage:
@@ -158,7 +158,7 @@ async function writeToFirestore(fetchedPrices, todayISO) {
       const key = String(id);
       const list = Array.isArray(prices[key]) ? [...prices[key]] : [];
       const alreadyExists = list.some(
-        (entry) => entry && Number(entry.price) === price
+        (entry) => entry && entry.date === todayISO && Number(entry.price) === price
       );
 
       if (alreadyExists) {
@@ -263,7 +263,7 @@ async function main() {
   const { addedCount, duplicateCount, addedSample } = await writeToFirestore(ok, todayISO);
   console.log(
     `Firestore sync complete: ${addedCount} new price entries added, ` +
-    `${duplicateCount} duplicate prices skipped.`
+    `${duplicateCount} same-day duplicates skipped.`
   );
 
   const summaryLines = [
@@ -277,7 +277,7 @@ async function main() {
     `| Without market price | ${noPrice.length} |`,
     `| Errors | ${errors.length} |`,
     `| **New prices added** | **${addedCount}** |`,
-    `| Duplicate prices skipped | ${duplicateCount} |`
+    `| Same-day duplicates skipped | ${duplicateCount} |`
   ];
 
   if (addedSample.length > 0) {

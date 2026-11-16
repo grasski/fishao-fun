@@ -320,7 +320,11 @@ function switchView(view, skipSync) {
   var missionSizeRow = document.getElementById("missionSizeRow");
 
   if (locationFilterGroup) locationFilterGroup.style.display = (view !== "club") ? "flex" : "none";
-  if (missionSizeRow) missionSizeRow.style.display = (view === "all") ? "flex" : "none";
+  if (missionSizeRow) {
+    missionSizeRow.style.display = (view === "all" || view === "market") ? "flex" : "none";
+    var sizeCluster = missionSizeRow.querySelector(".size-filter-cluster");
+    if (sizeCluster) sizeCluster.style.display = (view === "all") ? "flex" : "none";
+  }
 
   // Reset filters completely when switching tabs
   resetFilters();
@@ -520,7 +524,8 @@ window.fishaoApp = {
   onRangeSizeInput: onRangeSizeInput,
   toggleNowActive: toggleNowActive,
   toggleBestChanceSort: toggleBestChanceSort,
-  toggleOnlyPrice: toggleOnlyPrice,
+  toggleTodayHighPrice: toggleTodayHighPrice,
+  toggleOnlyCaught: toggleOnlyCaught,
   openPriceModal: openPriceModal,
   togglePriceChartVisibility: togglePriceChartVisibility,
   closePriceModal: closePriceModal,
