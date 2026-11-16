@@ -257,6 +257,123 @@
 .price-stat-label { font-size: 11px; color: var(--text-muted); }
 .price-stat-val { font-size: 15px; font-weight: 800; color: #fbbf24; margin-top: 2px; }
 
+/* Visual price distribution chart (fish modal) */
+.price-scale-box {
+  background: #0a0f19;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.price-scale-box.collapsed {
+  padding: 9px 12px;
+  gap: 0;
+}
+.price-scale-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+.price-scale-head-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.price-scale-toggle-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-secondary, #cbd5e1);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.price-scale-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+.price-scale-title { font-weight: 700; color: var(--text-secondary, #cbd5e1); }
+.price-scale-count { color: var(--text-muted); }
+.price-scale-count strong { color: #fbbf24; }
+.price-chart-wrap {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 6px 8px 4px;
+}
+.price-chart-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.price-chart-grid {
+  stroke: rgba(148, 163, 184, 0.14);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+.price-chart-line {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.price-chart-ref {
+  stroke-width: 1.5;
+  opacity: 0.85;
+  cursor: help;
+}
+.price-chart-ref.median {
+  stroke: #c084fc;
+  stroke-dasharray: 2 3;
+}
+.price-chart-hit {
+  fill: transparent;
+  cursor: help;
+}
+.price-chart-dot {
+  fill: #f8fafc;
+  stroke: #0a0f19;
+  stroke-width: 1.8;
+  transition: r 0.15s ease, fill 0.15s ease;
+  pointer-events: none;
+}
+.price-chart-node:hover .price-chart-dot {
+  fill: #fbbf24;
+  r: 5.5;
+}
+.price-scale-median-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(192, 132, 252, 0.1);
+  border: 1px solid rgba(192, 132, 252, 0.25);
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.price-scale-median-pill i {
+  display: inline-block;
+  width: 10px;
+  height: 2px;
+  border-radius: 2px;
+  background: #c084fc;
+}
+.price-scale-median-pill strong {
+  font-weight: 800;
+  color: #d8b4fe;
+}
+.price-scale-note { font-size: 11px; color: var(--text-muted); font-style: italic; text-align: center; }
+
 .price-form-box {
   background: rgba(16, 23, 38, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1054,6 +1171,33 @@ textarea.bulk-input {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.bait-advisor-other-toggle {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.bait-advisor-other-toggle:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(148, 163, 184, 0.35);
+  color: #e2e8f0;
+}
+
+.bait-advisor-other-toggle .toggle-caret {
+  font-size: 9px;
 }
 
 .bait-advisor-row {

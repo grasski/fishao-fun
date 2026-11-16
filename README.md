@@ -9,6 +9,7 @@ Moderní webová aplikace a interaktivní encyklopedie pro hráče rybářské h
 - **Kompletní databáze**: 80 klubových ryb a všech 615 herních druhů s detailními informacemi (návnady, pruty, lokace, časy, rozměry).
 - **Živý čas lovu**: Automatická detekce lokálního časového pásma uživatele s možností přepnutí na herní UTC čas a indikátorem „BERE TEĎ“.
 - **Pokročilé vyhledávání a filtry**: Rychlé filtrování podle názvu, prostředí, vzácnosti, minimálního levelu a velikostního rozpětí (vhodné pro plnění misí).
+- **Doporučení nejvýhodnější návnady & řazení dle šance**: Automatický výpočet konkurence ostatních ryb v dané lokaci/podoblasti se zohledněním vzácnosti (`1★–5★` a `rarity_factor`), procentuálního podílu při záběru přímo v tabulce, rychlého přepínače **🎯 Nejvyšší šance** a podrobného rozboru konkurentů v detailu ryby.
 - **Osobní sbírka úlovků**: Možnost označovat chycené ryby a sledovat procentuální postup ve sbírce.
 - **Klubový postup**: Nastavení bodů klubu s vizuálním odlišením odemčených ryb a odpočtem bodů do dalších milníků.
 - **Tržní ceny**: Evidence a přehled prodejních cen ryb na trhu včetně historie a statistik (v neděli zavřeno).

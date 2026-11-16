@@ -307,6 +307,24 @@ function openSpotBaitInFishdex(locKey, placeKey, baitCode) {
   }
 }
 
+function areOtherBaitsHidden() {
+  try {
+    return localStorage.getItem('fishao_hide_other_baits') !== 'false';
+  } catch (e) {
+    return true;
+  }
+}
+
+function toggleOtherBaitsVisibility() {
+  var next = !areOtherBaitsHidden();
+  try {
+    localStorage.setItem('fishao_hide_other_baits', next ? 'true' : 'false');
+  } catch (e) { }
+  if (selectedModalFishId) {
+    renderModalBaitAdvisor(selectedModalFishId);
+  }
+}
+
 function renderModalBaitAdvisor(fid, precomputedRec) {
   var box = document.getElementById("modalBaitAdvisorBox");
   if (!box) return null;
@@ -328,6 +346,8 @@ function renderModalBaitAdvisor(fid, precomputedRec) {
   }
 
   box.style.display = "block";
+
+  var hideOtherBaits = areOtherBaitsHidden();
 
   var isNowActive = (modalBaitAdvisorTimeMode === 'now');
   var modeBtnsHtml = '<button type="button" class="bait-advisor-mode-btn' + (isNowActive ? ' active' : '') + '"' +
@@ -370,7 +390,8 @@ function formatAdvisorChanceLabel(chancePct, competitorCount) {
     var safePlaceArg = escapeHtml(spot.placeKey || '').replace(/'/g, '&#39;');
     var safeBaitArg = escapeHtml(bestBaitCode).replace(/'/g, '&#39;');
 
-    var rowsHtml = spot.baits.map(function (bItem, bIdx) {
+    var visibleBaits = hideOtherBaits ? spot.baits.slice(0, 1) : spot.baits;
+    var rowHtmlList = visibleBaits.map(function (bItem, bIdx) {
       var rowKey = spotKey + '|' + bItem.bait;
       var safeRowKey = escapeHtml(rowKey).replace(/'/g, '&#39;');
       var isHighlight = bItem.isBestInSpot && (spot.baits.length > 1 || bItem.competitorCount === 0);
@@ -435,7 +456,22 @@ function formatAdvisorChanceLabel(chancePct, competitorCount) {
         '</div>' +
         (toggleBtnHtml ? '<div class="bait-advisor-row-sub">' + toggleBtnHtml + compListHtml + '</div>' : '') +
       '</div>';
-    }).join('');
+    });
+
+    var otherToggleHtml = '';
+    if (spot.baits.length > 1) {
+      var otherCount = spot.baits.length - 1;
+      var otherLabel = hideOtherBaits
+        ? (t('advisor_show_other_baits') + ' (+' + otherCount + ')')
+        : t('advisor_hide_other_baits');
+      otherToggleHtml = '<button type="button" class="bait-advisor-other-toggle"' +
+        ' onclick="window.fishaoApp.toggleOtherBaitsVisibility()">' +
+        '<span>' + escapeHtml(otherLabel) + '</span>' +
+        '<span class="toggle-caret">' + (hideOtherBaits ? '▼' : '▲') + '</span>' +
+      '</button>';
+    }
+
+    var rowsContentHtml = (rowHtmlList[0] || '') + otherToggleHtml + rowHtmlList.slice(1).join('');
 
     return '<div class="bait-advisor-loc-card">' +
       '<div class="bait-advisor-loc-header">' +
@@ -448,7 +484,7 @@ function formatAdvisorChanceLabel(chancePct, competitorCount) {
           escapeHtml(t('advisor_filter_in_table')) +
         '</button>' +
       '</div>' +
-      '<div class="bait-advisor-rows">' + rowsHtml + '</div>' +
+      '<div class="bait-advisor-rows">' + rowsContentHtml + '</div>' +
     '</div>';
   }).join('');
 
@@ -652,7 +688,25 @@ function openPriceModal(fid, skipSync) {
   if (loginNotice) loginNotice.style.display = currentUser ? "none" : "block";
 
   renderModalHistory(fid);
-  document.getElementById("priceModalOverlay").classList.add("active");
+  var overlayEl = document.getElementById("priceModalOverlay");
+  overlayEl.classList.add("active");
+
+  var modalBody = overlayEl.querySelector(".modal-body");
+  if (modalBody) {
+    if (currentView === "market") {
+      requestAnimationFrame(function () {
+        var marketDivider = modalBody.querySelector(".modal-market-divider");
+        if (marketDivider) {
+          var offset = marketDivider.getBoundingClientRect().top - modalBody.getBoundingClientRect().top + modalBody.scrollTop - 12;
+          modalBody.scrollTop = Math.max(0, offset);
+        } else {
+          modalBody.scrollTop = modalBody.scrollHeight;
+        }
+      });
+    } else {
+      modalBody.scrollTop = 0;
+    }
+  }
 }
 
 function closePriceModal(skipSync) {
@@ -673,6 +727,171 @@ function closePriceModal(skipSync) {
 function syncPriceHistoryActionColumn() {
   var th = document.getElementById("modalPriceHistoryActionTh");
   if (th) th.style.display = isAdmin ? "" : "none";
+}
+
+/**
+ * Summary statistics over display-normalized price entries.
+ * Returns null for an empty list.
+ */
+function computePriceStats(list) {
+  if (!list || !list.length) return null;
+  var values = list.map(function (x) { return x.price; }).sort(function (a, b) { return a - b; });
+  var n = values.length;
+  var sum = values.reduce(function (acc, v) { return acc + v; }, 0);
+  var median = (n % 2 === 1) ? values[(n - 1) / 2] : (values[n / 2 - 1] + values[n / 2]) / 2;
+  return { min: values[0], max: values[n - 1], avg: sum / n, median: median, count: n };
+}
+
+function isPriceChartHidden() {
+  try {
+    return localStorage.getItem('fishao_hide_price_chart') === 'true';
+  } catch (e) {
+    return false;
+  }
+}
+
+function togglePriceChartVisibility() {
+  var next = !isPriceChartHidden();
+  try {
+    localStorage.setItem('fishao_hide_price_chart', next ? 'true' : 'false');
+  } catch (e) { }
+  if (selectedModalFishId) {
+    renderModalPriceScale(normalizePriceEntries(getFishPrices(selectedModalFishId)));
+  }
+}
+
+/**
+ * Renders the visual price distribution mini-chart in the fish modal:
+ * an SVG area/line chart of sorted known prices with a median reference line.
+ */
+function renderModalPriceScale(list) {
+  var box = document.getElementById("modalPriceScale");
+  if (!box) return;
+  var stats = computePriceStats(list);
+  if (!stats) {
+    box.style.display = "none";
+    box.classList.remove("collapsed");
+    box.innerHTML = "";
+    return;
+  }
+
+  var locale = getLocale();
+  var fmt = function (v) {
+    return Math.round(v).toLocaleString(locale) + " FB";
+  };
+  var medLabel = t('modal_price_median');
+
+  var hidden = isPriceChartHidden();
+  box.classList.toggle("collapsed", hidden);
+
+  var toggleLabel = t(hidden ? 'modal_price_chart_show' : 'modal_price_chart_hide');
+  var headHtml =
+    '<div class="price-scale-head">' +
+      '<span class="price-scale-title">' + escapeHtml(t('modal_price_scale_title')) + '</span>' +
+      '<span class="price-scale-median-pill"><i></i>' + escapeHtml(medLabel) + ': <strong>' + fmt(stats.median) + '</strong></span>' +
+      '<div class="price-scale-head-right">' +
+        '<span class="price-scale-count">' + escapeHtml(t('modal_price_count')) + ': <strong>' + stats.count + '</strong></span>' +
+        '<button type="button" class="price-scale-toggle-btn">' + escapeHtml(toggleLabel) + '</button>' +
+      '</div>' +
+    '</div>';
+
+  if (hidden) {
+    box.innerHTML = headHtml;
+    box.style.display = "";
+    var collapsedBtn = box.querySelector(".price-scale-toggle-btn");
+    if (collapsedBtn) collapsedBtn.addEventListener("click", togglePriceChartVisibility);
+    return;
+  }
+
+  var chartHtml = '';
+  if (stats.count >= 2) {
+    var sorted = list.slice().sort(function (a, b) { return a.price - b.price; });
+    var W = 400;
+    var H = 112;
+    var padL = 10;
+    var padR = 10;
+    var padT = 12;
+    var padB = 12;
+    var plotW = W - padL - padR;
+    var plotH = H - padT - padB;
+    var span = stats.max - stats.min;
+
+    var xFor = function (idx) {
+      return padL + (idx / (sorted.length - 1)) * plotW;
+    };
+    var yFor = function (val) {
+      if (span <= 0) return padT + plotH / 2;
+      return padT + plotH - ((val - stats.min) / span) * plotH;
+    };
+
+    var pts = sorted.map(function (item, idx) {
+      return {
+        x: xFor(idx),
+        y: yFor(item.price),
+        item: item
+      };
+    });
+
+    var linePath = pts.map(function (p, i) {
+      return (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ',' + p.y.toFixed(1);
+    }).join(' ');
+    var bottomY = (padT + plotH).toFixed(1);
+    var areaPath = linePath +
+      ' L' + pts[pts.length - 1].x.toFixed(1) + ',' + bottomY +
+      ' L' + pts[0].x.toFixed(1) + ',' + bottomY + ' Z';
+
+    var medY = yFor(stats.median).toFixed(1);
+    var midY = (padT + plotH / 2).toFixed(1);
+    var dotR = sorted.length > 24 ? 3 : 4.2;
+
+    var nodesHtml = pts.map(function (p) {
+      var title = t('modal_price_dot_title', {
+        price: p.item.price.toLocaleString(locale),
+        date: formatPriceDate(p.item.date)
+      });
+      return '<g class="price-chart-node">' +
+        '<circle class="price-chart-hit" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="10"></circle>' +
+        '<circle class="price-chart-dot" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + dotR + '"></circle>' +
+        '<title>' + escapeHtml(title) + '</title>' +
+      '</g>';
+    }).join('');
+
+    chartHtml =
+      '<div class="price-chart-wrap">' +
+        '<svg class="price-chart-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + escapeHtml(t('modal_price_scale_title')) + '">' +
+          '<defs>' +
+            '<linearGradient id="priceChartAreaGrad" x1="0" y1="0" x2="0" y2="1">' +
+              '<stop offset="0%" stop-color="#34d399" stop-opacity="0.28"/>' +
+              '<stop offset="100%" stop-color="#34d399" stop-opacity="0.02"/>' +
+            '</linearGradient>' +
+            '<linearGradient id="priceChartLineGrad" x1="0" y1="0" x2="1" y2="0">' +
+              '<stop offset="0%" stop-color="#f87171"/>' +
+              '<stop offset="50%" stop-color="#fbbf24"/>' +
+              '<stop offset="100%" stop-color="#34d399"/>' +
+            '</linearGradient>' +
+          '</defs>' +
+          '<line class="price-chart-grid" x1="' + padL + '" y1="' + padT + '" x2="' + (W - padR) + '" y2="' + padT + '"/>' +
+          '<line class="price-chart-grid" x1="' + padL + '" y1="' + midY + '" x2="' + (W - padR) + '" y2="' + midY + '"/>' +
+          '<line class="price-chart-grid" x1="' + padL + '" y1="' + bottomY + '" x2="' + (W - padR) + '" y2="' + bottomY + '"/>' +
+          '<path d="' + areaPath + '" fill="url(#priceChartAreaGrad)"/>' +
+          '<line class="price-chart-ref median" x1="' + padL + '" y1="' + medY + '" x2="' + (W - padR) + '" y2="' + medY + '"><title>' + escapeHtml(medLabel + ': ' + fmt(stats.median)) + '</title></line>' +
+          '<path class="price-chart-line" d="' + linePath + '" stroke="url(#priceChartLineGrad)"/>' +
+          nodesHtml +
+        '</svg>' +
+      '</div>';
+  }
+
+  var noteHtml = stats.count === 1
+    ? '<div class="price-scale-note">' + escapeHtml(t('modal_price_scale_single')) + '</div>'
+    : '';
+
+  box.innerHTML =
+    headHtml +
+    chartHtml +
+    noteHtml;
+  box.style.display = "";
+  var expandedBtn = box.querySelector(".price-scale-toggle-btn");
+  if (expandedBtn) expandedBtn.addEventListener("click", togglePriceChartVisibility);
 }
 
 function renderModalHistory(fid) {
@@ -696,6 +915,7 @@ function renderModalHistory(fid) {
     tbody.innerHTML = '<tr><td colspan="' + (showActions ? 3 : 2) + '" style="text-align:center; color: var(--text-muted); padding: 15px;">' + t('price_empty_history') + '</td></tr>';
     if (minPriceEl) minPriceEl.innerText = "--";
     if (maxPriceEl) maxPriceEl.innerText = "--";
+    renderModalPriceScale([]);
     return;
   }
 
@@ -705,6 +925,7 @@ function renderModalHistory(fid) {
 
   if (minPriceEl) minPriceEl.innerText = minP.toLocaleString(locale) + " FB";
   if (maxPriceEl) maxPriceEl.innerText = maxP.toLocaleString(locale) + " FB";
+  renderModalPriceScale(list);
 
   tbody.innerHTML = list.map(function (item) {
     var actionCell = showActions

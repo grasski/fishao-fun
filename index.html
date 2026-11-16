@@ -123,14 +123,14 @@
   <!-- Modern Modular Stylesheets -->
   <link rel="stylesheet" href="css/base.css?v=3.2">
   <link rel="stylesheet" href="css/header.css?v=3.2">
-  <link rel="stylesheet" href="css/nav.css?v=3.2">
+  <link rel="stylesheet" href="css/nav.css?v=3.3">
   <link rel="stylesheet" href="css/filters.css?v=3.4">
   <link rel="stylesheet" href="css/table.css?v=3.8">
   <link rel="stylesheet" href="css/clubs.css?v=3.3">
   <link rel="stylesheet" href="css/players.css?v=3.2">
-  <link rel="stylesheet" href="css/modals.css?v=3.5">
+  <link rel="stylesheet" href="css/modals.css?v=3.9">
   <link rel="stylesheet" href="css/locations-calendar.css?v=1.2">
-  <link rel="stylesheet" href="css/responsive.css?v=3.5">
+  <link rel="stylesheet" href="css/responsive.css?v=3.7">
 </head>
 
 <body>
@@ -375,6 +375,11 @@
         <span class="action-bar-hint" id="marketStatsSummary" data-i18n="market_bar_subtitle">Komunitní katalog známých výkupních cen (FB)</span>
       </div>
       <div class="action-bar-right">
+        <button class="pill-btn" id="btnNeedsPrice" onclick="window.fishaoApp.toggleNeedsPrice()"
+          title="Zobrazit ryby, u kterých komunita zatím nemá žádnou cenu" data-i18n-title="market_needs_price_title">
+          <span data-i18n="market_needs_price_btn">🔍 Chybí cena</span>
+          <span class="needs-price-count" id="needsPriceCount">--</span>
+        </button>
         <button class="btn-action sm" onclick="window.fishaoApp.openBulkModal()"
           title="Hromadný import cen do Fish Marketu" data-i18n="market_btn_import" data-i18n-title="market_btn_import">
           📥 Import cen do Marketu </button>
@@ -1166,6 +1171,9 @@
           </div>
         </div>
 
+        <!-- Visual price range scale (known values, average, median) -->
+        <div class="price-scale-box" id="modalPriceScale" style="display: none;"></div>
+
         <!-- Add price form (gated: shown when logged in) -->
         <div id="priceAddFormBox" class="price-form-box" style="display: none;">
           <div class="price-form-header">
@@ -1628,9 +1636,9 @@
   <div id="appToast" class="app-toast" style="display: none;"></div>
 
   <!-- Data scripts and localization -->
-  <script src="data/i18n/ui_cs.js?v=5.0"></script>
-  <script src="data/i18n/ui_en.js?v=5.0"></script>
-  <script src="data/i18n/ui_pl.js?v=5.0"></script>
+  <script src="data/i18n/ui_cs.js?v=5.3"></script>
+  <script src="data/i18n/ui_en.js?v=5.3"></script>
+  <script src="data/i18n/ui_pl.js?v=5.3"></script>
   <script src="data/i18n/taxonomies.js?v=3.4"></script>
   <script src="data/i18n/fish_names.js?v=3.3"></script>
   <script src="data/i18n.js?v=3.2"></script>
@@ -1638,17 +1646,17 @@
   <script src="data/prices.js?v=3.4"></script>
   <script src="firebase-config.js?v=3.2"></script>
   <!-- Modular FISHAO Application Logic -->
-  <script src="js/state.js?v=4.5"></script>
+  <script src="js/state.js?v=4.7"></script>
   <script src="js/firestore-tx.js?v=3.2"></script>
   <script src="js/table.js?v=4.0"></script>
   <script src="js/clubs.js?v=3.9"></script>
-  <script src="js/market.js?v=4.8"></script>
-  <script src="js/filters.js?v=4.1"></script>
+  <script src="js/market.js?v=4.15"></script>
+  <script src="js/filters.js?v=4.3"></script>
   <script src="js/auth.js?v=4.2"></script>
   <script src="js/players.js?v=3.9"></script>
   <script src="js/locations.js?v=1.1"></script>
   <script src="js/calendar.js?v=1.0"></script>
-  <script src="js/main.js?v=4.2"></script>
+  <script src="js/main.js?v=4.5"></script>
 
 </body>
 

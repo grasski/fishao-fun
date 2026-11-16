@@ -188,8 +188,9 @@
   #bannerMarket .action-bar-right {
     width: 100%;
   }
-  #bannerMarket .action-bar-right .pill-btn {
-    width: 100%;
+  #bannerMarket .action-bar-right .pill-btn,
+  #bannerMarket .action-bar-right .btn-action {
+    flex: 1 1 auto;
     justify-content: center;
   }
 
