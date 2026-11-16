@@ -1,0 +1,41 @@
+name: Sync Fish Market Prices
+
+on:
+  schedule:
+    # Run daily at 00:05 UTC (slightly after midnight to avoid UTC 00:00 queue spikes)
+    - cron: '5 0 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Fetch prices without writing to Firestore'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync-prices:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install firebase-admin
+        if: ${{ !inputs.dry_run }}
+        run: npm install --no-save firebase-admin
+
+      - name: Sync market prices to Firestore
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            node scripts/sync-market-prices.mjs --dry-run
+          else
+            node scripts/sync-market-prices.mjs
+          fi

@@ -46,9 +46,13 @@ fishao/
 │   └── main.js         # Přepínání pohledů, hodiny, překlady, window.fishaoApp a start
 ├── firebase-config.js  # Konfigurace Firebase projektu
 ├── firestore.rules     # Bezpečnostní pravidla pro Firestore databázi
-├── build_data.py       # Nástroj pro generování dat ryb z herních zdrojů
-├── build_i18n.py       # Nástroj pro generování překladů ryb z lang_*.json
+├── docs/               # Dokumentace a poznámky (např. fishao_urls.md)
+├── scripts/            # Pomocné a automatizační skripty
+│   ├── build_data.py   # Nástroj pro generování dat ryb z herních zdrojů
+│   ├── build_i18n.py   # Nástroj pro generování překladů ryb z data/raw/lang_*.json
+│   └── sync-market-prices.mjs # Denní synchronizace cen ryb do Firestore
 ├── data/
+│   ├── raw/            # Surová herní JSON data (fish.json, lang_*.json)
 │   ├── i18n.js         # Jádro lokalizace (CZ / EN / PL, fallbacky, plurály)
 │   ├── i18n/           # Modulární jazykové slovníky
 │   │   ├── ui_cs.js    # České texty uživatelského rozhraní

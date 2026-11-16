@@ -16,14 +16,15 @@ the language fallback chain (pl -> en -> cs, en -> cs).
 To add another language: add it to LANG_FILES below, register it in the
 LANGUAGES map in data/i18n.js and create data/i18n/ui_<code>.js.
 
-Usage:  python build_i18n.py
+Usage:  python scripts/build_i18n.py
 """
 
 import json
 import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FISH_JSON = os.path.join(BASE_DIR, "fish.json")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+RAW_DIR = os.path.join(BASE_DIR, "data", "raw")
+FISH_JSON = os.path.join(RAW_DIR, "fish.json")
 OUT_FISH_NAMES = os.path.join(BASE_DIR, "data", "i18n", "fish_names.js")
 OUT_TAXONOMIES = os.path.join(BASE_DIR, "data", "i18n", "taxonomies.js")
 
@@ -108,7 +109,7 @@ CITIES = {
 
 
 def load_json(name):
-    with open(os.path.join(BASE_DIR, name), "r", encoding="utf-8") as f:
+    with open(os.path.join(RAW_DIR, name), "r", encoding="utf-8") as f:
         return json.load(f)
 
 

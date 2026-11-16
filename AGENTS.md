@@ -4,7 +4,7 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
 
 ## Key Architecture & Data Rules
 1. **Never read raw 400KB data files in full:**
-   * Do NOT read `lang_cz.json`, `lang_en.json`, `lang_pl.json`, `data/fishes.js`, or `fish.json` from beginning to end.
+   * Do NOT read `data/raw/lang_cz.json`, `data/raw/lang_en.json`, `data/raw/lang_pl.json`, `data/fishes.js`, or `data/raw/fish.json` from beginning to end.
    * Full data schemas, object shapes, and Firestore collections are documented in [.agents/skills/fishao/SKILL.md](.agents/skills/fishao/SKILL.md).
 2. **Vanilla JavaScript & GitHub Pages:**
    * This project has no Node.js/npm build step or bundler. Files are loaded natively by the browser.
@@ -28,7 +28,7 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
      - `data/i18n/ui_en.js`: English UI strings (`FISHAO_I18N_UI_EN`).
      - `data/i18n/ui_pl.js`: Polish UI strings (`FISHAO_I18N_UI_PL`).
      - `data/i18n/taxonomies.js`: Baits, waters, locations, and timezone city translations (`FISHAO_I18N_TAXONOMIES`).
-     - `data/i18n/fish_names.js`: 615 fish translations (`FISHAO_I18N_FISH_NAMES`), auto-generated from `lang_cz.json`, `lang_en.json`, and `lang_pl.json` by `build_i18n.py`.
+     - `data/i18n/fish_names.js`: 615 fish translations (`FISHAO_I18N_FISH_NAMES`), auto-generated from `data/raw/lang_cz.json`, `data/raw/lang_en.json`, and `data/raw/lang_pl.json` by `scripts/build_i18n.py`.
      - `data/i18n.js`: Core engine, `LANGUAGES` registry, `Intl.PluralRules` support, and helpers (`t()`, `getFishName()`, `getAltFishName()`, `getLocationName()`, `getBaitName()`, `getWaterName()`, `getCityName()`, `formatDayMonth()`, `formatDate()`, `norm()`).
    * Add all new text keys to `ui_cs.js`, `ui_en.js`, and `ui_pl.js`.
    * Use HTML attributes `data-i18n`, `data-i18n-placeholder`, `data-i18n-title`, and `data-i18n-aria-label` for static elements.

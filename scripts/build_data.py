@@ -9,12 +9,13 @@ to generate structured JavaScript data files:
 import json
 import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "data")
+RAW_DIR = os.path.join(DATA_DIR, "raw")
 os.makedirs(DATA_DIR, exist_ok=True)
 
-FISH_JSON = os.path.join(BASE_DIR, "fish.json")
-LANG_JSON = os.path.join(BASE_DIR, "lang_cz.json")
+FISH_JSON = os.path.join(RAW_DIR, "fish.json")
+LANG_JSON = os.path.join(RAW_DIR, "lang_cz.json")
 
 print("-> Loading source data files...")
 with open(FISH_JSON, "r", encoding="utf-8") as f:
