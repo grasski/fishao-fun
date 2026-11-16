@@ -145,6 +145,7 @@ async function writeToFirestore(fetchedPrices, todayISO) {
 
   let addedCount = 0;
   let duplicateCount = 0;
+  const addedSample = [];
 
   await db.runTransaction(async (tx) => {
     const snap = await tx.get(docRef);
@@ -168,6 +169,9 @@ async function writeToFirestore(fetchedPrices, todayISO) {
       list.push({ date: todayISO, price });
       prices[key] = list;
       addedCount++;
+      if (addedSample.length < 15) {
+        addedSample.push({ id, price });
+      }
     }
 
     if (addedCount > 0) {
@@ -178,7 +182,17 @@ async function writeToFirestore(fetchedPrices, todayISO) {
     }
   });
 
-  return { addedCount, duplicateCount };
+  return { addedCount, duplicateCount, addedSample };
+}
+
+function writeStepSummary(lines) {
+  const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+  if (!summaryPath) return;
+  try {
+    fs.appendFileSync(summaryPath, lines.join('\n') + '\n', 'utf8');
+  } catch (err) {
+    console.warn('Failed to write GITHUB_STEP_SUMMARY:', err.message);
+  }
 }
 
 async function main() {
@@ -188,6 +202,11 @@ async function main() {
 
   if (now.getUTCDay() === 0 && !process.env.FORCE_SYNC && !args.dryRun) {
     console.log(`[${todayISO}] Sunday (UTC): Fish Market is closed. Skipping sync.`);
+    writeStepSummary([
+      `## Fish Market Sync (${todayISO})`,
+      '',
+      '⏸️ **Skipped:** Sunday (UTC) — Fish Market is closed.'
+    ]);
     return;
   }
 
@@ -216,18 +235,61 @@ async function main() {
   if (args.dryRun) {
     console.log('Dry-run mode enabled; skipping Firestore write.');
     console.log('Sample fetched prices:', ok.slice(0, 10));
+    writeStepSummary([
+      `## Fish Market Sync (${todayISO}) — Dry Run`,
+      '',
+      '| Metric | Count |',
+      '| :--- | ---: |',
+      `| Fish IDs checked | ${fishIds.length} |`,
+      `| Prices fetched | ${ok.length} |`,
+      `| Not found (404) | ${notFound.length} |`,
+      `| Without market price | ${noPrice.length} |`,
+      `| Errors | ${errors.length} |`,
+      '',
+      '_Dry-run mode: Firestore was not modified._'
+    ]);
     return;
   }
 
   if (ok.length === 0) {
+    writeStepSummary([
+      `## Fish Market Sync (${todayISO}) — Failed`,
+      '',
+      `❌ No prices were fetched (${errors.length} errors). Firestore write aborted.`
+    ]);
     throw new Error('No prices were fetched; aborting Firestore write.');
   }
 
-  const { addedCount, duplicateCount } = await writeToFirestore(ok, todayISO);
+  const { addedCount, duplicateCount, addedSample } = await writeToFirestore(ok, todayISO);
   console.log(
     `Firestore sync complete: ${addedCount} new price entries added, ` +
     `${duplicateCount} duplicate prices skipped.`
   );
+
+  const summaryLines = [
+    `## Fish Market Sync (${todayISO})`,
+    '',
+    '| Metric | Count |',
+    '| :--- | ---: |',
+    `| Fish IDs checked | ${fishIds.length} |`,
+    `| Prices fetched | ${ok.length} |`,
+    `| Not found (404) | ${notFound.length} |`,
+    `| Without market price | ${noPrice.length} |`,
+    `| Errors | ${errors.length} |`,
+    `| **New prices added** | **${addedCount}** |`,
+    `| Duplicate prices skipped | ${duplicateCount} |`
+  ];
+
+  if (addedSample.length > 0) {
+    const preview = addedSample.map((e) => `#${e.id}: ${e.price} FB`).join(', ');
+    summaryLines.push('', `**Sample new prices:** ${preview}${addedCount > addedSample.length ? ', …' : ''}`);
+  }
+  if (errors.length > 0) {
+    const errPreview = errors.slice(0, 5).map((e) => `#${e.id} (${e.error})`).join(', ');
+    summaryLines.push('', `⚠️ **Sample errors:** ${errPreview}`);
+  }
+
+  writeStepSummary(summaryLines);
 }
 
 main().catch((err) => {
