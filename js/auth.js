@@ -106,7 +106,7 @@ async function initFirebaseSync() {
       if (docSnap.exists()) {
         var estData = docSnap.data();
         if (estData && estData.prices && typeof estData.prices === "object" && Object.keys(estData.prices).length > 0) {
-          estimatedPrices = estData.prices;
+          estimatedPrices = Object.assign({}, window.FISHAO_ESTIMATED_PRICES || {}, estData.prices);
           try {
             localStorage.setItem('fishao_estimated_prices_v1', JSON.stringify(estimatedPrices));
           } catch (e) {}

@@ -164,12 +164,13 @@ function renderPriceCell(fid) {
   var estRangeStr = est ? (est.min.toLocaleString(locale) + '–' + est.max.toLocaleString(locale)) : '';
   var estTitleSuffix = est ? ('\n' + t('price_est_cell_title', { min: est.min.toLocaleString(locale), max: est.max.toLocaleString(locale) })) : '';
 
+  var estSubHtml = est
+    ? '<span class="price-est-sub" title="' + escapeHtml(t('price_est_cell_title', { min: est.min.toLocaleString(locale), max: est.max.toLocaleString(locale) })) + '">~ ' + estRangeStr + ' FB</span>'
+    : '';
+
   if (list.length === 0) {
     var emptyTitle = t('price_cell_add_title') + estTitleSuffix;
-    var estSubHtml = est
-      ? '<span class="price-est-sub" title="' + escapeHtml(t('price_est_cell_title', { min: est.min.toLocaleString(locale), max: est.max.toLocaleString(locale) })) + '">~ ' + estRangeStr + ' FB</span>'
-      : '';
-    return '<div class="price-cell price-cell-empty-wrap" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + escapeHtml(emptyTitle) + '">' +
+    return '<div class="price-cell price-cell-stack" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + escapeHtml(emptyTitle) + '">' +
       '<span class="price-empty">+ ' + t('price_add_btn') + '</span>' +
       estSubHtml +
       '</div>';
@@ -203,8 +204,10 @@ function renderPriceCell(fid) {
       '<span class="price-unit">FB</span>';
   }
 
-  return '<div class="price-cell" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + escapeHtml(cellTitle) + '">' +
-    '<span class="price-inline">' + valuesHtml + histCount + '</span></div>';
+  return '<div class="price-cell price-cell-stack" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + escapeHtml(cellTitle) + '">' +
+    '<span class="price-inline">' + valuesHtml + histCount + '</span>' +
+    estSubHtml +
+    '</div>';
 }
 
 function countDistinctRecordedPrices() {
