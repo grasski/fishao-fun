@@ -664,8 +664,9 @@ function formatCompetitorCountLabel(count) {
 }
 
 function compareBaitScores(a, b) {
+  var weightDiff = a.competitorWeight - b.competitorWeight;
+  if (Math.abs(weightDiff) > 1e-6) return weightDiff;
   return (a.competitorCount - b.competitorCount) ||
-    (a.competitorWeight - b.competitorWeight) ||
     (a.commonCount - b.commonCount);
 }
 
