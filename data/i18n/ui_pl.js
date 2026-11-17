@@ -186,7 +186,6 @@
       "modal_club_unlock": "🏰 Warunki odblokowania w klubie",
       "modal_dimensions": "📏 Rozmiar (Min / Średnia / Max)",
       "modal_fish_detail": "🐟 Szczegóły ryby &amp; Fish Market",
-      "modal_history_title": "Znane ceny tej ryby: {count}",
       "modal_login_notice_link": "zalogować się przez Google",
       "modal_login_notice_prefix": "🔒 Aby dodać cenę do Fish Marketu, musisz",
       "modal_market_divider": "💵 Fish Market – Ceny skupu i historia",
@@ -198,6 +197,9 @@
       "modal_price_chart_hide": "Ukryj wykres",
       "modal_price_chart_show": "Pokaż wykres",
       "modal_price_dot_title": "{price} FB · {date}",
+      "modal_chart_hint": "Stuknij lub najedź na punkt, aby zobaczyć szczegóły",
+      "modal_chart_prev": "Poprzedni punkt",
+      "modal_chart_next": "Następny punkt",
       "modal_min_price": "Minimalna cena",
       "modal_est_price_label": "Szacowany zakres (obliczenia):",
       "modal_est_price_badge": "Tylko szacunek",
@@ -209,9 +211,6 @@
       "modal_sale_date": "Data sprzedaży:",
       "modal_save_price_btn": "Zapisz cenę",
       "modal_save_price_sunday_disabled": "W niedzielę Fish Market jest zamknięty (nie można zapisać ceny)",
-      "modal_th_action": "Akcja",
-      "modal_th_date": "Data",
-      "modal_th_price": "Cena (Fiszdolary / FB)",
       "modal_time": "⏰ Czas połowu",
       "modal_season": "📅 Sezon / Okres",
       "date_all_year": "Cały rok",
@@ -642,11 +641,7 @@
       "app_update_reload": "Odśwież",
       "avatar_url_https_only": "URL awatara musi zaczynać się od https://.",
       "auth_reauth_required": "Aby trwale usunąć konto, potwierdź ponownie logowanie przez Google.",
-      "modal_price_occurrences": "{count}×",
-      "modal_daily_history_btn": "📅 Wpisy dzienne ({month})",
-      "modal_daily_history_hide": "📅 Ukryj wpisy dzienne",
-      "modal_daily_history_loading": "Ładowanie wpisów dziennych...",
-      "modal_daily_history_empty": "Brak dziennych wpisów dla tego miesiąca."
+      "modal_price_occurrences": "{count}×"
   };
 
   if (typeof window !== 'undefined') {

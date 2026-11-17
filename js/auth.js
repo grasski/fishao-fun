@@ -875,8 +875,7 @@ function updateAuthUI() {
     var exportBtn = document.getElementById("btnExportPrices");
     if (exportBtn) exportBtn.style.display = isAdmin ? "inline-block" : "none";
 
-    // Admin-only action column in the fish modal price history.
-    if (typeof syncPriceHistoryActionColumn === "function") syncPriceHistoryActionColumn();
+    // Admin-only action column/buttons inside fish modal
     if (typeof syncManualImportVisibility === "function") syncManualImportVisibility();
     if (selectedModalFishId && typeof renderModalHistory === "function") {
       renderModalHistory(selectedModalFishId);

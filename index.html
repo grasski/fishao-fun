@@ -1268,20 +1268,8 @@
             data-i18n="modal_login_notice_link">přihlásit přes Google</a>.
         </div>
 
-        <div>
-          <span id="modalHistoryTitle" style="font-size: 13px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 8px;"
-            data-i18n="modal_history_title">Známé ceny této ryby:</span>
-          <table class="history-table" id="modalPriceHistoryTable">
-            <thead>
-              <tr>
-                <th data-i18n="modal_th_date">Datum</th>
-                <th data-i18n="modal_th_price">Cena (fishměna / FB)</th>
-                <th id="modalPriceHistoryActionTh" style="display: none; width: 50px; text-align: center;" data-i18n="modal_th_action">Akce</th>
-              </tr>
-            </thead>
-            <tbody id="modalPriceHistoryTbody"></tbody>
-          </table>
-          <div id="modalDailyHistoryBox" class="modal-daily-history-box"></div>
+        <div id="modalPriceEmptyNotice" class="price-empty-notice" style="display: none;" data-i18n="price_empty_history">
+          Zatím žádná zaznamenaná cena pro tuto rybu.
         </div>
       </div>
     </div>

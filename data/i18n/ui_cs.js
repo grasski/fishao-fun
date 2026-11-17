@@ -186,7 +186,6 @@
       "modal_club_unlock": "🏰 Klubové podmínky odemčení",
       "modal_dimensions": "📏 Velikost (Min / Průměr / Max)",
       "modal_fish_detail": "🐟 Detail ryby &amp; Fish Market",
-      "modal_history_title": "Známé ceny této ryby: {count}",
       "modal_login_notice_link": "přihlásit přes Google",
       "modal_login_notice_prefix": "🔒 Pro zadání ceny do Fish Marketu se musíš",
       "modal_market_divider": "💵 Fish Market – Výkupní ceny a historie",
@@ -198,6 +197,9 @@
       "modal_price_chart_hide": "Skrýt graf",
       "modal_price_chart_show": "Zobrazit graf",
       "modal_price_dot_title": "{price} FB · {date}",
+      "modal_chart_hint": "Klepni nebo najeď na bod pro detail",
+      "modal_chart_prev": "Předchozí bod",
+      "modal_chart_next": "Další bod",
       "modal_min_price": "Minimální cena",
       "modal_est_price_label": "Odhadované rozpětí (výpočet):",
       "modal_est_price_badge": "Pouze odhad",
@@ -209,9 +211,6 @@
       "modal_sale_date": "Datum prodeje",
       "modal_save_price_btn": "Uložit cenu",
       "modal_save_price_sunday_disabled": "V neděli je Fish Market zavřený (cenu nelze uložit)",
-      "modal_th_action": "Akce",
-      "modal_th_date": "Datum",
-      "modal_th_price": "Cena (fishměna / FB)",
       "modal_time": "⏰ Čas lovu",
       "modal_season": "📅 Sezóna / Období",
       "date_all_year": "Celoročně",
@@ -642,11 +641,7 @@
       "app_update_reload": "Obnovit",
       "avatar_url_https_only": "URL avataru musí začínat na https://.",
       "auth_reauth_required": "Pro trvalé smazání účtu se prosím znovu ověř přes Google.",
-      "modal_price_occurrences": "{count}×",
-      "modal_daily_history_btn": "📅 Denní záznamy ({month})",
-      "modal_daily_history_hide": "📅 Skrýt denní záznamy",
-      "modal_daily_history_loading": "Načítám denní záznamy...",
-      "modal_daily_history_empty": "Pro tento měsíc nejsou k dispozici žádné denní záznamy."
+      "modal_price_occurrences": "{count}×"
   };
 
   if (typeof window !== 'undefined') {

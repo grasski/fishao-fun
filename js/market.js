@@ -8,8 +8,7 @@
 
 var _bulkFishNameCacheLang = null;
 var _bulkFishNameCacheMap = null;
-var _modalDailyExpanded = false;
-var _modalDailySelectedMonth = "";
+var _selectedChartPointIdx = 0;
 
 function saveLocalPriceSummary(metaLastUpdated) {
   try {
@@ -644,8 +643,7 @@ function formatAdvisorChanceLabel(chancePct, competitorCount) {
 function openPriceModal(fid, skipSync) {
   selectedModalFishId = fid;
   modalBaitExpandedKeys = {};
-  _modalDailyExpanded = false;
-  _modalDailySelectedMonth = "";
+  _selectedChartPointIdx = -1;
   var fishObj = (typeof getFishById === "function") ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
   if (!fishObj) return;
 
@@ -853,11 +851,6 @@ function closePriceModal(skipSync) {
   }
 }
 
-function syncPriceHistoryActionColumn() {
-  var th = document.getElementById("modalPriceHistoryActionTh");
-  if (th) th.style.display = isAdmin ? "" : "none";
-}
-
 /**
  * Summary statistics over display-normalized price entries.
  * Returns null for an empty list.
@@ -885,17 +878,19 @@ function togglePriceChartVisibility() {
     localStorage.setItem('fishao_hide_price_chart', next ? 'true' : 'false');
   } catch (e) { }
   if (selectedModalFishId) {
-    renderModalPriceScale(normalizePriceEntries(getFishPrices(selectedModalFishId)));
+    renderModalPriceScale(normalizePriceEntries(getFishPrices(selectedModalFishId)), selectedModalFishId);
   }
 }
 
 /**
- * Renders the visual price distribution mini-chart in the fish modal:
- * an SVG area/line chart of sorted known prices with a median reference line.
+ * Renders the visual price distribution mini-chart & touch/pointer point inspector
+ * inside #modalPriceScale so values, last-seen dates, and occurrence counts are
+ * readable and interactive on both mobile (tap/step) and desktop (hover/click).
  */
-function renderModalPriceScale(list) {
+function renderModalPriceScale(list, fid) {
   var box = document.getElementById("modalPriceScale");
   if (!box) return;
+  var fishId = fid || selectedModalFishId;
   var stats = computePriceStats(list);
   if (!stats) {
     box.style.display = "none";
@@ -932,15 +927,26 @@ function renderModalPriceScale(list) {
     return;
   }
 
+  var sorted = list.slice().sort(function (a, b) {
+    return a.price - b.price || String(a.date || "").localeCompare(String(b.date || ""));
+  });
+
+  // Default to the newest entry on initial open so the latest recorded price & date are immediately visible
+  if (_selectedChartPointIdx < 0 || _selectedChartPointIdx >= sorted.length) {
+    var newestItem = list[0];
+    var newestIdx = newestItem ? sorted.indexOf(newestItem) : sorted.length - 1;
+    _selectedChartPointIdx = newestIdx >= 0 ? newestIdx : sorted.length - 1;
+  }
+
   var chartHtml = '';
+  var pts = [];
   if (stats.count >= 2) {
-    var sorted = list.slice().sort(function (a, b) { return a.price - b.price; });
-    var W = 400;
-    var H = 112;
-    var padL = 10;
-    var padR = 10;
-    var padT = 12;
-    var padB = 12;
+    var W = 420;
+    var H = 124;
+    var padL = 46;
+    var padR = 14;
+    var padT = 14;
+    var padB = 14;
     var plotW = W - padL - padR;
     var plotH = H - padT - padB;
     var span = stats.max - stats.min;
@@ -953,8 +959,9 @@ function renderModalPriceScale(list) {
       return padT + plotH - ((val - stats.min) / span) * plotH;
     };
 
-    var pts = sorted.map(function (item, idx) {
+    pts = sorted.map(function (item, idx) {
       return {
+        idx: idx,
         x: xFor(idx),
         y: yFor(item.price),
         item: item
@@ -971,19 +978,28 @@ function renderModalPriceScale(list) {
 
     var medY = yFor(stats.median).toFixed(1);
     var midY = (padT + plotH / 2).toFixed(1);
-    var dotR = sorted.length > 24 ? 3 : 4.2;
+    var topY = padT.toFixed(1);
+    var dotR = sorted.length > 24 ? 3.2 : 4.2;
+    var selPt = pts[_selectedChartPointIdx] || pts[pts.length - 1];
 
     var nodesHtml = pts.map(function (p) {
       var title = t('modal_price_dot_title', {
         price: p.item.price.toLocaleString(locale),
         date: formatPriceDate(p.item.date)
       });
-      return '<g class="price-chart-node">' +
-        '<circle class="price-chart-hit" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="10"></circle>' +
+      var selCls = (p.idx === selPt.idx) ? ' is-selected' : '';
+      return '<g class="price-chart-node' + selCls + '" data-idx="' + p.idx + '" tabindex="0" role="button" aria-label="' + escapeHtml(title) + '">' +
+        '<circle class="price-chart-hit" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="15"></circle>' +
+        '<circle class="price-chart-ring" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="8"></circle>' +
         '<circle class="price-chart-dot" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + dotR + '"></circle>' +
         '<title>' + escapeHtml(title) + '</title>' +
       '</g>';
     }).join('');
+
+    var axisLblsHtml =
+      '<text class="price-chart-axis-lbl" x="' + (padL - 6) + '" y="' + (padT + 3) + '">' + escapeHtml(stats.max.toLocaleString(locale)) + '</text>' +
+      '<text class="price-chart-axis-lbl med" x="' + (padL - 6) + '" y="' + (Number(medY) + 3).toFixed(1) + '">' + escapeHtml(Math.round(stats.median).toLocaleString(locale)) + '</text>' +
+      '<text class="price-chart-axis-lbl" x="' + (padL - 6) + '" y="' + (Number(bottomY) + 3).toFixed(1) + '">' + escapeHtml(stats.min.toLocaleString(locale)) + '</text>';
 
     chartHtml =
       '<div class="price-chart-wrap">' +
@@ -999,206 +1015,132 @@ function renderModalPriceScale(list) {
               '<stop offset="100%" stop-color="#34d399"/>' +
             '</linearGradient>' +
           '</defs>' +
-          '<line class="price-chart-grid" x1="' + padL + '" y1="' + padT + '" x2="' + (W - padR) + '" y2="' + padT + '"/>' +
+          '<line class="price-chart-grid" x1="' + padL + '" y1="' + topY + '" x2="' + (W - padR) + '" y2="' + topY + '"/>' +
           '<line class="price-chart-grid" x1="' + padL + '" y1="' + midY + '" x2="' + (W - padR) + '" y2="' + midY + '"/>' +
           '<line class="price-chart-grid" x1="' + padL + '" y1="' + bottomY + '" x2="' + (W - padR) + '" y2="' + bottomY + '"/>' +
+          axisLblsHtml +
           '<path d="' + areaPath + '" fill="url(#priceChartAreaGrad)"/>' +
           '<line class="price-chart-ref median" x1="' + padL + '" y1="' + medY + '" x2="' + (W - padR) + '" y2="' + medY + '"><title>' + escapeHtml(medLabel + ': ' + fmt(stats.median)) + '</title></line>' +
+          '<line class="price-chart-crosshair" x1="' + selPt.x.toFixed(1) + '" y1="' + topY + '" x2="' + selPt.x.toFixed(1) + '" y2="' + bottomY + '"/>' +
           '<path class="price-chart-line" d="' + linePath + '" stroke="url(#priceChartLineGrad)"/>' +
           nodesHtml +
         '</svg>' +
       '</div>';
   }
 
-  var noteHtml = stats.count === 1
+  var stepBtnsVisible = sorted.length > 1;
+  var inspectorHtml =
+    '<div class="price-chart-inspector">' +
+      (stepBtnsVisible
+        ? '<button type="button" class="price-chart-step-btn" data-step="-1" title="' + escapeHtml(t('modal_chart_prev')) + '" aria-label="' + escapeHtml(t('modal_chart_prev')) + '">‹</button>'
+        : '') +
+      '<div class="price-chart-inspector-main" id="priceChartInspectorMain"></div>' +
+      (stepBtnsVisible
+        ? '<button type="button" class="price-chart-step-btn" data-step="1" title="' + escapeHtml(t('modal_chart_next')) + '" aria-label="' + escapeHtml(t('modal_chart_next')) + '">›</button>'
+        : '') +
+    '</div>';
+
+  var hintHtml = stats.count === 1
     ? '<div class="price-scale-note">' + escapeHtml(t('modal_price_scale_single')) + '</div>'
-    : '';
+    : '<div class="price-scale-note">' + escapeHtml(t('modal_chart_hint')) + '</div>';
 
   box.innerHTML =
     headHtml +
     chartHtml +
-    noteHtml;
+    inspectorHtml +
+    hintHtml;
   box.style.display = "";
+
   var expandedBtn = box.querySelector(".price-scale-toggle-btn");
   if (expandedBtn) expandedBtn.addEventListener("click", togglePriceChartVisibility);
-}
 
-async function loadDailyMonth(monthId) {
-  if (!monthId || !/^\d{4}-\d{2}$/.test(monthId)) return {};
-  if (dailyMonthsCache.has(monthId)) {
-    return dailyMonthsCache.get(monthId);
-  }
-  if (!db || !window.FISHAO_FS_TX) return {};
-  try {
-    var fs = await window.FISHAO_FS_TX.loadFirestoreModule();
-    var mRef = fs.doc(db, "fishao_market_daily", monthId);
-    var mSnap = await fs.getDoc(mRef);
-    var days = (mSnap.exists() && mSnap.data() && typeof mSnap.data().days === "object") ? mSnap.data().days : {};
-    dailyMonthsCache.set(monthId, days);
-    return days;
-  } catch (err) {
-    console.warn("Failed to load daily price month:", monthId, err);
-    return {};
-  }
-}
+  var updateInspector = function (idx) {
+    if (idx < 0 || idx >= sorted.length) return;
+    _selectedChartPointIdx = idx;
+    var item = sorted[idx];
+    var mainEl = box.querySelector("#priceChartInspectorMain");
+    if (mainEl && item) {
+      var occHtml = (item.count && item.count > 1)
+        ? '<span class="price-occ-badge">' + escapeHtml(t('modal_price_occurrences', { count: item.count })) + '</span>'
+        : '';
+      var posHtml = sorted.length > 1
+        ? '<span class="price-inspector-pos">' + (idx + 1) + '/' + sorted.length + '</span>'
+        : '';
+      var delHtml = (isAdmin && fishId)
+        ? '<button type="button" class="btn-delete-price price-inspector-delete" title="' + escapeHtml(t('price_delete_admin_title')) + '" data-fid="' + fishId + '" data-price="' + item.price + '" data-date="' + escapeHtml(item.date) + '">🗑️</button>'
+        : '';
+      mainEl.innerHTML =
+        '<span class="price-inspector-val">💵 ' + escapeHtml(item.price.toLocaleString(locale)) + ' FB</span>' +
+        occHtml +
+        '<span class="price-inspector-sep">•</span>' +
+        '<span class="price-inspector-date">📅 ' + escapeHtml(formatPriceDate(item.date)) + '</span>' +
+        posHtml +
+        delHtml;
 
-function getCandidateMonthsForFish(fid, list) {
-  var monthsSet = Object.create(null);
-  var curMonth = getTodayISO().slice(0, 7);
-  if (curMonth) monthsSet[curMonth] = true;
-  (list || []).forEach(function (item) {
-    if (item && typeof item.date === "string" && item.date.length >= 7) {
-      monthsSet[item.date.slice(0, 7)] = true;
-    }
-  });
-  var fidStr = String(fid);
-  dailyMonthsCache.forEach(function (daysMap, mId) {
-    if (!daysMap || typeof daysMap !== "object") return;
-    Object.keys(daysMap).some(function (dStr) {
-      if (daysMap[dStr] && daysMap[dStr][fidStr] !== undefined) {
-        monthsSet[mId] = true;
-        return true;
+      var delBtn = mainEl.querySelector(".price-inspector-delete");
+      if (delBtn) {
+        delBtn.addEventListener("click", function () {
+          deletePriceEntry(Number(this.dataset.fid), Number(this.dataset.price), this.dataset.date || "");
+        });
       }
-      return false;
-    });
-  });
-  return Object.keys(monthsSet).sort().reverse();
-}
+    }
 
-function ensureModalDailyContainer() {
-  var existing = document.getElementById("modalDailyHistoryBox");
-  if (existing) return existing;
-  var tbody = document.getElementById("modalPriceHistoryTbody");
-  if (!tbody) return null;
-  var wrap = tbody.closest(".price-history-table-wrap") || tbody.closest("table");
-  if (!wrap || !wrap.parentNode) return null;
-  var box = document.createElement("div");
-  box.id = "modalDailyHistoryBox";
-  box.className = "modal-daily-history-box";
-  wrap.parentNode.insertBefore(box, wrap.nextSibling);
-  return box;
-}
-
-async function renderModalDailyHistoryBox(fid, list) {
-  var box = ensureModalDailyContainer();
-  if (!box) return;
-  if (!list || list.length === 0 || !db) {
-    box.style.display = "none";
-    box.innerHTML = "";
-    return;
-  }
-  box.style.display = "";
-  var months = getCandidateMonthsForFish(fid, list);
-  if (!_modalDailySelectedMonth || months.indexOf(_modalDailySelectedMonth) === -1) {
-    _modalDailySelectedMonth = months[0] || getTodayISO().slice(0, 7);
-  }
-  var btnLabel = _modalDailyExpanded
-    ? t('modal_daily_history_hide')
-    : t('modal_daily_history_btn', { month: _modalDailySelectedMonth });
-
-  var headerHtml =
-    '<div class="daily-history-bar">' +
-      '<button type="button" class="daily-history-toggle-btn" aria-expanded="' + (_modalDailyExpanded ? 'true' : 'false') + '">' +
-        escapeHtml(btnLabel) +
-      '</button>' +
-    '</div>';
-
-  if (!_modalDailyExpanded) {
-    box.innerHTML = headerHtml;
-    var closedBtn = box.querySelector(".daily-history-toggle-btn");
-    if (closedBtn) {
-      closedBtn.addEventListener("click", function () {
-        _modalDailyExpanded = true;
-        renderModalDailyHistoryBox(fid, list);
+    var svg = box.querySelector(".price-chart-svg");
+    if (svg && pts[idx]) {
+      var crosshair = svg.querySelector(".price-chart-crosshair");
+      if (crosshair) {
+        var xStr = pts[idx].x.toFixed(1);
+        crosshair.setAttribute("x1", xStr);
+        crosshair.setAttribute("x2", xStr);
+      }
+      var allNodes = svg.querySelectorAll(".price-chart-node");
+      allNodes.forEach(function (nEl, nIdx) {
+        nEl.classList.toggle("is-selected", nIdx === idx);
       });
     }
-    return;
-  }
+  };
 
-  var monthOptionsHtml = months.map(function (mId) {
-    var sel = mId === _modalDailySelectedMonth ? ' selected' : '';
-    return '<option value="' + escapeHtml(mId) + '"' + sel + '>' + escapeHtml(mId) + '</option>';
-  }).join('');
+  updateInspector(_selectedChartPointIdx);
 
-  box.innerHTML = headerHtml +
-    '<div class="daily-history-panel">' +
-      '<div class="daily-history-controls">' +
-        '<select class="daily-history-month-select" aria-label="' + escapeHtml(t('modal_daily_history_btn', { month: _modalDailySelectedMonth })) + '">' + monthOptionsHtml + '</select>' +
-      '</div>' +
-      '<div class="daily-history-list"><div class="daily-history-status">' + escapeHtml(t('modal_daily_history_loading')) + '</div></div>' +
-    '</div>';
-
-  var openBtn = box.querySelector(".daily-history-toggle-btn");
-  if (openBtn) {
-    openBtn.addEventListener("click", function () {
-      _modalDailyExpanded = false;
-      renderModalDailyHistoryBox(fid, list);
-    });
-  }
-  var selEl = box.querySelector(".daily-history-month-select");
-  if (selEl) {
-    selEl.addEventListener("change", function () {
-      _modalDailySelectedMonth = this.value;
-      renderModalDailyHistoryBox(fid, list);
+  var svgEl = box.querySelector(".price-chart-svg");
+  if (svgEl) {
+    var handleNodeSelect = function (ev) {
+      var g = ev.target && ev.target.closest ? ev.target.closest(".price-chart-node") : null;
+      if (!g) return;
+      var idx = parseInt(g.getAttribute("data-idx"), 10);
+      if (!isNaN(idx)) updateInspector(idx);
+    };
+    svgEl.addEventListener("pointerdown", handleNodeSelect);
+    svgEl.addEventListener("click", handleNodeSelect);
+    svgEl.addEventListener("mouseover", handleNodeSelect);
+    svgEl.addEventListener("keydown", function (ev) {
+      if (ev.key === "ArrowLeft") {
+        ev.preventDefault();
+        updateInspector((_selectedChartPointIdx - 1 + sorted.length) % sorted.length);
+      } else if (ev.key === "ArrowRight") {
+        ev.preventDefault();
+        updateInspector((_selectedChartPointIdx + 1) % sorted.length);
+      }
     });
   }
 
-  var reqFishId = selectedModalFishId;
-  var reqMonth = _modalDailySelectedMonth;
-  var daysMap = await loadDailyMonth(reqMonth);
-  if (selectedModalFishId !== reqFishId || !_modalDailyExpanded || _modalDailySelectedMonth !== reqMonth) return;
-
-  var listEl = box.querySelector(".daily-history-list");
-  if (!listEl) return;
-
-  var fidStr = String(fid);
-  var rows = [];
-  Object.keys(daysMap || {}).sort().reverse().forEach(function (dateStr) {
-    var val = daysMap[dateStr] ? daysMap[dateStr][fidStr] : undefined;
-    var prices = toDayEntryList(val);
-    if (prices.length > 0) {
-      rows.push({ date: dateStr, prices: prices });
-    }
+  box.querySelectorAll(".price-chart-step-btn").forEach(function (stepBtn) {
+    stepBtn.addEventListener("click", function () {
+      var step = parseInt(this.dataset.step, 10) || 0;
+      var nextIdx = (_selectedChartPointIdx + step + sorted.length) % sorted.length;
+      updateInspector(nextIdx);
+    });
   });
-
-  if (rows.length === 0) {
-    listEl.innerHTML = '<div class="daily-history-status">' + escapeHtml(t('modal_daily_history_empty')) + '</div>';
-    return;
-  }
-
-  var locale = getLocale();
-  listEl.innerHTML = rows.map(function (r) {
-    var pricesHtml = r.prices.map(function (pr) {
-      var delBtn = isAdmin
-        ? ' <button type="button" class="btn-delete-price btn-delete-daily" title="' + escapeHtml(t('price_delete_admin_title')) + '" data-fid="' + fid + '" data-price="' + pr + '" data-date="' + escapeHtml(r.date) + '">🗑️</button>'
-        : '';
-      return '<span class="daily-price-chip">💵 ' + pr.toLocaleString(locale) + ' FB' + delBtn + '</span>';
-    }).join('');
-    return '<div class="daily-history-row"><span class="daily-history-date">' + formatPriceDate(r.date) + '</span><span class="daily-history-prices">' + pricesHtml + '</span></div>';
-  }).join('');
-
-  if (!listEl.dataset.boundDailyDelete) {
-    listEl.dataset.boundDailyDelete = "1";
-    listEl.addEventListener("click", function (ev) {
-      var btn = ev.target && ev.target.closest ? ev.target.closest(".btn-delete-daily") : null;
-      if (!btn) return;
-      deletePriceEntry(Number(btn.dataset.fid), Number(btn.dataset.price), btn.dataset.date || "");
-    });
-  }
 }
 
 function renderModalHistory(fid) {
   // Display-only normalization: same-day duplicate prices are shown once.
   var list = normalizePriceEntries(getFishPrices(fid));
-  var tbody = document.getElementById("modalPriceHistoryTbody");
   var locale = getLocale();
-  var showActions = isAdmin;
-
-  syncPriceHistoryActionColumn();
 
   var minPriceEl = document.getElementById("statMinPrice");
   var maxPriceEl = document.getElementById("statMaxPrice");
-  var historyTitleEl = document.getElementById("modalHistoryTitle");
+  var emptyNoticeEl = document.getElementById("modalPriceEmptyNotice");
   var estBoxEl = document.getElementById("modalEstimatedPriceBox");
   var estValEl = document.getElementById("modalEstimatedPriceVal");
 
@@ -1212,18 +1154,15 @@ function renderModalHistory(fid) {
     }
   }
 
-  if (historyTitleEl) {
-    historyTitleEl.innerText = t('modal_history_title', { count: list.length });
-  }
-
   if (list.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="' + (showActions ? 3 : 2) + '" style="text-align:center; color: var(--text-muted); padding: 15px;">' + t('price_empty_history') + '</td></tr>';
     if (minPriceEl) minPriceEl.innerText = "--";
     if (maxPriceEl) maxPriceEl.innerText = "--";
-    renderModalPriceScale([]);
-    renderModalDailyHistoryBox(fid, []);
+    if (emptyNoticeEl) emptyNoticeEl.style.display = "";
+    renderModalPriceScale([], fid);
     return;
   }
+
+  if (emptyNoticeEl) emptyNoticeEl.style.display = "none";
 
   var pricesNum = list.map(function (x) { return x.price; });
   var minP = Math.min.apply(null, pricesNum);
@@ -1231,35 +1170,7 @@ function renderModalHistory(fid) {
 
   if (minPriceEl) minPriceEl.innerText = minP.toLocaleString(locale) + " FB";
   if (maxPriceEl) maxPriceEl.innerText = maxP.toLocaleString(locale) + " FB";
-  renderModalPriceScale(list);
-
-  if (!tbody.dataset.boundDelete) {
-    tbody.dataset.boundDelete = "1";
-    tbody.addEventListener("click", function (ev) {
-      var btn = ev.target && ev.target.closest ? ev.target.closest(".btn-delete-price") : null;
-      if (!btn) return;
-      deletePriceEntry(Number(btn.dataset.fid), Number(btn.dataset.price), btn.dataset.date || "");
-    });
-  }
-
-  tbody.innerHTML = list.map(function (item) {
-    var occBadge = (item.count && item.count > 1)
-      ? ' <span class="price-occ-badge" title="' + escapeHtml(t('modal_price_occurrences', { count: item.count })) + '">' + escapeHtml(t('modal_price_occurrences', { count: item.count })) + '</span>'
-      : '';
-    var actionCell = showActions
-      ? '<td style="text-align: center;">' +
-        '<button type="button" class="btn-delete-price" title="' + escapeHtml(t('price_delete_admin_title')) + '" data-fid="' + fid + '" data-price="' + item.price + '" data-date="' + escapeHtml(item.date) + '">🗑️</button>' +
-        '</td>'
-      : '';
-
-    return '<tr>' +
-      '<td style="color: #cbd5e1; font-weight: 600;">' + formatPriceDate(item.date) + '</td>' +
-      '<td style="color: #34d399; font-weight: 800;"><span class="cash-icon">💵</span> ' + item.price.toLocaleString(locale) + ' FB' + occBadge + '</td>' +
-      actionCell +
-      '</tr>';
-  }).join('');
-
-  renderModalDailyHistoryBox(fid, list);
+  renderModalPriceScale(list, fid);
 }
 
 function onPriceDateChange(dateVal) {

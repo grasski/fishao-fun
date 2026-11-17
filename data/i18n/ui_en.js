@@ -186,7 +186,6 @@
       "modal_club_unlock": "🏰 Club Unlock Requirements",
       "modal_dimensions": "📏 Size (Min / Avg / Max)",
       "modal_fish_detail": "🐟 Fish Detail & Fish Market",
-      "modal_history_title": "Known prices for this fish: {count}",
       "modal_login_notice_link": "sign in with Google",
       "modal_login_notice_prefix": "🔒 To submit prices to Fish Market you must",
       "modal_market_divider": "💵 Fish Market – Buy prices & history",
@@ -198,6 +197,9 @@
       "modal_price_chart_hide": "Hide chart",
       "modal_price_chart_show": "Show chart",
       "modal_price_dot_title": "{price} FB · {date}",
+      "modal_chart_hint": "Tap or hover a point for details",
+      "modal_chart_prev": "Previous point",
+      "modal_chart_next": "Next point",
       "modal_min_price": "Minimum price",
       "modal_est_price_label": "Estimated range (calculated):",
       "modal_est_price_badge": "Estimate only",
@@ -209,9 +211,6 @@
       "modal_sale_date": "Sale date:",
       "modal_save_price_btn": "Save price",
       "modal_save_price_sunday_disabled": "Fish Market is closed on Sundays (cannot save price)",
-      "modal_th_action": "Action",
-      "modal_th_date": "Date",
-      "modal_th_price": "Price (Fishbucks / FB)",
       "modal_time": "⏰ Catch Time",
       "modal_season": "📅 Season / Dates",
       "date_all_year": "All year",
@@ -636,11 +635,7 @@
       "app_update_reload": "Reload",
       "avatar_url_https_only": "Avatar URL must start with https://.",
       "auth_reauth_required": "Please re-authenticate with Google to permanently delete your account.",
-      "modal_price_occurrences": "{count}×",
-      "modal_daily_history_btn": "📅 Daily entries ({month})",
-      "modal_daily_history_hide": "📅 Hide daily entries",
-      "modal_daily_history_loading": "Loading daily entries...",
-      "modal_daily_history_empty": "No daily entries recorded for this month."
+      "modal_price_occurrences": "{count}×"
   };
 
   if (typeof window !== 'undefined') {

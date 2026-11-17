@@ -133,8 +133,8 @@ In memory (`js/state.js` / `js/market.js`), `summaryMapToPriceHistory(priceSumma
    * Default input dates use the current UTC date (`getTodayISO()`), so on Sundays the Sunday date is pre-filled, immediately displaying the red Sunday warning and disabling the submit button.
 2. **Variable Community Prices & Daily Recording:** Prices differ per player and change daily. Multiple prices for the same fish on the same day are allowed when values differ, and the same price reoccurring on a **new date** is recorded in `fishao_market_daily/{YYYY-MM}` and increments `{ c }` (`count`) and updates `{ l }` (`lastDate`) in `prices_summary`.
 3. **Per-Day Dedupe:** An identical `(fishId, date, price)` triple is stored at most once. Duplicate checks and dual-document updates (`prices_summary` + `fishao_market_daily/{YYYY-MM}`) execute atomically inside Firestore transactions (`window.FISHAO_FS_TX.runTx`).
-4. **Display Normalization:** `normalizePriceEntries(list)` in `js/market.js` is the single display normalization. It returns a newest-first array preserving `count`, never mutating storage. Collapsible daily history logs load individual month documents via `loadDailyMonth(monthId)` cached in `dailyMonthsCache`.
-5. **Admin Rights:** Administrators (`isAdmin === true`) can delete entries from either the summary table or an expanded daily log row; deletion updates `fishao_market_daily/{YYYY-MM}` and decrements or removes the price bucket in `prices_summary`.
+4. **Display Normalization & Chart Inspector:** `normalizePriceEntries(list)` in `js/market.js` is the single display normalization. It returns a newest-first array preserving `count`, never mutating storage. The fish detail modal displays min/max cards and `#modalPriceScale` (interactive SVG chart with Y-axis labels, mobile touch/tap + step inspector showing price, last-seen date, and occurrence badge).
+5. **Admin Rights:** Administrators (`isAdmin === true`) can delete the currently selected entry directly from the chart inspector bar (`deletePriceEntry`); deletion removes that occurrence from `fishao_market_daily/{YYYY-MM}` and decrements or removes the price bucket in `prices_summary`.
 
 ### 2.3 Cloud Firestore Collections
 
@@ -147,7 +147,7 @@ In memory (`js/state.js` / `js/market.js`), `summaryMapToPriceHistory(priceSumma
 * `/fishao_market/prices_history`:
   * Legacy flat price history doc kept read-compatible during migration (`--migrate-only`).
 * `/fishao_market/sync_status`:
-  * Compact `{ lastSuccessDate, lastSuccessAt, pricesFetched, addedCount, duplicateCount }` marker used by `js/auth.js` for cheap staleness checks when `manualImportEnabled == false`.
+  * Compact `{ lastSuccessDate, lastSuccessAt, pricesFetched, addedCount, duplicateCount }` marker used both for daily idempotency in `.github/workflows/sync-market-prices.yml` (primary external **cron-job.org** trigger at **00:02 UTC** via `workflow_dispatch`, fallback GitHub `schedule` at **00:05 UTC**) and by `js/auth.js` for cheap staleness checks when `manualImportEnabled == false`.
 * `/fishao_market/config`:
   * Document `config`: Feature flag document `{ manualImportEnabled: boolean, lastUpdated: string }`.
   * Readable by everyone; writable only by admins (`isAdmin()`), restricted to keys `['manualImportEnabled', 'lastUpdated']` with `manualImportEnabled is bool`.
