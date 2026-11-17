@@ -591,7 +591,7 @@
       "reminders_presets_label": "Szybkie szablony:",
       "reminders_preset_bob_btn": "🪙 Minigra Boba w Rio Tropical (7 d.)",
       "reminders_preset_desert_btn": "🪑 Fabryka mebli w Mystic Desert (2 d.)",
-      "reminders_preset_sid_btn": "<img src=\"images/bait_meat.png\" alt=\"\" class=\"reminders-preset-img\"> Mięso rzeźnika Sida w Aquayma (10 d.)",
+      "reminders_preset_sid_btn": "<img src=\"images/bait_meat.webp\" alt=\"\" class=\"reminders-preset-img\"> Mięso rzeźnika Sida w Aquayma (10 d.)",
       "reminders_preset_bob_title": "Minigra Boba w Rio Tropical",
       "reminders_preset_desert_title": "Fabryka mebli w Mystic Desert",
       "reminders_preset_sid_title": "Mięso rzeźnika Sida w Aquayma",

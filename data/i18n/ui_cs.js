@@ -588,7 +588,7 @@
       "reminders_presets_label": "Rychlé šablony:",
       "reminders_preset_bob_btn": "🪙 Bobova minihra v Rio Tropical (7 dní)",
       "reminders_preset_desert_btn": "🪑 Továrna na nábytek v Mystic Desert (2 dny)",
-      "reminders_preset_sid_btn": "<img src=\"images/bait_meat.png\" alt=\"\" class=\"reminders-preset-img\"> Maso řezníka Sida v Aquayma (10 dní)",
+      "reminders_preset_sid_btn": "<img src=\"images/bait_meat.webp\" alt=\"\" class=\"reminders-preset-img\"> Maso řezníka Sida v Aquayma (10 dní)",
       "reminders_preset_bob_title": "Bobova minihra v Rio Tropical",
       "reminders_preset_desert_title": "Továrna na nábytek v Mystic Desert",
       "reminders_preset_sid_title": "Maso řezníka Sida v Aquayma",

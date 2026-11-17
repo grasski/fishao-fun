@@ -430,7 +430,7 @@ function formatAdvisorChanceLabel(chancePct, competitorCount) {
           return '<button type="button" class="bait-advisor-comp-chip rate-' + (cf.rating || 1) + '"' +
             ' onclick="window.fishaoApp.openPriceModal(' + Number(cf.id) + ')"' +
             ' title="' + escapeHtml(cfName + ' (' + cfStars + ') • ' + cfTime) + '">' +
-            '<img src="images/fish_' + Number(cf.id) + '.png" alt="" loading="lazy"' +
+            '<img src="images/fish_' + Number(cf.id) + '.webp" alt="" loading="lazy"' +
               ' onerror="this.onerror=null;this.style.display=\'none\';">' +
             '<span class="comp-chip-name">' + escapeHtml(cfName) + '</span>' +
             '<span class="comp-chip-stars">' + escapeHtml(cfStars) + '</span>' +
@@ -559,7 +559,7 @@ function openPriceModal(fid, skipSync) {
   var imgEl = document.getElementById("modalFishImg");
   if (imgEl) {
     imgEl.style.display = "";
-    imgEl.src = "images/fish_" + f.id + ".png";
+    imgEl.src = "images/fish_" + f.id + ".webp";
     imgEl.onerror = function () {
       this.onerror = null;
       this.style.display = "none";

@@ -449,9 +449,89 @@ function renderTableHead() {
   }
 }
 
+var _tableRenderToken = 0;
+
+function renderFishRowHtml(f, idx, ctx) {
+  var isNow = isFishActiveNow(f.raw_times, f.raw_dates);
+  var timeInfo = formatCatchTime(f.raw_times);
+  var dateInfo = formatCatchDate(f.raw_dates);
+  var dateBadgeHtml = "";
+  if (dateInfo.isSeasonal) {
+    var sClass = dateInfo.inSeason ? "date-badge in-season" : "date-badge out-of-season";
+    var sTitle = dateInfo.inSeason ? ctx.inSeasonTitle : ctx.outSeasonTitle;
+    dateBadgeHtml = '<div class="' + sClass + '" title="' + sTitle + '"><span class="date-icon">📅</span> ' + dateInfo.text + '</div>';
+  }
+
+  var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
+  var altMatch = (ctx.searchQ && window.FISHAO_I18N && typeof window.FISHAO_I18N.getMatchingFishAltName === 'function')
+    ? window.FISHAO_I18N.getMatchingFishAltName(f, ctx.searchQ)
+    : "";
+  var altMatchHtml = altMatch ? '<div style="font-size: 11px; color: #38bdf8; font-weight: 500; margin-top: 2px;">' + escapeHtml(altMatch) + '</div>' : '';
+  var safeFishName = escapeHtml(fishName);
+
+  if (ctx.isClubView) {
+    var unlock = getUnlockStatus(f, currentClubPoints);
+    var rowClass = [];
+    if (!unlock.isUnlocked) rowClass.push("row-locked");
+    if (caughtFishIds.has(f.id)) rowClass.push("row-caught");
+    var areaName = getFishAreaLabels(f)[0] || "";
+
+    return '<tr class="' + rowClass.join(' ') + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + ctx.rowClickTitle + '">' +
+      '<td style="color: var(--text-muted); font-weight: 600;">' + f.order + '</td>' +
+      '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
+      '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.webp" alt="' + safeFishName + '" class="fish-img" width="92" height="52" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
+      '<td class="loc-box">' +
+      (areaName ? '<span class="loc-tag">' + areaName + '</span>' : '<span class="loc-unspecified">' + ctx.unspecText + '</span>') +
+      '</td>' +
+      '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName + '</div>' + altMatchHtml + '</td>' +
+      '<td>' + renderRatingBadge(f.rating) + '</td>' +
+      '<td>' + renderPriceCell(f.id) + '</td>' +
+      '<td>' + (typeof renderFishBaitsCell === 'function' ? renderFishBaitsCell(f) : f.baits.map(function (b) {
+        return renderBaitTag(b);
+      }).join('')) + '</td>' +
+      '<td><div class="time-cell"><span class="time-badge ' + (f.is_night ? 'time-night' : '') + '">' +
+      (f.is_night ? '🌙 ' : '☀️ ') + timeInfo.primary +
+      (isNow ? '<span class="time-now-active">' + ctx.activeNowLabel + '</span>' : '') +
+      '</span>' + (timeInfo.sub ? '<span class="time-subtext">' + timeInfo.sub + '</span>' : '') +
+      dateBadgeHtml + '</div></td>' +
+      '<td class="len-box"><span class="len-dim">' + f.min_l + '</span> / <strong class="len-avg">' + f.avg_l + ' cm</strong> / <span class="len-dim">' + f.max_l + ' cm</span></td>' +
+      '<td><div class="' + (unlock.isUnlocked ? 'status-unlocked' : 'status-locked') + '"><span class="status-cost">' + unlock.costText + '</span><span class="status-desc">' + unlock.desc + '</span></div></td>' +
+      '</tr>';
+  }
+
+  var rowCls = caughtFishIds.has(f.id) ? "row-caught" : "";
+  var locLabels = getFishLocationLabels(f);
+
+  return '<tr class="' + rowCls + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + ctx.rowClickTitle + '">' +
+    '<td style="color: var(--text-muted); font-weight: 600;">' + (idx + 1) + '</td>' +
+    '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
+    '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.webp" alt="' + safeFishName + '" class="fish-img" width="92" height="52" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
+    '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName +
+    (f.is_club ? '<span class="badge-club-tag">' + ctx.clubTagText + '</span>' : '') +
+    '</div>' + altMatchHtml + '</td>' +
+    '<td>' + renderRatingBadge(f.rating) + '</td>' +
+    '<td>' + renderPriceCell(f.id) + '</td>' +
+    '<td class="loc-box">' +
+    (locLabels.length ? locLabels.map(function (locName) {
+      return '<span class="loc-tag">' + locName + '</span>';
+    }).join('') : '<span class="loc-unspecified">' + ctx.unspecText + '</span>') +
+    '</td>' +
+    '<td>' + (typeof renderFishBaitsCell === 'function' ? renderFishBaitsCell(f) : f.baits.map(function (b) {
+      return renderBaitTag(b);
+    }).join('')) + '</td>' +
+    '<td><div class="time-cell"><span class="time-badge ' + (f.is_night ? 'time-night' : '') + '">' +
+    (f.is_night ? '🌙 ' : '☀️ ') + timeInfo.primary +
+    (isNow ? '<span class="time-now-active">' + ctx.activeNowLabel + '</span>' : '') +
+    '</span>' + (timeInfo.sub ? '<span class="time-subtext">' + timeInfo.sub + '</span>' : '') +
+    dateBadgeHtml + '</div></td>' +
+    '<td class="len-box"><span class="len-dim">' + f.min_l + '</span> / <strong class="len-avg">' + f.avg_l + ' cm</strong> / <span class="len-dim">' + f.max_l + ' cm</span></td>' +
+    '</tr>';
+}
+
 function renderTableBody(data) {
   var tbody = document.getElementById("tableBody");
   var total = currentView === "club" ? clubFishes.length : allFishes.length;
+  var token = ++_tableRenderToken;
 
   if (data.length === 0) {
     var colCount = currentView === "club" ? 11 : 10;
@@ -460,107 +540,44 @@ function renderTableBody(data) {
     return;
   }
 
-  var rowClickTitle = t('price_cell_detail_title');
-  var activeNowLabel = t('time_active_now_short');
   var searchInput = document.getElementById("search");
-  var searchQ = searchInput ? searchInput.value.trim() : "";
+  var ctx = {
+    isClubView: currentView === "club",
+    rowClickTitle: t('price_cell_detail_title'),
+    activeNowLabel: t('time_active_now_short'),
+    inSeasonTitle: t('date_in_season_title'),
+    outSeasonTitle: t('date_out_of_season_title'),
+    clubTagText: t('badge_club_fish'),
+    unspecText: t('loc_unspecified'),
+    searchQ: searchInput ? searchInput.value.trim() : ""
+  };
 
-  if (currentView === "club") {
-    tbody.innerHTML = data.map(function (f) {
-      var isNow = isFishActiveNow(f.raw_times, f.raw_dates);
-      var timeInfo = formatCatchTime(f.raw_times);
-      var dateInfo = formatCatchDate(f.raw_dates);
-      var dateBadgeHtml = "";
-      if (dateInfo.isSeasonal) {
-        var sClass = dateInfo.inSeason ? "date-badge in-season" : "date-badge out-of-season";
-        var sTitle = dateInfo.inSeason ? t('date_in_season_title') : t('date_out_of_season_title');
-        dateBadgeHtml = '<div class="' + sClass + '" title="' + sTitle + '"><span class="date-icon">📅</span> ' + dateInfo.text + '</div>';
-      }
-      var unlock = getUnlockStatus(f, currentClubPoints);
-      var rowClass = [];
-      if (!unlock.isUnlocked) rowClass.push("row-locked");
-      if (caughtFishIds.has(f.id)) rowClass.push("row-caught");
-
-      var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
-      var altMatch = (searchQ && window.FISHAO_I18N && typeof window.FISHAO_I18N.getMatchingFishAltName === 'function')
-        ? window.FISHAO_I18N.getMatchingFishAltName(f, searchQ)
-        : "";
-      var altMatchHtml = altMatch ? '<div style="font-size: 11px; color: #38bdf8; font-weight: 500; margin-top: 2px;">' + escapeHtml(altMatch) + '</div>' : '';
-      var safeFishName = escapeHtml(fishName);
-      var areaName = getFishAreaLabels(f)[0] || "";
-
-      return '<tr class="' + rowClass.join(' ') + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + rowClickTitle + '">' +
-        '<td style="color: var(--text-muted); font-weight: 600;">' + f.order + '</td>' +
-        '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
-        '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + safeFishName + '" class="fish-img" width="92" height="52" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
-        '<td class="loc-box">' +
-        (areaName ? '<span class="loc-tag">' + areaName + '</span>' : '<span class="loc-unspecified">' + t('loc_unspecified') + '</span>') +
-        '</td>' +
-        '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName + '</div>' + altMatchHtml + '</td>' +
-        '<td>' + renderRatingBadge(f.rating) + '</td>' +
-        '<td>' + renderPriceCell(f.id) + '</td>' +
-        '<td>' + (typeof renderFishBaitsCell === 'function' ? renderFishBaitsCell(f) : f.baits.map(function (b) {
-          return renderBaitTag(b);
-        }).join('')) + '</td>' +
-        '<td><div class="time-cell"><span class="time-badge ' + (f.is_night ? 'time-night' : '') + '">' +
-        (f.is_night ? '🌙 ' : '☀️ ') + timeInfo.primary +
-        (isNow ? '<span class="time-now-active">' + activeNowLabel + '</span>' : '') +
-        '</span>' + (timeInfo.sub ? '<span class="time-subtext">' + timeInfo.sub + '</span>' : '') +
-        dateBadgeHtml + '</div></td>' +
-        '<td class="len-box"><span class="len-dim">' + f.min_l + '</span> / <strong class="len-avg">' + f.avg_l + ' cm</strong> / <span class="len-dim">' + f.max_l + ' cm</span></td>' +
-        '<td><div class="' + (unlock.isUnlocked ? 'status-unlocked' : 'status-locked') + '"><span class="status-cost">' + unlock.costText + '</span><span class="status-desc">' + unlock.desc + '</span></div></td>' +
-        '</tr>';
-    }).join('');
-  } else {
-    var clubTagText = t('badge_club_fish');
-    var unspecText = t('loc_unspecified');
-
-    tbody.innerHTML = data.map(function (f, idx) {
-      var isNow = isFishActiveNow(f.raw_times, f.raw_dates);
-      var timeInfo = formatCatchTime(f.raw_times);
-      var dateInfo = formatCatchDate(f.raw_dates);
-      var dateBadgeHtml = "";
-      if (dateInfo.isSeasonal) {
-        var sClass = dateInfo.inSeason ? "date-badge in-season" : "date-badge out-of-season";
-        var sTitle = dateInfo.inSeason ? t('date_in_season_title') : t('date_out_of_season_title');
-        dateBadgeHtml = '<div class="' + sClass + '" title="' + sTitle + '"><span class="date-icon">📅</span> ' + dateInfo.text + '</div>';
-      }
-      var rowClass = caughtFishIds.has(f.id) ? "row-caught" : "";
-      var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
-      var altMatch = (searchQ && window.FISHAO_I18N && typeof window.FISHAO_I18N.getMatchingFishAltName === 'function')
-        ? window.FISHAO_I18N.getMatchingFishAltName(f, searchQ)
-        : "";
-      var altMatchHtml = altMatch ? '<div style="font-size: 11px; color: #38bdf8; font-weight: 500; margin-top: 2px;">' + escapeHtml(altMatch) + '</div>' : '';
-      var safeFishName = escapeHtml(fishName);
-      var locLabels = getFishLocationLabels(f);
-
-      return '<tr class="' + rowClass + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + rowClickTitle + '">' +
-        '<td style="color: var(--text-muted); font-weight: 600;">' + (idx + 1) + '</td>' +
-        '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
-        '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.png" alt="' + safeFishName + '" class="fish-img" width="92" height="52" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
-        '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName +
-        (f.is_club ? '<span class="badge-club-tag">' + clubTagText + '</span>' : '') +
-        '</div>' + altMatchHtml + '</td>' +
-        '<td>' + renderRatingBadge(f.rating) + '</td>' +
-        '<td>' + renderPriceCell(f.id) + '</td>' +
-        '<td class="loc-box">' +
-        (locLabels.length ? locLabels.map(function (locName) {
-          return '<span class="loc-tag">' + locName + '</span>';
-        }).join('') : '<span class="loc-unspecified">' + unspecText + '</span>') +
-        '</td>' +
-        '<td>' + (typeof renderFishBaitsCell === 'function' ? renderFishBaitsCell(f) : f.baits.map(function (b) {
-          return renderBaitTag(b);
-        }).join('')) + '</td>' +
-        '<td><div class="time-cell"><span class="time-badge ' + (f.is_night ? 'time-night' : '') + '">' +
-        (f.is_night ? '🌙 ' : '☀️ ') + timeInfo.primary +
-        (isNow ? '<span class="time-now-active">' + activeNowLabel + '</span>' : '') +
-        '</span>' + (timeInfo.sub ? '<span class="time-subtext">' + timeInfo.sub + '</span>' : '') +
-        dateBadgeHtml + '</div></td>' +
-        '<td class="len-box"><span class="len-dim">' + f.min_l + '</span> / <strong class="len-avg">' + f.avg_l + ' cm</strong> / <span class="len-dim">' + f.max_l + ' cm</span></td>' +
-        '</tr>';
-    }).join('');
+  var FIRST_BATCH = 40;
+  var NEXT_BATCH = 80;
+  var firstEnd = Math.min(data.length, FIRST_BATCH);
+  var firstHtml = [];
+  for (var i = 0; i < firstEnd; i++) {
+    firstHtml.push(renderFishRowHtml(data[i], i, ctx));
   }
-
+  tbody.innerHTML = firstHtml.join('');
   document.getElementById("counter").innerText = t('counter_showing', { shown: data.length, total: total });
+
+  if (firstEnd >= data.length) return;
+
+  var offset = firstEnd;
+  function appendNextBatch() {
+    if (token !== _tableRenderToken) return;
+    var end = Math.min(data.length, offset + NEXT_BATCH);
+    var chunk = [];
+    for (var j = offset; j < end; j++) {
+      chunk.push(renderFishRowHtml(data[j], j, ctx));
+    }
+    tbody.insertAdjacentHTML('beforeend', chunk.join(''));
+    offset = end;
+    if (offset < data.length) {
+      requestAnimationFrame(appendNextBatch);
+    }
+  }
+  requestAnimationFrame(appendNextBatch);
 }
 

@@ -47,7 +47,7 @@ function getLocationPreviewImage(locKey) {
   if (!LOCATION_PREVIEW_IMAGE_IDS[num]) return null;
   var isSquareIcon = (num === 12);
   return {
-    src: 'images/location_preview_' + num + '.png',
+    src: 'images/location_preview_' + num + '.webp',
     isIconImg: isSquareIcon
   };
 }
@@ -412,7 +412,7 @@ function renderLocationsView() {
         sortedPreview.map(function (f) {
           var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
           return '<button type="button" class="loc-fish-chip" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + escapeHtml(fName + t('click_for_detail_suffix')) + '">' +
-            '<img src="images/fish_' + f.id + '.png" alt="" onerror="this.onerror=null;this.style.display=\'none\';">' +
+            '<img src="images/fish_' + f.id + '.webp" alt="" onerror="this.onerror=null;this.style.display=\'none\';">' +
             '<span class="loc-fish-chip-name">' + escapeHtml(fName) + '</span>' +
             '<span class="loc-fish-chip-stars">' + (f.rating || 1) + '★</span>' +
           '</button>';
@@ -506,7 +506,7 @@ function preloadLocationImages() {
   Object.keys(LOCATION_PREVIEW_IMAGE_IDS).forEach(function (id) {
     var img = new Image();
     img.decoding = 'async';
-    img.src = 'images/location_preview_' + id + '.png';
+    img.src = 'images/location_preview_' + id + '.webp';
   });
 }
 
