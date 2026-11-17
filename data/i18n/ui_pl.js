@@ -554,6 +554,7 @@
       "advisor_mode_now_title": "Liczy tylko ryby biorące w lokacji w tej chwili",
       "advisor_inactive_now_warn": "⚠️ Ta ryba teraz nie bierze (poza swoim czasem lub sezonem). Poniżej widać aktualną konkurencję na jej przynęty.",
       "advisor_top_tip_label": "🏆 Najlepszy wybór:",
+      "advisor_best_spot_badge": "🏆 Najlepsze łowisko",
       "advisor_best_badge": "★ Najlepsza",
       "advisor_comp_zero": "0 innych ryb (bez przyłowu)",
       "advisor_comp_count_one": "+{count} inna ryba",

@@ -548,6 +548,7 @@
       "advisor_mode_now_title": "Counts only fish biting in the location right now",
       "advisor_inactive_now_warn": "⚠️ This fish is not biting right now (out of its time or season). Below is current competition on its baits.",
       "advisor_top_tip_label": "🏆 Best choice:",
+      "advisor_best_spot_badge": "🏆 Best location",
       "advisor_best_badge": "★ Best",
       "advisor_comp_zero": "0 other fish (no bycatch)",
       "advisor_comp_count_one": "+{count} other fish",

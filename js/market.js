@@ -510,9 +510,11 @@ function formatAdvisorChanceLabel(chancePct, competitorCount) {
     '</div>';
   }
 
-  var spotsHtml = rec.spots.map(function (spot) {
+  var hasMultipleSpots = rec.spots.length > 1;
+  var spotsHtml = rec.spots.map(function (spot, spotIdx) {
     var spotKey = spot.locKey + '|' + (spot.placeKey || 'general');
     var bestBaitCode = spot.bestBait ? spot.bestBait.bait : '';
+    var isTopSpot = !!(hasMultipleSpots && spot.bestBait && spot.bestBait.isBestOverall);
     var safeLocArg = escapeHtml(spot.locKey).replace(/'/g, '&#39;');
     var safePlaceArg = escapeHtml(spot.placeKey || '').replace(/'/g, '&#39;');
     var safeBaitArg = escapeHtml(bestBaitCode).replace(/'/g, '&#39;');
@@ -521,7 +523,7 @@ function formatAdvisorChanceLabel(chancePct, competitorCount) {
     var rowHtmlList = visibleBaits.map(function (bItem, bIdx) {
       var rowKey = spotKey + '|' + bItem.bait;
       var safeRowKey = escapeHtml(rowKey).replace(/'/g, '&#39;');
-      var isHighlight = bItem.isBestInSpot && (spot.baits.length > 1 || bItem.competitorCount === 0);
+      var isHighlight = bItem.isBestInSpot && (spot.baits.length > 1 || bItem.competitorCount === 0 || (hasMultipleSpots && bItem.isBestOverall));
       var compClass = bItem.competitorCount <= 3 ? 'low' : (bItem.competitorCount <= 8 ? 'med' : 'high');
       var rareTotal = bItem.midCount + bItem.rareCount;
       var isExpanded = Boolean(modalBaitExpandedKeys[rowKey]);
@@ -600,9 +602,19 @@ function formatAdvisorChanceLabel(chancePct, competitorCount) {
 
     var rowsContentHtml = (rowHtmlList[0] || '') + otherToggleHtml + rowHtmlList.slice(1).join('');
 
-    return '<div class="bait-advisor-loc-card">' +
+    var spotRankHtml = '';
+    if (hasMultipleSpots) {
+      spotRankHtml = isTopSpot
+        ? '<span class="bait-advisor-spot-rank best">' + escapeHtml(t('advisor_best_spot_badge')) + '</span>'
+        : '<span class="bait-advisor-spot-rank">#' + (spotIdx + 1) + '</span>';
+    }
+    var cardCls = 'bait-advisor-loc-card' +
+      (hasMultipleSpots ? (isTopSpot ? ' is-top-spot' : ' is-secondary-spot') : '');
+
+    return '<div class="' + cardCls + '">' +
       '<div class="bait-advisor-loc-header">' +
         '<div class="bait-advisor-loc-title">' +
+          spotRankHtml +
           '<span class="loc-tag">' + escapeHtml(spot.locLabel) + '</span>' +
           (spot.areaLabel ? '<span class="loc-area-chip">📍 ' + escapeHtml(spot.areaLabel) + '</span>' : '') +
         '</div>' +

@@ -550,6 +550,87 @@ function onModalOverlayClick(e, id) {
   }
 }
 
+(function initModalScrollLock() {
+  if (typeof document === 'undefined') return;
+  var _prevPaddingRight = '';
+  var _isLocked = false;
+  var _touchStartY = 0;
+
+  function syncModalBodyLock() {
+    var hasActive = !!document.querySelector('.modal-overlay.active');
+    if (hasActive === _isLocked) return;
+    _isLocked = hasActive;
+
+    var root = document.documentElement;
+    var body = document.body;
+    if (!root || !body) return;
+
+    if (hasActive) {
+      var scrollbarW = window.innerWidth - root.clientWidth;
+      _prevPaddingRight = body.style.paddingRight || '';
+      if (scrollbarW > 0) {
+        var computedPr = parseFloat(window.getComputedStyle(body).paddingRight) || 0;
+        body.style.paddingRight = (computedPr + scrollbarW) + 'px';
+      }
+      root.classList.add('modal-open');
+      body.classList.add('modal-open');
+    } else {
+      root.classList.remove('modal-open');
+      body.classList.remove('modal-open');
+      body.style.paddingRight = _prevPaddingRight;
+    }
+  }
+
+  function canScrollInModal(startEl, deltaY) {
+    var el = startEl;
+    while (el && el !== document.body && el !== document.documentElement) {
+      if (el.classList && el.classList.contains('modal-overlay')) return false;
+      var style = window.getComputedStyle(el);
+      var ovY = style ? style.overflowY : '';
+      if ((ovY === 'auto' || ovY === 'scroll') && el.scrollHeight > el.clientHeight + 1) {
+        if (deltaY === 0) return true;
+        if (deltaY > 0 && el.scrollTop > 0) return true;
+        if (deltaY < 0 && (el.scrollTop + el.clientHeight < el.scrollHeight - 1)) return true;
+      }
+      el = el.parentElement;
+    }
+    return false;
+  }
+
+  document.addEventListener('touchstart', function (e) {
+    if (_isLocked && e.touches && e.touches.length) {
+      _touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchmove', function (e) {
+    if (!_isLocked) return;
+    var target = e.target;
+    if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT')) {
+      return;
+    }
+    var deltaY = (e.touches && e.touches.length) ? (e.touches[0].clientY - _touchStartY) : 0;
+    if (!canScrollInModal(target, deltaY)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  document.addEventListener('wheel', function (e) {
+    if (!_isLocked) return;
+    if (!canScrollInModal(e.target, -e.deltaY)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  if (typeof MutationObserver === 'function') {
+    var obs = new MutationObserver(syncModalBodyLock);
+    document.querySelectorAll('.modal-overlay').forEach(function (el) {
+      obs.observe(el, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+  syncModalBodyLock();
+})();
+
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') {
     if (typeof closeAllBaitDropdowns === 'function') closeAllBaitDropdowns();

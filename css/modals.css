@@ -2,6 +2,12 @@
    8. MODAL OVERLAYS (Detail ryby & Fish Market)
    =================================================================== */
 
+html.modal-open,
+body.modal-open {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+
 .modal-overlay {
   display: none;
   position: fixed;
@@ -12,6 +18,7 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
+  overscroll-behavior: contain;
 }
 .modal-overlay.active { display: flex; }
 
@@ -61,6 +68,9 @@
   gap: 14px;
   max-height: 82vh;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 .modal-fish-hero {
@@ -1268,9 +1278,42 @@ textarea.bulk-input {
 
 .bait-advisor-loc-card {
   background: #0f1624;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   padding: 9px 10px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.bait-advisor-loc-card.is-top-spot {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(15, 22, 36, 0.96) 55%);
+  border: 1.5px solid rgba(16, 185, 129, 0.6);
+  border-left: 4px solid #10b981;
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.14);
+}
+
+.bait-advisor-loc-card.is-secondary-spot {
+  background: rgba(12, 18, 30, 0.85);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.bait-advisor-spot-rank {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.bait-advisor-spot-rank.best {
+  color: #022c22;
+  background: linear-gradient(135deg, #34d399, #10b981);
+  border-color: #6ee7b7;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.35);
 }
 
 .bait-advisor-loc-header {

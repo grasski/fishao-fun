@@ -554,6 +554,7 @@
       "advisor_mode_now_title": "Počítá jen ryby, které v lokaci berou v tuto chvíli",
       "advisor_inactive_now_warn": "⚠️ Tato ryba právě teď nebere (mimo svůj čas nebo sezónu). Níže vidíš aktuální konkurenci na její návnady.",
       "advisor_top_tip_label": "🏆 Nejlepší volba:",
+      "advisor_best_spot_badge": "🏆 Nejlepší lokace",
       "advisor_best_badge": "★ Nejlepší",
       "advisor_comp_zero": "0 dalších ryb (bez vedlejších úlovků)",
       "advisor_comp_count_one": "+{count} další ryba",
