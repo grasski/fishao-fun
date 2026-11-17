@@ -29,10 +29,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // HTML / navigation: Network-First so users always get the latest build
+  // HTML / navigation: Network-First (bypass 10-min GitHub Pages HTTP cache on reload)
   if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
     event.respondWith(
-      fetch(req)
+      fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' })
         .then((res) => {
           if (res && res.ok) {
             const copy = res.clone();
