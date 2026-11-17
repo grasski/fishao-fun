@@ -19,11 +19,9 @@ function saveLocalPriceSummary(metaLastUpdated) {
       var prevMeta = prevMetaRaw ? JSON.parse(prevMetaRaw) : {};
       safeStorageSet('fishao_price_summary_meta_v2', JSON.stringify({
         lastUpdated: typeof metaLastUpdated === 'string' ? metaLastUpdated : (prevMeta.lastUpdated || ''),
-        fetchedAt: Date.now(),
-        sharded: !!isShardedMarketSummary
+        fetchedAt: Date.now()
       }));
     }
-    safeStorageRemove('fishao_price_history_v1');
   } catch (err) {
     console.warn("Failed to save price summary locally:", err);
   }
@@ -1230,11 +1228,6 @@ function onPriceDateChange(dateVal) {
   }
 }
 
-function applyCloudPriceSummary(summaryMap, metaLastUpdated) {
-  priceSummary = (summaryMap && typeof summaryMap === "object") ? summaryMap : {};
-  saveLocalPriceSummary(metaLastUpdated);
-}
-
 async function submitNewPrice() {
   if (!selectedModalFishId) return;
 
@@ -1287,9 +1280,9 @@ async function submitNewPrice() {
   }
 
   // Local-only mode (no Firestore connection available).
-  var useShard = !!(isShardedMarketSummary && firebaseSummaryShardRefs && firebaseSummaryShardRefs.length === MARKET_SUMMARY_SHARD_COUNT);
-  var shardIdx = useShard ? getMarketSummaryShardIndex(fidStr) : -1;
-  var summaryRef = useShard ? firebaseSummaryShardRefs[shardIdx] : (firebaseSummaryDocRef || null);
+  var hasShards = !!(firebaseSummaryShardRefs && firebaseSummaryShardRefs.length === MARKET_SUMMARY_SHARD_COUNT);
+  var shardIdx = hasShards ? getMarketSummaryShardIndex(fidStr) : -1;
+  var summaryRef = hasShards ? firebaseSummaryShardRefs[shardIdx] : null;
   if (!db || !summaryRef || !window.FISHAO_FS_TX) {
     var localSummary = clonePriceSummary(priceSummary);
     applyPriceToSummaryMap(localSummary, fidStr, d, p, todayISO);
@@ -1356,8 +1349,7 @@ async function submitNewPrice() {
 
     if (!result || result.status === "duplicate") {
       if (result && result.summaryPrices) {
-        if (result.shardIdx >= 0) mergeSummaryShard(result.shardIdx, result.summaryPrices, false);
-        else applyCloudPriceSummary(result.summaryPrices, false);
+        mergeSummaryShard(result.shardIdx, result.summaryPrices, false);
       }
       renderModalHistory(fid);
       applyFilters();
@@ -1368,8 +1360,7 @@ async function submitNewPrice() {
       return;
     }
 
-    if (result.shardIdx >= 0) mergeSummaryShard(result.shardIdx, result.summaryPrices, result.lastUpdated);
-    else applyCloudPriceSummary(result.summaryPrices, result.lastUpdated);
+    mergeSummaryShard(result.shardIdx, result.summaryPrices, result.lastUpdated);
     renderModalHistory(fid);
     applyFilters();
     document.getElementById("newPriceValue").value = "";
@@ -1424,9 +1415,9 @@ async function deletePriceEntry(fid, price, date) {
   }
 
   // Local-only mode (no Firestore connection available).
-  var useShard = !!(isShardedMarketSummary && firebaseSummaryShardRefs && firebaseSummaryShardRefs.length === MARKET_SUMMARY_SHARD_COUNT);
-  var shardIdx = useShard ? getMarketSummaryShardIndex(fidStr) : -1;
-  var summaryRef = useShard ? firebaseSummaryShardRefs[shardIdx] : (firebaseSummaryDocRef || null);
+  var hasShards = !!(firebaseSummaryShardRefs && firebaseSummaryShardRefs.length === MARKET_SUMMARY_SHARD_COUNT);
+  var shardIdx = hasShards ? getMarketSummaryShardIndex(fidStr) : -1;
+  var summaryRef = hasShards ? firebaseSummaryShardRefs[shardIdx] : null;
   if (!db || !summaryRef || !window.FISHAO_FS_TX) {
     var localSummary = clonePriceSummary(priceSummary);
     removePriceFromSummaryMap(localSummary, fidStr, priceNum, targetDate, false, "");
@@ -1518,10 +1509,8 @@ async function deletePriceEntry(fid, price, date) {
     if (txResult && monthId && txResult.removedFromDaily && txResult.days) {
       dailyMonthsCache.set(monthId, txResult.days);
     }
-    if (txResult && txResult.shardIdx >= 0) {
+    if (txResult && txResult.summaryPrices) {
       mergeSummaryShard(txResult.shardIdx, txResult.summaryPrices, txResult.lastUpdated);
-    } else {
-      applyCloudPriceSummary(txResult ? txResult.summaryPrices : priceSummary, txResult ? txResult.lastUpdated : false);
     }
     renderModalHistory(fid);
     applyFilters();
@@ -1885,11 +1874,10 @@ async function processBulkImport() {
   });
 
   var added = 0;
-  var useShards = !!(isShardedMarketSummary && firebaseSummaryShardRefs && firebaseSummaryShardRefs.length === MARKET_SUMMARY_SHARD_COUNT);
-  var summaryRef = firebaseSummaryDocRef || null;
+  var hasShards = !!(firebaseSummaryShardRefs && firebaseSummaryShardRefs.length === MARKET_SUMMARY_SHARD_COUNT);
 
   if (planned > 0) {
-    if (!db || (!useShards && !summaryRef) || !window.FISHAO_FS_TX) {
+    if (!db || !hasShards || !window.FISHAO_FS_TX) {
       // Local-only mode.
       var localSummary = clonePriceSummary(priceSummary);
       Object.keys(additions).forEach(function (key) {
@@ -1911,35 +1899,27 @@ async function processBulkImport() {
           var additionKeys = Object.keys(additions);
 
           var shardIdxList = [];
-          if (useShards) {
-            var seenShards = {};
-            additionKeys.forEach(function (key) {
-              var sIdx = getMarketSummaryShardIndex(key);
-              if (!seenShards[sIdx]) {
-                seenShards[sIdx] = true;
-                shardIdxList.push(sIdx);
-              }
-            });
-          }
+          var seenShards = {};
+          additionKeys.forEach(function (key) {
+            var sIdx = getMarketSummaryShardIndex(key);
+            if (!seenShards[sIdx]) {
+              seenShards[sIdx] = true;
+              shardIdxList.push(sIdx);
+            }
+          });
 
-          var readPromises = useShards
-            ? shardIdxList.map(function (sIdx) { return tx.get(firebaseSummaryShardRefs[sIdx]); })
-            : [tx.get(summaryRef)];
+          var readPromises = shardIdxList.map(function (sIdx) {
+            return tx.get(firebaseSummaryShardRefs[sIdx]);
+          });
           readPromises.push(tx.get(dailyRef));
 
           var snaps = await Promise.all(readPromises);
           var dailySnap = snaps[snaps.length - 1];
 
           var shardMaps = {};
-          var singleSummaryMap = null;
-          if (useShards) {
-            for (var si = 0; si < shardIdxList.length; si++) {
-              var shData = snaps[si].exists() ? snaps[si].data() : {};
-              shardMaps[shardIdxList[si]] = clonePriceSummary(shData && shData.prices ? shData.prices : {});
-            }
-          } else {
-            var sumData = snaps[0].exists() ? snaps[0].data() : {};
-            singleSummaryMap = clonePriceSummary(sumData && sumData.prices ? sumData.prices : {});
+          for (var si = 0; si < shardIdxList.length; si++) {
+            var shData = snaps[si].exists() ? snaps[si].data() : {};
+            shardMaps[shardIdxList[si]] = clonePriceSummary(shData && shData.prices ? shData.prices : {});
           }
 
           var dailyData = dailySnap.exists() ? dailySnap.data() : {};
@@ -1957,7 +1937,8 @@ async function processBulkImport() {
           additionKeys.forEach(function (key) {
             var bucket = additions[key];
             var dayList = toDayEntryList(dayBucket[key]);
-            var targetSummaryMap = useShards ? shardMaps[getMarketSummaryShardIndex(key)] : singleSummaryMap;
+            var sIdx = getMarketSummaryShardIndex(key);
+            var targetSummaryMap = shardMaps[sIdx];
 
             bucket.prices.forEach(function (price) {
               if (dayList.indexOf(price) !== -1) {
@@ -1966,7 +1947,7 @@ async function processBulkImport() {
               }
               dayList.push(price);
               applyPriceToSummaryMap(targetSummaryMap, key, bucket.date, price, todayISO);
-              if (useShards) dirtyShards[getMarketSummaryShardIndex(key)] = true;
+              dirtyShards[sIdx] = true;
               cloudAdded++;
             });
 
@@ -1977,8 +1958,7 @@ async function processBulkImport() {
 
           if (cloudAdded === 0) {
             return {
-              shardMaps: useShards ? shardMaps : null,
-              summaryPrices: useShards ? null : singleSummaryMap,
+              shardMaps: shardMaps,
               days: days,
               added: 0,
               duplicates: cloudDuplicates,
@@ -1988,22 +1968,17 @@ async function processBulkImport() {
 
           var nowIso = new Date().toISOString();
           days[dateVal] = dayBucket;
-          if (useShards) {
-            Object.keys(dirtyShards).forEach(function (sKey) {
-              var sIdxNum = Number(sKey);
-              tx.set(firebaseSummaryShardRefs[sIdxNum], {
-                prices: shardMaps[sIdxNum],
-                lastUpdated: nowIso
-              });
+          Object.keys(dirtyShards).forEach(function (sKey) {
+            var sIdxNum = Number(sKey);
+            tx.set(firebaseSummaryShardRefs[sIdxNum], {
+              prices: shardMaps[sIdxNum],
+              lastUpdated: nowIso
             });
-          } else {
-            tx.set(summaryRef, { prices: singleSummaryMap, lastUpdated: nowIso });
-          }
+          });
           tx.set(dailyRef, { days: days, lastUpdated: nowIso });
 
           return {
-            shardMaps: useShards ? shardMaps : null,
-            summaryPrices: useShards ? null : singleSummaryMap,
+            shardMaps: shardMaps,
             days: days,
             added: cloudAdded,
             duplicates: cloudDuplicates,
@@ -2019,8 +1994,6 @@ async function processBulkImport() {
           shardKeys.forEach(function (sKey, kIdx) {
             mergeSummaryShard(Number(sKey), txResult.shardMaps[sKey], kIdx === shardKeys.length - 1 ? txResult.lastUpdated : false);
           });
-        } else if (txResult && txResult.summaryPrices) {
-          applyCloudPriceSummary(txResult.summaryPrices, txResult.lastUpdated);
         }
         added = (txResult && txResult.added) || 0;
         duplicates += (txResult && txResult.duplicates) || 0;
@@ -2195,6 +2168,9 @@ function updateMarketFloatingImportBtn() {
     btn.style.display = "inline-flex";
   } else {
     btn.style.display = "none";
+  }
+  if (typeof updateScrollTopButton === "function") {
+    updateScrollTopButton();
   }
 }
 

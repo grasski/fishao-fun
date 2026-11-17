@@ -209,13 +209,15 @@ function onLocSearchInput(val) {
   _debouncedRenderLocations();
 }
 
-function resetLocationsFilters() {
+function resetLocationsFilters(skipRender) {
   locCategoryFilter = 'all';
   locIncompleteOnly = false;
   locSearchQuery = '';
   var searchEl = document.getElementById('locSearchInput');
   if (searchEl) searchEl.value = '';
-  renderLocationsView();
+  if (!skipRender) {
+    renderLocationsView();
+  }
 }
 
 function openLocationInFishdex(locKey, areaKey, timeMode, collMode) {

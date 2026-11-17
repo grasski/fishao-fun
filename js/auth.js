@@ -156,8 +156,6 @@ async function initFirebaseSync() {
     }
     db = firestoreModule.getFirestore(firebaseApp);
     auth = authModule.getAuth(firebaseApp);
-    firebaseDocRef = firestoreModule.doc(db, "fishao_market", "prices_history");
-    firebaseSummaryDocRef = firestoreModule.doc(db, "fishao_market", "prices_summary");
     firebaseSummaryShardRefs = [0, 1, 2, 3].map(function (idx) {
       return firestoreModule.doc(db, "fishao_market", "prices_summary_" + idx);
     });
@@ -176,23 +174,15 @@ async function initFirebaseSync() {
       }
       var keys = Object.keys(sumObj || {});
       var totalPrices = 0;
-      var latestDate = "";
       for (var i = 0; i < keys.length; i++) {
         var entry = sumObj[keys[i]];
         if (!entry || typeof entry !== "object") continue;
         if (typeof entry.p === "string") {
           totalPrices += entry.p ? entry.p.split("|").length : 0;
-        } else if (entry.byPrice && typeof entry.byPrice === "object") {
-          var bpKeys = Object.keys(entry.byPrice);
-          totalPrices += bpKeys.length;
-          for (var j = 0; j < bpKeys.length; j++) {
-            var info = entry.byPrice[bpKeys[j]];
-            if (info && info.l && info.l > latestDate) latestDate = info.l;
-          }
         }
         if (Array.isArray(entry.t)) totalPrices += entry.t.length;
       }
-      return keys.length + "|" + totalPrices + "|" + latestDate + "|" + (lastUpdatedStr || "");
+      return keys.length + "|" + totalPrices + "|" + (lastUpdatedStr || "");
     };
 
     var hasHandledInitialAuth = false;
@@ -207,8 +197,7 @@ async function initFirebaseSync() {
         if (typeof lastUpdatedStr === "string") {
           safeStorageSet('fishao_price_summary_meta_v2', JSON.stringify({
             lastUpdated: lastUpdatedStr,
-            fetchedAt: Date.now(),
-            sharded: !!isShardedMarketSummary
+            fetchedAt: Date.now()
           }));
         }
         return;
@@ -225,46 +214,27 @@ async function initFirebaseSync() {
       scheduleViewRefresh({ filters: true, marketTab: true, modal: true });
     };
 
-    var fetchSummaryOrLegacyOnce = async function () {
+    var fetchMarketSummaryShards = async function () {
       try {
-        // 1. Primary: 4 compact summary shards (prices_summary_0..3) read in parallel
         var shardSnaps = await Promise.all(firebaseSummaryShardRefs.map(function (ref) {
           return firestoreModule.getDoc(ref);
         }));
-        var hasShards = shardSnaps.some(function (s) { return s.exists(); });
-        if (hasShards) {
-          isShardedMarketSummary = true;
-          var mergedShards = {};
-          var maxLastUpdated = "";
-          shardSnaps.forEach(function (s) {
-            if (!s.exists()) return;
-            var d = s.data() || {};
-            if (d.lastUpdated && typeof d.lastUpdated === "string" && d.lastUpdated > maxLastUpdated) {
-              maxLastUpdated = d.lastUpdated;
-            }
-            if (d.prices && typeof d.prices === "object") {
-              Object.assign(mergedShards, d.prices);
-            }
-          });
+        var mergedShards = {};
+        var maxLastUpdated = "";
+        var hasAny = false;
+        shardSnaps.forEach(function (s) {
+          if (!s.exists()) return;
+          hasAny = true;
+          var d = s.data() || {};
+          if (d.lastUpdated && typeof d.lastUpdated === "string" && d.lastUpdated > maxLastUpdated) {
+            maxLastUpdated = d.lastUpdated;
+          }
+          if (d.prices && typeof d.prices === "object") {
+            Object.assign(mergedShards, d.prices);
+          }
+        });
+        if (hasAny) {
           applySummarySnapshot(mergedShards, maxLastUpdated);
-          return;
-        }
-
-        // 2. Fallback: single prices_summary document (pre-sharding)
-        isShardedMarketSummary = false;
-        var sumSnap = await firestoreModule.getDoc(firebaseSummaryDocRef);
-        if (sumSnap.exists()) {
-          var sData = sumSnap.data() || {};
-          applySummarySnapshot(sData.prices || {}, sData.lastUpdated || "");
-          return;
-        }
-
-        // 3. Legacy fallback: prices_history until migration runs
-        var legSnap = await firestoreModule.getDoc(firebaseDocRef);
-        if (legSnap.exists()) {
-          var lData = legSnap.data() || {};
-          var converted = legacyHistoryToSummaryMap(lData.prices || {});
-          applySummarySnapshot(converted, lData.lastUpdated || "");
         }
       } catch (err) {
         console.warn("Firestore market price fetch warning:", err);
@@ -278,101 +248,70 @@ async function initFirebaseSync() {
       }
 
       if (enableRealtime) {
-        var useShards = isShardedMarketSummary;
-        if (!useShards) {
-          try {
-            var probeSnaps = await Promise.all(firebaseSummaryShardRefs.map(function (ref) {
-              return firestoreModule.getDoc(ref);
-            }));
-            useShards = probeSnaps.some(function (s) { return s.exists(); });
-            if (useShards) isShardedMarketSummary = true;
-          } catch (probeErr) {}
-        }
+        var shardMaps = [{}, {}, {}, {}];
+        var shardDates = ["", "", "", ""];
+        var shardReady = [false, false, false, false];
+        var mergeTimer = 0;
 
-        if (useShards) {
-          var shardMaps = [{}, {}, {}, {}];
-          var shardDates = ["", "", "", ""];
-          var shardReady = [false, false, false, false];
-          var mergeTimer = 0;
-
-          var flushMergedRealtime = function () {
-            mergeTimer = 0;
-            var combined = {};
-            var latestTs = "";
-            for (var si = 0; si < shardMaps.length; si++) {
-              Object.assign(combined, shardMaps[si]);
-              if (shardDates[si] && shardDates[si] > latestTs) latestTs = shardDates[si];
-            }
-            if (shardReady.every(Boolean)) {
-              applySummarySnapshot(combined, latestTs);
-            }
-          };
-
-          var unsubs = firebaseSummaryShardRefs.map(function (ref, idx) {
-            return firestoreModule.onSnapshot(ref, function (docSnap) {
-              shardReady[idx] = true;
-              if (docSnap.exists()) {
-                var cd = docSnap.data() || {};
-                shardMaps[idx] = (cd.prices && typeof cd.prices === "object") ? cd.prices : {};
-                shardDates[idx] = typeof cd.lastUpdated === "string" ? cd.lastUpdated : "";
-              } else {
-                shardMaps[idx] = {};
-                shardDates[idx] = "";
-              }
-              if (!mergeTimer) {
-                mergeTimer = setTimeout(flushMergedRealtime, 30);
-              }
-            }, function (error) {
-              console.warn("Firestore market shard realtime warning:", error);
-            });
-          });
-          marketPricesUnsubscribe = function () {
-            if (mergeTimer) {
-              clearTimeout(mergeTimer);
-              mergeTimer = 0;
-            }
-            unsubs.forEach(function (u) { try { u(); } catch (e) {} });
-          };
-          return;
-        }
-
-        marketPricesUnsubscribe = firestoreModule.onSnapshot(firebaseSummaryDocRef, function (docSnap) {
-          if (docSnap.exists()) {
-            var cloudData = docSnap.data() || {};
-            applySummarySnapshot(cloudData.prices || {}, cloudData.lastUpdated || "");
-          } else {
-            fetchSummaryOrLegacyOnce();
+        var flushMergedRealtime = function () {
+          mergeTimer = 0;
+          var combined = {};
+          var latestTs = "";
+          for (var si = 0; si < shardMaps.length; si++) {
+            Object.assign(combined, shardMaps[si]);
+            if (shardDates[si] && shardDates[si] > latestTs) latestTs = shardDates[si];
           }
-        }, function (error) {
-          console.warn("Firestore market realtime warning:", error);
+          if (shardReady.every(Boolean)) {
+            applySummarySnapshot(combined, latestTs);
+          }
+        };
+
+        var unsubs = firebaseSummaryShardRefs.map(function (ref, idx) {
+          return firestoreModule.onSnapshot(ref, function (docSnap) {
+            shardReady[idx] = true;
+            if (docSnap.exists()) {
+              var cd = docSnap.data() || {};
+              shardMaps[idx] = (cd.prices && typeof cd.prices === "object") ? cd.prices : {};
+              shardDates[idx] = typeof cd.lastUpdated === "string" ? cd.lastUpdated : "";
+            } else {
+              shardMaps[idx] = {};
+              shardDates[idx] = "";
+            }
+            if (!mergeTimer) {
+              mergeTimer = setTimeout(flushMergedRealtime, 30);
+            }
+          }, function (error) {
+            console.warn("Firestore market shard realtime warning:", error);
+          });
         });
+        marketPricesUnsubscribe = function () {
+          if (mergeTimer) {
+            clearTimeout(mergeTimer);
+            mergeTimer = 0;
+          }
+          unsubs.forEach(function (u) { try { u(); } catch (e) {} });
+        };
         return;
       }
 
-      // Auto-sync mode: check localStorage TTL + tiny sync_status before downloading summaries
+      // Auto-sync mode: check localStorage TTL + tiny sync_status before downloading shards
       var SUMMARY_TTL_MS = 15 * 60 * 1000;
       var needsFetch = !priceSummary || Object.keys(priceSummary).length === 0;
       if (!needsFetch) {
         try {
           var metaRaw = safeStorageGet('fishao_price_summary_meta_v2');
           var meta = metaRaw ? JSON.parse(metaRaw) : null;
-          if (meta && typeof meta.sharded === "boolean") {
-            isShardedMarketSummary = meta.sharded;
-          }
           var isFreshTtl = !!(meta && meta.fetchedAt && (Date.now() - meta.fetchedAt) < SUMMARY_TTL_MS);
 
           if (!isFreshTtl) {
             var statusSnap = await firestoreModule.getDoc(syncStatusDocRef);
             var statusData = statusSnap.exists() ? statusSnap.data() : null;
-            if (statusData && statusData.summaryMode === "sharded_compact_v2" && !isShardedMarketSummary) {
-              needsFetch = true;
-            } else if (!statusData || !meta || !meta.lastUpdated || (statusData.lastSuccessAt && statusData.lastSuccessAt > meta.lastUpdated)) {
+            if (!statusData || !meta || !meta.lastUpdated || (statusData.lastSuccessAt && statusData.lastSuccessAt > meta.lastUpdated)) {
               needsFetch = true;
             } else {
               safeStorageSet('fishao_price_summary_meta_v2', JSON.stringify({
                 lastUpdated: meta.lastUpdated || "",
-                fetchedAt: Date.now(),
-                sharded: !!isShardedMarketSummary
+                fetchedAt: Date.now()
               }));
             }
           }
@@ -382,7 +321,7 @@ async function initFirebaseSync() {
       }
 
       if (needsFetch) {
-        await fetchSummaryOrLegacyOnce();
+        await fetchMarketSummaryShards();
       }
     };
 
@@ -640,6 +579,7 @@ function acceptCookieConsent(fromPrivacyModal) {
   safeStorageSet("fishao_cookie_consent", "granted");
   var banner = document.getElementById("cookieConsentBanner");
   if (banner) banner.style.display = "none";
+  if (typeof updateScrollTopButton === "function") updateScrollTopButton();
 
   if (firebaseApp) {
     initFirebaseAnalytics();
@@ -654,6 +594,7 @@ function declineCookieConsent(fromPrivacyModal) {
   safeStorageSet("fishao_cookie_consent", "denied");
   var banner = document.getElementById("cookieConsentBanner");
   if (banner) banner.style.display = "none";
+  if (typeof updateScrollTopButton === "function") updateScrollTopButton();
 
   if (typeof firebaseConfig !== "undefined" && firebaseConfig && firebaseConfig.measurementId) {
     window["ga-disable-" + firebaseConfig.measurementId] = true;
@@ -1424,7 +1365,7 @@ async function exportFirestoreBackup() {
   try {
     var firestoreModule = await getFirestoreModule();
 
-    // 1. Fetch Market docs (summary, legacy history if present, estimated, config, sync_status)
+    // 1. Fetch Market docs (4 summary shards, estimated_prices, config, sync_status)
     var readOptDoc = async function (docId) {
       try {
         var s = await firestoreModule.getDoc(firestoreModule.doc(db, "fishao_market", docId));
@@ -1438,18 +1379,14 @@ async function exportFirestoreBackup() {
       readOptDoc("prices_summary_1"),
       readOptDoc("prices_summary_2"),
       readOptDoc("prices_summary_3"),
-      readOptDoc("prices_summary"),
-      readOptDoc("prices_history"),
       readOptDoc("estimated_prices"),
       readOptDoc("config"),
       readOptDoc("sync_status")
     ]);
     var shardDocs = marketDocs.slice(0, 4);
-    var summaryData = marketDocs[4];
-    var legacyMarketData = marketDocs[5];
-    var estData = marketDocs[6];
-    var configData = marketDocs[7];
-    var syncStatusData = marketDocs[8];
+    var estData = marketDocs[4];
+    var configData = marketDocs[5];
+    var syncStatusData = marketDocs[6];
 
     // Fetch monthly daily archives (/fishao_market_daily)
     var dailySnap = await firestoreModule.getDocs(firestoreModule.collection(db, "fishao_market_daily"));
@@ -1472,12 +1409,9 @@ async function exportFirestoreBackup() {
       usersList.push(Object.assign({ id: doc.id }, doc.data()));
     });
 
-    var shardedFishCount = shardDocs.reduce(function (acc, s) {
+    var summaryFishCount = shardDocs.reduce(function (acc, s) {
       return acc + ((s && s.prices) ? Object.keys(s.prices).length : 0);
     }, 0);
-    var summaryFishCount = shardedFishCount > 0
-      ? shardedFishCount
-      : ((summaryData && summaryData.prices) ? Object.keys(summaryData.prices).length : 0);
 
     // Compile backup payload
     var backupData = {
@@ -1496,8 +1430,6 @@ async function exportFirestoreBackup() {
           prices_summary_1: shardDocs[1],
           prices_summary_2: shardDocs[2],
           prices_summary_3: shardDocs[3],
-          prices_summary: summaryData,
-          prices_history: legacyMarketData,
           estimated_prices: estData,
           config: configData,
           sync_status: syncStatusData

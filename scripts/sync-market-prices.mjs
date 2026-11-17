@@ -7,7 +7,7 @@
  *   - `fishao_market_daily/{YYYY-MM}` (monthly daily archive, immune to 1 MiB limit)
  *
  * Usage:
- *   node scripts/sync-market-prices.mjs [--dry-run] [--limit=N] [--migrate-only]
+ *   node scripts/sync-market-prices.mjs [--dry-run] [--limit=N]
  *
  * Environment:
  *   FIREBASE_SERVICE_ACCOUNT  JSON string of a Firebase service account key
@@ -75,15 +75,6 @@ function decodeFishSummaryEntry(fishSum) {
       if (!Number.isFinite(priceNum) || priceNum <= 0 || !lastDate) continue;
       byPrice[String(priceNum)] = { l: lastDate, c: countNum };
     }
-  } else if (fishSum.byPrice && typeof fishSum.byPrice === 'object') {
-    for (const [pStr, info] of Object.entries(fishSum.byPrice)) {
-      const priceNum = Number(pStr);
-      if (!Number.isFinite(priceNum) || priceNum <= 0 || !info || typeof info !== 'object' || !info.l) continue;
-      byPrice[String(priceNum)] = {
-        l: String(info.l),
-        c: Math.max(1, Number.parseInt(info.c, 10) || 1)
-      };
-    }
   }
   const td = typeof fishSum.td === 'string' ? fishSum.td : '';
   const t = Array.isArray(fishSum.t)
@@ -113,10 +104,9 @@ function encodeFishSummaryEntry(entry) {
 }
 
 function parseArgs(argv) {
-  const args = { dryRun: false, migrateOnly: false, limit: 0 };
+  const args = { dryRun: false, limit: 0 };
   for (const arg of argv) {
     if (arg === '--dry-run') args.dryRun = true;
-    else if (arg === '--migrate-only') args.migrateOnly = true;
     else if (arg.startsWith('--limit=')) {
       const n = Number(arg.slice('--limit='.length));
       if (Number.isInteger(n) && n > 0) args.limit = n;
@@ -295,8 +285,6 @@ function measureShardedSummaries(shardMaps, lastUpdated) {
       fishCount++;
       if (typeof fishSum.p === 'string' && fishSum.p) {
         uniquePrices += fishSum.p.split('|').length;
-      } else if (fishSum.byPrice && typeof fishSum.byPrice === 'object') {
-        uniquePrices += Object.keys(fishSum.byPrice).length;
       }
     }
     const payload = { prices: safePrices, lastUpdated: lastUpdated || '' };
@@ -397,110 +385,6 @@ function compactShardMap(rawMap) {
     if (enc) out[k] = enc;
   }
   return out;
-}
-
-async function migrateLegacyPricesIfNeeded(db, todayISO) {
-  const shardRefs = Array.from({ length: SUMMARY_SHARD_COUNT }, (_, i) =>
-    db.collection('fishao_market').doc(getShardDocId(i))
-  );
-  const shardSnaps = await Promise.all(shardRefs.map((r) => r.get()));
-  if (shardSnaps.some((s) => s.exists)) {
-    return false;
-  }
-
-  const summaryRef = db.collection('fishao_market').doc('prices_summary');
-  const summarySnap = await summaryRef.get();
-  if (summarySnap.exists) {
-    const legacySummaryPrices = summarySnap.data()?.prices || {};
-    const shardMaps = Array.from({ length: SUMMARY_SHARD_COUNT }, () => ({}));
-    let migratedCount = 0;
-
-    for (const [fidKey, rawEntry] of Object.entries(legacySummaryPrices)) {
-      const encoded = encodeFishSummaryEntry(rawEntry);
-      if (!encoded) continue;
-      shardMaps[getShardIndex(fidKey)][fidKey] = encoded;
-      migratedCount++;
-    }
-
-    const nowIso = summarySnap.data()?.lastUpdated || new Date().toISOString();
-    const batch = db.batch();
-    for (let i = 0; i < SUMMARY_SHARD_COUNT; i++) {
-      batch.set(shardRefs[i], { prices: shardMaps[i], lastUpdated: nowIso });
-    }
-    await batch.commit();
-    console.log(
-      `Migrated prices_summary -> ${SUMMARY_SHARD_COUNT} compact shards (${migratedCount} fish).`
-    );
-    return true;
-  }
-
-  const legacyRef = db.collection('fishao_market').doc('prices_history');
-  const legacySnap = await legacyRef.get();
-  if (!legacySnap.exists) {
-    return false;
-  }
-
-  const legacyPrices = legacySnap.data()?.prices;
-  if (!legacyPrices || typeof legacyPrices !== 'object') {
-    return false;
-  }
-
-  const shardMaps = Array.from({ length: SUMMARY_SHARD_COUNT }, () => ({}));
-  const monthlyDays = {};
-  let migratedEntries = 0;
-
-  for (const [fidKey, rawList] of Object.entries(legacyPrices)) {
-    if (!Array.isArray(rawList)) continue;
-    const seenPairs = new Set();
-    const targetShard = shardMaps[getShardIndex(fidKey)];
-
-    for (const item of rawList) {
-      if (!item || typeof item !== 'object') continue;
-      const dateISO = typeof item.date === 'string' ? item.date.trim() : '';
-      const priceNum = Number(item.price);
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(dateISO) || !Number.isFinite(priceNum) || priceNum <= 0) {
-        continue;
-      }
-      const pairKey = `${dateISO}|${priceNum}`;
-      if (seenPairs.has(pairKey)) continue;
-      seenPairs.add(pairKey);
-
-      applyPriceToSummary(targetShard, fidKey, dateISO, priceNum, todayISO);
-
-      const monthId = dateISO.slice(0, 7);
-      if (!monthlyDays[monthId]) monthlyDays[monthId] = {};
-      if (!monthlyDays[monthId][dateISO]) monthlyDays[monthId][dateISO] = {};
-
-      const existing = toDayEntryList(monthlyDays[monthId][dateISO][fidKey]);
-      if (!existing.includes(priceNum)) {
-        existing.push(priceNum);
-        monthlyDays[monthId][dateISO][fidKey] = encodeDayEntryList(existing);
-      }
-      migratedEntries++;
-    }
-  }
-
-  const nowIso = new Date().toISOString();
-  const monthEntries = Object.entries(monthlyDays);
-  for (let i = 0; i < monthEntries.length; i += 400) {
-    const chunk = monthEntries.slice(i, i + 400);
-    const batch = db.batch();
-    for (const [monthId, days] of chunk) {
-      const dailyRef = db.collection('fishao_market_daily').doc(monthId);
-      batch.set(dailyRef, { days, lastUpdated: nowIso }, { merge: true });
-    }
-    await batch.commit();
-  }
-  const shardBatch = db.batch();
-  for (let i = 0; i < SUMMARY_SHARD_COUNT; i++) {
-    shardBatch.set(shardRefs[i], { prices: shardMaps[i], lastUpdated: nowIso });
-  }
-  await shardBatch.commit();
-
-  console.log(
-    `Migrated legacy prices_history -> ${SUMMARY_SHARD_COUNT} compact shards + ${monthEntries.length} monthly docs (${migratedEntries} entries).`
-  );
-  return true;
 }
 
 async function writeToFirestore(db, fetchedPrices, todayISO) {
@@ -611,13 +495,6 @@ async function main() {
   const now = new Date();
   const todayISO = now.toISOString().slice(0, 10);
 
-  if (args.migrateOnly) {
-    const db = await initFirestore();
-    const migrated = await migrateLegacyPricesIfNeeded(db, todayISO);
-    console.log(migrated ? 'Migration complete.' : 'Nothing to migrate (sharded prices_summary_0..3 already exists or legacy missing).');
-    return;
-  }
-
   if (now.getUTCDay() === 0 && !process.env.FORCE_SYNC && !args.dryRun) {
     console.log(`[${todayISO}] Sunday (UTC): Fish Market is closed. Skipping sync.`);
     writeStepSummary([
@@ -631,7 +508,6 @@ async function main() {
   let db = null;
   if (!args.dryRun) {
     db = await initFirestore();
-    await migrateLegacyPricesIfNeeded(db, todayISO);
     if (!process.env.FORCE_SYNC) {
       const existingSync = await getTodaySyncStatus(db, todayISO);
       if (existingSync) {

@@ -802,6 +802,21 @@ async function toggleClubSpecialFish(fishId) {
   }
 }
 
+function resetClubManageFilters(skipRender) {
+  currentSpecialFilter = 'all';
+  document.querySelectorAll('.special-header-filters .pill-btn').forEach(function (b, idx) {
+    b.classList.toggle('active', idx === 0);
+  });
+  currentMilestoneFilter = 'all';
+  document.querySelectorAll('.roadmap-header-filters .pill-btn').forEach(function (b, idx) {
+    b.classList.toggle('active', idx === 0);
+  });
+  if (!skipRender) {
+    renderClubSpecialFishes();
+    renderClubMilestones();
+  }
+}
+
 function filterSpecialFishes(filter, btn) {
   currentSpecialFilter = filter || 'all';
   var btns = document.querySelectorAll('.special-header-filters .pill-btn');

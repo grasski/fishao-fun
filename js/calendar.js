@@ -296,7 +296,7 @@ function onCalSearchInput(val) {
   _debouncedRenderCalendar();
 }
 
-function resetCalendarFilters() {
+function resetCalendarFilters(skipRender) {
   calStatusFilter = 'all';
   calMonthFilter = 0;
   calLocationFilter = '';
@@ -305,7 +305,9 @@ function resetCalendarFilters() {
   if (locEl) locEl.value = '';
   var searchEl = document.getElementById('calSearchInput');
   if (searchEl) searchEl.value = '';
-  renderCalendarView();
+  if (!skipRender) {
+    renderCalendarView();
+  }
 }
 
 function updateCalendarTabPill() {

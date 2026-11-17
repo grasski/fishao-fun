@@ -81,7 +81,6 @@ var clubFishes = allFishes.filter(function (f) {
   var bw = getFishWater(b) === 'salt' ? 0 : 1;
   return (aw - bw) || ((a.order || 0) - (b.order || 0));
 });
-var initialPrices = window.FISHAO_DEFAULT_PRICES || {};
 
 /**
  * Resolve the parent location labels to display for a fish (e.g. Lost Valley).
@@ -196,10 +195,7 @@ var isAdmin = false;
 // Firebase service instances
 var db = null;
 var auth = null;
-var firebaseDocRef = null;         // Legacy /fishao_market/prices_history fallback
-var firebaseSummaryDocRef = null;  // Legacy /fishao_market/prices_summary fallback
 var firebaseSummaryShardRefs = []; // Sharded /fishao_market/prices_summary_0..3
-var isShardedMarketSummary = false;
 var estimatedPricesDocRef = null;
 var marketConfigDocRef = null;
 var firebaseApp = null;
@@ -267,16 +263,6 @@ function decodeFishSummaryEntry(fishSum) {
       if (!isFinite(priceNum) || priceNum <= 0 || !lastDate) continue;
       byPrice[String(priceNum)] = { l: lastDate, c: countNum };
     }
-  } else if (fishSum.byPrice && typeof fishSum.byPrice === "object") {
-    Object.keys(fishSum.byPrice).forEach(function (pStr) {
-      var priceNum = Number(pStr);
-      var info = fishSum.byPrice[pStr];
-      if (!isFinite(priceNum) || priceNum <= 0 || !info || typeof info !== "object" || !info.l) return;
-      byPrice[String(priceNum)] = {
-        l: String(info.l),
-        c: Math.max(1, parseInt(info.c, 10) || 1)
-      };
-    });
   }
   var td = typeof fishSum.td === "string" ? fishSum.td : "";
   var tArr = Array.isArray(fishSum.t)
@@ -314,54 +300,6 @@ function compactSummaryMap(summaryMap) {
     var enc = encodeFishSummaryEntry(src[fidKey]);
     if (enc) out[fidKey] = enc;
   });
-  return out;
-}
-
-function legacyHistoryToSummaryMap(legacyMap, refTodayISO) {
-  var src = (legacyMap && typeof legacyMap === "object") ? legacyMap : {};
-  var out = {};
-  var todayStr = refTodayISO || getTodayISO();
-
-  Object.keys(src).forEach(function (fidKey) {
-    var list = Array.isArray(src[fidKey]) ? src[fidKey] : [];
-    var byPrice = {};
-    var seenPairs = Object.create(null);
-    var todayPrices = [];
-
-    list.forEach(function (item) {
-      if (!item || typeof item !== "object") return;
-      var dateStr = typeof item.date === "string" ? item.date.trim() : "";
-      var priceNum = Number(item.price);
-      if (!dateStr || !isFinite(priceNum) || priceNum <= 0) return;
-
-      var pairKey = dateStr + "|" + String(priceNum);
-      if (seenPairs[pairKey]) return;
-      seenPairs[pairKey] = true;
-
-      var pKey = String(priceNum);
-      var prev = byPrice[pKey];
-      if (!prev) {
-        byPrice[pKey] = { l: dateStr, c: 1 };
-      } else {
-        byPrice[pKey] = {
-          l: (!prev.l || dateStr > prev.l) ? dateStr : prev.l,
-          c: (prev.c || 0) + 1
-        };
-      }
-
-      if (dateStr === todayStr && todayPrices.indexOf(priceNum) === -1) {
-        todayPrices.push(priceNum);
-      }
-    });
-
-    var encoded = encodeFishSummaryEntry({
-      byPrice: byPrice,
-      td: todayPrices.length > 0 ? todayStr : "",
-      t: todayPrices
-    });
-    if (encoded) out[fidKey] = encoded;
-  });
-
   return out;
 }
 
@@ -424,15 +362,10 @@ try {
       priceSummary = compactSummaryMap(parsedSum);
       priceHistory = summaryMapToPriceHistory(priceSummary);
     }
-  } else {
-    var savedLegacy = safeStorageGet('fishao_price_history_v1');
-    var legacyMap = savedLegacy ? JSON.parse(savedLegacy) : JSON.parse(JSON.stringify(initialPrices));
-    priceSummary = legacyHistoryToSummaryMap(legacyMap);
-    priceHistory = summaryMapToPriceHistory(priceSummary);
   }
 } catch (e) {
-  priceSummary = legacyHistoryToSummaryMap(initialPrices);
-  priceHistory = summaryMapToPriceHistory(priceSummary);
+  priceSummary = {};
+  priceHistory = {};
 }
 
 // Estimated min/max fish prices (loaded from Firestore /fishao_market/estimated_prices with static fallback)
@@ -440,7 +373,7 @@ var estimatedPrices = (window.FISHAO_ESTIMATED_PRICES && typeof window.FISHAO_ES
   ? window.FISHAO_ESTIMATED_PRICES
   : {};
 try {
-  var savedEst = localStorage.getItem('fishao_estimated_prices_v1');
+  var savedEst = safeStorageGet('fishao_estimated_prices_v1');
   if (savedEst) {
     var parsedEst = JSON.parse(savedEst);
     if (parsedEst && typeof parsedEst === "object" && Object.keys(parsedEst).length > 0) {

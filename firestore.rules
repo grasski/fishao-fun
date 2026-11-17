@@ -21,12 +21,10 @@ service cloud.firestore {
     }
 
     function isMarketSummaryDoc(docId) {
-      return docId == 'prices_summary'
-        || docId.matches('^prices_summary_[0-3]$')
-        || docId == 'prices_history';
+      return docId.matches('^prices_summary_[0-3]$');
     }
 
-    // Market summary (legacy + sharded 0..3), legacy prices_history, estimated_prices & market config
+    // Sharded market summaries (0..3), estimated_prices & market config
     match /fishao_market/{docId} {
       allow read: if true;
 

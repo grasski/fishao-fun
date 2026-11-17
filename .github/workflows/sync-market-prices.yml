@@ -14,10 +14,6 @@ on:
         description: 'Force sync even if already synced today (or on Sunday)'
         type: boolean
         default: false
-      migrate_only:
-        description: 'Only migrate legacy prices_history to prices_summary + daily archive'
-        type: boolean
-        default: false
 
 permissions:
   contents: read
@@ -51,9 +47,7 @@ jobs:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           FORCE_SYNC: ${{ inputs.force && '1' || '' }}
         run: |
-          if [ "${{ inputs.migrate_only }}" = "true" ]; then
-            node scripts/sync-market-prices.mjs --migrate-only
-          elif [ "${{ inputs.dry_run }}" = "true" ]; then
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
             node scripts/sync-market-prices.mjs --dry-run
           else
             node scripts/sync-market-prices.mjs

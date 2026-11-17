@@ -276,6 +276,7 @@ function switchView(view, skipSync) {
     if (secManage) secManage.style.display = "none";
     if (secTable) secTable.style.display = "none";
     if (filterCard) filterCard.style.display = "none";
+    if (typeof resetPlayerFilters === 'function') resetPlayerFilters(true);
 
     if (!currentUser) {
       if (bPlayers) bPlayers.style.display = "none";
@@ -297,6 +298,7 @@ function switchView(view, skipSync) {
     if (secLocations) secLocations.style.display = "none";
     if (secCalendar) secCalendar.style.display = "none";
     if (secTable) secTable.style.display = "none";
+    if (typeof resetClubManageFilters === 'function') resetClubManageFilters(true);
 
     if (!currentUser) {
       if (gateClub) gateClub.style.display = "block";
@@ -319,6 +321,7 @@ function switchView(view, skipSync) {
     if (secCalendar) secCalendar.style.display = "none";
     if (secTable) secTable.style.display = "none";
     if (filterCard) filterCard.style.display = "none";
+    if (typeof resetLocationsFilters === 'function') resetLocationsFilters(true);
     if (typeof preloadLocationImages === 'function') preloadLocationImages();
     updateCaughtStats();
     return;
@@ -331,6 +334,7 @@ function switchView(view, skipSync) {
     if (secLocations) secLocations.style.display = "none";
     if (secTable) secTable.style.display = "none";
     if (filterCard) filterCard.style.display = "none";
+    if (typeof resetCalendarFilters === 'function') resetCalendarFilters(true);
     updateCaughtStats();
     return;
   } else {
@@ -354,27 +358,10 @@ function switchView(view, skipSync) {
     updateMarketSundayCountdown();
   }
 
-  var preserveSharedFilters = ((prevView === "all" && view === "market") || (prevView === "market" && view === "all"));
   updateSortByOptions();
-  if (preserveSharedFilters) {
-    filterTodayHighPrice = false;
-    if (typeof syncTodayHighPriceUI === "function") {
-      syncTodayHighPriceUI();
-    }
-    if (view !== "all") {
-      var minEl = document.getElementById("minSizeInput");
-      var maxEl = document.getElementById("maxSizeInput");
-      if (minEl) minEl.value = "";
-      if (maxEl) maxEl.value = "";
-      document.querySelectorAll(".pill-btn-size.active").forEach(function (p) {
-        p.classList.remove("active");
-      });
-    }
-    applyFilters();
-  } else {
-    resetFilters();
-  }
+  resetFilters();
   updateCaughtStats();
+  updateScrollTopButton();
 }
 
 function updateStaticTranslations() {
@@ -402,7 +389,7 @@ function updateStaticTranslations() {
     var key = el.getAttribute("data-i18n");
     var val = t(key);
     if (val !== undefined && val !== null && val !== key) {
-      if (val.indexOf('<') !== -1 || val.indexOf('&') !== -1) {
+      if (val.indexOf('<') !== -1) {
         el.innerHTML = val;
       } else {
         el.textContent = val;
@@ -879,8 +866,55 @@ window.fishaoApp = {
   resetReminderForm: resetReminderForm,
   deleteReminder: deleteReminder,
   saveHideLockedClubPreference: typeof saveHideLockedClubPreference === 'function' ? saveHideLockedClubPreference : null,
+  scrollToTop: scrollToTop,
   t: t
 };
+
+var _scrollTopRaf = false;
+
+function scrollToTop() {
+  var reduceMotion = typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.scrollTo({
+    top: 0,
+    behavior: reduceMotion ? 'auto' : 'smooth'
+  });
+}
+
+function updateScrollTopButton() {
+  var btn = document.getElementById('scrollToTopBtn');
+  if (!btn) return;
+
+  var scrollY = window.scrollY || window.pageYOffset || 0;
+  var isModalOpen = document.body && document.body.classList.contains('modal-open');
+  if (scrollY <= 320 || isModalOpen) {
+    btn.style.display = 'none';
+    return;
+  }
+
+  var cookieBanner = document.getElementById('cookieConsentBanner');
+  var cookieVisible = !!(cookieBanner && cookieBanner.style.display !== 'none');
+  var importBtn = document.getElementById('marketFloatingImportBtn');
+  var importVisible = !!(importBtn && importBtn.style.display !== 'none');
+
+  btn.classList.toggle('above-cookie', cookieVisible);
+  btn.classList.toggle('above-import-fab', importVisible);
+  btn.style.display = 'inline-flex';
+}
+
+function scheduleUpdateScrollTopButton() {
+  if (_scrollTopRaf) return;
+  _scrollTopRaf = true;
+  requestAnimationFrame(function () {
+    _scrollTopRaf = false;
+    updateScrollTopButton();
+  });
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('scroll', scheduleUpdateScrollTopButton, { passive: true });
+  window.addEventListener('resize', scheduleUpdateScrollTopButton, { passive: true });
+}
 
 // Initialize localization & application (avoid double initial render)
 (async function bootApplication() {

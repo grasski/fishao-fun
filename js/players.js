@@ -455,7 +455,7 @@ function clearPlayerSearch() {
   renderPlayersList();
 }
 
-function resetPlayerFilters() {
+function resetPlayerFilters(skipRender) {
   filterPlayerSearchText = "";
   filterPlayerFriendsOnly = false;
   filterPlayerBackyardOnly = false;
@@ -483,7 +483,9 @@ function resetPlayerFilters() {
   var sTime = document.getElementById("playerTimeFilterSelect");
   if (sTime) sTime.value = "";
 
-  renderPlayersList();
+  if (!skipRender) {
+    renderPlayersList();
+  }
 }
 
 function renderPlayersActiveFiltersBar() {

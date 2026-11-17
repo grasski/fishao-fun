@@ -855,4 +855,57 @@ tbody tr:hover .fish-img {
   bottom: 78px;
 }
 
+/* Floating Action Button: Scroll Back to Top */
+.scroll-top-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 949;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  color: var(--ocean-light);
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5), 0 0 16px rgba(56, 189, 248, 0.18);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease, bottom 0.2s ease;
+  animation: marketFabPopIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-top-fab:hover {
+  background: rgba(2, 132, 199, 0.95);
+  border-color: #7dd3fc;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6), 0 0 22px rgba(56, 189, 248, 0.4);
+}
+
+.scroll-top-fab:active {
+  transform: translateY(0);
+}
+
+.scroll-top-fab:focus-visible {
+  outline: 2px solid #7dd3fc;
+  outline-offset: 2px;
+}
+
+.scroll-top-fab.above-cookie {
+  bottom: 78px;
+}
+
+.scroll-top-fab.above-import-fab {
+  bottom: 78px;
+}
+
+.scroll-top-fab.above-cookie.above-import-fab {
+  bottom: 132px;
+}
+
 

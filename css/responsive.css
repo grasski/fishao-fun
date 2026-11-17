@@ -395,6 +395,22 @@
   .market-fab-btn.above-cookie {
     bottom: 110px;
   }
+
+  .scroll-top-fab {
+    bottom: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+  }
+  .scroll-top-fab.above-cookie {
+    bottom: 110px;
+  }
+  .scroll-top-fab.above-import-fab {
+    bottom: 68px;
+  }
+  .scroll-top-fab.above-cookie.above-import-fab {
+    bottom: 162px;
+  }
 }
 
 /* Very Small Phones (<= 420px) */

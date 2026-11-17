@@ -19,7 +19,7 @@
       "admin_manual_import_on": "🟢 Enabled",
       "admin_manual_import_title": "Manual Price Entry & Import (Market)",
       "admin_tools_title": "Database Management & Backup (Admin)",
-      "app_desc": "Complete overview of 80 club &amp; 615 standard fish • Live biting times • Fish Market prices • Personal catch collection",
+      "app_desc": "Complete overview of 80 club & 615 standard fish • Live biting times • Fish Market prices • Personal catch collection",
       "app_subtitle": "Tracker",
       "app_title": "FISHAO",
       "auth_need_config": "Please configure firebase-config.js before signing in.",
@@ -352,9 +352,9 @@
       "confirm_cancel": "Cancel",
       "confirm_btn": "Confirm",
       "club_change_confirm": "You are already in club '{current}'. Do you want to leave and join club '{target}'?",
-      "nav_players": "Players &amp; Backyard",
+      "nav_players": "Players & Backyard",
       "nav_players_pill": "Community",
-      "players_gate_title": "Anglers Community &amp; Backyard",
+      "players_gate_title": "Anglers Community & Backyard",
       "players_gate_desc": "This community overview and backyard tool allows encyclopedia users to share progress. Data is not linked to official FISHAO game servers and only players registered on this site are visible. Please sign in with Google to explore.",
       "players_community_notice": "<strong class=\"highlight-teal\">Community Tool:</strong> Player profiles, catches, and backyard fishes are not connected to official FISHAO game servers (they do not reflect in-game data). Only anglers who register on this website appear here.",
       "players_search_placeholder": "Search player, club, or fish...",
@@ -365,7 +365,7 @@
       "players_count_stat_other": "{count} players",
       "players_manage_my_backyard": "My Backyard Fish",
       "players_empty_search": "No players found matching your filters.",
-      "player_card_view_profile": "View profile &amp; backyard →",
+      "player_card_view_profile": "View profile & backyard →",
       "player_card_backyard_title": "Backyard ({count}):",
       "player_card_backyard_empty": "No backyard fish",
       "player_card_no_club": "No club",
@@ -637,7 +637,8 @@
       "avatar_url_https_only": "Avatar URL must start with https://.",
       "auth_reauth_required": "Please re-authenticate with Google to permanently delete your account.",
       "modal_price_occurrences": "{count}×",
-      "loading_short": "Loading..."
+      "loading_short": "Loading...",
+      "btn_scroll_top": "Back to top"
   };
 
   if (typeof window !== 'undefined') {

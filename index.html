@@ -1768,6 +1768,18 @@
     </div>
   </div>
 
+  <!-- Floating Action Button: Scroll Back to Top -->
+  <button type="button" id="scrollToTopBtn" class="scroll-top-fab"
+    onclick="window.fishaoApp.scrollToTop()"
+    title="Zpět nahoru" aria-label="Zpět nahoru"
+    data-i18n-title="btn_scroll_top" data-i18n-aria-label="btn_scroll_top"
+    style="display: none;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 19V5" />
+      <path d="M5 12l7-7 7 7" />
+    </svg>
+  </button>
+
   <!-- Floating Action Button: Fish Market Bulk Price Import (shown when scrolling in Market view) -->
   <button type="button" id="marketFloatingImportBtn" class="market-fab-btn" onclick="window.fishaoApp.openBulkModal()"
     title="Hromadný import cen do Fish Marketu" data-i18n="market_btn_import" data-i18n-title="market_btn_import"
