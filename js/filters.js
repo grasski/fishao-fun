@@ -30,10 +30,35 @@ function setSizeFilter(min, max, btn) {
   applyFilters();
 }
 
-function toggleTodayHighPrice() {
-  filterTodayHighPrice = !filterTodayHighPrice;
+function getTodayHighPricePct() {
+  var el = document.getElementById("todayHighPricePct");
+  if (!el) return 90;
+  var val = parseFloat(el.value);
+  return (isFinite(val) && val > 0) ? val : 90;
+}
+
+function syncTodayHighPriceUI() {
   var btn = document.getElementById("btnTodayHighPrice");
   if (btn) btn.classList.toggle("active", filterTodayHighPrice);
+  var grp = document.getElementById("todayHighPriceGroup");
+  if (grp) grp.classList.toggle("is-active", filterTodayHighPrice);
+}
+
+function onTodayHighPricePctInput() {
+  var el = document.getElementById("todayHighPricePct");
+  var val = el ? parseFloat(el.value) : NaN;
+  if (isFinite(val) && val > 0 && !filterTodayHighPrice) {
+    filterTodayHighPrice = true;
+    syncTodayHighPriceUI();
+  }
+  if (filterTodayHighPrice) {
+    applyFilters();
+  }
+}
+
+function toggleTodayHighPrice() {
+  filterTodayHighPrice = !filterTodayHighPrice;
+  syncTodayHighPriceUI();
   applyFilters();
 }
 
@@ -55,11 +80,22 @@ function toggleNowActive() {
   applyFilters();
 }
 
+function onSortByChange() {
+  sortBestChanceOverride = false;
+  applyFilters();
+}
+
 function toggleBestChanceSort() {
+  if (currentView === "market") {
+    sortBestChanceOverride = !sortBestChanceOverride;
+    applyFilters();
+    return;
+  }
+  sortBestChanceOverride = false;
   var sortEl = document.getElementById("sortBy");
   if (!sortEl) return;
   if (sortEl.value === "chance_desc") {
-    sortEl.value = (currentView === "market") ? "price_desc" : "name_asc";
+    sortEl.value = "name_asc";
   } else {
     sortEl.value = "chance_desc";
   }
@@ -91,7 +127,7 @@ function applyFilters() {
   var areaEl = document.getElementById("areaFilter");
   var area = areaEl ? areaEl.value : "";
   var timeVal = document.getElementById("timeFilter").value;
-  var sortBy = document.getElementById("sortBy").value;
+  var sortBy = sortBestChanceOverride ? "chance_desc" : document.getElementById("sortBy").value;
   var hideLockedCheckbox = document.getElementById("hideLockedCheckbox");
   var hideLocked = hideLockedCheckbox ? hideLockedCheckbox.checked : false;
   var filterUncaught = document.getElementById("filterUncaughtCheckbox") ? document.getElementById("filterUncaughtCheckbox").checked : false;
@@ -105,11 +141,13 @@ function applyFilters() {
   var btnNow = document.getElementById("btnNow");
   if (btnNow) btnNow.classList.toggle("active", filterNowActive);
 
+  sortBestChanceOverride = false;
   var btnBestChance = document.getElementById("btnBestChance");
   if (btnBestChance) btnBestChance.classList.toggle("active", sortBy === "chance_desc");
 
   var dataset = currentView === "club" ? clubFishes : allFishes;
   var todayISO = filterTodayHighPrice ? getTodayISO() : "";
+  var todayHighPct = filterTodayHighPrice ? getTodayHighPricePct() : 90;
 
   var filtered = dataset.filter(function (f) {
     if (currentView === "club") {
@@ -163,7 +201,7 @@ function applyFilters() {
     if (filterTodayHighPrice) {
       var est = (typeof getEstimatedPrice === "function") ? getEstimatedPrice(f.id) : null;
       if (!est || !(est.max > 0)) return false;
-      var threshold = est.max * 0.9;
+      var threshold = est.max * (todayHighPct / 100);
       var entries = normalizePriceEntries(getFishPrices(f.id));
       var hasTodayHigh = entries.some(function (entry) {
         return entry.date === todayISO && entry.price >= threshold;
@@ -283,7 +321,7 @@ function applyFilters() {
   if (currentView === "club" && hideLocked) filterNotes.push(t('filter_note_unlocked'));
   if (sortBy === "chance_desc") filterNotes.push(t('filter_note_sort_chance'));
   if (filterTodayHighPrice) {
-    filterNotes.push(t('filter_note_today_high_price'));
+    filterNotes.push(t('filter_note_today_high_price', { pct: todayHighPct }));
   }
   if (filterOnlyCaught) {
     filterNotes.push(t('filter_note_only_caught'));
@@ -385,12 +423,14 @@ function resetFilters() {
   var btnNow = document.getElementById("btnNow");
   if (btnNow) btnNow.classList.remove("active");
 
+  sortBestChanceOverride = false;
   var btnBestChance = document.getElementById("btnBestChance");
   if (btnBestChance) btnBestChance.classList.remove("active");
 
   filterTodayHighPrice = false;
-  var btnTodayHighPrice = document.getElementById("btnTodayHighPrice");
-  if (btnTodayHighPrice) btnTodayHighPrice.classList.remove("active");
+  syncTodayHighPriceUI();
+  var pctEl = document.getElementById("todayHighPricePct");
+  if (pctEl) pctEl.value = "90";
 
   filterOnlyCaught = false;
   var btnOnlyCaught = document.getElementById("btnOnlyCaught");
@@ -550,6 +590,17 @@ function updateSortByOptions() {
   var select = document.getElementById("sortBy");
   if (!select) return;
   var curVal = select.value;
+
+  if (currentView === "market") {
+    select.innerHTML =
+      '<option value="price_desc">' + t('opt_sort_price_desc') + '</option>' +
+      '<option value="price_asc">' + t('opt_sort_price_asc') + '</option>' +
+      '<option value="name_asc">' + t('opt_sort_name_asc') + '</option>' +
+      '<option value="name_desc">' + t('opt_sort_name_desc') + '</option>';
+    var allowed = ["price_desc", "price_asc", "name_asc", "name_desc"];
+    select.value = allowed.indexOf(curVal) !== -1 ? curVal : "price_desc";
+    return;
+  }
 
   select.innerHTML =
     '<option value="name_asc">' + t('opt_sort_name_asc') + '</option>' +

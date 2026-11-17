@@ -327,6 +327,7 @@ function switchView(view, skipSync) {
   }
 
   // Reset filters completely when switching tabs
+  updateSortByOptions();
   resetFilters();
   updateCaughtStats();
 }
@@ -524,7 +525,9 @@ window.fishaoApp = {
   onRangeSizeInput: onRangeSizeInput,
   toggleNowActive: toggleNowActive,
   toggleBestChanceSort: toggleBestChanceSort,
+  onSortByChange: onSortByChange,
   toggleTodayHighPrice: toggleTodayHighPrice,
+  onTodayHighPricePctInput: onTodayHighPricePctInput,
   toggleOnlyCaught: toggleOnlyCaught,
   openPriceModal: openPriceModal,
   togglePriceChartVisibility: togglePriceChartVisibility,

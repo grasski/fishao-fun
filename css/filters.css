@@ -280,6 +280,91 @@ select.filter-control option {
   display: inline-flex;
   gap: 6px;
   align-items: center;
+  flex-wrap: wrap;
+}
+.today-high-price-group {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  background: #151e30;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+  transition: all 0.15s ease;
+}
+.today-high-price-group:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.today-high-price-group.is-active {
+  background: #0284c7;
+  border-color: #38bdf8;
+}
+.today-high-price-group .pill-btn {
+  border: none;
+  background: transparent;
+  border-radius: 0;
+  padding: 0 9px 0 11px;
+  height: 100%;
+}
+.today-high-price-group .pill-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.today-high-price-group.is-active .pill-btn,
+.today-high-price-group.is-active .pill-btn.active {
+  background: transparent;
+  border: none;
+  color: #fff;
+}
+.pct-input-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 100%;
+  padding: 0 9px 0 7px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.18);
+  cursor: text;
+}
+.today-high-price-group.is-active .pct-input-wrap {
+  border-left-color: rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.2);
+}
+.pct-input-prefix,
+.pct-input-unit {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  user-select: none;
+}
+.today-high-price-group.is-active .pct-input-prefix,
+.today-high-price-group.is-active .pct-input-unit {
+  color: rgba(255, 255, 255, 0.88);
+}
+.pct-input {
+  width: 34px;
+  padding: 1px 2px;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 0;
+  background: transparent;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-primary);
+  -moz-appearance: textfield;
+}
+.pct-input::-webkit-outer-spin-button,
+.pct-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.pct-input:focus {
+  outline: none;
+  border-bottom-color: #38bdf8;
+}
+.today-high-price-group.is-active .pct-input {
+  color: #fff;
+  border-bottom-color: rgba(255, 255, 255, 0.55);
 }
 
 /* Clean pill buttons */

@@ -195,7 +195,8 @@ function renderPriceCell(fid) {
     var todayPriceStr = (minT === maxT)
       ? minT.toLocaleString(locale)
       : (minT.toLocaleString(locale) + '–' + maxT.toLocaleString(locale));
-    var isHighToday = !!(est && est.max > 0 && maxT >= est.max * 0.9);
+    var highPct = (typeof getTodayHighPricePct === "function") ? getTodayHighPricePct() : 90;
+    var isHighToday = !!(est && est.max > 0 && maxT >= est.max * (highPct / 100));
     cellTitle = t('price_today_sub', { price: todayPriceStr }) + '\n' +
       t('price_cell_range_title', {
         min: minP.toLocaleString(locale),

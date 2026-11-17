@@ -124,7 +124,7 @@
   <link rel="stylesheet" href="css/base.css?v=3.2">
   <link rel="stylesheet" href="css/header.css?v=3.2">
   <link rel="stylesheet" href="css/nav.css?v=3.3">
-  <link rel="stylesheet" href="css/filters.css?v=3.4">
+  <link rel="stylesheet" href="css/filters.css?v=3.5">
   <link rel="stylesheet" href="css/table.css?v=3.8">
   <link rel="stylesheet" href="css/clubs.css?v=3.3">
   <link rel="stylesheet" href="css/players.css?v=3.2">
@@ -959,7 +959,7 @@
 
           <div class="filter-group">
             <label class="filter-label" for="sortBy" data-i18n="filter_sort_label">Řadit podle</label>
-            <select id="sortBy" class="filter-control" onchange="window.fishaoApp.applyFilters()">
+            <select id="sortBy" class="filter-control" onchange="window.fishaoApp.onSortByChange()">
               <option value="name_asc" selected>Název (A - Z)</option>
               <option value="name_desc">Název (Z - A)</option>
               <option value="chance_desc">🎯 Šance na úlovek (od nejvyšší)</option>
@@ -1017,9 +1017,19 @@
             <button class="pill-btn" id="btnBestChance" onclick="window.fishaoApp.toggleBestChanceSort()"
               data-i18n="filter_btn_best_chance" data-i18n-title="filter_btn_best_chance_title"
               title="Seřadit ryby podle nejvyšší šance na úlovek">🎯 Nejvyšší šance</button>
-            <button class="pill-btn" id="btnTodayHighPrice" onclick="window.fishaoApp.toggleTodayHighPrice()"
-              data-i18n="filter_btn_today_high_price" data-i18n-title="filter_btn_today_high_price_title"
-              title="Zobrazit ryby s dnešní cenou alespoň 90 % odhadovaného maxima">🔥 Top ceny dnes</button>
+            <div class="today-high-price-group" id="todayHighPriceGroup">
+              <button class="pill-btn" id="btnTodayHighPrice" onclick="window.fishaoApp.toggleTodayHighPrice()"
+                data-i18n="filter_btn_today_high_price" data-i18n-title="filter_btn_today_high_price_title"
+                title="Zobrazit ryby s dnešní cenou alespoň zadané % odhadovaného maxima">🔥 Top ceny dnes</button>
+              <label class="pct-input-wrap" data-i18n-title="filter_today_high_pct_title"
+                title="Minimální % odhadovaného maxima">
+                <span class="pct-input-prefix">≥</span>
+                <input type="number" id="todayHighPricePct" class="pct-input" value="90" min="1" max="200"
+                  step="5" oninput="window.fishaoApp.onTodayHighPricePctInput()"
+                  onchange="window.fishaoApp.onTodayHighPricePctInput()">
+                <span class="pct-input-unit">%</span>
+              </label>
+            </div>
             <button class="pill-btn" id="btnOnlyCaught" onclick="window.fishaoApp.toggleOnlyCaught()"
               data-i18n="filter_btn_only_caught" data-i18n-title="filter_btn_only_caught_title"
               title="Zobrazit pouze ryby, které už máš chycené">✅ Pouze chycené</button>
@@ -1767,9 +1777,9 @@
   <div id="appToast" class="app-toast" style="display: none;"></div>
 
   <!-- Data scripts and localization -->
-  <script src="data/i18n/ui_cs.js?v=5.4"></script>
-  <script src="data/i18n/ui_en.js?v=5.4"></script>
-  <script src="data/i18n/ui_pl.js?v=5.4"></script>
+  <script src="data/i18n/ui_cs.js?v=5.5"></script>
+  <script src="data/i18n/ui_en.js?v=5.5"></script>
+  <script src="data/i18n/ui_pl.js?v=5.5"></script>
   <script src="data/i18n/taxonomies.js?v=3.4"></script>
   <script src="data/i18n/fish_names.js?v=3.3"></script>
   <script src="data/i18n.js?v=3.2"></script>
@@ -1778,18 +1788,18 @@
   <script src="data/estimated_prices.js?v=1.0"></script>
   <script src="firebase-config.js?v=3.2"></script>
   <!-- Modular FISHAO Application Logic -->
-  <script src="js/state.js?v=4.7"></script>
+  <script src="js/state.js?v=4.8"></script>
   <script src="js/firestore-tx.js?v=3.2"></script>
-  <script src="js/table.js?v=4.0"></script>
+  <script src="js/table.js?v=4.1"></script>
   <script src="js/clubs.js?v=3.9"></script>
   <script src="js/market.js?v=4.15"></script>
-  <script src="js/filters.js?v=4.3"></script>
+  <script src="js/filters.js?v=4.5"></script>
   <script src="js/auth.js?v=4.2"></script>
   <script src="js/players.js?v=3.9"></script>
   <script src="js/locations.js?v=1.1"></script>
   <script src="js/calendar.js?v=1.0"></script>
   <script src="js/reminders.js?v=1.1"></script>
-  <script src="js/main.js?v=4.6"></script>
+  <script src="js/main.js?v=4.8"></script>
 
 </body>
 
