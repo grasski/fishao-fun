@@ -3,7 +3,7 @@
  * ----------------------------------------------------------------------
  * Fetches daily Fish Market prices from https://www.fishao.net/wiki/fish/<id>/__data.json
  * for all fish IDs in fish.json and merges daily market prices into:
- *   - `fishao_market/prices_summary` (compact unique-price summary for fast loads)
+ *   - `fishao_market/prices_summary_0..3` (4-sharded compact unique-price summary)
  *   - `fishao_market_daily/{YYYY-MM}` (monthly daily archive, immune to 1 MiB limit)
  *
  * Usage:
@@ -23,8 +23,94 @@ const BASE_URL = 'https://www.fishao.net/wiki/fish';
 const CONCURRENCY = 12;
 const REQUEST_TIMEOUT_MS = 10000;
 const MAX_RETRIES = 2;
+const SUMMARY_SHARD_COUNT = 4;
 const FIRESTORE_DOC_LIMIT_BYTES = 1024 * 1024;
 const SUMMARY_WARN_THRESHOLD_BYTES = 700 * 1024;
+
+function getShardIndex(fidKey) {
+  const n = Number.parseInt(fidKey, 10);
+  return (Number.isFinite(n) && n >= 0) ? (n % SUMMARY_SHARD_COUNT) : 0;
+}
+
+function getShardDocId(shardIdx) {
+  return `prices_summary_${shardIdx}`;
+}
+
+function packSummaryDate(isoDate) {
+  if (typeof isoDate !== 'string') return '';
+  const s = isoDate.trim();
+  if (/^20\d{2}-\d{2}-\d{2}$/.test(s)) {
+    return s.slice(2, 4) + s.slice(5, 7) + s.slice(8, 10);
+  }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+    return s.slice(0, 4) + s.slice(5, 7) + s.slice(8, 10);
+  }
+  return s;
+}
+
+function unpackSummaryDate(packed) {
+  if (typeof packed !== 'string') return '';
+  if (packed.length === 6 && /^\d{6}$/.test(packed)) {
+    return `20${packed.slice(0, 2)}-${packed.slice(2, 4)}-${packed.slice(4, 6)}`;
+  }
+  if (packed.length === 8 && /^\d{8}$/.test(packed)) {
+    return `${packed.slice(0, 4)}-${packed.slice(4, 6)}-${packed.slice(6, 8)}`;
+  }
+  return packed;
+}
+
+function decodeFishSummaryEntry(fishSum) {
+  const byPrice = {};
+  if (!fishSum || typeof fishSum !== 'object') {
+    return { byPrice, td: '', t: [] };
+  }
+  if (typeof fishSum.p === 'string' && fishSum.p) {
+    const tokens = fishSum.p.split('|');
+    for (const tok of tokens) {
+      if (!tok) continue;
+      const parts = tok.split(':');
+      const priceNum = Number(parts[0]);
+      const lastDate = parts[1] ? unpackSummaryDate(parts[1]) : '';
+      const countNum = parts[2] ? Math.max(1, Number.parseInt(parts[2], 10) || 1) : 1;
+      if (!Number.isFinite(priceNum) || priceNum <= 0 || !lastDate) continue;
+      byPrice[String(priceNum)] = { l: lastDate, c: countNum };
+    }
+  } else if (fishSum.byPrice && typeof fishSum.byPrice === 'object') {
+    for (const [pStr, info] of Object.entries(fishSum.byPrice)) {
+      const priceNum = Number(pStr);
+      if (!Number.isFinite(priceNum) || priceNum <= 0 || !info || typeof info !== 'object' || !info.l) continue;
+      byPrice[String(priceNum)] = {
+        l: String(info.l),
+        c: Math.max(1, Number.parseInt(info.c, 10) || 1)
+      };
+    }
+  }
+  const td = typeof fishSum.td === 'string' ? fishSum.td : '';
+  const t = Array.isArray(fishSum.t)
+    ? fishSum.t.map(Number).filter((n) => Number.isFinite(n) && n > 0)
+    : [];
+  return { byPrice, td, t };
+}
+
+function encodeFishSummaryEntry(entry) {
+  if (!entry || typeof entry !== 'object') return null;
+  const dec = (typeof entry.p === 'string' && !entry.byPrice) ? decodeFishSummaryEntry(entry) : entry;
+  const keys = Object.keys(dec.byPrice || {}).sort((a, b) => Number(a) - Number(b));
+  const tokens = [];
+  for (const pKey of keys) {
+    const info = dec.byPrice[pKey];
+    if (!info || !info.l) continue;
+    const cNum = Math.max(1, Number.parseInt(info.c, 10) || 1);
+    tokens.push(`${pKey}:${packSummaryDate(info.l)}${cNum > 1 ? `:${cNum}` : ''}`);
+  }
+  if (tokens.length === 0) return null;
+  const out = { p: tokens.join('|') };
+  if (dec.td && Array.isArray(dec.t) && dec.t.length > 0) {
+    out.td = dec.td;
+    out.t = [...dec.t];
+  }
+  return out;
+}
 
 function parseArgs(argv) {
   const args = { dryRun: false, migrateOnly: false, limit: 0 };
@@ -194,31 +280,44 @@ function estimateFirestoreDocBytes(collectionId, docId, data) {
   return nameBytes + estimateFirestoreValueBytes(data || {});
 }
 
-function measureSummaryDocument(summaryPrices, lastUpdated) {
-  const safePrices = (summaryPrices && typeof summaryPrices === 'object') ? summaryPrices : {};
+function measureShardedSummaries(shardMaps, lastUpdated) {
   let fishCount = 0;
   let uniquePrices = 0;
+  let totalJsonBytes = 0;
+  let totalFirestoreBytes = 0;
+  let maxShardBytes = 0;
+  const shardBytes = [];
 
-  for (const fishSum of Object.values(safePrices)) {
-    if (!fishSum || typeof fishSum !== 'object') continue;
-    fishCount++;
-    if (fishSum.byPrice && typeof fishSum.byPrice === 'object') {
-      uniquePrices += Object.keys(fishSum.byPrice).length;
+  for (let i = 0; i < SUMMARY_SHARD_COUNT; i++) {
+    const safePrices = (shardMaps[i] && typeof shardMaps[i] === 'object') ? shardMaps[i] : {};
+    for (const fishSum of Object.values(safePrices)) {
+      if (!fishSum || typeof fishSum !== 'object') continue;
+      fishCount++;
+      if (typeof fishSum.p === 'string' && fishSum.p) {
+        uniquePrices += fishSum.p.split('|').length;
+      } else if (fishSum.byPrice && typeof fishSum.byPrice === 'object') {
+        uniquePrices += Object.keys(fishSum.byPrice).length;
+      }
     }
+    const payload = { prices: safePrices, lastUpdated: lastUpdated || '' };
+    totalJsonBytes += Buffer.byteLength(JSON.stringify(payload), 'utf8');
+    const fsBytes = estimateFirestoreDocBytes('fishao_market', getShardDocId(i), payload);
+    shardBytes.push(fsBytes);
+    totalFirestoreBytes += fsBytes;
+    if (fsBytes > maxShardBytes) maxShardBytes = fsBytes;
   }
 
-  const payload = { prices: safePrices, lastUpdated: lastUpdated || '' };
-  const jsonBytes = Buffer.byteLength(JSON.stringify(payload), 'utf8');
-  const firestoreBytes = estimateFirestoreDocBytes('fishao_market', 'prices_summary', payload);
-  const limitPct = Number(((firestoreBytes / FIRESTORE_DOC_LIMIT_BYTES) * 100).toFixed(1));
+  const maxShardLimitPct = Number(((maxShardBytes / FIRESTORE_DOC_LIMIT_BYTES) * 100).toFixed(1));
 
   return {
     fishCount,
     uniquePrices,
-    jsonBytes,
-    firestoreBytes,
-    limitPct,
-    isNearLimit: firestoreBytes >= SUMMARY_WARN_THRESHOLD_BYTES
+    jsonBytes: totalJsonBytes,
+    firestoreBytes: totalFirestoreBytes,
+    maxShardBytes,
+    shardBytes,
+    limitPct: maxShardLimitPct,
+    isNearLimit: maxShardBytes >= SUMMARY_WARN_THRESHOLD_BYTES
   };
 }
 
@@ -233,12 +332,15 @@ async function markTodaySynced(db, todayISO, stats) {
   const doc = {
     lastSuccessDate: todayISO,
     lastSuccessAt: new Date().toISOString(),
+    summaryMode: 'sharded_compact_v2',
+    shardCount: SUMMARY_SHARD_COUNT,
     pricesFetched: stats.pricesFetched,
     addedCount: stats.addedCount,
     duplicateCount: stats.duplicateCount
   };
   if (stats.summaryMetrics) {
     doc.summaryBytes = stats.summaryMetrics.firestoreBytes;
+    doc.maxShardBytes = stats.summaryMetrics.maxShardBytes;
     doc.summaryLimitPct = stats.summaryMetrics.limitPct;
     doc.summaryUniquePrices = stats.summaryMetrics.uniquePrices;
   }
@@ -259,13 +361,8 @@ function encodeDayEntryList(list) {
 }
 
 function applyPriceToSummary(summaryPrices, fidKey, dateISO, priceNum, todayISO) {
-  let fishSum = summaryPrices[fidKey];
-  if (!fishSum || typeof fishSum !== 'object') {
-    fishSum = { byPrice: {}, td: '', t: [] };
-  }
-  const byPrice = (fishSum.byPrice && typeof fishSum.byPrice === 'object')
-    ? { ...fishSum.byPrice }
-    : {};
+  const dec = decodeFishSummaryEntry(summaryPrices[fidKey]);
+  const byPrice = { ...dec.byPrice };
 
   const pKey = String(priceNum);
   const curInfo = byPrice[pKey];
@@ -277,8 +374,8 @@ function applyPriceToSummary(summaryPrices, fidKey, dateISO, priceNum, todayISO)
     c: prevCount + 1
   };
 
-  let td = typeof fishSum.td === 'string' ? fishSum.td : '';
-  let t = Array.isArray(fishSum.t) ? [...fishSum.t] : [];
+  let td = dec.td || '';
+  let t = Array.isArray(dec.t) ? [...dec.t] : [];
   if (dateISO === todayISO) {
     if (td === todayISO) {
       if (!t.includes(priceNum)) t.push(priceNum);
@@ -288,14 +385,53 @@ function applyPriceToSummary(summaryPrices, fidKey, dateISO, priceNum, todayISO)
     }
   }
 
-  summaryPrices[fidKey] = { byPrice, td, t };
+  const encoded = encodeFishSummaryEntry({ byPrice, td, t });
+  if (encoded) summaryPrices[fidKey] = encoded;
+}
+
+function compactShardMap(rawMap) {
+  const out = {};
+  if (!rawMap || typeof rawMap !== 'object') return out;
+  for (const [k, v] of Object.entries(rawMap)) {
+    const enc = encodeFishSummaryEntry(v);
+    if (enc) out[k] = enc;
+  }
+  return out;
 }
 
 async function migrateLegacyPricesIfNeeded(db, todayISO) {
+  const shardRefs = Array.from({ length: SUMMARY_SHARD_COUNT }, (_, i) =>
+    db.collection('fishao_market').doc(getShardDocId(i))
+  );
+  const shardSnaps = await Promise.all(shardRefs.map((r) => r.get()));
+  if (shardSnaps.some((s) => s.exists)) {
+    return false;
+  }
+
   const summaryRef = db.collection('fishao_market').doc('prices_summary');
   const summarySnap = await summaryRef.get();
   if (summarySnap.exists) {
-    return false;
+    const legacySummaryPrices = summarySnap.data()?.prices || {};
+    const shardMaps = Array.from({ length: SUMMARY_SHARD_COUNT }, () => ({}));
+    let migratedCount = 0;
+
+    for (const [fidKey, rawEntry] of Object.entries(legacySummaryPrices)) {
+      const encoded = encodeFishSummaryEntry(rawEntry);
+      if (!encoded) continue;
+      shardMaps[getShardIndex(fidKey)][fidKey] = encoded;
+      migratedCount++;
+    }
+
+    const nowIso = summarySnap.data()?.lastUpdated || new Date().toISOString();
+    const batch = db.batch();
+    for (let i = 0; i < SUMMARY_SHARD_COUNT; i++) {
+      batch.set(shardRefs[i], { prices: shardMaps[i], lastUpdated: nowIso });
+    }
+    await batch.commit();
+    console.log(
+      `Migrated prices_summary -> ${SUMMARY_SHARD_COUNT} compact shards (${migratedCount} fish).`
+    );
+    return true;
   }
 
   const legacyRef = db.collection('fishao_market').doc('prices_history');
@@ -309,13 +445,14 @@ async function migrateLegacyPricesIfNeeded(db, todayISO) {
     return false;
   }
 
-  const summaryPrices = {};
+  const shardMaps = Array.from({ length: SUMMARY_SHARD_COUNT }, () => ({}));
   const monthlyDays = {};
   let migratedEntries = 0;
 
   for (const [fidKey, rawList] of Object.entries(legacyPrices)) {
     if (!Array.isArray(rawList)) continue;
     const seenPairs = new Set();
+    const targetShard = shardMaps[getShardIndex(fidKey)];
 
     for (const item of rawList) {
       if (!item || typeof item !== 'object') continue;
@@ -328,7 +465,7 @@ async function migrateLegacyPricesIfNeeded(db, todayISO) {
       if (seenPairs.has(pairKey)) continue;
       seenPairs.add(pairKey);
 
-      applyPriceToSummary(summaryPrices, fidKey, dateISO, priceNum, todayISO);
+      applyPriceToSummary(targetShard, fidKey, dateISO, priceNum, todayISO);
 
       const monthId = dateISO.slice(0, 7);
       if (!monthlyDays[monthId]) monthlyDays[monthId] = {};
@@ -354,29 +491,36 @@ async function migrateLegacyPricesIfNeeded(db, todayISO) {
     }
     await batch.commit();
   }
-  await summaryRef.set({ prices: summaryPrices, lastUpdated: nowIso });
+  const shardBatch = db.batch();
+  for (let i = 0; i < SUMMARY_SHARD_COUNT; i++) {
+    shardBatch.set(shardRefs[i], { prices: shardMaps[i], lastUpdated: nowIso });
+  }
+  await shardBatch.commit();
 
   console.log(
-    `Migrated legacy prices_history -> prices_summary + ${monthEntries.length} monthly docs (${migratedEntries} entries).`
+    `Migrated legacy prices_history -> ${SUMMARY_SHARD_COUNT} compact shards + ${monthEntries.length} monthly docs (${migratedEntries} entries).`
   );
   return true;
 }
 
 async function writeToFirestore(db, fetchedPrices, todayISO) {
-  const summaryRef = db.collection('fishao_market').doc('prices_summary');
+  const shardRefs = Array.from({ length: SUMMARY_SHARD_COUNT }, (_, i) =>
+    db.collection('fishao_market').doc(getShardDocId(i))
+  );
   const monthId = todayISO.slice(0, 7);
   const dailyRef = db.collection('fishao_market_daily').doc(monthId);
 
   const txResult = await db.runTransaction(async (tx) => {
-    const [summarySnap, dailySnap] = await Promise.all([
-      tx.get(summaryRef),
+    const snaps = await Promise.all([
+      ...shardRefs.map((ref) => tx.get(ref)),
       tx.get(dailyRef)
     ]);
+    const shardSnaps = snaps.slice(0, SUMMARY_SHARD_COUNT);
+    const dailySnap = snaps[SUMMARY_SHARD_COUNT];
 
-    const summaryData = summarySnap.exists ? summarySnap.data() : {};
-    const summaryPrices = (summaryData?.prices && typeof summaryData.prices === 'object')
-      ? { ...summaryData.prices }
-      : {};
+    const shardMaps = shardSnaps.map((s) =>
+      compactShardMap(s.exists ? s.data()?.prices : {})
+    );
 
     const dailyData = dailySnap.exists ? dailySnap.data() : {};
     const days = (dailyData?.days && typeof dailyData.days === 'object')
@@ -389,6 +533,7 @@ async function writeToFirestore(db, fetchedPrices, todayISO) {
     let txAdded = 0;
     let txDupes = 0;
     const txSample = [];
+    const shardDirty = new Array(SUMMARY_SHARD_COUNT).fill(false);
 
     for (const { id, price } of fetchedPrices) {
       const key = String(id);
@@ -399,24 +544,34 @@ async function writeToFirestore(db, fetchedPrices, todayISO) {
         continue;
       }
 
+      const sIdx = getShardIndex(key);
       dayList.push(price);
       dayBucket[key] = encodeDayEntryList(dayList);
-      applyPriceToSummary(summaryPrices, key, todayISO, price, todayISO);
+      applyPriceToSummary(shardMaps[sIdx], key, todayISO, price, todayISO);
+      shardDirty[sIdx] = true;
       txAdded++;
       if (txSample.length < 15) {
         txSample.push({ id, price });
       }
     }
 
-    let finalLastUpdated = (typeof summaryData?.lastUpdated === 'string') ? summaryData.lastUpdated : '';
+    let finalLastUpdated = shardSnaps.reduce((latest, s) => {
+      const lu = s.exists && typeof s.data()?.lastUpdated === 'string' ? s.data().lastUpdated : '';
+      return lu > latest ? lu : latest;
+    }, '');
+
     if (txAdded > 0) {
       const nowIso = new Date().toISOString();
       finalLastUpdated = nowIso;
       days[todayISO] = dayBucket;
-      tx.set(summaryRef, {
-        prices: summaryPrices,
-        lastUpdated: nowIso
-      });
+      for (let i = 0; i < SUMMARY_SHARD_COUNT; i++) {
+        if (shardDirty[i] || !shardSnaps[i].exists) {
+          tx.set(shardRefs[i], {
+            prices: shardMaps[i],
+            lastUpdated: nowIso
+          });
+        }
+      }
       tx.set(dailyRef, {
         days,
         lastUpdated: nowIso
@@ -427,12 +582,12 @@ async function writeToFirestore(db, fetchedPrices, todayISO) {
       addedCount: txAdded,
       duplicateCount: txDupes,
       addedSample: txSample,
-      summaryPrices,
+      shardMaps,
       lastUpdated: finalLastUpdated
     };
   });
 
-  const summaryMetrics = measureSummaryDocument(txResult.summaryPrices, txResult.lastUpdated);
+  const summaryMetrics = measureShardedSummaries(txResult.shardMaps, txResult.lastUpdated);
   return {
     addedCount: txResult.addedCount,
     duplicateCount: txResult.duplicateCount,
@@ -459,7 +614,7 @@ async function main() {
   if (args.migrateOnly) {
     const db = await initFirestore();
     const migrated = await migrateLegacyPricesIfNeeded(db, todayISO);
-    console.log(migrated ? 'Migration complete.' : 'Nothing to migrate (prices_summary already exists or legacy missing).');
+    console.log(migrated ? 'Migration complete.' : 'Nothing to migrate (sharded prices_summary_0..3 already exists or legacy missing).');
     return;
   }
 
@@ -551,18 +706,19 @@ async function main() {
       summaryMetrics
     });
   }
-  const fsKb = (summaryMetrics.firestoreBytes / 1024).toFixed(1);
+  const maxFsKb = (summaryMetrics.maxShardBytes / 1024).toFixed(1);
+  const totalFsKb = (summaryMetrics.firestoreBytes / 1024).toFixed(1);
   const jsonKb = (summaryMetrics.jsonBytes / 1024).toFixed(1);
   console.log(
     `Firestore sync complete: ${addedCount} new price entries added, ` +
     `${duplicateCount} same-day duplicates skipped. ` +
-    `prices_summary size: ${fsKb} KB / 1024 KB (${summaryMetrics.limitPct}% Firestore est., ` +
-    `${jsonKb} KB JSON, ${summaryMetrics.uniquePrices} unique prices across ${summaryMetrics.fishCount} fish).`
+    `Max shard size: ${maxFsKb} KB / 1024 KB (${summaryMetrics.limitPct}% est., ` +
+    `total ${totalFsKb} KB across ${SUMMARY_SHARD_COUNT} shards, ${jsonKb} KB JSON, ` +
+    `${summaryMetrics.uniquePrices} unique prices across ${summaryMetrics.fishCount} fish).`
   );
   if (summaryMetrics.isNearLimit) {
     console.warn(
-      `::warning::fishao_market/prices_summary reached ${fsKb} KB (${summaryMetrics.limitPct}% of 1 MiB limit). ` +
-      `Consider compacting entries or sharding summaries from fishao_market_daily.`
+      `::warning::Max prices_summary shard reached ${maxFsKb} KB (${summaryMetrics.limitPct}% of 1 MiB limit).`
     );
   }
 
@@ -579,14 +735,15 @@ async function main() {
     `| **New prices added** | **${addedCount}** |`,
     `| Same-day duplicates skipped | ${duplicateCount} |`,
     `| Unique prices in summary | ${summaryMetrics.uniquePrices} (${summaryMetrics.fishCount} fish) |`,
-    `| \`prices_summary\` size (est.) | ${fsKb} KB / 1,024 KB (${summaryMetrics.limitPct}%) |`
+    `| Max \`prices_summary_*\` shard (est.) | ${maxFsKb} KB / 1,024 KB (${summaryMetrics.limitPct}%) |`,
+    `| Total summary across ${SUMMARY_SHARD_COUNT} shards | ${totalFsKb} KB (JSON: ${jsonKb} KB) |`
   ];
 
   if (summaryMetrics.isNearLimit) {
     summaryLines.push(
       '',
       '> [!WARNING]',
-      `> \`fishao_market/prices_summary\` reached **${fsKb} KB (${summaryMetrics.limitPct}%)** of Firestore's 1 MiB document limit (JSON: ${jsonKb} KB). Time to switch to compact strings or sharded summary docs using \`fishao_market_daily\`.`
+      `> Largest \`fishao_market/prices_summary_*\` shard reached **${maxFsKb} KB (${summaryMetrics.limitPct}%)** of Firestore's 1 MiB document limit.`
     );
   }
 

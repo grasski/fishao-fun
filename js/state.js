@@ -9,13 +9,51 @@
 var firebaseConfig = window.FISHAO_FIREBASE_CONFIG || {};
 var isFirebaseConfigured = typeof window.isFirebaseConfigured === 'function' ? window.isFirebaseConfigured() : false;
 
+function safeStorageGet(key) {
+  try {
+    return typeof localStorage !== 'undefined' ? localStorage.getItem(key) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function safeStorageSet(key, value) {
+  try {
+    if (typeof localStorage !== 'undefined') localStorage.setItem(key, value);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function safeStorageRemove(key) {
+  try {
+    if (typeof localStorage !== 'undefined') localStorage.removeItem(key);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 // Fish & Market Data
 var allFishes = (window.FISHAO_DATA && window.FISHAO_DATA.allFishes) || [];
+var _fishNamesLookup = (typeof window !== 'undefined' && window.FISHAO_I18N_FISH_NAMES) ? window.FISHAO_I18N_FISH_NAMES : {};
 var fishById = new Map();
 allFishes.forEach(function (f) {
-  if (f && f.id !== undefined) {
-    fishById.set(Number(f.id), f);
+  if (!f || f.id === undefined) return;
+  if (!f.name) {
+    var fn = _fishNamesLookup[f.id];
+    f.name = (fn && fn.cs) ? fn.cs : ('Fish #' + f.id);
   }
+  f.is_club = !!f.is_club;
+  if (typeof f.rarity_factor !== 'number') f.rarity_factor = 1;
+  if (!Array.isArray(f.locations)) f.locations = [];
+  if (!Array.isArray(f.places)) f.places = [];
+  if (!Array.isArray(f.baits)) f.baits = [];
+  if (!Array.isArray(f.raw_times)) f.raw_times = [];
+  if (!Array.isArray(f.raw_dates)) f.raw_dates = [];
+  f.is_night = !!f.is_night;
+  fishById.set(Number(f.id), f);
 });
 
 function getFishById(fid) {
@@ -110,6 +148,11 @@ function getFishLocationLabels(fish) {
 // View & Navigation State
 var currentView = "all";
 var selectedModalFishId = null;
+var _tableViewDirty = false;
+
+function isTableViewActive() {
+  return currentView === "all" || currentView === "market" || currentView === "club";
+}
 
 // Club State
 var currentClubId = "";
@@ -154,7 +197,9 @@ var isAdmin = false;
 var db = null;
 var auth = null;
 var firebaseDocRef = null;         // Legacy /fishao_market/prices_history fallback
-var firebaseSummaryDocRef = null;  // Primary /fishao_market/prices_summary
+var firebaseSummaryDocRef = null;  // Legacy /fishao_market/prices_summary fallback
+var firebaseSummaryShardRefs = []; // Sharded /fishao_market/prices_summary_0..3
+var isShardedMarketSummary = false;
 var estimatedPricesDocRef = null;
 var marketConfigDocRef = null;
 var firebaseApp = null;
@@ -162,7 +207,8 @@ var firebaseApp = null;
 // Remote feature flag (/fishao_market/config -> manualImportEnabled)
 var manualImportEnabled = false;
 
-// Market price summary, derived display map, and monthly daily cache
+// Market price summary (compact + sharded), derived display map, and monthly daily cache
+var MARKET_SUMMARY_SHARD_COUNT = 4;
 var priceSummary = {};
 var priceHistory = {};
 var dailyMonthsCache = new Map();
@@ -170,6 +216,105 @@ var _priceDataVersion = 0;
 
 function bumpPriceDataVersion() {
   _priceDataVersion++;
+}
+
+function getMarketSummaryShardIndex(fidKey) {
+  var n = parseInt(fidKey, 10);
+  return (isFinite(n) && n >= 0) ? (n % MARKET_SUMMARY_SHARD_COUNT) : 0;
+}
+
+function getMarketSummaryShardDocId(shardIdx) {
+  return "prices_summary_" + shardIdx;
+}
+
+function packSummaryDate(isoDate) {
+  if (typeof isoDate !== "string") return "";
+  var s = isoDate.trim();
+  if (/^20\d{2}-\d{2}-\d{2}$/.test(s)) {
+    return s.slice(2, 4) + s.slice(5, 7) + s.slice(8, 10);
+  }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+    return s.slice(0, 4) + s.slice(5, 7) + s.slice(8, 10);
+  }
+  return s;
+}
+
+function unpackSummaryDate(packed) {
+  if (typeof packed !== "string") return "";
+  if (packed.length === 6 && /^\d{6}$/.test(packed)) {
+    return "20" + packed.slice(0, 2) + "-" + packed.slice(2, 4) + "-" + packed.slice(4, 6);
+  }
+  if (packed.length === 8 && /^\d{8}$/.test(packed)) {
+    return packed.slice(0, 4) + "-" + packed.slice(4, 6) + "-" + packed.slice(6, 8);
+  }
+  return packed;
+}
+
+function decodeFishSummaryEntry(fishSum) {
+  var byPrice = {};
+  if (!fishSum || typeof fishSum !== "object") {
+    return { byPrice: byPrice, td: "", t: [] };
+  }
+  if (typeof fishSum.p === "string" && fishSum.p) {
+    var tokens = fishSum.p.split("|");
+    for (var i = 0; i < tokens.length; i++) {
+      var tok = tokens[i];
+      if (!tok) continue;
+      var parts = tok.split(":");
+      var priceNum = Number(parts[0]);
+      var lastDate = parts[1] ? unpackSummaryDate(parts[1]) : "";
+      var countNum = parts[2] ? Math.max(1, parseInt(parts[2], 10) || 1) : 1;
+      if (!isFinite(priceNum) || priceNum <= 0 || !lastDate) continue;
+      byPrice[String(priceNum)] = { l: lastDate, c: countNum };
+    }
+  } else if (fishSum.byPrice && typeof fishSum.byPrice === "object") {
+    Object.keys(fishSum.byPrice).forEach(function (pStr) {
+      var priceNum = Number(pStr);
+      var info = fishSum.byPrice[pStr];
+      if (!isFinite(priceNum) || priceNum <= 0 || !info || typeof info !== "object" || !info.l) return;
+      byPrice[String(priceNum)] = {
+        l: String(info.l),
+        c: Math.max(1, parseInt(info.c, 10) || 1)
+      };
+    });
+  }
+  var td = typeof fishSum.td === "string" ? fishSum.td : "";
+  var tArr = Array.isArray(fishSum.t)
+    ? fishSum.t.map(Number).filter(function (n) { return isFinite(n) && n > 0; })
+    : [];
+  return { byPrice: byPrice, td: td, t: tArr };
+}
+
+function encodeFishSummaryEntry(entry) {
+  if (!entry || typeof entry !== "object") return null;
+  var dec = (typeof entry.p === "string" && !entry.byPrice) ? decodeFishSummaryEntry(entry) : entry;
+  var byPrice = dec.byPrice || {};
+  var keys = Object.keys(byPrice).sort(function (a, b) { return Number(a) - Number(b); });
+  var tokens = [];
+  for (var i = 0; i < keys.length; i++) {
+    var pKey = keys[i];
+    var info = byPrice[pKey];
+    if (!info || !info.l) continue;
+    var cNum = Math.max(1, parseInt(info.c, 10) || 1);
+    tokens.push(pKey + ":" + packSummaryDate(info.l) + (cNum > 1 ? (":" + cNum) : ""));
+  }
+  if (tokens.length === 0) return null;
+  var out = { p: tokens.join("|") };
+  if (dec.td && Array.isArray(dec.t) && dec.t.length > 0) {
+    out.td = dec.td;
+    out.t = dec.t.slice();
+  }
+  return out;
+}
+
+function compactSummaryMap(summaryMap) {
+  var src = (summaryMap && typeof summaryMap === "object") ? summaryMap : {};
+  var out = {};
+  Object.keys(src).forEach(function (fidKey) {
+    var enc = encodeFishSummaryEntry(src[fidKey]);
+    if (enc) out[fidKey] = enc;
+  });
+  return out;
 }
 
 function legacyHistoryToSummaryMap(legacyMap, refTodayISO) {
@@ -209,13 +354,12 @@ function legacyHistoryToSummaryMap(legacyMap, refTodayISO) {
       }
     });
 
-    if (Object.keys(byPrice).length > 0) {
-      out[fidKey] = {
-        byPrice: byPrice,
-        td: todayPrices.length > 0 ? todayStr : "",
-        t: todayPrices
-      };
-    }
+    var encoded = encodeFishSummaryEntry({
+      byPrice: byPrice,
+      td: todayPrices.length > 0 ? todayStr : "",
+      t: todayPrices
+    });
+    if (encoded) out[fidKey] = encoded;
   });
 
   return out;
@@ -227,26 +371,22 @@ function summaryMapToPriceHistory(summaryMap) {
   var todayStr = getTodayISO();
 
   Object.keys(src).forEach(function (fidKey) {
-    var fishSum = src[fidKey];
-    if (!fishSum || typeof fishSum !== "object") return;
-    var byPrice = (fishSum.byPrice && typeof fishSum.byPrice === "object") ? fishSum.byPrice : {};
+    var dec = decodeFishSummaryEntry(src[fidKey]);
+    var byPrice = dec.byPrice;
     var list = [];
     var seenPrices = Object.create(null);
 
     Object.keys(byPrice).forEach(function (pStr) {
       var priceNum = Number(pStr);
       var info = byPrice[pStr];
-      if (!isFinite(priceNum) || priceNum <= 0 || !info || typeof info !== "object") return;
-      var lastDate = typeof info.l === "string" ? info.l : "";
-      var countNum = Math.max(1, parseInt(info.c, 10) || 1);
-      if (!lastDate) return;
+      if (!isFinite(priceNum) || priceNum <= 0 || !info) return;
       seenPrices[pStr] = true;
-      list.push({ date: lastDate, price: priceNum, count: countNum });
+      list.push({ date: info.l, price: priceNum, count: info.c });
     });
 
     // Ensure today's prices appear with todayStr if td matches today
-    if (fishSum.td === todayStr && Array.isArray(fishSum.t)) {
-      fishSum.t.forEach(function (pVal) {
+    if (dec.td === todayStr && Array.isArray(dec.t)) {
+      dec.t.forEach(function (pVal) {
         var priceNum = Number(pVal);
         if (!isFinite(priceNum) || priceNum <= 0) return;
         var pStr = String(priceNum);
@@ -277,15 +417,15 @@ function summaryMapToPriceHistory(summaryMap) {
 }
 
 try {
-  var savedSummary = localStorage.getItem('fishao_price_summary_v2');
+  var savedSummary = safeStorageGet('fishao_price_summary_v2');
   if (savedSummary) {
     var parsedSum = JSON.parse(savedSummary);
     if (parsedSum && typeof parsedSum === "object") {
-      priceSummary = parsedSum;
+      priceSummary = compactSummaryMap(parsedSum);
       priceHistory = summaryMapToPriceHistory(priceSummary);
     }
   } else {
-    var savedLegacy = localStorage.getItem('fishao_price_history_v1');
+    var savedLegacy = safeStorageGet('fishao_price_history_v1');
     var legacyMap = savedLegacy ? JSON.parse(savedLegacy) : JSON.parse(JSON.stringify(initialPrices));
     priceSummary = legacyHistoryToSummaryMap(legacyMap);
     priceHistory = summaryMapToPriceHistory(priceSummary);
@@ -807,8 +947,20 @@ function isFishInSeasonOnUtcDate(rawDates, month, day) {
   return false;
 }
 
-function isFishInSeasonNow(rawDates) {
+function createTimeNowContext(dateObj) {
+  var d = dateObj || new Date();
+  return {
+    utcMonth: d.getUTCMonth() + 1,
+    utcDay: d.getUTCDate(),
+    utcMinutes: d.getUTCHours() * 60 + d.getUTCMinutes()
+  };
+}
+
+function isFishInSeasonNow(rawDates, nowCtx) {
   if (!rawDates || rawDates.length === 0) return true;
+  if (nowCtx && nowCtx.utcMonth && nowCtx.utcDay) {
+    return isFishInSeasonOnUtcDate(rawDates, nowCtx.utcMonth, nowCtx.utcDay);
+  }
   var now = new Date();
   return isFishInSeasonOnUtcDate(rawDates, now.getUTCMonth() + 1, now.getUTCDate());
 }
@@ -832,13 +984,18 @@ function isFishActiveAtLocalHour(rawTimes, testLocalHour) {
   return isFishActiveAtUTCHour(rawTimes, d.getUTCHours());
 }
 
-function isFishActiveNow(rawTimes, rawDates) {
-  if (rawDates && rawDates.length > 0 && !isFishInSeasonNow(rawDates)) {
+function isFishActiveNow(rawTimes, rawDates, nowCtx) {
+  if (rawDates && rawDates.length > 0 && !isFishInSeasonNow(rawDates, nowCtx)) {
     return false;
   }
   if (!rawTimes || rawTimes.length === 0) return true;
-  var now = new Date();
-  var curUtcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+  var curUtcMinutes;
+  if (nowCtx && typeof nowCtx.utcMinutes === 'number') {
+    curUtcMinutes = nowCtx.utcMinutes;
+  } else {
+    var now = new Date();
+    curUtcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+  }
   var ranges = parseTimeWindowsToMinutes(rawTimes);
   for (var i = 0; i < ranges.length; i++) {
     if (curUtcMinutes >= ranges[i][0] && curUtcMinutes <= ranges[i][1]) return true;
@@ -846,10 +1003,10 @@ function isFishActiveNow(rawTimes, rawDates) {
   return false;
 }
 
-function matchesFishTimeFilter(f, timeVal) {
+function matchesFishTimeFilter(f, timeVal, nowCtx) {
   if (!f) return false;
   if (!timeVal) return true;
-  if (timeVal === "now") return isFishActiveNow(f.raw_times, f.raw_dates);
+  if (timeVal === "now") return isFishActiveNow(f.raw_times, f.raw_dates, nowCtx);
   if (timeVal === "seasonal") return !!(f.raw_dates && f.raw_dates.length > 0);
   if (timeVal === "night") return !!f.is_night;
   if (timeVal === "day") return !f.is_night;
@@ -927,16 +1084,6 @@ function doNumericRangesOverlap(rangesA, rangesB, inclusive) {
     }
   }
   return false;
-}
-
-function doFishTimesOverlap(timesA, timesB) {
-  if (!timesA || timesA.length === 0 || !timesB || timesB.length === 0) return true;
-  return doNumericRangesOverlap(parseTimeWindowsToMinutes(timesA), parseTimeWindowsToMinutes(timesB), false);
-}
-
-function doFishDatesOverlap(datesA, datesB) {
-  if (!datesA || datesA.length === 0 || !datesB || datesB.length === 0) return true;
-  return doNumericRangesOverlap(parseDateWindowsToMMDD(datesA), parseDateWindowsToMMDD(datesB), true);
 }
 
 /**
@@ -1032,6 +1179,7 @@ function computeFishBaitRecommendations(fish, options) {
   var filterLoc = opts.filterLoc || '';
   var filterArea = opts.filterArea || '';
   var onlyUnlockedClub = Boolean(opts.onlyUnlockedClub);
+  var nowCtx = opts.nowCtx || (timeMode === 'now' ? createTimeNowContext() : null);
   var lang = getLang();
 
   var cacheKey = lang + '|' + timeMode + '|' + fish.id + '|' + filterLoc + '|' + filterArea;
@@ -1084,7 +1232,7 @@ function computeFishBaitRecommendations(fish, options) {
           if (!getUnlockStatus(other, currentClubPoints).isUnlocked) continue;
         }
         if (timeMode === 'now') {
-          if (!isFishActiveNow(other.raw_times, other.raw_dates)) continue;
+          if (!isFishActiveNow(other.raw_times, other.raw_dates, nowCtx)) continue;
         } else if (timeMode === 'overlap') {
           if (targetTimeRanges && other._timeRanges && !doNumericRangesOverlap(targetTimeRanges, other._timeRanges, false)) {
             continue;
@@ -1098,27 +1246,19 @@ function computeFishBaitRecommendations(fish, options) {
 
       var baitResults = targetBaits.map(function (baitCode) {
         var competitors = [];
-        for (var si = 0; si < spotFishes.length; si++) {
-          var cand = spotFishes[si];
-          if (cand._baitsSet ? cand._baitsSet.has(baitCode) : (Array.isArray(cand.baits) && cand.baits.indexOf(baitCode) !== -1)) {
-            competitors.push(cand);
-          }
-        }
-
-        competitors.sort(function (a, b) {
-          return (getFishSpawnWeight(b) - getFishSpawnWeight(a)) || (a.rating - b.rating);
-        });
-
         var commonCount = 0;
         var midCount = 0;
         var rareCount = 0;
         var competitorWeight = 0;
-        for (var i = 0; i < competitors.length; i++) {
-          var c = competitors[i];
-          if (c.rating <= 2) commonCount++;
-          else if (c.rating === 3) midCount++;
-          else rareCount++;
-          competitorWeight += getFishSpawnWeight(c);
+        for (var si = 0; si < spotFishes.length; si++) {
+          var cand = spotFishes[si];
+          if (cand._baitsSet ? cand._baitsSet.has(baitCode) : (Array.isArray(cand.baits) && cand.baits.indexOf(baitCode) !== -1)) {
+            competitors.push(cand);
+            if (cand.rating <= 2) commonCount++;
+            else if (cand.rating === 3) midCount++;
+            else rareCount++;
+            competitorWeight += getFishSpawnWeight(cand);
+          }
         }
 
         var competitorCount = competitors.length;
@@ -1132,6 +1272,7 @@ function computeFishBaitRecommendations(fish, options) {
         return {
           bait: baitCode,
           competitors: competitors,
+          _competitorsSorted: false,
           competitorCount: competitorCount,
           commonCount: commonCount,
           midCount: midCount,

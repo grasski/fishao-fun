@@ -158,43 +158,64 @@ async function initFirebaseSync() {
     auth = authModule.getAuth(firebaseApp);
     firebaseDocRef = firestoreModule.doc(db, "fishao_market", "prices_history");
     firebaseSummaryDocRef = firestoreModule.doc(db, "fishao_market", "prices_summary");
+    firebaseSummaryShardRefs = [0, 1, 2, 3].map(function (idx) {
+      return firestoreModule.doc(db, "fishao_market", "prices_summary_" + idx);
+    });
     estimatedPricesDocRef = firestoreModule.doc(db, "fishao_market", "estimated_prices");
     marketConfigDocRef = firestoreModule.doc(db, "fishao_market", "config");
     var syncStatusDocRef = firestoreModule.doc(db, "fishao_market", "sync_status");
 
     checkCookieConsentBanner();
-    if (localStorage.getItem("fishao_cookie_consent") === "granted") {
+    if (safeStorageGet("fishao_cookie_consent") === "granted") {
       initFirebaseAnalytics();
     }
 
+    var computePriceSummarySig = function (sumObj, lastUpdatedStr) {
+      if (typeof lastUpdatedStr === "string" && lastUpdatedStr && !manualImportEnabled) {
+        return "u:" + lastUpdatedStr + ":" + Object.keys(sumObj || {}).length;
+      }
+      var keys = Object.keys(sumObj || {});
+      var totalPrices = 0;
+      var latestDate = "";
+      for (var i = 0; i < keys.length; i++) {
+        var entry = sumObj[keys[i]];
+        if (!entry || typeof entry !== "object") continue;
+        if (typeof entry.p === "string") {
+          totalPrices += entry.p ? entry.p.split("|").length : 0;
+        } else if (entry.byPrice && typeof entry.byPrice === "object") {
+          var bpKeys = Object.keys(entry.byPrice);
+          totalPrices += bpKeys.length;
+          for (var j = 0; j < bpKeys.length; j++) {
+            var info = entry.byPrice[bpKeys[j]];
+            if (info && info.l && info.l > latestDate) latestDate = info.l;
+          }
+        }
+        if (Array.isArray(entry.t)) totalPrices += entry.t.length;
+      }
+      return keys.length + "|" + totalPrices + "|" + latestDate + "|" + (lastUpdatedStr || "");
+    };
+
     var hasHandledInitialAuth = false;
     var wasSignedIn = false;
-    var lastPriceSummaryJson = "";
-    try {
-      lastPriceSummaryJson = JSON.stringify(priceSummary || {});
-    } catch (e) {}
+    var lastPriceSummarySig = computePriceSummarySig(priceSummary || {}, "");
 
     var applySummarySnapshot = function (nextSummary, lastUpdatedStr) {
-      var safeSum = (nextSummary && typeof nextSummary === "object") ? nextSummary : {};
-      var nextJson = "";
-      try {
-        nextJson = JSON.stringify(safeSum);
-      } catch (e) {}
+      var safeSum = compactSummaryMap((nextSummary && typeof nextSummary === "object") ? nextSummary : {});
+      var nextSig = computePriceSummarySig(safeSum, lastUpdatedStr);
 
-      if (nextJson && nextJson === lastPriceSummaryJson) {
+      if (nextSig && nextSig === lastPriceSummarySig) {
         if (typeof lastUpdatedStr === "string") {
-          try {
-            localStorage.setItem('fishao_price_summary_meta_v2', JSON.stringify({
-              lastUpdated: lastUpdatedStr,
-              fetchedAt: Date.now()
-            }));
-          } catch (e) {}
+          safeStorageSet('fishao_price_summary_meta_v2', JSON.stringify({
+            lastUpdated: lastUpdatedStr,
+            fetchedAt: Date.now(),
+            sharded: !!isShardedMarketSummary
+          }));
         }
         return;
       }
 
       priceSummary = safeSum;
-      lastPriceSummaryJson = nextJson;
+      lastPriceSummarySig = nextSig;
       if (typeof saveLocalPriceSummary === "function") {
         saveLocalPriceSummary(typeof lastUpdatedStr === "string" ? lastUpdatedStr : "");
       } else {
@@ -206,13 +227,39 @@ async function initFirebaseSync() {
 
     var fetchSummaryOrLegacyOnce = async function () {
       try {
+        // 1. Primary: 4 compact summary shards (prices_summary_0..3) read in parallel
+        var shardSnaps = await Promise.all(firebaseSummaryShardRefs.map(function (ref) {
+          return firestoreModule.getDoc(ref);
+        }));
+        var hasShards = shardSnaps.some(function (s) { return s.exists(); });
+        if (hasShards) {
+          isShardedMarketSummary = true;
+          var mergedShards = {};
+          var maxLastUpdated = "";
+          shardSnaps.forEach(function (s) {
+            if (!s.exists()) return;
+            var d = s.data() || {};
+            if (d.lastUpdated && typeof d.lastUpdated === "string" && d.lastUpdated > maxLastUpdated) {
+              maxLastUpdated = d.lastUpdated;
+            }
+            if (d.prices && typeof d.prices === "object") {
+              Object.assign(mergedShards, d.prices);
+            }
+          });
+          applySummarySnapshot(mergedShards, maxLastUpdated);
+          return;
+        }
+
+        // 2. Fallback: single prices_summary document (pre-sharding)
+        isShardedMarketSummary = false;
         var sumSnap = await firestoreModule.getDoc(firebaseSummaryDocRef);
         if (sumSnap.exists()) {
           var sData = sumSnap.data() || {};
           applySummarySnapshot(sData.prices || {}, sData.lastUpdated || "");
           return;
         }
-        // Backward compatibility: fall back to legacy prices_history until migration runs
+
+        // 3. Legacy fallback: prices_history until migration runs
         var legSnap = await firestoreModule.getDoc(firebaseDocRef);
         if (legSnap.exists()) {
           var lData = legSnap.data() || {};
@@ -231,6 +278,64 @@ async function initFirebaseSync() {
       }
 
       if (enableRealtime) {
+        var useShards = isShardedMarketSummary;
+        if (!useShards) {
+          try {
+            var probeSnaps = await Promise.all(firebaseSummaryShardRefs.map(function (ref) {
+              return firestoreModule.getDoc(ref);
+            }));
+            useShards = probeSnaps.some(function (s) { return s.exists(); });
+            if (useShards) isShardedMarketSummary = true;
+          } catch (probeErr) {}
+        }
+
+        if (useShards) {
+          var shardMaps = [{}, {}, {}, {}];
+          var shardDates = ["", "", "", ""];
+          var shardReady = [false, false, false, false];
+          var mergeTimer = 0;
+
+          var flushMergedRealtime = function () {
+            mergeTimer = 0;
+            var combined = {};
+            var latestTs = "";
+            for (var si = 0; si < shardMaps.length; si++) {
+              Object.assign(combined, shardMaps[si]);
+              if (shardDates[si] && shardDates[si] > latestTs) latestTs = shardDates[si];
+            }
+            if (shardReady.every(Boolean)) {
+              applySummarySnapshot(combined, latestTs);
+            }
+          };
+
+          var unsubs = firebaseSummaryShardRefs.map(function (ref, idx) {
+            return firestoreModule.onSnapshot(ref, function (docSnap) {
+              shardReady[idx] = true;
+              if (docSnap.exists()) {
+                var cd = docSnap.data() || {};
+                shardMaps[idx] = (cd.prices && typeof cd.prices === "object") ? cd.prices : {};
+                shardDates[idx] = typeof cd.lastUpdated === "string" ? cd.lastUpdated : "";
+              } else {
+                shardMaps[idx] = {};
+                shardDates[idx] = "";
+              }
+              if (!mergeTimer) {
+                mergeTimer = setTimeout(flushMergedRealtime, 30);
+              }
+            }, function (error) {
+              console.warn("Firestore market shard realtime warning:", error);
+            });
+          });
+          marketPricesUnsubscribe = function () {
+            if (mergeTimer) {
+              clearTimeout(mergeTimer);
+              mergeTimer = 0;
+            }
+            unsubs.forEach(function (u) { try { u(); } catch (e) {} });
+          };
+          return;
+        }
+
         marketPricesUnsubscribe = firestoreModule.onSnapshot(firebaseSummaryDocRef, function (docSnap) {
           if (docSnap.exists()) {
             var cloudData = docSnap.data() || {};
@@ -244,29 +349,31 @@ async function initFirebaseSync() {
         return;
       }
 
-      // Auto-sync mode: check localStorage TTL + tiny sync_status before downloading prices_summary
+      // Auto-sync mode: check localStorage TTL + tiny sync_status before downloading summaries
       var SUMMARY_TTL_MS = 15 * 60 * 1000;
       var needsFetch = !priceSummary || Object.keys(priceSummary).length === 0;
       if (!needsFetch) {
         try {
-          var metaRaw = localStorage.getItem('fishao_price_summary_meta_v2');
+          var metaRaw = safeStorageGet('fishao_price_summary_meta_v2');
           var meta = metaRaw ? JSON.parse(metaRaw) : null;
-          var todayStr = getTodayISO();
-          var fetchedDay = (meta && meta.fetchedAt) ? new Date(meta.fetchedAt).toISOString().slice(0, 10) : "";
-          var isFreshTtl = !!(meta && meta.fetchedAt && (Date.now() - meta.fetchedAt) < SUMMARY_TTL_MS && fetchedDay === todayStr);
+          if (meta && typeof meta.sharded === "boolean") {
+            isShardedMarketSummary = meta.sharded;
+          }
+          var isFreshTtl = !!(meta && meta.fetchedAt && (Date.now() - meta.fetchedAt) < SUMMARY_TTL_MS);
 
           if (!isFreshTtl) {
             var statusSnap = await firestoreModule.getDoc(syncStatusDocRef);
             var statusData = statusSnap.exists() ? statusSnap.data() : null;
-            if (!statusData || !meta || !meta.lastUpdated || (statusData.lastSuccessAt && statusData.lastSuccessAt > meta.lastUpdated) || fetchedDay !== todayStr) {
+            if (statusData && statusData.summaryMode === "sharded_compact_v2" && !isShardedMarketSummary) {
+              needsFetch = true;
+            } else if (!statusData || !meta || !meta.lastUpdated || (statusData.lastSuccessAt && statusData.lastSuccessAt > meta.lastUpdated)) {
               needsFetch = true;
             } else {
-              try {
-                localStorage.setItem('fishao_price_summary_meta_v2', JSON.stringify({
-                  lastUpdated: meta.lastUpdated || "",
-                  fetchedAt: Date.now()
-                }));
-              } catch (e) {}
+              safeStorageSet('fishao_price_summary_meta_v2', JSON.stringify({
+                lastUpdated: meta.lastUpdated || "",
+                fetchedAt: Date.now(),
+                sharded: !!isShardedMarketSummary
+              }));
             }
           }
         } catch (e) {
@@ -347,34 +454,50 @@ async function initFirebaseSync() {
     // Estimated prices rarely change: use 6-hour localStorage TTL cache + one-time getDoc instead of onSnapshot
     (async function syncEstimatedPricesWithCache() {
       var EST_TTL_MS = 6 * 60 * 60 * 1000;
-      try {
-        var cachedEst = localStorage.getItem('fishao_estimated_prices_v1');
-        var cachedTs = parseInt(localStorage.getItem('fishao_estimated_prices_ts_v1') || '0', 10);
-        if (cachedEst && cachedTs && (Date.now() - cachedTs) < EST_TTL_MS) {
-          return;
-        }
-      } catch (e) {}
+      var cachedTs = parseInt(safeStorageGet('fishao_estimated_prices_ts_v1') || '0', 10);
+      if (cachedTs && (Date.now() - cachedTs) < EST_TTL_MS) {
+        return;
+      }
 
       try {
         var docSnap = await firestoreModule.getDoc(estimatedPricesDocRef);
         if (docSnap.exists()) {
           var estData = docSnap.data();
           if (estData && estData.prices && typeof estData.prices === "object" && Object.keys(estData.prices).length > 0) {
-            var nextEstimated = Object.assign({}, window.FISHAO_ESTIMATED_PRICES || {}, estData.prices);
-            var prevJson = "";
-            var nextJson = "";
-            try {
-              prevJson = JSON.stringify(estimatedPrices || {});
-              nextJson = JSON.stringify(nextEstimated);
-            } catch (e) {}
+            var baseEst = window.FISHAO_ESTIMATED_PRICES || {};
+            var nextEstimated = Object.assign({}, baseEst, estData.prices);
+            var hasDiff = Object.keys(nextEstimated).length !== Object.keys(estimatedPrices || {}).length;
+            if (!hasDiff) {
+              var kList = Object.keys(nextEstimated);
+              for (var ei = 0; ei < kList.length; ei++) {
+                var ek = kList[ei];
+                var a = nextEstimated[ek];
+                var b = estimatedPrices ? estimatedPrices[ek] : null;
+                if (!b || a.min !== b.min || a.max !== b.max) {
+                  hasDiff = true;
+                  break;
+                }
+              }
+            }
 
             estimatedPrices = nextEstimated;
-            try {
-              localStorage.setItem('fishao_estimated_prices_v1', nextJson || JSON.stringify(estimatedPrices));
-              localStorage.setItem('fishao_estimated_prices_ts_v1', String(Date.now()));
-            } catch (e) {}
+            var matchesStatic = Object.keys(nextEstimated).length === Object.keys(baseEst).length &&
+              Object.keys(nextEstimated).every(function (ek) {
+                var a = nextEstimated[ek];
+                var b = baseEst[ek];
+                return b && a && a.min === b.min && a.max === b.max;
+              });
 
-            if (!prevJson || nextJson !== prevJson) {
+            if (matchesStatic) {
+              safeStorageRemove('fishao_estimated_prices_v1');
+            } else {
+              try {
+                safeStorageSet('fishao_estimated_prices_v1', JSON.stringify(estimatedPrices));
+              } catch (e) {}
+            }
+            safeStorageSet('fishao_estimated_prices_ts_v1', String(Date.now()));
+
+            if (hasDiff) {
               scheduleViewRefresh({ filters: true, modal: true });
             }
           }
@@ -384,26 +507,65 @@ async function initFirebaseSync() {
       }
     })();
 
-    var hasBoundMarketMode = false;
-    var prevRealtimeFlag = null;
-    firestoreModule.onSnapshot(marketConfigDocRef, function (docSnap) {
-      var data = docSnap.exists() ? docSnap.data() : null;
-      manualImportEnabled = !!(data && data.manualImportEnabled === true);
+    // Resolve market config without blocking initial sync_status / prices_summary fetch (cached TTL + parallel check)
+    (async function syncMarketConfigAndPrices() {
+      var CONFIG_CACHE_KEY = 'fishao_market_config_v1';
+      var CONFIG_TTL_MS = 5 * 60 * 1000;
+      var cachedCfg = null;
+      try {
+        var rawCfg = safeStorageGet(CONFIG_CACHE_KEY);
+        if (rawCfg) cachedCfg = JSON.parse(rawCfg);
+      } catch (e) {}
+
+      var initialManualFlag = !!(cachedCfg && cachedCfg.manualImportEnabled === true);
+      manualImportEnabled = initialManualFlag;
       if (typeof syncManualImportVisibility === "function") {
         syncManualImportVisibility();
       }
-      if (!hasBoundMarketMode || prevRealtimeFlag !== manualImportEnabled) {
-        hasBoundMarketMode = true;
-        prevRealtimeFlag = manualImportEnabled;
-        syncMarketPricesMode(manualImportEnabled);
+
+      var hasFreshCfgCache = !!(cachedCfg && cachedCfg.ts && (Date.now() - cachedCfg.ts) < CONFIG_TTL_MS && !initialManualFlag);
+      // Kick off market sync immediately using cached flag (avoids waiting on config roundtrip)
+      syncMarketPricesMode(initialManualFlag);
+
+      if (hasFreshCfgCache) return;
+
+      var bindConfigRealtime = function () {
+        firestoreModule.onSnapshot(marketConfigDocRef, function (docSnap) {
+          var d = docSnap.exists() ? docSnap.data() : null;
+          var nextFlag = !!(d && d.manualImportEnabled === true);
+          safeStorageSet(CONFIG_CACHE_KEY, JSON.stringify({ manualImportEnabled: nextFlag, ts: Date.now() }));
+          if (nextFlag !== manualImportEnabled) {
+            manualImportEnabled = nextFlag;
+            if (typeof syncManualImportVisibility === "function") syncManualImportVisibility();
+            syncMarketPricesMode(nextFlag);
+          }
+        }, function (error) {
+          console.warn("Firestore market config warning:", error);
+        });
+      };
+
+      if (initialManualFlag) {
+        bindConfigRealtime();
+        return;
       }
-    }, function (error) {
-      console.warn("Firestore market config warning:", error);
-      if (!hasBoundMarketMode) {
-        hasBoundMarketMode = true;
-        syncMarketPricesMode(false);
+
+      try {
+        var cfgSnap = await firestoreModule.getDoc(marketConfigDocRef);
+        var cfgData = cfgSnap.exists() ? cfgSnap.data() : null;
+        var liveFlag = !!(cfgData && cfgData.manualImportEnabled === true);
+        safeStorageSet(CONFIG_CACHE_KEY, JSON.stringify({ manualImportEnabled: liveFlag, ts: Date.now() }));
+        if (liveFlag !== manualImportEnabled) {
+          manualImportEnabled = liveFlag;
+          if (typeof syncManualImportVisibility === "function") syncManualImportVisibility();
+          syncMarketPricesMode(liveFlag);
+        }
+        if (liveFlag) {
+          bindConfigRealtime();
+        }
+      } catch (error) {
+        console.warn("Firestore market config warning:", error);
       }
-    });
+    })();
 
   } catch (err) {
     console.error("Firebase initialization failed:", err);
@@ -418,7 +580,7 @@ async function initFirebaseSync() {
  */
 async function initFirebaseAnalytics() {
   if (firebaseAnalytics) return firebaseAnalytics;
-  var consent = localStorage.getItem("fishao_cookie_consent");
+  var consent = safeStorageGet("fishao_cookie_consent");
   if (consent !== "granted") {
     console.log("[FISHAO Analytics] Waiting for consent (status: " + consent + ")");
     return null;
@@ -463,7 +625,7 @@ function logAnalyticsEvent(eventName, eventParams) {
 }
 
 function checkCookieConsentBanner() {
-  var consent = localStorage.getItem("fishao_cookie_consent");
+  var consent = safeStorageGet("fishao_cookie_consent");
   var banner = document.getElementById("cookieConsentBanner");
   if (!banner) return;
 
@@ -475,7 +637,7 @@ function checkCookieConsentBanner() {
 }
 
 function acceptCookieConsent(fromPrivacyModal) {
-  localStorage.setItem("fishao_cookie_consent", "granted");
+  safeStorageSet("fishao_cookie_consent", "granted");
   var banner = document.getElementById("cookieConsentBanner");
   if (banner) banner.style.display = "none";
 
@@ -489,7 +651,7 @@ function acceptCookieConsent(fromPrivacyModal) {
 }
 
 function declineCookieConsent(fromPrivacyModal) {
-  localStorage.setItem("fishao_cookie_consent", "denied");
+  safeStorageSet("fishao_cookie_consent", "denied");
   var banner = document.getElementById("cookieConsentBanner");
   if (banner) banner.style.display = "none";
 
@@ -533,7 +695,7 @@ function updatePrivacyConsentStatusUI() {
   var btnDecline = document.getElementById("privacyBtnDecline");
   if (!badge) return;
 
-  var consent = localStorage.getItem("fishao_cookie_consent");
+  var consent = safeStorageGet("fishao_cookie_consent");
   if (consent === "granted") {
     badge.textContent = t("cookie_status_granted");
     badge.style.background = "rgba(16, 185, 129, 0.2)";
@@ -574,9 +736,9 @@ async function signIn() {
     }
     console.error("Sign-in error:", err);
     if (err.code === 'auth/unauthorized-domain') {
-      alert(t('auth_unauth_domain', { domain: window.location.hostname }));
+      showToast(t('auth_unauth_domain', { domain: window.location.hostname }), "error");
     } else {
-      alert(t('auth_signin_failed', { msg: err.message }));
+      showToast(t('auth_signin_failed', { msg: err.message }), "error");
     }
   }
 }
@@ -608,6 +770,8 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
     }
 
     var handledFirstSnapshot = false;
+    var isBootstrappingNewUser = false;
+    var userDocExists = false;
     var lastAppliedProfileSig = "";
     var activeBoundClubId = cachedClubId || "";
     var legacyMigrationDone = false;
@@ -639,7 +803,7 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
         syncRemindersFromProfile({ reminders: privData.reminders });
       }
 
-      if (!privSnap.exists() && userProfile) {
+      if (!privSnap.exists() && !isBootstrappingNewUser && handledFirstSnapshot && userDocExists && userProfile) {
         try {
           await fsModule.setDoc(privDocRef, {
             friendUids: Array.from(friendUids || []),
@@ -667,6 +831,7 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
       handledFirstSnapshot = true;
 
       var isNewUser = !snap.exists();
+      userDocExists = snap.exists();
       var oldClubId = userProfile ? userProfile.clubId : activeBoundClubId;
 
       if (snap.exists()) {
@@ -700,34 +865,38 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
 
         // Throttle lastLogin write (onto private settings) to once every 15 minutes
         if (isFirst) {
-          try {
-            var loginSyncKey = 'fishao_last_login_sync_' + user.uid;
-            var lastSync = parseInt(localStorage.getItem(loginSyncKey) || '0', 10);
-            if (!lastSync || (Date.now() - lastSync) > 15 * 60 * 1000) {
-              localStorage.setItem(loginSyncKey, String(Date.now()));
-              savePrivateUserSettings({ lastLogin: new Date().toISOString() }).catch(function () {});
-            }
-          } catch (e) {}
+          var loginSyncKey = 'fishao_last_login_sync_' + user.uid;
+          var lastSync = parseInt(safeStorageGet(loginSyncKey) || '0', 10);
+          if (!lastSync || (Date.now() - lastSync) > 15 * 60 * 1000) {
+            safeStorageSet(loginSyncKey, String(Date.now()));
+            savePrivateUserSettings({ lastLogin: new Date().toISOString() }).catch(function () {});
+          }
         }
       } else {
         // Privacy / GDPR: zero PII on public profile (NO email, NO avatar photo from OAuth)
-        var defaultNick = t('user_default_player') + " #" + Math.floor(1000 + Math.random() * 9000);
-        userProfile = {
-          displayName: defaultNick,
-          role: "member",
-          clubId: "",
-          clubName: "",
-          caughtFishIds: Array.from(caughtFishIds),
-          backyardFishIds: Array.from(backyardFishIds),
-          createdAt: new Date().toISOString()
-        };
-        await fsModule.setDoc(userDocRef, userProfile);
-        await fsModule.setDoc(privDocRef, {
-          friendUids: Array.from(friendUids || []),
-          reminders: (typeof userReminders !== 'undefined' && Array.isArray(userReminders)) ? userReminders : [],
-          lastLogin: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }, { merge: true });
+        isBootstrappingNewUser = true;
+        try {
+          var defaultNick = t('user_default_player') + " #" + Math.floor(1000 + Math.random() * 9000);
+          userProfile = {
+            displayName: defaultNick,
+            role: "member",
+            clubId: "",
+            clubName: "",
+            caughtFishIds: Array.from(caughtFishIds),
+            backyardFishIds: Array.from(backyardFishIds),
+            createdAt: new Date().toISOString()
+          };
+          await fsModule.setDoc(userDocRef, userProfile);
+          userDocExists = true;
+          await fsModule.setDoc(privDocRef, {
+            friendUids: Array.from(friendUids || []),
+            reminders: (typeof userReminders !== 'undefined' && Array.isArray(userReminders)) ? userReminders : [],
+            lastLogin: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+        } finally {
+          isBootstrappingNewUser = false;
+        }
       }
 
       isAdmin = (userProfile.role === "admin");
@@ -779,8 +948,8 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
           userProfile.displayName.startsWith("Wędkarz #") ||
           userProfile.displayName.startsWith("Player #")
         );
-        if (isNewUser || (hasDefaultNick && localStorage.getItem(nickStorageKey) !== '1')) {
-          localStorage.setItem(nickStorageKey, '1');
+        if (isNewUser || (hasDefaultNick && safeStorageGet(nickStorageKey) !== '1')) {
+          safeStorageSet(nickStorageKey, '1');
           setTimeout(function () {
             openProfileModal();
             var nickInput = document.getElementById("inputProfileNickname");
@@ -864,7 +1033,10 @@ function updateAuthUI() {
       }
       if (avatarBadge) avatarBadge.style.display = "none";
     } else {
-      if (avatarImg) avatarImg.style.display = "none";
+      if (avatarImg) {
+        avatarImg.removeAttribute("src");
+        avatarImg.style.display = "none";
+      }
       if (avatarBadge) {
         avatarBadge.innerText = /^https?:\/\//i.test(uAv) ? "🎣" : (uAv || "🎣");
         avatarBadge.style.display = "flex";
@@ -1071,6 +1243,21 @@ async function saveProfile() {
     if (userProfile) {
       userProfile.displayName = newNick;
       userProfile.avatarUrl = finalAvatar;
+      saveProfileToCache(currentUser.uid, userProfile);
+    }
+
+    if (typeof allPlayersList !== "undefined" && Array.isArray(allPlayersList)) {
+      var meEntry = allPlayersList.find(function (p) { return p.uid === currentUser.uid; });
+      if (meEntry) {
+        meEntry.displayName = newNick;
+        meEntry.avatarUrl = finalAvatar;
+        if (typeof savePlayersSessionCache === "function" && typeof lastPlayersFetchTime !== "undefined") {
+          savePlayersSessionCache(lastPlayersFetchTime);
+        }
+        if (currentView === "players" && typeof renderPlayersList === "function") {
+          renderPlayersList();
+        }
+      }
     }
 
     if (currentClubId) {
@@ -1085,9 +1272,7 @@ async function saveProfile() {
       }
     }
 
-    try {
-      localStorage.setItem('fishao_nick_prompted_' + currentUser.uid, '1');
-    } catch (e) {}
+    safeStorageSet('fishao_nick_prompted_' + currentUser.uid, '1');
 
     closeProfileModal();
     updateAuthUI();
@@ -1174,13 +1359,14 @@ async function deleteAccount() {
 
     // 4. Clear local storage, profile cache, and session caches
     clearProfileCache();
+    safeStorageRemove('fishao_caught_fish_ids');
+    safeStorageRemove('fishao_backyard_fish_ids');
+    safeStorageRemove('fishao_friends_uids');
+    safeStorageRemove('fishao_reminders_v1');
+    safeStorageRemove('fishao_nick_prompted_' + uid);
+    safeStorageRemove('fishao_last_login_sync_' + uid);
+    safeStorageRemove('fishao_players_cache_v1');
     try {
-      localStorage.removeItem('fishao_caught_fish_ids');
-      localStorage.removeItem('fishao_backyard_fish_ids');
-      localStorage.removeItem('fishao_friends_uids');
-      localStorage.removeItem('fishao_reminders_v1');
-      localStorage.removeItem('fishao_nick_prompted_' + uid);
-      localStorage.removeItem('fishao_last_login_sync_' + uid);
       sessionStorage.removeItem('fishao_players_cache_v1');
     } catch (e) {}
 
@@ -1248,17 +1434,22 @@ async function exportFirestoreBackup() {
       }
     };
     var marketDocs = await Promise.all([
+      readOptDoc("prices_summary_0"),
+      readOptDoc("prices_summary_1"),
+      readOptDoc("prices_summary_2"),
+      readOptDoc("prices_summary_3"),
       readOptDoc("prices_summary"),
       readOptDoc("prices_history"),
       readOptDoc("estimated_prices"),
       readOptDoc("config"),
       readOptDoc("sync_status")
     ]);
-    var summaryData = marketDocs[0];
-    var legacyMarketData = marketDocs[1];
-    var estData = marketDocs[2];
-    var configData = marketDocs[3];
-    var syncStatusData = marketDocs[4];
+    var shardDocs = marketDocs.slice(0, 4);
+    var summaryData = marketDocs[4];
+    var legacyMarketData = marketDocs[5];
+    var estData = marketDocs[6];
+    var configData = marketDocs[7];
+    var syncStatusData = marketDocs[8];
 
     // Fetch monthly daily archives (/fishao_market_daily)
     var dailySnap = await firestoreModule.getDocs(firestoreModule.collection(db, "fishao_market_daily"));
@@ -1281,19 +1472,30 @@ async function exportFirestoreBackup() {
       usersList.push(Object.assign({ id: doc.id }, doc.data()));
     });
 
+    var shardedFishCount = shardDocs.reduce(function (acc, s) {
+      return acc + ((s && s.prices) ? Object.keys(s.prices).length : 0);
+    }, 0);
+    var summaryFishCount = shardedFishCount > 0
+      ? shardedFishCount
+      : ((summaryData && summaryData.prices) ? Object.keys(summaryData.prices).length : 0);
+
     // Compile backup payload
     var backupData = {
       app: "FISHAO Tracker",
-      version: "2.0",
+      version: "2.1",
       exportedAt: new Date().toISOString(),
       stats: {
         usersCount: usersList.length,
         clubsCount: clubsList.length,
-        marketSummaryFishCount: (summaryData && summaryData.prices) ? Object.keys(summaryData.prices).length : 0,
+        marketSummaryFishCount: summaryFishCount,
         dailyMonthsCount: Object.keys(dailyArchive).length
       },
       collections: {
         fishao_market: {
+          prices_summary_0: shardDocs[0],
+          prices_summary_1: shardDocs[1],
+          prices_summary_2: shardDocs[2],
+          prices_summary_3: shardDocs[3],
           prices_summary: summaryData,
           prices_history: legacyMarketData,
           estimated_prices: estData,

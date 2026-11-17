@@ -50,8 +50,30 @@ jobs:
             console.log('i18n parity OK: cs=' + cs.length + ', en=' + en.length + ', pl=' + pl.length);
           "
 
+      - name: Validate CSS braces & custom properties
+        run: |
+          python - <<'EOF'
+          import glob, re, sys
+          defs, uses, errs = set(), {}, []
+          for f in sorted(glob.glob('css/*.css')):
+              s = open(f, encoding='utf-8').read()
+              defs.update(re.findall(r'(--[a-zA-Z0-9_-]+)\s*:', s))
+              for m in re.finditer(r'var\((--[a-zA-Z0-9_-]+)\)', s):
+                  uses.setdefault(m.group(1), []).append(f)
+              o, c = s.count('{'), s.count('}')
+              if o != c:
+                  errs.append(f'Brace mismatch in {f}: {o} != {c}')
+          missing = {k: v for k, v in uses.items() if k not in defs}
+          if missing:
+              errs.append(f'Undefined CSS variables: {missing}')
+          if errs:
+              print('\n'.join(errs))
+              sys.exit(1)
+          print('CSS validation OK')
+          EOF
+
       - name: Install esbuild for JS/CSS minification
-        run: npm install --no-save esbuild
+        run: npm install --no-save esbuild@^0.24.0
 
       - name: Build bundled dist
         run: python scripts/build_dist.py --out _site

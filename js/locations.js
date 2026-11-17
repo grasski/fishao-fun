@@ -497,18 +497,8 @@ function renderLocationsView() {
   }).join('');
 }
 
-var locationImagesPreloaded = false;
-
 /**
- * Preload local location preview thumbnails lazily when the user interacts with Locations.
+ * Preloading 20+ large WebP previews eagerly hurts mobile bandwidth; location cards
+ * already use native `<img loading="lazy">` and decode on demand when scrolled into view.
  */
-function preloadLocationImages() {
-  if (locationImagesPreloaded || typeof Image === 'undefined') return;
-  locationImagesPreloaded = true;
-
-  Object.keys(LOCATION_PREVIEW_IMAGE_IDS).forEach(function (id) {
-    var img = new Image();
-    img.decoding = 'async';
-    img.src = 'images/location_preview_' + id + '.webp';
-  });
-}
+function preloadLocationImages() {}

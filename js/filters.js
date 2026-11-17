@@ -132,6 +132,12 @@ function setCollectionFilter(mode, btn) {
 }
 
 function applyFilters() {
+  if (typeof isTableViewActive === "function" && !isTableViewActive()) {
+    _tableViewDirty = true;
+    updateCaughtStats();
+    return;
+  }
+  _tableViewDirty = false;
   updateClubStats();
   syncBaitSelectIcon('baitFilter', 'baitFilterIcon');
 
@@ -164,6 +170,9 @@ function applyFilters() {
   var dataset = currentView === "club" ? clubFishes : allFishes;
   var todayISO = filterTodayHighPrice ? getTodayISO() : "";
   var todayHighPct = filterTodayHighPrice ? getTodayHighPricePct() : 90;
+  var filterNowCtx = (timeVal === "now" && typeof createTimeNowContext === "function")
+    ? createTimeNowContext()
+    : null;
 
   var filtered = dataset.filter(function (f) {
     if (currentView === "club") {
@@ -192,13 +201,15 @@ function applyFilters() {
     if (!isNaN(minSize) && f.max_l < minSize) return false;
     if (!isNaN(maxSize) && f.min_l > maxSize) return false;
 
-    if (timeVal && !matchesFishTimeFilter(f, timeVal)) return false;
+    if (timeVal && !matchesFishTimeFilter(f, timeVal, filterNowCtx)) return false;
 
     if (filterTodayHighPrice) {
       var est = (typeof getEstimatedPrice === "function") ? getEstimatedPrice(f.id) : null;
       if (!est || !(est.max > 0)) return false;
       var threshold = est.max * (todayHighPct / 100);
-      var entries = normalizePriceEntries(getFishPrices(f.id));
+      var entries = (typeof getNormalizedFishPrices === "function")
+        ? getNormalizedFishPrices(f.id)
+        : normalizePriceEntries(getFishPrices(f.id));
       var hasTodayHigh = entries.some(function (entry) {
         return entry.date === todayISO && entry.price >= threshold;
       });
@@ -221,6 +232,9 @@ function applyFilters() {
   if (sortBy === "chance_desc" || sortBy === "chance_asc") {
     var chanceMap = new Map();
     var timeModeForSort = filterNowActive ? 'now' : 'overlap';
+    var sortNowCtx = (timeModeForSort === 'now')
+      ? (filterNowCtx || (typeof createTimeNowContext === "function" ? createTimeNowContext() : null))
+      : null;
     var locForSort = (currentView === "club") ? "location_112" : (location || "");
     var getChanceData = function (f) {
       if (chanceMap.has(f.id)) return chanceMap.get(f.id);
@@ -229,7 +243,8 @@ function applyFilters() {
             timeMode: timeModeForSort,
             filterLoc: locForSort,
             filterArea: area || "",
-            onlyUnlockedClub: (currentView === "club" && hideLocked)
+            onlyUnlockedClub: (currentView === "club" && hideLocked),
+            nowCtx: sortNowCtx
           })
         : null;
       var topSpot = (rec && rec.spots && rec.spots.length) ? rec.spots[0] : null;

@@ -350,7 +350,7 @@ select.filter-control option {
   text-align: center;
   font-size: 12px;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-main);
   -moz-appearance: textfield;
 }
 .pct-input::-webkit-outer-spin-button,

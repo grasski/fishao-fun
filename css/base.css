@@ -71,7 +71,6 @@ body::before {
   z-index: -1;
   pointer-events: none;
 }
-}
 
 .container {
   max-width: 1720px;

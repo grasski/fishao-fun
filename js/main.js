@@ -26,7 +26,7 @@ function updateTzButtonsUI() {
 
 function setTimezone(tz) {
   userTimezone = tz;
-  localStorage.setItem('fishao_tz', tz);
+  safeStorageSet('fishao_tz', tz);
   updateTzButtonsUI();
   updateClock();
   updateMarketTabStatus();
@@ -358,11 +358,17 @@ function switchView(view, skipSync) {
   updateSortByOptions();
   if (preserveSharedFilters) {
     filterTodayHighPrice = false;
-    var highBtn = document.getElementById("highPriceToggle");
-    if (highBtn) highBtn.classList.remove("active");
+    if (typeof syncTodayHighPriceUI === "function") {
+      syncTodayHighPriceUI();
+    }
     if (view !== "all") {
-      if (typeof currentSizeMin !== "undefined") currentSizeMin = "";
-      if (typeof currentSizeMax !== "undefined") currentSizeMax = "";
+      var minEl = document.getElementById("minSizeInput");
+      var maxEl = document.getElementById("maxSizeInput");
+      if (minEl) minEl.value = "";
+      if (maxEl) maxEl.value = "";
+      document.querySelectorAll(".pill-btn-size.active").forEach(function (p) {
+        p.classList.remove("active");
+      });
     }
     applyFilters();
   } else {
@@ -555,9 +561,53 @@ function onModalOverlayClick(e, id) {
   var _prevPaddingRight = '';
   var _isLocked = false;
   var _touchStartY = 0;
+  var _lastFocusedBeforeModal = null;
+
+  function getTopActiveModal() {
+    var actives = document.querySelectorAll('.modal-overlay.active');
+    return actives.length ? actives[actives.length - 1] : null;
+  }
+
+  function getModalFocusableElements(modalEl) {
+    if (!modalEl) return [];
+    var selector = 'a[href], button:not([disabled]), input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    var nodes = modalEl.querySelectorAll(selector);
+    var visible = [];
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      if (el.offsetWidth > 0 || el.offsetHeight > 0 || el.getClientRects().length > 0) {
+        visible.push(el);
+      }
+    }
+    return visible;
+  }
+
+  function focusActiveModal() {
+    var modalEl = getTopActiveModal();
+    if (!modalEl) return;
+    requestAnimationFrame(function () {
+      var curModal = getTopActiveModal();
+      if (!curModal) return;
+      if (curModal.contains(document.activeElement)) return;
+      var autoEl = curModal.querySelector('[autofocus]');
+      if (autoEl && (autoEl.offsetWidth > 0 || autoEl.offsetHeight > 0)) {
+        try { autoEl.focus({ preventScroll: true }); } catch (e) {}
+        return;
+      }
+      var dialogEl = curModal.matches('[role="dialog"]') ? curModal : (curModal.querySelector('[role="dialog"]') || curModal.querySelector('.modal-box') || curModal);
+      if (dialogEl) {
+        if (!dialogEl.hasAttribute('tabindex')) dialogEl.setAttribute('tabindex', '-1');
+        try { dialogEl.focus({ preventScroll: true }); } catch (e) {}
+      }
+    });
+  }
 
   function syncModalBodyLock() {
-    var hasActive = !!document.querySelector('.modal-overlay.active');
+    var activeModal = getTopActiveModal();
+    var hasActive = !!activeModal;
+    if (hasActive) {
+      focusActiveModal();
+    }
     if (hasActive === _isLocked) return;
     _isLocked = hasActive;
 
@@ -566,6 +616,10 @@ function onModalOverlayClick(e, id) {
     if (!root || !body) return;
 
     if (hasActive) {
+      var ae = document.activeElement;
+      if (ae && ae !== body && ae !== root && !ae.closest('.modal-overlay')) {
+        _lastFocusedBeforeModal = ae;
+      }
       var scrollbarW = window.innerWidth - root.clientWidth;
       _prevPaddingRight = body.style.paddingRight || '';
       if (scrollbarW > 0) {
@@ -574,12 +628,45 @@ function onModalOverlayClick(e, id) {
       }
       root.classList.add('modal-open');
       body.classList.add('modal-open');
+      focusActiveModal();
     } else {
       root.classList.remove('modal-open');
       body.classList.remove('modal-open');
       body.style.paddingRight = _prevPaddingRight;
+      var toRestore = _lastFocusedBeforeModal;
+      _lastFocusedBeforeModal = null;
+      if (toRestore && toRestore.isConnected && typeof toRestore.focus === 'function') {
+        try { toRestore.focus({ preventScroll: true }); } catch (e) {}
+      }
     }
   }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab' || !_isLocked) return;
+    var modalEl = getTopActiveModal();
+    if (!modalEl) return;
+    var focusables = getModalFocusableElements(modalEl);
+    if (!focusables.length) {
+      e.preventDefault();
+      return;
+    }
+    var first = focusables[0];
+    var last = focusables[focusables.length - 1];
+    if (!modalEl.contains(document.activeElement)) {
+      e.preventDefault();
+      first.focus();
+      return;
+    }
+    if (e.shiftKey) {
+      if (document.activeElement === first || document.activeElement === modalEl) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else if (document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
 
   function canScrollInModal(startEl, deltaY) {
     var el = startEl;
@@ -797,7 +884,7 @@ window.fishaoApp = {
 
 // Initialize localization & application (avoid double initial render)
 (async function bootApplication() {
-  var initialLang = (window.FISHAO_I18N && window.FISHAO_I18N.currentLang) || localStorage.getItem('fishao_lang') || 'cs';
+  var initialLang = (window.FISHAO_I18N && window.FISHAO_I18N.currentLang) || safeStorageGet('fishao_lang') || 'cs';
   var needsLangFetch = !!(window.FISHAO_I18N &&
     typeof window.FISHAO_I18N.isLangLoaded === 'function' &&
     typeof window.FISHAO_I18N.ensureLangLoaded === 'function' &&
@@ -808,7 +895,7 @@ window.fishaoApp = {
     langPromise = window.FISHAO_I18N.ensureLangLoaded(initialLang);
     await Promise.race([
       langPromise,
-      new Promise(function (resolve) { setTimeout(resolve, 250); })
+      new Promise(function (resolve) { setTimeout(resolve, 450); })
     ]);
   }
 

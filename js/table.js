@@ -75,10 +75,12 @@ function renderRatingBadge(r) {
     '</span>';
 }
 
-function renderPriceCell(fid) {
+function renderPriceCell(fid, priceCtx) {
   // Display-only normalization: one row per distinct known price value.
-  var list = normalizePriceEntries(getFishPrices(fid));
-  var locale = getLocale();
+  var list = (typeof getNormalizedFishPrices === "function")
+    ? getNormalizedFishPrices(fid)
+    : normalizePriceEntries(getFishPrices(fid));
+  var locale = (priceCtx && priceCtx.locale) ? priceCtx.locale : getLocale();
   var est = (typeof getEstimatedPrice === "function") ? getEstimatedPrice(fid) : null;
   var estRangeStr = est ? (est.min.toLocaleString(locale) + '–' + est.max.toLocaleString(locale)) : '';
   var estTitleSuffix = est ? ('\n' + t('price_est_cell_title', { min: est.min.toLocaleString(locale), max: est.max.toLocaleString(locale) })) : '';
@@ -87,12 +89,14 @@ function renderPriceCell(fid) {
     ? '<span class="price-est-sub" title="' + escapeHtml(t('price_est_cell_title', { min: est.min.toLocaleString(locale), max: est.max.toLocaleString(locale) })) + '">~ ' + estRangeStr + ' FB</span>'
     : '';
 
-  var todayISO = (typeof getTodayISO === "function") ? getTodayISO() : "";
+  var todayISO = (priceCtx && priceCtx.todayISO !== undefined)
+    ? priceCtx.todayISO
+    : ((typeof getTodayISO === "function") ? getTodayISO() : "");
   var todayEntries = todayISO ? list.filter(function (x) { return x.date === todayISO; }) : [];
 
   if (list.length === 0) {
     var emptyTitle = t('price_cell_add_title') + estTitleSuffix;
-    return '<div class="price-cell price-cell-stack" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + escapeHtml(emptyTitle) + '">' +
+    return '<div class="price-cell price-cell-stack" title="' + escapeHtml(emptyTitle) + '">' +
       '<span class="price-empty">+ ' + t('price_add_btn') + '</span>' +
       estSubHtml +
       '</div>';
@@ -114,7 +118,9 @@ function renderPriceCell(fid) {
     var todayPriceStr = (minT === maxT)
       ? minT.toLocaleString(locale)
       : (minT.toLocaleString(locale) + '–' + maxT.toLocaleString(locale));
-    var highPct = (typeof getTodayHighPricePct === "function") ? getTodayHighPricePct() : 90;
+    var highPct = (priceCtx && typeof priceCtx.highPct === "number")
+      ? priceCtx.highPct
+      : ((typeof getTodayHighPricePct === "function") ? getTodayHighPricePct() : 90);
     var isHighToday = !!(est && est.max > 0 && maxT >= est.max * (highPct / 100));
     cellTitle = t('price_today_sub', { price: todayPriceStr }) + '\n' +
       t('price_cell_range_title', {
@@ -143,7 +149,7 @@ function renderPriceCell(fid) {
       '<span class="price-unit">FB</span>';
   }
 
-  return '<div class="price-cell price-cell-stack" onclick="window.fishaoApp.openPriceModal(' + fid + ')" title="' + escapeHtml(cellTitle) + '">' +
+  return '<div class="price-cell price-cell-stack" title="' + escapeHtml(cellTitle) + '">' +
     '<span class="price-inline">' + valuesHtml + histCount + '</span>' +
     estSubHtml +
     '</div>';
@@ -157,7 +163,10 @@ function countDistinctRecordedPrices() {
     return _distinctPriceCountVal;
   }
   var total = Object.keys(priceHistory).reduce(function (sum, fid) {
-    return sum + normalizePriceEntries(getFishPrices(fid)).length;
+    var list = (typeof getNormalizedFishPrices === "function")
+      ? getNormalizedFishPrices(fid)
+      : normalizePriceEntries(getFishPrices(fid));
+    return sum + list.length;
   }, 0);
   if (typeof _priceDataVersion !== 'undefined') {
     _distinctPriceCountVer = _priceDataVersion;
@@ -166,12 +175,15 @@ function countDistinctRecordedPrices() {
   return total;
 }
 
+function getCaughtBtnTitle(isCaught) {
+  if (!currentUser) return t('auth_notice_collection');
+  return isCaught ? t('caught_btn_unmarked_title') : t('caught_btn_mark_title');
+}
+
 function renderCaughtBtn(fishId) {
   var isCaught = caughtFishIds.has(fishId);
-  var title = !currentUser
-    ? t('auth_notice_collection')
-    : (isCaught ? t('caught_btn_unmarked_title') : t('caught_btn_mark_title'));
-  return '<button type="button" class="caught-btn' + (isCaught ? ' caught' : '') + '" onclick="event.stopPropagation(); window.fishaoApp.toggleCaughtFish(' + fishId + ')" title="' + escapeHtml(title) + '" aria-label="' + escapeHtml(title) + '">' +
+  var title = getCaughtBtnTitle(isCaught);
+  return '<button type="button" class="caught-btn' + (isCaught ? ' caught' : '') + '" data-catch-id="' + fishId + '" title="' + escapeHtml(title) + '" aria-label="' + escapeHtml(title) + '">' +
     (isCaught ? '✓' : '') + '</button>';
 }
 
@@ -189,10 +201,193 @@ function toggleCaughtFromModal() {
   updateModalCaughtBtn(selectedModalFishId);
 }
 
-async function toggleCaughtFish(fishId) {
+var _caughtSyncTimer = null;
+var _caughtSyncPromise = null;
+var _caughtSyncDirty = false;
+var _pendingCaughtBaseArr = null;
+var _pendingCaughtUid = "";
+
+function updateCaughtRowInPlace(fishId, isCaught) {
+  var title = getCaughtBtnTitle(isCaught);
+  var tbody = document.getElementById("tableBody");
+  if (tbody) {
+    var tr = tbody.querySelector('tr[data-fish-id="' + fishId + '"]');
+    if (tr) {
+      tr.classList.toggle('row-caught', isCaught);
+      var btn = tr.querySelector('.caught-btn[data-catch-id="' + fishId + '"]');
+      if (btn) {
+        btn.classList.toggle('caught', isCaught);
+        btn.textContent = isCaught ? '✓' : '';
+        btn.title = title;
+        btn.setAttribute('aria-label', title);
+      }
+    }
+  }
+  var calGrid = document.getElementById("calendarGrid");
+  if (calGrid) {
+    var card = calGrid.querySelector('.cal-fish-card[data-fish-id="' + fishId + '"]');
+    if (card) {
+      card.classList.toggle('is-caught', isCaught);
+      var calBtn = card.querySelector('.caught-btn[data-catch-id="' + fishId + '"]');
+      if (calBtn) {
+        calBtn.classList.toggle('caught', isCaught);
+        calBtn.textContent = isCaught ? '✓' : '';
+        calBtn.title = title;
+        calBtn.setAttribute('aria-label', title);
+      }
+    }
+  }
+}
+
+function syncOwnPlayerCacheCounts() {
+  if (!currentUser) return;
+  var clubCount = 0;
+  clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) clubCount++; });
+  if (typeof allPlayersList !== "undefined" && Array.isArray(allPlayersList)) {
+    var meInList = allPlayersList.find(function (p) { return p.uid === currentUser.uid; });
+    if (meInList) {
+      meInList.caughtCount = caughtFishIds.size;
+      meInList.caughtClubCount = clubCount;
+      if (typeof savePlayersSessionCache === "function" && typeof lastPlayersFetchTime !== "undefined") {
+        savePlayersSessionCache(lastPlayersFetchTime);
+      }
+    }
+  }
+}
+
+function refreshViewAfterCaughtChange(changedFishId) {
+  var isTable = (typeof isTableViewActive === "function") ? isTableViewActive() : (currentView === 'all' || currentView === 'market' || currentView === 'club');
+  if (currentView === 'club_manage') {
+    updateCaughtStats({ skipSubViewRender: true });
+    renderClubMilestones();
+    return;
+  }
+  if (currentView === 'calendar') {
+    var needsCalRebuild = (typeof calStatusFilter !== 'undefined' && calStatusFilter === 'missing');
+    if (needsCalRebuild) {
+      updateCaughtStats();
+    } else {
+      updateCaughtStats({ skipSubViewRender: true });
+      if (changedFishId !== undefined) updateCaughtRowInPlace(changedFishId, caughtFishIds.has(changedFishId));
+    }
+    return;
+  }
+  if (currentView === 'locations') {
+    updateCaughtStats();
+    return;
+  }
+  if (isTable) {
+    var uncaughtEl = document.getElementById("filterUncaughtCheckbox");
+    var hasUncaughtFilter = !!(uncaughtEl && uncaughtEl.checked);
+    var hasCollectionFilter = (currentView === 'all' || currentView === 'market') && collectionFilterMode !== 'all';
+    if (filterOnlyCaught || hasUncaughtFilter || hasCollectionFilter) {
+      updateCaughtStats({ skipSubViewRender: true });
+      applyFilters();
+    } else {
+      updateCaughtStats({ skipSubViewRender: true });
+      if (changedFishId !== undefined) {
+        updateCaughtRowInPlace(changedFishId, caughtFishIds.has(changedFishId));
+      } else {
+        applyFilters();
+      }
+    }
+    return;
+  }
+  updateCaughtStats();
+}
+
+async function flushPendingCaughtSync() {
+  if (_caughtSyncTimer) {
+    clearTimeout(_caughtSyncTimer);
+    _caughtSyncTimer = null;
+  }
+  if (_caughtSyncPromise) return _caughtSyncPromise;
+  if (!_caughtSyncDirty || !currentUser || !db) return;
+
+  _caughtSyncPromise = (async function () {
+    while (_caughtSyncDirty && currentUser && db) {
+      _caughtSyncDirty = false;
+      var syncUid = currentUser.uid;
+      var snapshotArr = Array.from(caughtFishIds);
+      var rollbackArr = (_pendingCaughtUid === syncUid && Array.isArray(_pendingCaughtBaseArr))
+        ? _pendingCaughtBaseArr.slice()
+        : null;
+
+      try {
+        var fsModule = await getFirestoreModule();
+        var userDocRef = fsModule.doc(db, "users", syncUid);
+        await fsModule.updateDoc(userDocRef, {
+          caughtFishIds: snapshotArr
+        });
+
+        if (currentClubId && currentUser && currentUser.uid === syncUid) {
+          try {
+            var myClubCount = 0;
+            clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myClubCount++; });
+            var clubDocRef = fsModule.doc(db, "clubs", currentClubId);
+            var mSync = {};
+            mSync["members." + syncUid + ".caughtCount"] = caughtFishIds.size;
+            mSync["members." + syncUid + ".caughtClubCount"] = myClubCount;
+            await fsModule.updateDoc(clubDocRef, mSync);
+          } catch (clubSyncErr) {
+            console.warn("Could not sync member catch counts to club:", clubSyncErr);
+          }
+        }
+
+        if (!_caughtSyncDirty && _pendingCaughtUid === syncUid) {
+          _pendingCaughtBaseArr = null;
+          _pendingCaughtUid = "";
+        }
+      } catch (err) {
+        console.error("Failed to update caught fish:", err);
+        _caughtSyncDirty = false;
+        if (currentUser && currentUser.uid === syncUid && rollbackArr) {
+          caughtFishIds = new Set(rollbackArr);
+          if (userProfile) {
+            userProfile.caughtFishIds = rollbackArr;
+            if (typeof saveProfileToCache === 'function') {
+              saveProfileToCache(syncUid, userProfile);
+            }
+          }
+          syncOwnPlayerCacheCounts();
+          if (selectedModalFishId) updateModalCaughtBtn(selectedModalFishId);
+          refreshViewAfterCaughtChange(undefined);
+        }
+        _pendingCaughtBaseArr = null;
+        _pendingCaughtUid = "";
+        if (typeof showToast === 'function') {
+          showToast(t('err_save') + err.message, "error");
+        }
+        break;
+      }
+    }
+  })().finally(function () {
+    _caughtSyncPromise = null;
+  });
+
+  return _caughtSyncPromise;
+}
+
+if (typeof document !== 'undefined' && typeof window !== 'undefined') {
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden' && _caughtSyncDirty) {
+      flushPendingCaughtSync();
+    }
+  });
+  window.addEventListener('pagehide', function () {
+    if (_caughtSyncDirty) flushPendingCaughtSync();
+  });
+}
+
+function toggleCaughtFish(fishId) {
   if (!currentUser) {
     showAuthNotice(t('auth_notice_collection'));
     return;
+  }
+
+  if (!_pendingCaughtBaseArr || _pendingCaughtUid !== currentUser.uid) {
+    _pendingCaughtUid = currentUser.uid;
+    _pendingCaughtBaseArr = Array.from(caughtFishIds);
   }
 
   if (caughtFishIds.has(fishId)) {
@@ -203,46 +398,25 @@ async function toggleCaughtFish(fishId) {
 
   if (userProfile) {
     userProfile.caughtFishIds = Array.from(caughtFishIds);
-    if (typeof saveProfileToCache === 'function' && currentUser) {
+    if (typeof saveProfileToCache === 'function') {
       saveProfileToCache(currentUser.uid, userProfile);
     }
   }
+  syncOwnPlayerCacheCounts();
+  refreshViewAfterCaughtChange(fishId);
 
-  if (currentUser && db) {
-    try {
-      var fsModule = await getFirestoreModule();
-      var userDocRef = fsModule.doc(db, "users", currentUser.uid);
-      await fsModule.updateDoc(userDocRef, {
-        caughtFishIds: Array.from(caughtFishIds)
-      });
-
-      if (currentClubId) {
-        try {
-          var myClubCount = 0;
-          clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myClubCount++; });
-          var clubDocRef = fsModule.doc(db, "clubs", currentClubId);
-          var mSync = {};
-          mSync["members." + currentUser.uid + ".caughtCount"] = caughtFishIds.size;
-          mSync["members." + currentUser.uid + ".caughtClubCount"] = myClubCount;
-          await fsModule.updateDoc(clubDocRef, mSync);
-        } catch (e) {
-          console.warn("Could not sync member catch counts to club:", e);
-        }
-      }
-    } catch (err) {
-      console.error("Failed to update caught fish:", err);
-    }
-  }
-
-  updateCaughtStats();
-  if (currentView === 'club_manage') {
-    renderClubMilestones();
-  } else if (currentView !== 'locations' && currentView !== 'calendar') {
-    applyFilters();
+  if (db) {
+    _caughtSyncDirty = true;
+    if (_caughtSyncTimer) clearTimeout(_caughtSyncTimer);
+    _caughtSyncTimer = setTimeout(function () {
+      _caughtSyncTimer = null;
+      flushPendingCaughtSync();
+    }, 300);
   }
 }
 
-function updateCaughtStats() {
+function updateCaughtStats(opts) {
+  var skipSubViewRender = !!(opts && opts.skipSubViewRender);
   var clubCount = 0;
   var allCount = 0;
 
@@ -287,10 +461,12 @@ function updateCaughtStats() {
     marketSummary.innerText = t('market_recorded_prices', { count: priceCount });
   }
 
-  if (currentView === 'locations' && typeof renderLocationsView === 'function') {
-    renderLocationsView();
-  } else if (currentView === 'calendar' && typeof renderCalendarView === 'function') {
-    renderCalendarView();
+  if (!skipSubViewRender) {
+    if (currentView === 'locations' && typeof renderLocationsView === 'function') {
+      renderLocationsView();
+    } else if (currentView === 'calendar' && typeof renderCalendarView === 'function') {
+      renderCalendarView();
+    }
   }
 }
 
@@ -404,7 +580,7 @@ function getFishRenderData(f) {
 }
 
 function renderFishRowHtml(f, idx, ctx) {
-  var isNow = isFishActiveNow(f.raw_times, f.raw_dates);
+  var isNow = isFishActiveNow(f.raw_times, f.raw_dates, ctx.nowCtx);
   var rc = getFishRenderData(f);
   var timeInfo = rc.timeInfo;
   var dateInfo = rc.dateInfo;
@@ -428,7 +604,7 @@ function renderFishRowHtml(f, idx, ctx) {
     if (caughtFishIds.has(f.id)) rowClass.push("row-caught");
     var areaName = rc.areaName;
 
-    return '<tr class="' + rowClass.join(' ') + '" tabindex="0" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();window.fishaoApp.openPriceModal(' + f.id + ');}" title="' + ctx.rowClickTitle + '">' +
+    return '<tr class="' + rowClass.join(' ') + '" tabindex="0" data-fish-id="' + f.id + '" title="' + ctx.rowClickTitle + '">' +
       '<td style="color: var(--text-muted); font-weight: 600;">' + f.order + '</td>' +
       '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
       '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.webp" alt="' + safeFishName + '" class="fish-img" width="92" height="52" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
@@ -437,7 +613,7 @@ function renderFishRowHtml(f, idx, ctx) {
       '</td>' +
       '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName + '</div>' + altMatchHtml + '</td>' +
       '<td>' + renderRatingBadge(f.rating) + '</td>' +
-      '<td>' + renderPriceCell(f.id) + '</td>' +
+      '<td>' + renderPriceCell(f.id, ctx.priceCtx) + '</td>' +
       '<td>' + (typeof renderFishBaitsCell === 'function' ? renderFishBaitsCell(f, ctx.baitFilterCtx) : f.baits.map(function (b) {
         return renderBaitTag(b);
       }).join('')) + '</td>' +
@@ -454,7 +630,7 @@ function renderFishRowHtml(f, idx, ctx) {
   var rowCls = caughtFishIds.has(f.id) ? "row-caught" : "";
   var locLabels = rc.locLabels;
 
-  return '<tr class="' + rowCls + '" tabindex="0" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();window.fishaoApp.openPriceModal(' + f.id + ');}" title="' + ctx.rowClickTitle + '">' +
+  return '<tr class="' + rowCls + '" tabindex="0" data-fish-id="' + f.id + '" title="' + ctx.rowClickTitle + '">' +
     '<td style="color: var(--text-muted); font-weight: 600;">' + (idx + 1) + '</td>' +
     '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
     '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.webp" alt="' + safeFishName + '" class="fish-img" width="92" height="52" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
@@ -462,7 +638,7 @@ function renderFishRowHtml(f, idx, ctx) {
     (f.is_club ? '<span class="badge-club-tag">' + ctx.clubTagText + '</span>' : '') +
     '</div>' + altMatchHtml + '</td>' +
     '<td>' + renderRatingBadge(f.rating) + '</td>' +
-    '<td>' + renderPriceCell(f.id) + '</td>' +
+    '<td>' + renderPriceCell(f.id, ctx.priceCtx) + '</td>' +
     '<td class="loc-box">' +
     (locLabels.length ? locLabels.map(function (locName) {
       return '<span class="loc-tag">' + escapeHtml(locName) + '</span>';
@@ -480,10 +656,146 @@ function renderFishRowHtml(f, idx, ctx) {
     '</tr>';
 }
 
+var _tableScrollState = {
+  token: 0,
+  data: [],
+  offset: 0,
+  ctx: null,
+  observer: null,
+  sentinel: null,
+  rafScheduled: false
+};
+
+function bindTableDelegation(tbody) {
+  if (!tbody || tbody.dataset.boundTableActions) return;
+  tbody.dataset.boundTableActions = '1';
+
+  tbody.addEventListener('click', function (ev) {
+    var catchBtn = ev.target && ev.target.closest ? ev.target.closest('.caught-btn[data-catch-id]') : null;
+    if (catchBtn) {
+      ev.stopPropagation();
+      toggleCaughtFish(Number(catchBtn.dataset.catchId));
+      return;
+    }
+    var tr = ev.target && ev.target.closest ? ev.target.closest('tr[data-fish-id]') : null;
+    if (tr) {
+      openPriceModal(Number(tr.dataset.fishId));
+    }
+  });
+
+  tbody.addEventListener('keydown', function (ev) {
+    if (ev.key !== 'Enter' && ev.key !== ' ') return;
+    if (ev.target && ev.target.closest && ev.target.closest('.caught-btn')) return;
+    var tr = ev.target && ev.target.closest ? ev.target.closest('tr[data-fish-id]') : null;
+    if (tr && ev.target === tr) {
+      ev.preventDefault();
+      openPriceModal(Number(tr.dataset.fishId));
+    }
+  });
+}
+
+function ensureTableScrollSentinel(tbody) {
+  if (_tableScrollState.sentinel && _tableScrollState.sentinel.isConnected) {
+    return _tableScrollState.sentinel;
+  }
+  var existing = document.getElementById('tableScrollSentinel');
+  if (!existing) {
+    existing = document.createElement('div');
+    existing.id = 'tableScrollSentinel';
+    existing.setAttribute('aria-hidden', 'true');
+    existing.style.width = '100%';
+    existing.style.height = '1px';
+    existing.style.pointerEvents = 'none';
+    var tableWrap = tbody.closest ? tbody.closest('.table-container') : null;
+    if (tableWrap && tableWrap.parentNode) {
+      tableWrap.parentNode.insertBefore(existing, tableWrap.nextSibling);
+    } else if (tbody.parentNode && tbody.parentNode.parentNode) {
+      tbody.parentNode.parentNode.appendChild(existing);
+    }
+  }
+  _tableScrollState.sentinel = existing;
+
+  if (!_tableScrollState.observer && typeof IntersectionObserver === 'function') {
+    _tableScrollState.observer = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) {
+          scheduleMoreTableRows();
+          break;
+        }
+      }
+    }, { rootMargin: '750px 0px' });
+    _tableScrollState.observer.observe(existing);
+  } else if (!window._tableScrollFallbackBound) {
+    window._tableScrollFallbackBound = true;
+    var checkScrollMore = function () {
+      if (_tableScrollState.offset >= _tableScrollState.data.length) return;
+      var s = _tableScrollState.sentinel;
+      if (!s) return;
+      var rect = s.getBoundingClientRect();
+      if (rect.top <= (window.innerHeight || 800) + 750) {
+        scheduleMoreTableRows();
+      }
+    };
+    window.addEventListener('scroll', checkScrollMore, { passive: true });
+    window.addEventListener('resize', checkScrollMore, { passive: true });
+  }
+  return existing;
+}
+
+function isSentinelNearViewport() {
+  var s = _tableScrollState.sentinel;
+  if (!s || s.style.display === 'none') return false;
+  var rect = s.getBoundingClientRect();
+  return rect.top <= (window.innerHeight || 800) + 750;
+}
+
+function appendNextTableBatch() {
+  _tableScrollState.rafScheduled = false;
+  var st = _tableScrollState;
+  if (st.token !== _tableRenderToken) return;
+  if (st.offset >= st.data.length) {
+    if (st.sentinel) st.sentinel.style.display = 'none';
+    return;
+  }
+
+  var tbody = document.getElementById("tableBody");
+  if (!tbody) return;
+
+  var NEXT_BATCH = 45;
+  var end = Math.min(st.data.length, st.offset + NEXT_BATCH);
+  var chunk = [];
+  for (var j = st.offset; j < end; j++) {
+    chunk.push(renderFishRowHtml(st.data[j], j, st.ctx));
+  }
+  tbody.insertAdjacentHTML('beforeend', chunk.join(''));
+  st.offset = end;
+
+  if (st.offset >= st.data.length) {
+    if (st.sentinel) st.sentinel.style.display = 'none';
+  } else if (isSentinelNearViewport()) {
+    scheduleMoreTableRows();
+  }
+}
+
+function scheduleMoreTableRows() {
+  if (_tableScrollState.rafScheduled) return;
+  if (_tableScrollState.offset >= _tableScrollState.data.length) return;
+  _tableScrollState.rafScheduled = true;
+  requestAnimationFrame(appendNextTableBatch);
+}
+
 function renderTableBody(data) {
   var tbody = document.getElementById("tableBody");
+  if (!tbody) return;
+  bindTableDelegation(tbody);
+  var sentinel = ensureTableScrollSentinel(tbody);
+
   var total = currentView === "club" ? clubFishes.length : allFishes.length;
   var token = ++_tableRenderToken;
+  _tableScrollState.token = token;
+  _tableScrollState.data = data || [];
+  _tableScrollState.offset = 0;
+  _tableScrollState.rafScheduled = false;
 
   var now = new Date();
   var langKey = (window.FISHAO_I18N && window.FISHAO_I18N.currentLang) || 'cs';
@@ -496,6 +808,7 @@ function renderTableBody(data) {
   if (data.length === 0) {
     var colCount = currentView === "club" ? 11 : 10;
     tbody.innerHTML = '<tr><td colspan="' + colCount + '" class="empty-state">' + t('table_empty_state') + '</td></tr>';
+    sentinel.style.display = 'none';
     document.getElementById("counter").innerText = t('counter_showing', { shown: 0, total: total });
     return;
   }
@@ -504,6 +817,8 @@ function renderTableBody(data) {
   var locEl = document.getElementById("locationFilter");
   var areaEl = document.getElementById("areaFilter");
   var hideLockedEl = document.getElementById("hideLockedCheckbox");
+  var nowCtx = (typeof createTimeNowContext === "function") ? createTimeNowContext(now) : null;
+  var todayIsoStr = (typeof getTodayISO === "function") ? getTodayISO() : "";
   var ctx = {
     isClubView: currentView === "club",
     rowClickTitle: escapeHtml(t('price_cell_detail_title')),
@@ -513,16 +828,22 @@ function renderTableBody(data) {
     clubTagText: t('badge_club_fish'),
     unspecText: t('loc_unspecified'),
     searchQ: searchInput ? searchInput.value.trim() : "",
+    nowCtx: nowCtx,
+    priceCtx: {
+      locale: getLocale(),
+      todayISO: todayIsoStr,
+      highPct: (typeof getTodayHighPricePct === "function") ? getTodayHighPricePct() : 90
+    },
     baitFilterCtx: {
       locFilter: (currentView === 'club') ? 'location_112' : ((locEl && locEl.value) || ''),
       areaFilter: (areaEl && areaEl.value) || '',
       timeMode: filterNowActive ? 'now' : 'overlap',
-      hideLocked: (currentView === 'club' && hideLockedEl && hideLockedEl.checked)
+      hideLocked: (currentView === 'club' && hideLockedEl && hideLockedEl.checked),
+      nowCtx: nowCtx
     }
   };
 
-  var FIRST_BATCH = 40;
-  var NEXT_BATCH = 80;
+  var FIRST_BATCH = 30;
   var firstEnd = Math.min(data.length, FIRST_BATCH);
   var firstHtml = [];
   for (var i = 0; i < firstEnd; i++) {
@@ -531,22 +852,17 @@ function renderTableBody(data) {
   tbody.innerHTML = firstHtml.join('');
   document.getElementById("counter").innerText = t('counter_showing', { shown: data.length, total: total });
 
-  if (firstEnd >= data.length) return;
+  _tableScrollState.offset = firstEnd;
+  _tableScrollState.ctx = ctx;
 
-  var offset = firstEnd;
-  function appendNextBatch() {
-    if (token !== _tableRenderToken) return;
-    var end = Math.min(data.length, offset + NEXT_BATCH);
-    var chunk = [];
-    for (var j = offset; j < end; j++) {
-      chunk.push(renderFishRowHtml(data[j], j, ctx));
-    }
-    tbody.insertAdjacentHTML('beforeend', chunk.join(''));
-    offset = end;
-    if (offset < data.length) {
-      requestAnimationFrame(appendNextBatch);
-    }
+  if (firstEnd >= data.length) {
+    sentinel.style.display = 'none';
+    return;
   }
-  requestAnimationFrame(appendNextBatch);
+
+  sentinel.style.display = 'block';
+  if (isSentinelNearViewport()) {
+    scheduleMoreTableRows();
+  }
 }
 

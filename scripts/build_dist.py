@@ -40,7 +40,6 @@ JS_FILES = [
     "data/i18n/fish_names.js",
     "data/i18n.js",
     "data/fishes.js",
-    "data/prices.js",
     "data/estimated_prices.js",
     "firebase-config.js",
     "js/state.js",
@@ -68,8 +67,6 @@ STATIC_COPY_FILES = [
     "favicon-48x48.png",
     "favicon-96x96.png",
     "apple-touch-icon.png",
-    "data/i18n/ui_en.js",
-    "data/i18n/ui_pl.js",
 ]
 
 

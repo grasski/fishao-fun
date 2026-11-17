@@ -418,7 +418,6 @@
       "club_kick_confirm": "Opravdu chceš odebrat hráče {name} z klubu?",
       "club_member_kicked": "Hráč byl odebrán z klubu.",
       "club_you_were_removed": "Byl jsi odebrán z klubu.",
-      "club_ghost_cleaned": "Tento hráč již smazal svůj účet a byl automaticky odebrán z klubu.",
       "footer_fan_badge": "Fanouškovský projekt",
       "footer_disclaimer": "FISHAO je registrovaná ochranná známka společnosti GamoVation B.V. Tento web je neoficiální komunitní projekt vytvořený hráči pro hráče a není nijak spojen ani sponzorován společností GamoVation. Veškerá grafika a názvy ze hry patří jejich příslušným vlastníkům.",
       "footer_recaptcha_notice": "Tento web je chráněn službou reCAPTCHA a platí na něj <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Ochrana soukromí</a> a <a href=\"https://policies.google.com/terms\" target=\"_blank\" rel=\"noopener noreferrer\">Smluvní podmínky</a> společnosti Google.",
@@ -643,7 +642,8 @@
       "app_update_reload": "Obnovit",
       "avatar_url_https_only": "URL avataru musí začínat na https://.",
       "auth_reauth_required": "Pro trvalé smazání účtu se prosím znovu ověř přes Google.",
-      "modal_price_occurrences": "{count}×"
+      "modal_price_occurrences": "{count}×",
+      "loading_short": "Načítám..."
   };
 
   if (typeof window !== 'undefined') {

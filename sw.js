@@ -30,18 +30,20 @@ self.addEventListener('fetch', (event) => {
   }
 
   // HTML / navigation: Network-First (bypass 10-min GitHub Pages HTTP cache on reload)
+  // Cache under canonical URL without query params so ?tab=/?lang=/?fish= don't bloat cache
   if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
+    const navCacheKey = url.origin + url.pathname;
     event.respondWith(
       fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' })
         .then((res) => {
           if (res && res.ok) {
             const copy = res.clone();
-            caches.open(CACHE_STATIC).then((cache) => cache.put(req, copy));
+            caches.open(CACHE_STATIC).then((cache) => cache.put(navCacheKey, copy));
           }
           return res;
         })
         .catch(() =>
-          caches.match(req, { ignoreSearch: true }).then((match) => match || caches.match('./'))
+          caches.match(navCacheKey).then((match) => match || caches.match(req, { ignoreSearch: true }) || caches.match('./'))
         )
     );
     return;
@@ -105,8 +107,12 @@ self.addEventListener('message', (event) => {
         Promise.all(
           requests.map((req) => {
             try {
-              const p = new URL(req.url).pathname;
+              const u = new URL(req.url);
+              const p = u.pathname;
               if (p.includes('/dist/') && !activeSet.has(p)) {
+                return cache.delete(req);
+              }
+              if ((p === '/' || p.endsWith('/index.html') || p.endsWith('/')) && u.search) {
                 return cache.delete(req);
               }
             } catch (e) {}

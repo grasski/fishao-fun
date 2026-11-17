@@ -20,8 +20,9 @@ function isBackyardBreedable(fish) {
 }
 
 var PLAYERS_CACHE_KEY = 'fishao_players_cache_v1';
-var PLAYERS_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+var PLAYERS_CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes across tabs
 var lastPlayersFetchTime = 0;
+var _playersLoadPromise = null;
 var playerCurrentPage = 1;
 var PLAYERS_PER_PAGE = 24;
 var _playerProfileCache = new Map();
@@ -53,7 +54,7 @@ function savePlayersSessionCache(ts) {
         createdAt: p.createdAt || ""
       };
     });
-    sessionStorage.setItem(PLAYERS_CACHE_KEY, JSON.stringify({
+    safeStorageSet(PLAYERS_CACHE_KEY, JSON.stringify({
       timestamp: ts,
       list: compact
     }));
@@ -61,7 +62,7 @@ function savePlayersSessionCache(ts) {
 }
 
 /**
- * Load all players from Firestore collection 'users' (cached for 5 minutes)
+ * Load all players from Firestore collection 'users' (cached in localStorage for 15 minutes)
  */
 async function loadAllPlayers(force) {
   var now = Date.now();
@@ -72,10 +73,10 @@ async function loadAllPlayers(force) {
     return;
   }
 
-  // If in-memory is empty (e.g. after F5), try restoring from sessionStorage (0 reads)
+  // If in-memory is empty (e.g. after F5), try restoring from localStorage (0 reads)
   if (!force && allPlayersList.length === 0) {
     try {
-      var cachedStr = sessionStorage.getItem(PLAYERS_CACHE_KEY);
+      var cachedStr = safeStorageGet(PLAYERS_CACHE_KEY);
       if (cachedStr) {
         var cachedObj = JSON.parse(cachedStr);
         if (cachedObj && cachedObj.timestamp && (now - cachedObj.timestamp < PLAYERS_CACHE_TTL_MS) && Array.isArray(cachedObj.list) && cachedObj.list.length > 0) {
@@ -87,6 +88,10 @@ async function loadAllPlayers(force) {
         }
       }
     } catch (e) {}
+  }
+
+  if (!force && _playersLoadPromise) {
+    return _playersLoadPromise;
   }
 
   if (!currentUser) {
@@ -118,71 +123,82 @@ async function loadAllPlayers(force) {
     return;
   }
 
-  try {
-    var fsModule = await getFirestoreModule();
-    var usersCol = fsModule.collection(db, "users");
-    var clubsCol = fsModule.collection(db, "clubs");
-    var snaps = await Promise.all([
-      fsModule.getDocs(usersCol),
-      fsModule.getDocs(clubsCol).catch(function () { return null; })
-    ]);
-    var snap = snaps[0];
-    var clubsSnap = snaps[1];
-    var clubsMap = null;
-    if (clubsSnap) {
-      clubsMap = {};
-      clubsSnap.forEach(function (cDoc) {
-        clubsMap[cDoc.id] = cDoc.data() || {};
+  _playersLoadPromise = (async function () {
+    try {
+      var fsModule = await getFirestoreModule();
+      var usersCol = fsModule.collection(db, "users");
+      var clubsCol = fsModule.collection(db, "clubs");
+      var snaps = await Promise.all([
+        fsModule.getDocs(usersCol),
+        fsModule.getDocs(clubsCol).catch(function () { return null; })
+      ]);
+      var snap = snaps[0];
+      var clubsSnap = snaps[1];
+      var clubsMap = null;
+      if (clubsSnap) {
+        clubsMap = {};
+        clubsSnap.forEach(function (cDoc) {
+          clubsMap[cDoc.id] = cDoc.data() || {};
+        });
+      }
+
+      var clubFishIdsSet = new Set(clubFishes.map(function (f) { return f.id; }));
+      var list = [];
+
+      snap.forEach(function (doc) {
+        var d = doc.data();
+        var cId = d.clubId || "";
+        var cName = d.clubName || "";
+        if (cId && clubsMap) {
+          var cData = clubsMap[cId];
+          if (!cData || !cData.members || !cData.members[doc.id]) {
+            cId = "";
+            cName = "";
+          } else if (cData.name) {
+            cName = cData.name;
+          }
+        }
+        var rawCaught = Array.isArray(d.caughtFishIds) ? d.caughtFishIds : [];
+        var clubC = 0;
+        for (var ci = 0; ci < rawCaught.length; ci++) {
+          if (clubFishIdsSet.has(rawCaught[ci])) clubC++;
+        }
+        list.push({
+          uid: doc.id,
+          displayName: d.displayName || t('user_default_player'),
+          avatarUrl: d.avatarUrl || "🎣",
+          role: d.role || "member",
+          clubId: cId,
+          clubName: cName,
+          caughtCount: rawCaught.length,
+          caughtClubCount: clubC,
+          backyardFishIds: Array.isArray(d.backyardFishIds) ? d.backyardFishIds : [],
+          createdAt: d.createdAt || ""
+        });
       });
-    }
 
-    var clubFishIdsSet = new Set(clubFishes.map(function (f) { return f.id; }));
-    var list = [];
+      allPlayersList = list;
+      lastPlayersFetchTime = Date.now();
+      savePlayersSessionCache(lastPlayersFetchTime);
 
-    snap.forEach(function (doc) {
-      var d = doc.data();
-      var cId = d.clubId || "";
-      var cName = d.clubName || "";
-      if (cId && clubsMap) {
-        var cData = clubsMap[cId];
-        if (!cData || !cData.members || !cData.members[doc.id]) {
-          cId = "";
-          cName = "";
-        } else if (cData.name) {
-          cName = cData.name;
+      populatePlayerFishFilterDropdown();
+      renderPlayersList();
+      if (selectedModalFishId) {
+        var modalOverlay = document.getElementById("priceModalOverlay");
+        if (modalOverlay && modalOverlay.classList.contains("active")) {
+          renderModalBackyardOwners(selectedModalFishId);
         }
       }
-      var rawCaught = Array.isArray(d.caughtFishIds) ? d.caughtFishIds : [];
-      var clubC = 0;
-      for (var ci = 0; ci < rawCaught.length; ci++) {
-        if (clubFishIdsSet.has(rawCaught[ci])) clubC++;
+      if (force) {
+        showToast(t('players_refresh_success'), 'info');
       }
-      list.push({
-        uid: doc.id,
-        displayName: d.displayName || t('user_default_player'),
-        avatarUrl: d.avatarUrl || "🎣",
-        role: d.role || "member",
-        clubId: cId,
-        clubName: cName,
-        caughtCount: rawCaught.length,
-        caughtClubCount: clubC,
-        backyardFishIds: Array.isArray(d.backyardFishIds) ? d.backyardFishIds : [],
-        createdAt: d.createdAt || ""
-      });
-    });
-
-    allPlayersList = list;
-    lastPlayersFetchTime = Date.now();
-    savePlayersSessionCache(lastPlayersFetchTime);
-
-    populatePlayerFishFilterDropdown();
-    renderPlayersList();
-    if (force) {
-      showToast(t('players_refresh_success'), 'info');
+    } catch (err) {
+      console.error("Failed to load community players:", err);
+    } finally {
+      _playersLoadPromise = null;
     }
-  } catch (err) {
-    console.error("Failed to load community players:", err);
-  }
+  })();
+  return _playersLoadPromise;
 }
 
 function refreshPlayersList() {
@@ -863,14 +879,14 @@ async function toggleBackyardFish(fishId) {
     }
   }
 
-  // Update in allPlayersList & compact session cache
+  // Update in allPlayersList & compact cache
   var meInList = allPlayersList.find(function (p) { return p.uid === currentUser.uid; });
   if (meInList) {
     meInList.backyardFishIds = Array.from(backyardFishIds);
     savePlayersSessionCache(lastPlayersFetchTime);
   }
 
-  // Sync to Firestore
+  // Sync to Firestore with rollback on error
   if (currentUser && db) {
     try {
       var fsModule = await getFirestoreModule();
@@ -880,6 +896,26 @@ async function toggleBackyardFish(fishId) {
       });
     } catch (err) {
       console.warn("Failed to sync backyard fish to Firestore:", err);
+      if (isBred) {
+        backyardFishIds.add(fishId);
+      } else {
+        backyardFishIds.delete(fishId);
+      }
+      if (userProfile) {
+        userProfile.backyardFishIds = Array.from(backyardFishIds);
+        if (typeof saveProfileToCache === "function") {
+          saveProfileToCache(currentUser.uid, userProfile);
+        }
+      }
+      if (meInList) {
+        meInList.backyardFishIds = Array.from(backyardFishIds);
+        savePlayersSessionCache(lastPlayersFetchTime);
+      }
+      updateModalBackyardBtn(fishId);
+      renderModalBackyardOwners(fishId);
+      renderBackyardProfilePicker();
+      showToast(t('err_save') + err.message, "error");
+      return;
     }
   }
 
@@ -951,6 +987,15 @@ function renderModalBackyardOwners(fishId) {
   }
 
   box.style.display = "block";
+
+  if (allPlayersList.length === 0 && currentUser && db) {
+    box.innerHTML = '<div class="modal-backyard-owners-title">🏡 ' + t('modal_backyard_owners_title') + '</div>' +
+      '<div style="font-size: 11.5px; color: var(--text-muted);">⏳ ' + t('loading_short') + '</div>';
+    if (!_playersLoadPromise) {
+      loadAllPlayers(false);
+    }
+    return;
+  }
 
   var owners = allPlayersList.filter(function (p) {
     return p.backyardFishIds && p.backyardFishIds.indexOf(fishId) !== -1;
@@ -1187,11 +1232,11 @@ async function openPlayerModal(uid) {
   var clubMem = (currentClubMembersMap && currentClubMembersMap[uid]) || null;
   var isMe = !!(currentUser && uid === currentUser.uid);
 
-  // Check short in-memory cache for modal lookups
+  // Check short in-memory cache for modal lookups (skip extra Firestore read if already in fresh allPlayersList)
   var cachedEntry = _playerProfileCache.get(uid);
   if (cachedEntry && (Date.now() - cachedEntry.ts < PLAYER_MODAL_CACHE_TTL_MS)) {
     player = cachedEntry.player;
-  } else if (!isMe && (!player || clubMem) && db) {
+  } else if (!isMe && (!player || typeof player.caughtCount !== "number") && db) {
     try {
       var fsModule = await getFirestoreModule();
       var snap = await fsModule.getDoc(fsModule.doc(db, "users", uid));

@@ -414,7 +414,6 @@
       "club_kick_confirm": "Are you sure you want to remove {name} from the club?",
       "club_member_kicked": "Player was removed from the club.",
       "club_you_were_removed": "You have been removed from the club.",
-      "club_ghost_cleaned": "This player has deleted their account and was automatically removed from the club.",
       "footer_fan_badge": "Fan Project",
       "footer_disclaimer": "FISHAO is a registered trademark of GamoVation B.V. This website is an unofficial community project made by players for players and is not affiliated with or endorsed by GamoVation. All in-game artwork and names belong to their respective owners.",
       "footer_recaptcha_notice": "This site is protected by reCAPTCHA and the Google <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Privacy Policy</a> and <a href=\"https://policies.google.com/terms\" target=\"_blank\" rel=\"noopener noreferrer\">Terms of Service</a> apply.",
@@ -637,7 +636,8 @@
       "app_update_reload": "Reload",
       "avatar_url_https_only": "Avatar URL must start with https://.",
       "auth_reauth_required": "Please re-authenticate with Google to permanently delete your account.",
-      "modal_price_occurrences": "{count}×"
+      "modal_price_occurrences": "{count}×",
+      "loading_short": "Loading..."
   };
 
   if (typeof window !== 'undefined') {

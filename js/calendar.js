@@ -355,6 +355,31 @@ function renderCalendarView() {
   var gridEl = document.getElementById('calendarGrid');
   if (!gridEl) return;
 
+  if (!gridEl.dataset.boundCalActions) {
+    gridEl.dataset.boundCalActions = '1';
+    gridEl.addEventListener('click', function (ev) {
+      var catchBtn = ev.target && ev.target.closest ? ev.target.closest('.caught-btn[data-catch-id]') : null;
+      if (catchBtn) {
+        ev.stopPropagation();
+        toggleCaughtFish(Number(catchBtn.dataset.catchId));
+        return;
+      }
+      var card = ev.target && ev.target.closest ? ev.target.closest('.cal-fish-card[data-fish-id]') : null;
+      if (card) {
+        openPriceModal(Number(card.dataset.fishId));
+      }
+    });
+    gridEl.addEventListener('keydown', function (ev) {
+      if (ev.key !== 'Enter' && ev.key !== ' ') return;
+      if (ev.target && ev.target.closest && ev.target.closest('.caught-btn')) return;
+      var card = ev.target && ev.target.closest ? ev.target.closest('.cal-fish-card[data-fish-id]') : null;
+      if (card && ev.target === card) {
+        ev.preventDefault();
+        openPriceModal(Number(card.dataset.fishId));
+      }
+    });
+  }
+
   var now = new Date();
   var curUtcMonth = now.getUTCMonth() + 1;
   var seasonalFishes = getSeasonalFishesList();
@@ -543,9 +568,9 @@ function renderCalendarView() {
     else if (st.inSeason) cardClasses.push('is-in-season');
     if (item.isCaught) cardClasses.push('is-caught');
 
-    return '<article class="' + cardClasses.join(' ') + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')">' +
+    return '<article class="' + cardClasses.join(' ') + '" role="button" tabindex="0" data-fish-id="' + f.id + '">' +
       '<div class="cal-card-top">' +
-      '<div class="cal-card-caught-wrap" onclick="event.stopPropagation();">' + renderCaughtBtn(f.id) + '</div>' +
+      '<div class="cal-card-caught-wrap">' + renderCaughtBtn(f.id) + '</div>' +
       '<div class="cal-card-img-box">' +
       '<img src="images/fish_' + f.id + '.webp" alt="' + escapeHtml(fishName) + '" class="fish-img" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
       '</div>' +
@@ -557,7 +582,7 @@ function renderCalendarView() {
       (altName ? '<div class="cal-card-alt-name">' + escapeHtml(altName) + '</div>' : '') +
       '<div class="cal-card-badges">' +
       renderRatingBadge(f.rating) +
-      '<div class="cal-price-wrap" onclick="event.stopPropagation();">' + renderPriceCell(f.id) + '</div>' +
+      '<div class="cal-price-wrap">' + renderPriceCell(f.id) + '</div>' +
       '</div>' +
       '</div>' +
       '</div>' +

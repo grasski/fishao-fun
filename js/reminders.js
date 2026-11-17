@@ -165,15 +165,20 @@ function updateRemindersBellBadge() {
   }
 }
 
+function isReminderUtcMode() {
+  return (typeof userTimezone !== 'undefined' && userTimezone === 'utc');
+}
+
 function toLocalDatetimeInputValue(dateObj) {
   var d = (dateObj instanceof Date) ? dateObj : new Date(dateObj);
   if (isNaN(d.getTime())) d = new Date();
+  var useUtc = isReminderUtcMode();
   var pad = function (n) { return String(n).padStart(2, '0'); };
-  return d.getFullYear() + '-' +
-    pad(d.getMonth() + 1) + '-' +
-    pad(d.getDate()) + 'T' +
-    pad(d.getHours()) + ':' +
-    pad(d.getMinutes());
+  return (useUtc ? d.getUTCFullYear() : d.getFullYear()) + '-' +
+    pad((useUtc ? d.getUTCMonth() : d.getMonth()) + 1) + '-' +
+    pad(useUtc ? d.getUTCDate() : d.getDate()) + 'T' +
+    pad(useUtc ? d.getUTCHours() : d.getHours()) + ':' +
+    pad(useUtc ? d.getUTCMinutes() : d.getMinutes());
 }
 
 function formatReminderDateTime(isoString) {
@@ -228,10 +233,11 @@ function checkRemindersOnStartup(fromAuthLoad) {
   } catch (e) { }
 
   if (!introSeen) {
-    if (!remindersStartupChecked) {
+    // Do not interrupt anonymous first-time visitors with a blocking popup on landing;
+    // show intro only after sign-in or via user interaction.
+    if (!remindersStartupChecked && fromAuthLoad && typeof currentUser !== 'undefined' && currentUser) {
       remindersStartupChecked = true;
       setTimeout(function () {
-        // Do not overlap with other active modals
         if (!document.querySelector('.modal-overlay.active')) {
           openRemindersIntroModal();
         }
@@ -399,6 +405,24 @@ function editReminder(id) {
   if (titleEl) titleEl.focus();
 }
 
+function parseReminderInputDate(dtVal) {
+  if (!dtVal) return new Date(NaN);
+  if (isReminderUtcMode()) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(String(dtVal).trim());
+    if (m) {
+      return new Date(Date.UTC(
+        parseInt(m[1], 10),
+        parseInt(m[2], 10) - 1,
+        parseInt(m[3], 10),
+        parseInt(m[4], 10),
+        parseInt(m[5], 10),
+        m[6] ? parseInt(m[6], 10) : 0
+      ));
+    }
+  }
+  return new Date(dtVal);
+}
+
 async function submitReminderForm(e) {
   if (e && e.preventDefault) e.preventDefault();
 
@@ -414,7 +438,7 @@ async function submitReminderForm(e) {
     if (typeof showToast === 'function') showToast(t('reminders_err_title'), 'warning');
     return;
   }
-  var parsedDate = new Date(dtVal);
+  var parsedDate = parseReminderInputDate(dtVal);
   if (!dtVal || isNaN(parsedDate.getTime())) {
     if (typeof showToast === 'function') showToast(t('reminders_err_date'), 'warning');
     return;

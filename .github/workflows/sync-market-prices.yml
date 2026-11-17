@@ -44,7 +44,7 @@ jobs:
 
       - name: Install firebase-admin
         if: ${{ !inputs.dry_run && steps.cache-firebase-admin.outputs.cache-hit != 'true' }}
-        run: npm install --no-save --no-audit --no-fund firebase-admin
+        run: npm install --no-save --no-audit --no-fund firebase-admin@^13.0.0
 
       - name: Sync market prices to Firestore
         env:
