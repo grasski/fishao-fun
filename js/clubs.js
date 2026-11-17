@@ -7,15 +7,19 @@
  */
 
 var pendingMemberFetches = new Set();
+var _boundClubId = "";
+var _lastClubMemberSyncSig = "";
 
 async function bindClubListener(clubId) {
   if (!db || !clubId) return;
+  if (clubUnsubscribe && _boundClubId === clubId) return;
   try {
     var fsModule = await getFirestoreModule();
     if (clubUnsubscribe) {
       clubUnsubscribe();
       clubUnsubscribe = null;
     }
+    _boundClubId = clubId;
     currentClubId = clubId;
     var clubDocRef = fsModule.doc(db, "clubs", clubId);
 
@@ -27,14 +31,13 @@ async function bindClubListener(clubId) {
         // If current user is supposedly in this club, verify if still registered as member
         if (currentUser && currentClubId === clubId) {
           if (!members[currentUser.uid]) {
-            // User was removed / kicked or left this club: cleanly detach and do NOT resurrect!
             console.info("Current user " + currentUser.uid + " is no longer a member of club " + clubId + ", detaching listener.");
             if (userProfile && userProfile.clubId === clubId) {
               userProfile.clubId = "";
               userProfile.clubName = "";
               try {
                 var uRef = fsModule.doc(db, "users", currentUser.uid);
-                fsModule.updateDoc(uRef, { clubId: "", clubName: "" });
+                fsModule.updateDoc(uRef, { clubId: "", clubName: "" }).catch(function () {});
               } catch (e) {}
             }
             unbindClubListener();
@@ -48,7 +51,7 @@ async function bindClubListener(clubId) {
 
         currentClubName = data.name || "";
         currentClubPoints = typeof data.points === 'number' ? data.points : 0;
-        currentClubMemberCount = Math.max(actualCount, typeof data.memberCount === 'number' ? data.memberCount : actualCount);
+        currentClubMemberCount = actualCount;
 
         var acName = document.getElementById("activeClubName");
         if (acName) acName.innerText = currentClubName || "Klub";
@@ -57,43 +60,37 @@ async function bindClubListener(clubId) {
         var acMemb = document.getElementById("activeClubMembers");
         if (acMemb) acMemb.innerText = '👥 ' + formatClubMemberCount(currentClubMemberCount);
 
-        // Self-heal memberCount in Firestore if desynced
-        if (data.memberCount !== actualCount && actualCount > 0) {
-          try {
-            fsModule.updateDoc(clubDocRef, { memberCount: actualCount });
-          } catch (e) {}
-        }
-
         currentClubUnlockedFcFishIds = new Set(data.unlockedFcFishIds || []);
         currentClubUnlockedMonsterIds = new Set(data.unlockedMonsterIds || []);
         renderClubMembers(members, data.createdBy);
 
-        // Sync stats if current user belongs to this club and stats have changed
+        // Sync ONLY own member stats if changed since last sync signature
         if (currentUser && currentClubId === clubId && userProfile && userProfile.clubId === clubId) {
           var curMember = members[currentUser.uid];
           if (curMember) {
             var myClubCount = 0;
             clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myClubCount++; });
-            var needsSync = (curMember.caughtCount !== caughtFishIds.size ||
-                             curMember.caughtClubCount !== myClubCount ||
-                             (userProfile.displayName && curMember.displayName !== userProfile.displayName) ||
-                             (userProfile.avatarUrl && curMember.avatarUrl !== userProfile.avatarUrl));
-            if (needsSync) {
-              try {
-                var upM = {};
-                upM["members." + currentUser.uid + ".caughtCount"] = caughtFishIds.size;
-                upM["members." + currentUser.uid + ".caughtClubCount"] = myClubCount;
-                if (userProfile.displayName) upM["members." + currentUser.uid + ".displayName"] = userProfile.displayName;
-                if (userProfile.avatarUrl) upM["members." + currentUser.uid + ".avatarUrl"] = userProfile.avatarUrl;
-                fsModule.updateDoc(clubDocRef, upM);
-              } catch (e) {
+            var curSig = caughtFishIds.size + "|" + myClubCount + "|" + (userProfile.displayName || "") + "|" + (userProfile.avatarUrl || "");
+            var remoteSig = (curMember.caughtCount || 0) + "|" + (curMember.caughtClubCount || 0) + "|" + (curMember.displayName || "") + "|" + (curMember.avatarUrl || "");
+            if (curSig !== remoteSig && _lastClubMemberSyncSig !== curSig) {
+              _lastClubMemberSyncSig = curSig;
+              var upM = {
+                updatedAt: new Date().toISOString(),
+                lastUpdatedBy: currentUser.uid
+              };
+              upM["members." + currentUser.uid + ".caughtCount"] = caughtFishIds.size;
+              upM["members." + currentUser.uid + ".caughtClubCount"] = myClubCount;
+              if (userProfile.displayName) upM["members." + currentUser.uid + ".displayName"] = userProfile.displayName;
+              if (userProfile.avatarUrl) upM["members." + currentUser.uid + ".avatarUrl"] = userProfile.avatarUrl;
+              fsModule.updateDoc(clubDocRef, upM).catch(function (e) {
                 console.warn("Could not sync member stats in club:", e);
-              }
+              });
             }
           }
         }
       } else {
         console.warn("Club document not found:", clubId);
+        _boundClubId = "";
         currentClubId = "";
         currentClubName = "";
         currentClubPoints = 0;
@@ -121,98 +118,49 @@ async function fetchAndSyncMemberStats(uid) {
   try {
     var fsModule = await getFirestoreModule();
     var uSnap = await fsModule.getDoc(fsModule.doc(db, "users", uid));
-    if (!uSnap.exists()) {
-      // User document does not exist (account deleted)!
-      // Clean up orphaned member from club document so ghost members disappear automatically
-      if (currentClubId) {
-        try {
-          var cRef = fsModule.doc(db, "clubs", currentClubId);
-          var cSnap = await fsModule.getDoc(cRef);
-          if (cSnap.exists()) {
-            var cData = cSnap.data();
-            var cnt = cData.memberCount || 1;
-            var delPatch = {
-              memberCount: Math.max(0, cnt - 1),
-              updatedAt: new Date().toISOString(),
-              lastUpdatedBy: currentUser.uid
-            };
-            delPatch["members." + uid] = fsModule.deleteField();
-            await fsModule.updateDoc(cRef, delPatch);
-            console.info("Cleaned up orphaned deleted member " + uid + " from club " + currentClubId);
-          }
-        } catch (e) {
-          console.warn("Could not clean up deleted member from club:", e);
-        }
-      }
-      return;
+    if (!uSnap.exists()) return;
+
+    var uData = uSnap.data();
+    var uCaught = Array.isArray(uData.caughtFishIds) ? uData.caughtFishIds : [];
+    var totalC = uCaught.length;
+    var clubFishIdsSet = new Set(clubFishes.map(function (f) { return f.id; }));
+    var clubC = 0;
+    uCaught.forEach(function (fid) { if (clubFishIdsSet.has(fid)) clubC++; });
+
+    if (currentClubMembersMap) {
+      if (!currentClubMembersMap[uid]) currentClubMembersMap[uid] = {};
+      currentClubMembersMap[uid].caughtCount = totalC;
+      currentClubMembersMap[uid].caughtClubCount = clubC;
+      if (uData.displayName) currentClubMembersMap[uid].displayName = uData.displayName;
+      if (uData.avatarUrl) currentClubMembersMap[uid].avatarUrl = uData.avatarUrl;
     }
-    if (uSnap.exists()) {
-      var uData = uSnap.data();
-      var uCaught = Array.isArray(uData.caughtFishIds) ? uData.caughtFishIds : [];
-      var totalC = uCaught.length;
-      var clubFishIdsSet = new Set(clubFishes.map(function (f) { return f.id; }));
-      var clubC = 0;
-      uCaught.forEach(function (fid) { if (clubFishIdsSet.has(fid)) clubC++; });
 
-      var existingMem = (currentClubMembersMap && currentClubMembersMap[uid]) || {};
-      var needsUpdate = (existingMem.caughtCount !== totalC ||
-                         existingMem.caughtClubCount !== clubC ||
-                         (uData.displayName && existingMem.displayName !== uData.displayName) ||
-                         (uData.avatarUrl && existingMem.avatarUrl !== uData.avatarUrl));
+    // Update member chip badge in active grid
+    var badgeEl = document.getElementById("clubMemberCatchBadge_" + sanitizeDomId(uid));
+    if (badgeEl) {
+      badgeEl.innerText = "• 🎣 " + totalC + "/" + allFishes.length;
+      badgeEl.style.display = "inline";
+    }
 
-      if (currentClubMembersMap) {
-        if (!currentClubMembersMap[uid]) currentClubMembersMap[uid] = {};
-        currentClubMembersMap[uid].caughtCount = totalC;
-        currentClubMembersMap[uid].caughtClubCount = clubC;
-        if (uData.displayName) currentClubMembersMap[uid].displayName = uData.displayName;
-        if (uData.avatarUrl) currentClubMembersMap[uid].avatarUrl = uData.avatarUrl;
-      }
+    // If player modal is open for this player, update modal live
+    var modalNameEl = document.getElementById("playerModalName");
+    if (modalNameEl && modalNameEl.dataset.currentUid === uid) {
+      var totalClub = clubFishes.length || 80;
+      var clubCountEl = document.getElementById("playerModalClubCount");
+      var clubFillEl = document.getElementById("playerModalClubFill");
+      if (clubCountEl) clubCountEl.innerText = clubC + " / " + totalClub;
+      if (clubFillEl) clubFillEl.style.width = Math.min(100, Math.round((clubC / totalClub) * 100)) + "%";
 
-      // Update member chip badge in active grid
-      var badgeEl = document.getElementById("clubMemberCatchBadge_" + uid);
-      if (badgeEl) {
-        badgeEl.innerText = "• 🎣 " + totalC + "/" + allFishes.length;
-        badgeEl.style.display = "inline";
-      }
+      var totalCountEl = document.getElementById("playerModalTotalCount");
+      var totalFillEl = document.getElementById("playerModalTotalFill");
+      var totalPct = Math.round((totalC / allFishes.length) * 100);
+      if (totalCountEl) totalCountEl.innerText = totalC + " / " + allFishes.length + " (" + totalPct + "%)";
+      if (totalFillEl) totalFillEl.style.width = Math.min(100, (totalC / allFishes.length) * 100).toFixed(1) + "%";
 
-      // If player modal is open for this player, update modal live
-      var modalNameEl = document.getElementById("playerModalName");
-      if (modalNameEl && modalNameEl.dataset.currentUid === uid) {
-        var totalClub = clubFishes.length || 80;
-        var clubCountEl = document.getElementById("playerModalClubCount");
-        var clubFillEl = document.getElementById("playerModalClubFill");
-        if (clubCountEl) clubCountEl.innerText = clubC + " / " + totalClub;
-        if (clubFillEl) clubFillEl.style.width = Math.min(100, Math.round((clubC / totalClub) * 100)) + "%";
-
-        var totalCountEl = document.getElementById("playerModalTotalCount");
-        var totalFillEl = document.getElementById("playerModalTotalFill");
-        var totalPct = Math.round((totalC / allFishes.length) * 100);
-        if (totalCountEl) totalCountEl.innerText = totalC + " / " + allFishes.length + " (" + totalPct + "%)";
-        if (totalFillEl) totalFillEl.style.width = Math.min(100, (totalC / allFishes.length) * 100).toFixed(1) + "%";
-
-        var avWrap = document.getElementById("playerModalAvatarWrap");
-        var av = uData.avatarUrl || "🎣";
-        if (avWrap) {
-          avWrap.innerHTML = '<div class="player-modal-avatar-large">' + renderAvatarHtml(av, "🎣") + '</div>';
-        }
-      }
-
-      // Cache into club doc only if values changed to avoid unnecessary Firestore updates
-      if (needsUpdate && currentClubId) {
-        try {
-          var cRef = fsModule.doc(db, "clubs", currentClubId);
-          var patch = {
-            updatedAt: new Date().toISOString(),
-            lastUpdatedBy: currentUser.uid
-          };
-          patch["members." + uid + ".caughtCount"] = totalC;
-          patch["members." + uid + ".caughtClubCount"] = clubC;
-          if (uData.displayName) patch["members." + uid + ".displayName"] = uData.displayName;
-          if (uData.avatarUrl) patch["members." + uid + ".avatarUrl"] = uData.avatarUrl;
-          await fsModule.updateDoc(cRef, patch);
-        } catch (e) {
-          // Silently ignore if permissions prevent caching
-        }
+      var avWrap = document.getElementById("playerModalAvatarWrap");
+      var av = uData.avatarUrl || "🎣";
+      if (avWrap) {
+        avWrap.innerHTML = '<div class="player-modal-avatar-large">' + renderAvatarHtml(av, "🎣") + '</div>';
       }
     }
   } catch (err) {
@@ -306,22 +254,33 @@ function renderClubMembers(membersMap, creatorId) {
       : '<span>🎣 ' + t('club_member_role') + '</span>';
 
     var cCount = isMe ? caughtFishIds.size : (typeof m.caughtCount === 'number' ? m.caughtCount : null);
-    var countBadge = '<span id="clubMemberCatchBadge_' + uid + '" style="color: #38bdf8; font-size: 11px; margin-left: 4px; font-weight: 600;">• 🎣 ' + (cCount !== null ? cCount : (typeof m.caughtCount === 'number' ? m.caughtCount : 0)) + '/' + allFishes.length + '</span>';
+    var countBadge = '<span id="clubMemberCatchBadge_' + sanitizeDomId(uid) + '" style="color: #38bdf8; font-size: 11px; margin-left: 4px; font-weight: 600;">• 🎣 ' + (cCount !== null ? cCount : (typeof m.caughtCount === 'number' ? m.caughtCount : 0)) + '/' + allFishes.length + '</span>';
 
-    html += '<div class="club-member-chip' + (isCr ? ' creator' : '') + '" onclick="window.fishaoApp.openPlayerModal(\'' + uid + '\')" title="' + escapeHtml(t('club_member_view_profile')) + '">' +
+    html += '<button type="button" class="club-member-chip' + (isCr ? ' creator' : '') + '" data-uid="' + escapeHtml(uid) + '" title="' + escapeHtml(t('club_member_view_profile')) + '">' +
       avatarHtml +
       '<div class="club-member-info">' +
-        '<div class="club-member-name">' + escapeHtml(dName) + (isMe ? ' <span style="font-size:11px;color:#a78bfa;">(' + t('player_card_me_tag') + ')</span>' : '') + '</div>' +
+        '<div class="club-member-name">' + escapeHtml(dName) + (isMe ? ' <span style="font-size:11px;color:#a78bfa;">(' + escapeHtml(t('player_card_me_tag')) + ')</span>' : '') + '</div>' +
         '<div class="club-member-tag">' +
           roleBadge + countBadge +
         '</div>' +
       '</div>' +
-    '</div>';
+    '</button>';
 
     if (!isMe && currentUser && db && (m.caughtCount === undefined || m.caughtClubCount === undefined)) {
       fetchAndSyncMemberStats(uid);
     }
   });
+
+  if (!grid.dataset.boundMemberClick) {
+    grid.dataset.boundMemberClick = "1";
+    grid.addEventListener("click", function (ev) {
+      var chip = ev.target && ev.target.closest ? ev.target.closest(".club-member-chip") : null;
+      if (!chip || !chip.dataset.uid) return;
+      if (window.fishaoApp && typeof window.fishaoApp.openPlayerModal === "function") {
+        window.fishaoApp.openPlayerModal(chip.dataset.uid);
+      }
+    });
+  }
 
   grid.innerHTML = html;
 }
@@ -338,6 +297,8 @@ function unbindClubListener() {
     clubUnsubscribe();
     clubUnsubscribe = null;
   }
+  _boundClubId = "";
+  _lastClubMemberSyncSig = "";
   currentClubId = "";
   currentClubName = "";
   currentClubPoints = 0;
@@ -353,43 +314,50 @@ function unbindClubListener() {
   applyFilters();
 }
 
-async function removeMemberFromClubDoc(fsModule, clubId, uid) {
+async function removeMemberFromClubDoc(fsModule, clubId, uid, alsoClearUserDoc) {
   if (!db || !clubId || !uid) return;
-  var clubRef = fsModule.doc(db, "clubs", clubId);
-  var snap = await fsModule.getDoc(clubRef);
-  if (!snap.exists()) return;
-  var cData = snap.data();
-  var cnt = cData.memberCount || 1;
-  var members = cData.members || {};
-  var wasMember = !!members[uid];
-  var remainingUids = Object.keys(members).filter(function (k) { return k !== uid; });
+  if (!window.FISHAO_FS_TX) return;
 
-  if (remainingUids.length === 0) {
-    try {
-      await fsModule.deleteDoc(clubRef);
+  await window.FISHAO_FS_TX.runTx(db, async function (tx, fs) {
+    var clubRef = fs.doc(db, "clubs", clubId);
+    var snap = await tx.get(clubRef);
+    var uRef = alsoClearUserDoc ? fs.doc(db, "users", uid) : null;
+
+    if (!snap.exists()) {
+      if (uRef) tx.update(uRef, { clubId: "", clubName: "" });
       return;
-    } catch (e) {
-      // Fallback to updateDoc if deleteDoc is not permitted
     }
-  }
 
-  var leaveUpdate = {
-    memberCount: Math.max(0, wasMember ? (cnt - 1) : cnt),
-    updatedAt: new Date().toISOString(),
-    lastUpdatedBy: (currentUser && currentUser.uid) ? currentUser.uid : uid
-  };
-  leaveUpdate["members." + uid] = fsModule.deleteField();
+    var cData = snap.data() || {};
+    var members = Object.assign({}, cData.members || {});
+    var targetMem = members[uid];
+    var remainingUids = Object.keys(members).filter(function (k) { return k !== uid; });
 
-  if ((cData.createdBy === uid || (members[uid] && members[uid].isCreator)) && remainingUids.length > 0) {
-    remainingUids.sort(function (a, b) {
-      var ja = (members[a] && members[a].joinedAt) || "";
-      var jb = (members[b] && members[b].joinedAt) || "";
-      return ja.localeCompare(jb);
-    });
-    leaveUpdate["members." + remainingUids[0] + ".isCreator"] = true;
-  }
+    if (remainingUids.length === 0) {
+      tx.delete(clubRef);
+      if (uRef) tx.update(uRef, { clubId: "", clubName: "" });
+      return;
+    }
 
-  await fsModule.updateDoc(clubRef, leaveUpdate);
+    var leaveUpdate = {
+      memberCount: remainingUids.length,
+      updatedAt: new Date().toISOString(),
+      lastUpdatedBy: (currentUser && currentUser.uid) ? currentUser.uid : uid
+    };
+    leaveUpdate["members." + uid] = fs.deleteField();
+
+    if ((cData.createdBy === uid || (targetMem && targetMem.isCreator)) && remainingUids.length > 0) {
+      remainingUids.sort(function (a, b) {
+        var ja = (members[a] && members[a].joinedAt) || "";
+        var jb = (members[b] && members[b].joinedAt) || "";
+        return ja.localeCompare(jb);
+      });
+      leaveUpdate["members." + remainingUids[0] + ".isCreator"] = true;
+    }
+
+    tx.update(clubRef, leaveUpdate);
+    if (uRef) tx.update(uRef, { clubId: "", clubName: "" });
+  });
 }
 
 async function searchClubs(query) {
@@ -442,14 +410,23 @@ async function searchClubs(query) {
         '<span>🪙 ' + unlockedFcCount + '/24</span>' +
         '</div>' +
         '</div>' +
-        '<button class="pill-btn purple" data-club-id="' + escapeHtml(cId) + '" data-club-name="' + escapeHtml(name) + '" onclick="window.fishaoApp.joinClub(this.getAttribute(\'data-club-id\'), this.getAttribute(\'data-club-name\'))">' + t('club_btn_join') + '</button>' +
+        '<button type="button" class="pill-btn purple btn-club-join" data-club-id="' + escapeHtml(cId) + '" data-club-name="' + escapeHtml(name) + '">' + escapeHtml(t('club_btn_join')) + '</button>' +
         '</div>';
     });
+
+    if (!resultsEl.dataset.boundJoinClick) {
+      resultsEl.dataset.boundJoinClick = "1";
+      resultsEl.addEventListener("click", function (ev) {
+        var btn = ev.target && ev.target.closest ? ev.target.closest(".btn-club-join") : null;
+        if (!btn) return;
+        joinClub(btn.getAttribute("data-club-id"), btn.getAttribute("data-club-name"));
+      });
+    }
 
     resultsEl.innerHTML = html;
   } catch (err) {
     console.error("Error searching clubs:", err);
-    resultsEl.innerHTML = '<div style="padding: 10px; color: #f87171; font-size: 12px;">' + t('err_generic') + err.message + '</div>';
+    resultsEl.innerHTML = '<div style="padding: 10px; color: #f87171; font-size: 12px;">' + escapeHtml(t('err_generic') + (err && err.message ? err.message : String(err))) + '</div>';
   }
 }
 
@@ -476,9 +453,9 @@ async function createClub(name) {
     // Remove user from previous club (and promote oldest remaining member if creator)
     if (currentClubId) {
       try {
-        await removeMemberFromClubDoc(fsModule, currentClubId, currentUser.uid);
+        await removeMemberFromClubDoc(fsModule, currentClubId, currentUser.uid, false);
       } catch (e) {
-        console.warn("Could not decrement prev club:", e);
+        console.warn("Could not leave previous club:", e);
       }
     }
 
@@ -494,29 +471,33 @@ async function createClub(name) {
     };
     var initialMembers = {};
     initialMembers[currentUser.uid] = memberData;
+    var nowIso = new Date().toISOString();
 
-    var newDocRef = await fsModule.addDoc(clubsCol, {
-      name: clubName,
-      name_lower: clubName.toLowerCase(),
-      points: 0,
-      unlockedFcFishIds: [],
-      unlockedMonsterIds: [],
-      memberCount: 1,
-      members: initialMembers,
-      createdBy: currentUser.uid,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    });
-
+    var newClubRef = fsModule.doc(clubsCol);
     var userDocRef = fsModule.doc(db, "users", currentUser.uid);
-    await fsModule.updateDoc(userDocRef, {
-      clubId: newDocRef.id,
-      clubName: clubName
+
+    await window.FISHAO_FS_TX.commitBatch(db, function (batch) {
+      batch.set(newClubRef, {
+        name: clubName,
+        name_lower: clubName.toLowerCase(),
+        points: 0,
+        unlockedFcFishIds: [],
+        unlockedMonsterIds: [],
+        memberCount: 1,
+        members: initialMembers,
+        createdBy: currentUser.uid,
+        createdAt: nowIso,
+        updatedAt: nowIso
+      });
+      batch.update(userDocRef, {
+        clubId: newClubRef.id,
+        clubName: clubName
+      });
     });
 
     if (input) input.value = "";
     showToast(t('club_created_success', { name: clubName }), "success");
-    bindClubListener(newDocRef.id);
+    bindClubListener(newClubRef.id);
   } catch (err) {
     console.error("Failed to create club:", err);
     showToast(t('club_err_create') + err.message, "error");
@@ -547,19 +528,12 @@ async function joinClub(clubId, clubName) {
       if (!ok) return;
 
       try {
-        await removeMemberFromClubDoc(fsModule, currentClubId, currentUser.uid);
+        await removeMemberFromClubDoc(fsModule, currentClubId, currentUser.uid, false);
       } catch (e) {
-        console.warn("Could not decrement old club:", e);
+        console.warn("Could not leave previous club:", e);
       }
     }
 
-    var newClubRef = fsModule.doc(db, "clubs", clubId);
-    var newSnap = await fsModule.getDoc(newClubRef);
-    if (!newSnap.exists()) {
-      showToast(t('club_not_found'), "error");
-      return;
-    }
-    var newCount = (newSnap.data().memberCount || 0) + 1;
     var myJoinClubCount = 0;
     clubFishes.forEach(function (f) { if (caughtFishIds.has(f.id)) myJoinClubCount++; });
     var memberData = {
@@ -570,23 +544,42 @@ async function joinClub(clubId, clubName) {
       caughtCount: caughtFishIds.size,
       caughtClubCount: myJoinClubCount
     };
-    var updatePayload = {
-      memberCount: newCount,
-      updatedAt: new Date().toISOString(),
-      lastUpdatedBy: currentUser.uid
-    };
-    updatePayload["members." + currentUser.uid] = memberData;
-    await fsModule.updateDoc(newClubRef, updatePayload);
 
-    var userDocRef = fsModule.doc(db, "users", currentUser.uid);
-    await fsModule.updateDoc(userDocRef, {
-      clubId: clubId,
-      clubName: clubName || newSnap.data().name || "Klub"
+    var resolvedClubName = await window.FISHAO_FS_TX.runTx(db, async function (tx, fs) {
+      var newClubRef = fs.doc(db, "clubs", clubId);
+      var newSnap = await tx.get(newClubRef);
+      if (!newSnap.exists()) {
+        throw new Error("CLUB_NOT_FOUND");
+      }
+      var data = newSnap.data() || {};
+      var membersCopy = Object.assign({}, data.members || {});
+      membersCopy[currentUser.uid] = memberData;
+
+      var updatePayload = {
+        memberCount: Object.keys(membersCopy).length,
+        updatedAt: new Date().toISOString(),
+        lastUpdatedBy: currentUser.uid
+      };
+      updatePayload["members." + currentUser.uid] = memberData;
+      tx.update(newClubRef, updatePayload);
+
+      var finalName = clubName || data.name || "Klub";
+      var userDocRef = fs.doc(db, "users", currentUser.uid);
+      tx.update(userDocRef, {
+        clubId: clubId,
+        clubName: finalName
+      });
+
+      return finalName;
     });
 
-    showToast(t('club_joined_success', { name: clubName || newSnap.data().name }), "success");
+    showToast(t('club_joined_success', { name: resolvedClubName }), "success");
     bindClubListener(clubId);
   } catch (err) {
+    if (err && err.message === "CLUB_NOT_FOUND") {
+      showToast(t('club_not_found'), "error");
+      return;
+    }
     console.error("Failed to join club:", err);
     showToast(t('club_err_join') + err.message, "error");
   }
@@ -604,7 +597,7 @@ async function leaveClub() {
 
   var clubToLeave = currentClubId;
 
-  // 1. Unbind club listener FIRST so self-heal snapshot cannot re-register leaving member
+  // 1. Unbind club listener FIRST so snapshot cannot trigger anything for stale club
   unbindClubListener();
   currentClubId = "";
   currentClubName = "";
@@ -625,20 +618,8 @@ async function leaveClub() {
 
   try {
     var fsModule = await getFirestoreModule();
-
-    // 2. Remove member from club document and promote oldest member if creator
-    try {
-      await removeMemberFromClubDoc(fsModule, clubToLeave, currentUser.uid);
-    } catch (e) {
-      console.warn("Could not decrement club:", e);
-    }
-
-    // 3. Clear clubId in user profile document
-    var userDocRef = fsModule.doc(db, "users", currentUser.uid);
-    await fsModule.updateDoc(userDocRef, {
-      clubId: "",
-      clubName: ""
-    });
+    // 2. Atomically remove member from club & clear clubId in /users/{uid}
+    await removeMemberFromClubDoc(fsModule, clubToLeave, currentUser.uid, true);
 
     renderClubMembers({}, "");
     updateClubStats();
@@ -668,35 +649,33 @@ async function kickMemberFromClub(targetUid) {
   if (!ok) return;
 
   try {
-    var fsModule = await getFirestoreModule();
-    var clubRef = fsModule.doc(db, "clubs", currentClubId);
-    var snap = await fsModule.getDoc(clubRef);
-    if (snap.exists()) {
-      var cData = snap.data();
-      var cnt = cData.memberCount || 1;
-      var members = cData.members || {};
-      var wasMember = !!members[targetUid];
-      var update = {
-        memberCount: Math.max(0, wasMember ? (cnt - 1) : cnt),
-        updatedAt: new Date().toISOString(),
-        lastUpdatedBy: currentUser.uid
-      };
-      update["members." + targetUid] = fsModule.deleteField();
-      await fsModule.updateDoc(clubRef, update);
-    }
+    await window.FISHAO_FS_TX.runTx(db, async function (tx, fs) {
+      var clubRef = fs.doc(db, "clubs", currentClubId);
+      var snap = await tx.get(clubRef);
+      if (snap.exists()) {
+        var cData = snap.data() || {};
+        var membersCopy = Object.assign({}, cData.members || {});
+        delete membersCopy[targetUid];
+        var update = {
+          memberCount: Object.keys(membersCopy).length,
+          updatedAt: new Date().toISOString(),
+          lastUpdatedBy: currentUser.uid
+        };
+        update["members." + targetUid] = fs.deleteField();
+        tx.update(clubRef, update);
+      }
 
-    // Also update local allPlayersList cache immediately so community player list reflects the kick
+      if (isAdmin) {
+        var uRef = fs.doc(db, "users", targetUid);
+        tx.update(uRef, { clubId: "", clubName: "" });
+      }
+    });
+
+    // Update local allPlayersList cache immediately so community player list reflects the kick
     var kickedPlayer = allPlayersList.find(function (p) { return p.uid === targetUid; });
     if (kickedPlayer) {
       kickedPlayer.clubId = "";
       kickedPlayer.clubName = "";
-    }
-
-    if (isAdmin) {
-      try {
-        var uRef = fsModule.doc(db, "users", targetUid);
-        await fsModule.updateDoc(uRef, { clubId: "", clubName: "" });
-      } catch (e) {}
     }
 
     closePlayerModal();
@@ -716,14 +695,15 @@ async function setClubPoints(val) {
     showToast(t('club_err_points_member'), "error");
     return;
   }
-  var num = Math.max(0, parseInt(val) || 0);
+  var num = Math.max(0, Math.min(100000000, parseInt(val, 10) || 0));
   try {
-    var fsModule = await getFirestoreModule();
-    var clubRef = fsModule.doc(db, "clubs", currentClubId);
-    await fsModule.updateDoc(clubRef, {
-      points: num,
-      updatedAt: new Date().toISOString(),
-      lastUpdatedBy: currentUser.uid
+    await window.FISHAO_FS_TX.runTx(db, async function (tx, fs) {
+      var clubRef = fs.doc(db, "clubs", currentClubId);
+      tx.update(clubRef, {
+        points: num,
+        updatedAt: new Date().toISOString(),
+        lastUpdatedBy: currentUser.uid
+      });
     });
   } catch (err) {
     console.error("Failed to update club points:", err);
@@ -752,34 +732,37 @@ async function toggleClubSpecialFish(fishId) {
   if (!isMonster && !isFc) return;
 
   try {
-    var fsModule = await getFirestoreModule();
-    var clubRef = fsModule.doc(db, "clubs", currentClubId);
-
-    if (isMonster) {
-      var updatedMonsters = new Set(currentClubUnlockedMonsterIds);
-      if (updatedMonsters.has(fishId)) {
-        updatedMonsters.delete(fishId);
+    await window.FISHAO_FS_TX.runTx(db, async function (tx, fs) {
+      var clubRef = fs.doc(db, "clubs", currentClubId);
+      var snap = await tx.get(clubRef);
+      if (!snap.exists()) return;
+      var data = snap.data() || {};
+      if (isMonster) {
+        var updatedMonsters = new Set(Array.isArray(data.unlockedMonsterIds) ? data.unlockedMonsterIds : []);
+        if (updatedMonsters.has(fishId)) {
+          updatedMonsters.delete(fishId);
+        } else {
+          updatedMonsters.add(fishId);
+        }
+        tx.update(clubRef, {
+          unlockedMonsterIds: Array.from(updatedMonsters),
+          updatedAt: new Date().toISOString(),
+          lastUpdatedBy: currentUser.uid
+        });
       } else {
-        updatedMonsters.add(fishId);
+        var updatedFc = new Set(Array.isArray(data.unlockedFcFishIds) ? data.unlockedFcFishIds : []);
+        if (updatedFc.has(fishId)) {
+          updatedFc.delete(fishId);
+        } else {
+          updatedFc.add(fishId);
+        }
+        tx.update(clubRef, {
+          unlockedFcFishIds: Array.from(updatedFc),
+          updatedAt: new Date().toISOString(),
+          lastUpdatedBy: currentUser.uid
+        });
       }
-      await fsModule.updateDoc(clubRef, {
-        unlockedMonsterIds: Array.from(updatedMonsters),
-        updatedAt: new Date().toISOString(),
-        lastUpdatedBy: currentUser.uid
-      });
-    } else {
-      var updatedFc = new Set(currentClubUnlockedFcFishIds);
-      if (updatedFc.has(fishId)) {
-        updatedFc.delete(fishId);
-      } else {
-        updatedFc.add(fishId);
-      }
-      await fsModule.updateDoc(clubRef, {
-        unlockedFcFishIds: Array.from(updatedFc),
-        updatedAt: new Date().toISOString(),
-        lastUpdatedBy: currentUser.uid
-      });
-    }
+    });
   } catch (err) {
     console.error("Failed to toggle special fish:", err);
     showToast(t('err_save') + err.message, "error");
@@ -825,13 +808,13 @@ function renderClubSpecialFishes() {
 
     return '<div class="special-fish-card ' + (isUnlocked ? 'unlocked' : '') + '">' +
       '<div class="special-fish-left" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" style="cursor: pointer;">' +
-      '<img src="images/fish_' + f.id + '.webp" class="special-fish-img" alt="' + fishName + '" onerror="this.onerror=null;this.style.display=\'none\';">' +
+      '<img src="images/fish_' + f.id + '.webp" class="special-fish-img" alt="' + escapeHtml(fishName) + '" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
       '<div class="special-fish-details">' +
-      '<span class="special-fish-name" title="' + fishName + '">' + fishName + '</span>' +
-      '<span class="special-fish-cost">' + costLabel + '</span>' +
+      '<span class="special-fish-name" title="' + escapeHtml(fishName) + '">' + escapeHtml(fishName) + '</span>' +
+      '<span class="special-fish-cost">' + escapeHtml(costLabel) + '</span>' +
       '</div>' +
       '</div>' +
-      '<button class="' + btnClass + '" onclick="window.fishaoApp.toggleClubSpecialFish(' + f.id + ')">' + btnText + '</button>' +
+      '<button type="button" class="' + btnClass + '" onclick="window.fishaoApp.toggleClubSpecialFish(' + f.id + ')">' + escapeHtml(btnText) + '</button>' +
       '</div>';
   }).join("");
 }
@@ -966,12 +949,12 @@ function renderClubMilestones() {
         '<div class="dash-card-body">' +
         '<div class="milestone-fish-row" style="margin-top: 4px;">' +
         '<div class="milestone-fish-img-box" style="width: 84px; height: 52px;">' +
-        '<img src="images/fish_' + nextFish.id + '.webp" class="milestone-fish-img" alt="' + nextFishName + '" onerror="this.onerror=null;this.style.display=\'none\';">' +
+        '<img src="images/fish_' + nextFish.id + '.webp" class="milestone-fish-img" alt="' + escapeHtml(nextFishName) + '" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
         '</div>' +
         '<div class="milestone-fish-info">' +
-        '<div class="milestone-fish-name" style="font-size: 14px;">' + nextFishName + '</div>' +
-        '<div class="milestone-fish-meta">' + nextWater + ' • ' + renderRatingBadge(nextFish.rating) + ' • ' + nextBaits + '</div>' +
-        '<div style="font-size: 11px; color: #f87171; font-weight: 700; margin-top: 2px;">' + t('milestone_remaining_pts', { diff: minDiff }) + '</div>' +
+        '<div class="milestone-fish-name" style="font-size: 14px;">' + escapeHtml(nextFishName) + '</div>' +
+        '<div class="milestone-fish-meta">' + escapeHtml(nextWater) + ' • ' + renderRatingBadge(nextFish.rating) + ' • ' + nextBaits + '</div>' +
+        '<div style="font-size: 11px; color: #f87171; font-weight: 700; margin-top: 2px;">' + escapeHtml(t('milestone_remaining_pts', { diff: minDiff })) + '</div>' +
         '</div>' +
         '</div>' +
         '<div class="caught-progress-track" style="margin-top: 8px;" title="' + t('milestone_progress_title', { pct: targetPct.toFixed(0) }) + '">' +
@@ -1046,35 +1029,35 @@ function renderClubMilestones() {
 
     return '<div class="milestone-card ' + (isUnlocked ? 'unlocked' : 'locked') + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" style="cursor: pointer;">' +
       '<div class="milestone-card-top">' +
-      '<span class="milestone-status ' + statusClass + '">' + statusText + '</span>' +
-      '<span class="milestone-cost-badge">' + costBadge + '</span>' +
+      '<span class="milestone-status ' + statusClass + '">' + escapeHtml(statusText) + '</span>' +
+      '<span class="milestone-cost-badge">' + escapeHtml(costBadge) + '</span>' +
       '</div>' +
       '<div class="milestone-fish-row">' +
       '<div class="milestone-fish-img-box">' +
-      '<img src="images/fish_' + f.id + '.webp" class="milestone-fish-img" alt="' + fishName + '" onerror="this.onerror=null;this.style.display=\'none\';">' +
+      '<img src="images/fish_' + f.id + '.webp" class="milestone-fish-img" alt="' + escapeHtml(fishName) + '" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
       '</div>' +
       '<div class="milestone-fish-info">' +
-      '<div class="milestone-fish-name" title="' + fishName + '">' + fishName + '</div>' +
-      '<div class="milestone-fish-meta">' + waterLabel + ' • ' + renderRatingBadge(f.rating) + '</div>' +
+      '<div class="milestone-fish-name" title="' + escapeHtml(fishName) + '">' + escapeHtml(fishName) + '</div>' +
+      '<div class="milestone-fish-meta">' + escapeHtml(waterLabel) + ' • ' + renderRatingBadge(f.rating) + '</div>' +
       '</div>' +
       '</div>' +
       '<div class="milestone-card-footer">' +
       '<span class="milestone-baits-list">' + baitsLabel + '</span>' +
-      '<button class="btn-caught-milestone ' + (isCaught ? 'caught' : '') + '" onclick="event.stopPropagation(); window.fishaoApp.toggleCaughtFish(' + f.id + ')">' +
-      (isCaught ? t('btn_caught_short') : t('btn_catch_short')) +
+      '<button type="button" class="btn-caught-milestone ' + (isCaught ? 'caught' : '') + '" onclick="event.stopPropagation(); window.fishaoApp.toggleCaughtFish(' + f.id + ')">' +
+      escapeHtml(isCaught ? t('btn_caught_short') : t('btn_catch_short')) +
       '</button>' +
       '</div>' +
       '</div>';
   }).join('');
 }
 
-function updateClubStats() {
-  var hideLockedCheckbox = document.getElementById("hideLockedCheckbox");
-  var hideLocked = hideLockedCheckbox ? hideLockedCheckbox.checked : false;
+function saveHideLockedClubPreference(checked) {
   try {
-    localStorage.setItem('fishao_hide_locked', hideLocked);
+    localStorage.setItem('fishao_hide_locked', !!checked);
   } catch (e) {}
+}
 
+function updateClubStats() {
   var unlockedCount = 0;
   var nextFish = null;
   var minDiff = Infinity;

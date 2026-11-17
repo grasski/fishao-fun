@@ -39,7 +39,10 @@ function sanitizeRemindersList(list) {
   for (var i = 0; i < list.length && out.length < 100; i++) {
     var item = list[i];
     if (!item || typeof item !== 'object') continue;
-    var id = String(item.id || ('rem_' + Date.now() + '_' + i));
+    var rawId = String(item.id || ('rem_' + Date.now() + '_' + i));
+    var id = (typeof sanitizeDomId === 'function')
+      ? sanitizeDomId(rawId)
+      : rawId.replace(/[^a-zA-Z0-9_-]/g, '_');
     var title = String(item.title || '').trim().slice(0, 80);
     if (!title) continue;
     var intervalDays = parseInt(item.intervalDays, 10);
@@ -66,11 +69,9 @@ async function persistReminders() {
 
   if (typeof currentUser !== 'undefined' && currentUser && typeof db !== 'undefined' && db) {
     try {
-      var fsModule = await getFirestoreModule();
-      var userDocRef = fsModule.doc(db, "users", currentUser.uid);
-      await fsModule.updateDoc(userDocRef, {
-        reminders: userReminders
-      });
+      if (typeof savePrivateUserSettings === 'function') {
+        await savePrivateUserSettings({ reminders: userReminders });
+      }
     } catch (err) {
       console.warn("Could not sync reminders to Firestore:", err);
       if (typeof showToast === 'function') {
@@ -518,9 +519,10 @@ function renderReminderItemHtml(rem, statusType, compactAlert) {
     (isTodayLater ? ' is-today-later' : '') +
     (rem.completed ? ' is-completed' : '');
 
+  var safeRemId = escapeHtml(rem.id);
   var manageBtns = compactAlert ? '' : (
-    '<button type="button" class="reminder-btn-icon" onclick="window.fishaoApp.editReminder(\'' + rem.id + '\')" title="' + t('reminders_btn_edit') + '">✏️</button>' +
-    '<button type="button" class="reminder-btn-icon danger" onclick="window.fishaoApp.deleteReminder(\'' + rem.id + '\')" title="' + t('reminders_btn_delete') + '">🗑️</button>'
+    '<button type="button" class="reminder-btn-icon" data-rem-action="edit" data-rem-id="' + safeRemId + '" title="' + escapeHtml(t('reminders_btn_edit')) + '">✏️</button>' +
+    '<button type="button" class="reminder-btn-icon danger" data-rem-action="delete" data-rem-id="' + safeRemId + '" title="' + escapeHtml(t('reminders_btn_delete')) + '">🗑️</button>'
   );
 
   return '<div class="' + cardClass + '">' +
@@ -536,16 +538,32 @@ function renderReminderItemHtml(rem, statusType, compactAlert) {
     '</div>' +
     '<div class="reminder-item-actions">' +
       (!rem.completed
-        ? '<button type="button" class="reminder-btn-done" onclick="window.fishaoApp.completeReminder(\'' + rem.id + '\')">✓ ' + completeLabel + '</button>'
+        ? '<button type="button" class="reminder-btn-done" data-rem-action="complete" data-rem-id="' + safeRemId + '">✓ ' + escapeHtml(completeLabel) + '</button>'
         : '') +
       manageBtns +
     '</div>' +
   '</div>';
 }
 
+function bindRemindersDelegation(containerEl) {
+  if (!containerEl || containerEl.dataset.boundRemindersClick) return;
+  containerEl.dataset.boundRemindersClick = "1";
+  containerEl.addEventListener("click", function (ev) {
+    var btn = ev.target && ev.target.closest ? ev.target.closest("[data-rem-action]") : null;
+    if (!btn) return;
+    var remId = btn.dataset.remId;
+    var action = btn.dataset.remAction;
+    if (!remId) return;
+    if (action === "edit") editReminder(remId);
+    else if (action === "delete") deleteReminder(remId);
+    else if (action === "complete") completeReminder(remId);
+  });
+}
+
 function renderRemindersAlertModal() {
   var listEl = document.getElementById('remindersAlertListContainer');
   if (!listEl) return;
+  bindRemindersDelegation(listEl);
 
   var due = getDueReminders();
   var todayLater = getTodayUpcomingReminders();
@@ -571,6 +589,7 @@ function renderRemindersModal() {
   var listEl = document.getElementById('remindersListContainer');
   var syncHintEl = document.getElementById('remindersSyncHint');
   if (!listEl) return;
+  bindRemindersDelegation(listEl);
 
   if (syncHintEl) {
     var isSignedIn = (typeof currentUser !== 'undefined' && !!currentUser);

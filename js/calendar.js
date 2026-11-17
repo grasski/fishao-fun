@@ -10,41 +10,54 @@ var calStatusFilter = 'all'; // 'all' | 'in_season' | 'biting_now' | 'ending_soo
 var calMonthFilter = 0;      // 0 = Full year, 1..12 = Jan..Dec
 var calLocationFilter = '';
 var calSearchQuery = '';
+var _calParsedRangeCache = Object.create(null);
+var _calDayStatusCacheDay = '';
+var _calDayStatusCache = Object.create(null);
+var _calTimelineCacheKey = '';
+var _calTimelineCache = Object.create(null);
 
 function parseRawDateRange(rangeStr) {
   var clean = String(rangeStr || '').trim();
-  if (clean.indexOf('-') === -1) return null;
+  if (_calParsedRangeCache[clean] !== undefined) return _calParsedRangeCache[clean];
+  if (clean.indexOf('-') === -1) {
+    _calParsedRangeCache[clean] = null;
+    return null;
+  }
   var parts = clean.split('-');
-  if (parts.length !== 2) return null;
+  if (parts.length !== 2) {
+    _calParsedRangeCache[clean] = null;
+    return null;
+  }
   var s = parts[0].split('.').map(Number);
   var e = parts[1].split('.').map(Number);
   if (s.length !== 2 || e.length !== 2 || isNaN(s[0]) || isNaN(s[1]) || isNaN(e[0]) || isNaN(e[1])) {
+    _calParsedRangeCache[clean] = null;
     return null;
   }
-  return { sm: s[0], sd: s[1], em: e[0], ed: e[1] };
+  var res = { sm: s[0], sd: s[1], em: e[0], ed: e[1] };
+  _calParsedRangeCache[clean] = res;
+  return res;
 }
 
-/**
- * Checks whether a fish's raw_dates includes a given UTC month (1..12) and day (1..31).
- * Treats 02.28 range end as also valid on leap day 02.29.
- */
-function isFishInSeasonOnUtcDate(rawDates, month, day) {
-  if (!Array.isArray(rawDates) || rawDates.length === 0) return true;
-  var curVal = month * 100 + day;
+if (typeof isFishInSeasonOnUtcDate !== 'function') {
+  window.isFishInSeasonOnUtcDate = function (rawDates, month, day) {
+    if (!Array.isArray(rawDates) || rawDates.length === 0) return true;
+    var curVal = month * 100 + day;
 
-  for (var i = 0; i < rawDates.length; i++) {
-    var r = parseRawDateRange(rawDates[i]);
-    if (!r) continue;
-    var sVal = r.sm * 100 + r.sd;
-    var eVal = (r.em === 2 && r.ed === 28) ? 229 : (r.em * 100 + r.ed);
+    for (var i = 0; i < rawDates.length; i++) {
+      var r = parseRawDateRange(rawDates[i]);
+      if (!r) continue;
+      var sVal = r.sm * 100 + r.sd;
+      var eVal = (r.em === 2 && r.ed === 28) ? 229 : (r.em * 100 + r.ed);
 
-    if (sVal <= eVal) {
-      if (curVal >= sVal && curVal <= eVal) return true;
-    } else {
-      if (curVal >= sVal || curVal <= eVal) return true;
+      if (sVal <= eVal) {
+        if (curVal >= sVal && curVal <= eVal) return true;
+      } else {
+        if (curVal >= sVal || curVal <= eVal) return true;
+      }
     }
-  }
-  return false;
+    return false;
+  };
 }
 
 function isFishActiveInMonth(rawDates, monthNum) {
@@ -111,51 +124,72 @@ function getSeasonalFishStatus(fish, refDate) {
   var y = now.getUTCFullYear();
   var m = now.getUTCMonth();
   var d = now.getUTCDate();
+  var dayKey = y + '-' + m + '-' + d;
 
-  var rawDates = (fish && fish.raw_dates) || [];
-  var inSeason = isFishInSeasonOnUtcDate(rawDates, m + 1, d);
-  var isBitingNow = inSeason && (typeof isFishActiveNow === 'function' ? isFishActiveNow(fish.raw_times, rawDates) : false);
-
-  var daysRemaining = null;
-  var daysUntilStart = null;
-  var targetMonth = m + 1;
-  var targetDay = d;
-
-  if (inSeason) {
-    var endOffset = null;
-    for (var off = 1; off <= 366; off++) {
-      var dt = new Date(Date.UTC(y, m, d + off));
-      if (!isFishInSeasonOnUtcDate(rawDates, dt.getUTCMonth() + 1, dt.getUTCDate())) {
-        endOffset = off;
-        var lastActive = new Date(Date.UTC(y, m, d + off - 1));
-        targetMonth = lastActive.getUTCMonth() + 1;
-        targetDay = lastActive.getUTCDate();
-        break;
-      }
-    }
-    daysRemaining = endOffset !== null ? endOffset : 365;
-  } else {
-    var startOffset = null;
-    for (var off2 = 1; off2 <= 366; off2++) {
-      var dt2 = new Date(Date.UTC(y, m, d + off2));
-      if (isFishInSeasonOnUtcDate(rawDates, dt2.getUTCMonth() + 1, dt2.getUTCDate())) {
-        startOffset = off2;
-        targetMonth = dt2.getUTCMonth() + 1;
-        targetDay = dt2.getUTCDate();
-        break;
-      }
-    }
-    daysUntilStart = startOffset !== null ? startOffset : 365;
+  if (_calDayStatusCacheDay !== dayKey) {
+    _calDayStatusCacheDay = dayKey;
+    _calDayStatusCache = Object.create(null);
   }
 
+  var rawDates = (fish && fish.raw_dates) || [];
+  var cacheId = (fish && fish.id !== undefined) ? String(fish.id) : rawDates.join(',');
+  var dayStatus = _calDayStatusCache[cacheId];
+
+  if (!dayStatus) {
+    var inSeason = isFishInSeasonOnUtcDate(rawDates, m + 1, d);
+    var daysRemaining = null;
+    var daysUntilStart = null;
+    var targetMonth = m + 1;
+    var targetDay = d;
+
+    if (inSeason) {
+      var endOffset = null;
+      for (var off = 1; off <= 366; off++) {
+        var dt = new Date(Date.UTC(y, m, d + off));
+        if (!isFishInSeasonOnUtcDate(rawDates, dt.getUTCMonth() + 1, dt.getUTCDate())) {
+          endOffset = off;
+          var lastActive = new Date(Date.UTC(y, m, d + off - 1));
+          targetMonth = lastActive.getUTCMonth() + 1;
+          targetDay = lastActive.getUTCDate();
+          break;
+        }
+      }
+      daysRemaining = endOffset !== null ? endOffset : 365;
+    } else {
+      var startOffset = null;
+      for (var off2 = 1; off2 <= 366; off2++) {
+        var dt2 = new Date(Date.UTC(y, m, d + off2));
+        if (isFishInSeasonOnUtcDate(rawDates, dt2.getUTCMonth() + 1, dt2.getUTCDate())) {
+          startOffset = off2;
+          targetMonth = dt2.getUTCMonth() + 1;
+          targetDay = dt2.getUTCDate();
+          break;
+        }
+      }
+      daysUntilStart = startOffset !== null ? startOffset : 365;
+    }
+
+    dayStatus = {
+      inSeason: inSeason,
+      daysRemaining: daysRemaining,
+      daysUntilStart: daysUntilStart,
+      targetDateFormatted: formatDayMonthSafe(targetMonth, targetDay),
+      endingSoon: inSeason && daysRemaining <= 14,
+      startingSoon: !inSeason && daysUntilStart <= 30
+    };
+    _calDayStatusCache[cacheId] = dayStatus;
+  }
+
+  var isBitingNow = dayStatus.inSeason && (typeof isFishActiveNow === 'function' ? isFishActiveNow(fish.raw_times, rawDates) : false);
+
   return {
-    inSeason: inSeason,
+    inSeason: dayStatus.inSeason,
     isBitingNow: isBitingNow,
-    daysRemaining: daysRemaining,
-    daysUntilStart: daysUntilStart,
-    targetDateFormatted: formatDayMonthSafe(targetMonth, targetDay),
-    endingSoon: inSeason && daysRemaining <= 14,
-    startingSoon: !inSeason && daysUntilStart <= 30
+    daysRemaining: dayStatus.daysRemaining,
+    daysUntilStart: dayStatus.daysUntilStart,
+    targetDateFormatted: dayStatus.targetDateFormatted,
+    endingSoon: dayStatus.endingSoon,
+    startingSoon: dayStatus.startingSoon
   };
 }
 
@@ -171,6 +205,17 @@ function renderFishYearTimelineBar(rawDates, refDate) {
   var year = now.getUTCFullYear();
   var curMonth = now.getUTCMonth() + 1; // 1..12
   var curDay = now.getUTCDate();
+  var curLang = (typeof getLang === 'function') ? getLang() : 'cs';
+  var cacheCtx = year + '-' + curMonth + '-' + curDay + '|' + curLang + '|' + calMonthFilter;
+  if (_calTimelineCacheKey !== cacheCtx) {
+    _calTimelineCacheKey = cacheCtx;
+    _calTimelineCache = Object.create(null);
+  }
+  var datesKey = Array.isArray(rawDates) ? rawDates.join(',') : '';
+  if (_calTimelineCache[datesKey] !== undefined) {
+    return _calTimelineCache[datesKey];
+  }
+
   var curMonthDays = new Date(Date.UTC(year, curMonth, 0)).getUTCDate();
 
   var shortMonths = String(t('cal_months_short')).split(',');
@@ -218,10 +263,12 @@ function renderFishYearTimelineBar(rawDates, refDate) {
   var todayDateText = formatDayMonthSafe(curMonth, curDay);
   var todayTitle = t('cal_today_marker', { date: todayDateText });
 
-  return '<div class="cal-timeline-wrap" title="' + escapeHtml(todayTitle) + '">' +
+  var htmlOut = '<div class="cal-timeline-wrap" title="' + escapeHtml(todayTitle) + '">' +
     '<div class="cal-timeline-grid">' + cellsHtml + '</div>' +
     '<div class="cal-today-line" style="left:' + todayPct + '%;"></div>' +
     '</div>';
+  _calTimelineCache[datesKey] = htmlOut;
+  return htmlOut;
 }
 
 function setCalStatusFilter(status) {
@@ -240,9 +287,13 @@ function onCalLocationChange(val) {
   renderCalendarView();
 }
 
+var _debouncedRenderCalendar = (typeof debounce === 'function')
+  ? debounce(function () { renderCalendarView(); }, 150)
+  : function () { renderCalendarView(); };
+
 function onCalSearchInput(val) {
   calSearchQuery = String(val || '');
-  renderCalendarView();
+  _debouncedRenderCalendar();
 }
 
 function resetCalendarFilters() {
@@ -496,7 +547,7 @@ function renderCalendarView() {
       '<div class="cal-card-top">' +
       '<div class="cal-card-caught-wrap" onclick="event.stopPropagation();">' + renderCaughtBtn(f.id) + '</div>' +
       '<div class="cal-card-img-box">' +
-      '<img src="images/fish_' + f.id + '.webp" alt="' + escapeHtml(fishName) + '" class="fish-img" onerror="this.onerror=null;this.style.display=\'none\';">' +
+      '<img src="images/fish_' + f.id + '.webp" alt="' + escapeHtml(fishName) + '" class="fish-img" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
       '</div>' +
       '<div class="cal-card-title-wrap">' +
       '<div class="cal-card-name-row">' +

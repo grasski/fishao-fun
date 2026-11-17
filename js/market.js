@@ -6,12 +6,35 @@
  * fuzzy search, duplicate price detection, and JSON price export.
  */
 
-function saveLocalPriceHistory() {
+var _bulkFishNameCacheLang = null;
+var _bulkFishNameCacheMap = null;
+var _modalDailyExpanded = false;
+var _modalDailySelectedMonth = "";
+
+function saveLocalPriceSummary(metaLastUpdated) {
   try {
-    localStorage.setItem('fishao_price_history_v1', JSON.stringify(priceHistory));
+    localStorage.setItem('fishao_price_summary_v2', JSON.stringify(priceSummary || {}));
+    if (metaLastUpdated !== false) {
+      var prevMetaRaw = localStorage.getItem('fishao_price_summary_meta_v2');
+      var prevMeta = prevMetaRaw ? JSON.parse(prevMetaRaw) : {};
+      localStorage.setItem('fishao_price_summary_meta_v2', JSON.stringify({
+        lastUpdated: typeof metaLastUpdated === 'string' ? metaLastUpdated : (prevMeta.lastUpdated || ''),
+        fetchedAt: Date.now()
+      }));
+    }
+    try { localStorage.removeItem('fishao_price_history_v1'); } catch (rmErr) { }
   } catch (err) {
-    console.warn("Failed to save price history locally:", err);
+    console.warn("Failed to save price summary locally:", err);
   }
+  priceHistory = summaryMapToPriceHistory(priceSummary);
+  if (typeof bumpPriceDataVersion === 'function') bumpPriceDataVersion();
+}
+
+function saveLocalPriceHistory(metaLastUpdated) {
+  if ((!priceSummary || Object.keys(priceSummary).length === 0) && priceHistory && Object.keys(priceHistory).length > 0) {
+    priceSummary = legacyHistoryToSummaryMap(priceHistory);
+  }
+  saveLocalPriceSummary(metaLastUpdated);
 }
 
 function clonePriceMap(map) {
@@ -21,18 +44,120 @@ function clonePriceMap(map) {
     var list = source[key];
     copy[key] = Array.isArray(list)
       ? list.map(function (item) {
-        return (item && typeof item === "object")
-          ? { date: item.date, price: item.price }
-          : item;
+        if (!item || typeof item !== "object") return item;
+        var obj = { date: item.date, price: item.price };
+        if (item.count && item.count > 1) obj.count = item.count;
+        return obj;
       })
       : [];
   });
   return copy;
 }
 
+function clonePriceSummary(map) {
+  var src = (map && typeof map === "object") ? map : {};
+  var copy = {};
+  Object.keys(src).forEach(function (fidKey) {
+    var entry = src[fidKey];
+    if (!entry || typeof entry !== "object") return;
+    var byPriceCopy = {};
+    if (entry.byPrice && typeof entry.byPrice === "object") {
+      Object.keys(entry.byPrice).forEach(function (pKey) {
+        var info = entry.byPrice[pKey];
+        if (!info || typeof info !== "object") return;
+        byPriceCopy[pKey] = {
+          l: typeof info.l === "string" ? info.l : "",
+          c: Math.max(1, parseInt(info.c, 10) || 1)
+        };
+      });
+    }
+    copy[fidKey] = {
+      byPrice: byPriceCopy,
+      td: typeof entry.td === "string" ? entry.td : "",
+      t: Array.isArray(entry.t) ? entry.t.slice() : []
+    };
+  });
+  return copy;
+}
+
+function toDayEntryList(rawVal) {
+  if (Array.isArray(rawVal)) {
+    return rawVal.map(Number).filter(function (n) { return isFinite(n) && n > 0; });
+  }
+  var single = Number(rawVal);
+  return (isFinite(single) && single > 0) ? [single] : [];
+}
+
+function encodeDayEntryList(list) {
+  if (!list || list.length === 0) return undefined;
+  return list.length === 1 ? list[0] : list;
+}
+
+function applyPriceToSummaryMap(summaryMap, fidStr, dateISO, priceNum, todayISO) {
+  var fishSum = summaryMap[fidStr];
+  if (!fishSum || typeof fishSum !== "object") {
+    fishSum = { byPrice: {}, td: "", t: [] };
+  }
+  var byPrice = (fishSum.byPrice && typeof fishSum.byPrice === "object")
+    ? Object.assign({}, fishSum.byPrice)
+    : {};
+
+  var pKey = String(priceNum);
+  var curInfo = byPrice[pKey];
+  var prevLast = curInfo && typeof curInfo.l === "string" ? curInfo.l : "";
+  var prevCount = curInfo && isFinite(Number(curInfo.c)) ? Number(curInfo.c) : 0;
+
+  byPrice[pKey] = {
+    l: (!prevLast || dateISO > prevLast) ? dateISO : prevLast,
+    c: prevCount + 1
+  };
+
+  var td = typeof fishSum.td === "string" ? fishSum.td : "";
+  var tArr = Array.isArray(fishSum.t) ? fishSum.t.slice() : [];
+  if (dateISO === (todayISO || getTodayISO())) {
+    if (td === dateISO) {
+      if (tArr.indexOf(priceNum) === -1) tArr.push(priceNum);
+    } else {
+      td = dateISO;
+      tArr = [priceNum];
+    }
+  }
+
+  summaryMap[fidStr] = { byPrice: byPrice, td: td, t: tArr };
+}
+
+function removePriceFromSummaryMap(summaryMap, fidStr, priceNum, targetDate, removedFromDaily, fallbackLastDate) {
+  var fishSum = summaryMap[fidStr];
+  if (!fishSum || typeof fishSum !== "object" || !fishSum.byPrice) return;
+  var pKey = String(priceNum);
+  var info = fishSum.byPrice[pKey];
+
+  if (info && typeof info === "object") {
+    var curCount = Math.max(1, parseInt(info.c, 10) || 1);
+    if (targetDate && removedFromDaily && curCount > 1) {
+      info.c = curCount - 1;
+      if (fallbackLastDate) {
+        info.l = fallbackLastDate;
+      }
+    } else {
+      delete fishSum.byPrice[pKey];
+    }
+  }
+
+  if (targetDate && fishSum.td === targetDate && Array.isArray(fishSum.t)) {
+    fishSum.t = fishSum.t.filter(function (v) { return Number(v) !== priceNum; });
+    if (fishSum.t.length === 0) fishSum.td = "";
+  }
+
+  if (Object.keys(fishSum.byPrice).length === 0) {
+    delete summaryMap[fidStr];
+  }
+}
+
 function sortPriceEntriesNewestFirst(list) {
   return list.slice().sort(function (a, b) {
-    return String(b.date || "").localeCompare(String(a.date || ""));
+    var dc = String(b.date || "").localeCompare(String(a.date || ""));
+    return dc !== 0 ? dc : (Number(b.price) - Number(a.price));
   });
 }
 
@@ -40,10 +165,7 @@ function sortPriceEntriesNewestFirst(list) {
  * Single display-only normalization for known prices.
  *
  * Returns a new, newest-first array with at most one entry per (date, price)
- * pair. Invalid entries are dropped.
- * It never mutates its input and never writes to storage, so legacy same-day
- * duplicate rows stay untouched in Firestore/localStorage while every UI path
- * shows a de-duplicated daily list.
+ * pair. Invalid entries are dropped and occurrence counts are preserved.
  */
 function normalizePriceEntries(list) {
   if (!Array.isArray(list)) return [];
@@ -54,7 +176,12 @@ function normalizePriceEntries(list) {
     var price = Number(item.price);
     var date = typeof item.date === "string" ? item.date : "";
     if (!isFinite(price) || price <= 0 || !date) return;
-    valid.push({ date: date, price: price });
+    var countVal = Number(item.count);
+    valid.push({
+      date: date,
+      price: price,
+      count: (isFinite(countVal) && countVal > 1) ? Math.floor(countVal) : 1
+    });
   });
 
   var sorted = sortPriceEntriesNewestFirst(valid);
@@ -115,6 +242,7 @@ function getMarketClosedWindowText() {
 }
 
 function updateMarketSundayCountdown() {
+  if (typeof currentView !== "undefined" && currentView !== "market") return;
   var isSunday = isMarketClosedToday();
   var countdownEl = document.getElementById("marketSundayCountdown");
   var openTimeEl = document.getElementById("marketSundayOpenTimeText");
@@ -516,6 +644,8 @@ function formatAdvisorChanceLabel(chancePct, competitorCount) {
 function openPriceModal(fid, skipSync) {
   selectedModalFishId = fid;
   modalBaitExpandedKeys = {};
+  _modalDailyExpanded = false;
+  _modalDailySelectedMonth = "";
   var fishObj = (typeof getFishById === "function") ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
   if (!fishObj) return;
 
@@ -893,6 +1023,170 @@ function renderModalPriceScale(list) {
   if (expandedBtn) expandedBtn.addEventListener("click", togglePriceChartVisibility);
 }
 
+async function loadDailyMonth(monthId) {
+  if (!monthId || !/^\d{4}-\d{2}$/.test(monthId)) return {};
+  if (dailyMonthsCache.has(monthId)) {
+    return dailyMonthsCache.get(monthId);
+  }
+  if (!db || !window.FISHAO_FS_TX) return {};
+  try {
+    var fs = await window.FISHAO_FS_TX.loadFirestoreModule();
+    var mRef = fs.doc(db, "fishao_market_daily", monthId);
+    var mSnap = await fs.getDoc(mRef);
+    var days = (mSnap.exists() && mSnap.data() && typeof mSnap.data().days === "object") ? mSnap.data().days : {};
+    dailyMonthsCache.set(monthId, days);
+    return days;
+  } catch (err) {
+    console.warn("Failed to load daily price month:", monthId, err);
+    return {};
+  }
+}
+
+function getCandidateMonthsForFish(fid, list) {
+  var monthsSet = Object.create(null);
+  var curMonth = getTodayISO().slice(0, 7);
+  if (curMonth) monthsSet[curMonth] = true;
+  (list || []).forEach(function (item) {
+    if (item && typeof item.date === "string" && item.date.length >= 7) {
+      monthsSet[item.date.slice(0, 7)] = true;
+    }
+  });
+  var fidStr = String(fid);
+  dailyMonthsCache.forEach(function (daysMap, mId) {
+    if (!daysMap || typeof daysMap !== "object") return;
+    Object.keys(daysMap).some(function (dStr) {
+      if (daysMap[dStr] && daysMap[dStr][fidStr] !== undefined) {
+        monthsSet[mId] = true;
+        return true;
+      }
+      return false;
+    });
+  });
+  return Object.keys(monthsSet).sort().reverse();
+}
+
+function ensureModalDailyContainer() {
+  var existing = document.getElementById("modalDailyHistoryBox");
+  if (existing) return existing;
+  var tbody = document.getElementById("modalPriceHistoryTbody");
+  if (!tbody) return null;
+  var wrap = tbody.closest(".price-history-table-wrap") || tbody.closest("table");
+  if (!wrap || !wrap.parentNode) return null;
+  var box = document.createElement("div");
+  box.id = "modalDailyHistoryBox";
+  box.className = "modal-daily-history-box";
+  wrap.parentNode.insertBefore(box, wrap.nextSibling);
+  return box;
+}
+
+async function renderModalDailyHistoryBox(fid, list) {
+  var box = ensureModalDailyContainer();
+  if (!box) return;
+  if (!list || list.length === 0 || !db) {
+    box.style.display = "none";
+    box.innerHTML = "";
+    return;
+  }
+  box.style.display = "";
+  var months = getCandidateMonthsForFish(fid, list);
+  if (!_modalDailySelectedMonth || months.indexOf(_modalDailySelectedMonth) === -1) {
+    _modalDailySelectedMonth = months[0] || getTodayISO().slice(0, 7);
+  }
+  var btnLabel = _modalDailyExpanded
+    ? t('modal_daily_history_hide')
+    : t('modal_daily_history_btn', { month: _modalDailySelectedMonth });
+
+  var headerHtml =
+    '<div class="daily-history-bar">' +
+      '<button type="button" class="daily-history-toggle-btn" aria-expanded="' + (_modalDailyExpanded ? 'true' : 'false') + '">' +
+        escapeHtml(btnLabel) +
+      '</button>' +
+    '</div>';
+
+  if (!_modalDailyExpanded) {
+    box.innerHTML = headerHtml;
+    var closedBtn = box.querySelector(".daily-history-toggle-btn");
+    if (closedBtn) {
+      closedBtn.addEventListener("click", function () {
+        _modalDailyExpanded = true;
+        renderModalDailyHistoryBox(fid, list);
+      });
+    }
+    return;
+  }
+
+  var monthOptionsHtml = months.map(function (mId) {
+    var sel = mId === _modalDailySelectedMonth ? ' selected' : '';
+    return '<option value="' + escapeHtml(mId) + '"' + sel + '>' + escapeHtml(mId) + '</option>';
+  }).join('');
+
+  box.innerHTML = headerHtml +
+    '<div class="daily-history-panel">' +
+      '<div class="daily-history-controls">' +
+        '<select class="daily-history-month-select" aria-label="' + escapeHtml(t('modal_daily_history_btn', { month: _modalDailySelectedMonth })) + '">' + monthOptionsHtml + '</select>' +
+      '</div>' +
+      '<div class="daily-history-list"><div class="daily-history-status">' + escapeHtml(t('modal_daily_history_loading')) + '</div></div>' +
+    '</div>';
+
+  var openBtn = box.querySelector(".daily-history-toggle-btn");
+  if (openBtn) {
+    openBtn.addEventListener("click", function () {
+      _modalDailyExpanded = false;
+      renderModalDailyHistoryBox(fid, list);
+    });
+  }
+  var selEl = box.querySelector(".daily-history-month-select");
+  if (selEl) {
+    selEl.addEventListener("change", function () {
+      _modalDailySelectedMonth = this.value;
+      renderModalDailyHistoryBox(fid, list);
+    });
+  }
+
+  var reqFishId = selectedModalFishId;
+  var reqMonth = _modalDailySelectedMonth;
+  var daysMap = await loadDailyMonth(reqMonth);
+  if (selectedModalFishId !== reqFishId || !_modalDailyExpanded || _modalDailySelectedMonth !== reqMonth) return;
+
+  var listEl = box.querySelector(".daily-history-list");
+  if (!listEl) return;
+
+  var fidStr = String(fid);
+  var rows = [];
+  Object.keys(daysMap || {}).sort().reverse().forEach(function (dateStr) {
+    var val = daysMap[dateStr] ? daysMap[dateStr][fidStr] : undefined;
+    var prices = toDayEntryList(val);
+    if (prices.length > 0) {
+      rows.push({ date: dateStr, prices: prices });
+    }
+  });
+
+  if (rows.length === 0) {
+    listEl.innerHTML = '<div class="daily-history-status">' + escapeHtml(t('modal_daily_history_empty')) + '</div>';
+    return;
+  }
+
+  var locale = getLocale();
+  listEl.innerHTML = rows.map(function (r) {
+    var pricesHtml = r.prices.map(function (pr) {
+      var delBtn = isAdmin
+        ? ' <button type="button" class="btn-delete-price btn-delete-daily" title="' + escapeHtml(t('price_delete_admin_title')) + '" data-fid="' + fid + '" data-price="' + pr + '" data-date="' + escapeHtml(r.date) + '">🗑️</button>'
+        : '';
+      return '<span class="daily-price-chip">💵 ' + pr.toLocaleString(locale) + ' FB' + delBtn + '</span>';
+    }).join('');
+    return '<div class="daily-history-row"><span class="daily-history-date">' + formatPriceDate(r.date) + '</span><span class="daily-history-prices">' + pricesHtml + '</span></div>';
+  }).join('');
+
+  if (!listEl.dataset.boundDailyDelete) {
+    listEl.dataset.boundDailyDelete = "1";
+    listEl.addEventListener("click", function (ev) {
+      var btn = ev.target && ev.target.closest ? ev.target.closest(".btn-delete-daily") : null;
+      if (!btn) return;
+      deletePriceEntry(Number(btn.dataset.fid), Number(btn.dataset.price), btn.dataset.date || "");
+    });
+  }
+}
+
 function renderModalHistory(fid) {
   // Display-only normalization: same-day duplicate prices are shown once.
   var list = normalizePriceEntries(getFishPrices(fid));
@@ -927,6 +1221,7 @@ function renderModalHistory(fid) {
     if (minPriceEl) minPriceEl.innerText = "--";
     if (maxPriceEl) maxPriceEl.innerText = "--";
     renderModalPriceScale([]);
+    renderModalDailyHistoryBox(fid, []);
     return;
   }
 
@@ -938,19 +1233,33 @@ function renderModalHistory(fid) {
   if (maxPriceEl) maxPriceEl.innerText = maxP.toLocaleString(locale) + " FB";
   renderModalPriceScale(list);
 
+  if (!tbody.dataset.boundDelete) {
+    tbody.dataset.boundDelete = "1";
+    tbody.addEventListener("click", function (ev) {
+      var btn = ev.target && ev.target.closest ? ev.target.closest(".btn-delete-price") : null;
+      if (!btn) return;
+      deletePriceEntry(Number(btn.dataset.fid), Number(btn.dataset.price), btn.dataset.date || "");
+    });
+  }
+
   tbody.innerHTML = list.map(function (item) {
+    var occBadge = (item.count && item.count > 1)
+      ? ' <span class="price-occ-badge" title="' + escapeHtml(t('modal_price_occurrences', { count: item.count })) + '">' + escapeHtml(t('modal_price_occurrences', { count: item.count })) + '</span>'
+      : '';
     var actionCell = showActions
       ? '<td style="text-align: center;">' +
-        '<button class="btn-delete-price" title="' + t('price_delete_admin_title') + '" onclick="window.fishaoApp.deletePriceEntry(' + fid + ', ' + item.price + ', \'' + escapeHtml(item.date) + '\')">🗑️</button>' +
+        '<button type="button" class="btn-delete-price" title="' + escapeHtml(t('price_delete_admin_title')) + '" data-fid="' + fid + '" data-price="' + item.price + '" data-date="' + escapeHtml(item.date) + '">🗑️</button>' +
         '</td>'
       : '';
 
     return '<tr>' +
       '<td style="color: #cbd5e1; font-weight: 600;">' + formatPriceDate(item.date) + '</td>' +
-      '<td style="color: #34d399; font-weight: 800;"><span class="cash-icon">💵</span> ' + item.price.toLocaleString(locale) + ' FB</td>' +
+      '<td style="color: #34d399; font-weight: 800;"><span class="cash-icon">💵</span> ' + item.price.toLocaleString(locale) + ' FB' + occBadge + '</td>' +
       actionCell +
       '</tr>';
   }).join('');
+
+  renderModalDailyHistoryBox(fid, list);
 }
 
 function onPriceDateChange(dateVal) {
@@ -973,13 +1282,9 @@ function onPriceDateChange(dateVal) {
   }
 }
 
-function applyCloudFishPriceList(fidStr, list) {
-  if (Array.isArray(list) && list.length > 0) {
-    priceHistory[fidStr] = list;
-  } else {
-    delete priceHistory[fidStr];
-  }
-  saveLocalPriceHistory();
+function applyCloudPriceSummary(summaryMap, metaLastUpdated) {
+  priceSummary = (summaryMap && typeof summaryMap === "object") ? summaryMap : {};
+  saveLocalPriceSummary(metaLastUpdated);
 }
 
 async function submitNewPrice() {
@@ -990,10 +1295,15 @@ async function submitNewPrice() {
     return;
   }
 
+  if (db && typeof isManualImportEnabled === "function" && !isManualImportEnabled() && !isAdmin) {
+    showToast(t('admin_manual_import_off'), "error");
+    return;
+  }
+
   var d = document.getElementById("newPriceDate").value;
   var p = parseInt(document.getElementById("newPriceValue").value, 10);
 
-  if (!d) {
+  if (!d || !/^\d{4}-\d{2}-\d{2}$/.test(d)) {
     showToast(t('price_invalid_input'), "error");
     return;
   }
@@ -1010,24 +1320,31 @@ async function submitNewPrice() {
 
   var fidStr = selectedModalFishId.toString();
   var fid = selectedModalFishId;
+  var monthId = d.slice(0, 7);
+  var todayISO = getTodayISO();
 
-  // Fast local duplicate check: same price cannot be stored twice on the same date.
+  // Fast local duplicate check for the exact (date, price) pair.
   var localDuplicate = getFishPrices(fid).find(function (it) {
     return it.date === d && Number(it.price) === p;
   });
+  var cachedDays = dailyMonthsCache.get(monthId);
+  if (!localDuplicate && cachedDays && cachedDays[d]) {
+    if (toDayEntryList(cachedDays[d][fidStr]).indexOf(p) !== -1) {
+      localDuplicate = { date: d, price: p };
+    }
+  }
   if (localDuplicate) {
     showToast(t('price_exists', { price: p.toLocaleString(getLocale()), date: formatPriceDate(localDuplicate.date) }), "error");
     return;
   }
 
   // Local-only mode (no Firestore connection available).
-  if (!db || !firebaseDocRef || !window.FISHAO_FS_TX) {
-    var localMap = clonePriceMap(priceHistory);
-    var localList = Array.isArray(localMap[fidStr]) ? localMap[fidStr] : [];
-    localList.push({ date: d, price: p });
-    localMap[fidStr] = sortPriceEntriesNewestFirst(localList);
-    priceHistory = localMap;
-    saveLocalPriceHistory();
+  var summaryRef = firebaseSummaryDocRef || null;
+  if (!db || !summaryRef || !window.FISHAO_FS_TX) {
+    var localSummary = clonePriceSummary(priceSummary);
+    applyPriceToSummaryMap(localSummary, fidStr, d, p, todayISO);
+    priceSummary = localSummary;
+    saveLocalPriceSummary(new Date().toISOString());
     renderModalHistory(fid);
     applyFilters();
     document.getElementById("newPriceValue").value = "";
@@ -1036,43 +1353,69 @@ async function submitNewPrice() {
   }
 
   try {
-    var result = await window.FISHAO_FS_TX.readModifyWrite(db, firebaseDocRef, function (currentData) {
-      var prices = clonePriceMap(currentData && currentData.prices ? currentData.prices : {});
-      var list = Array.isArray(prices[fidStr]) ? prices[fidStr] : [];
+    var result = await window.FISHAO_FS_TX.runTx(db, async function (tx, fs) {
+      var dailyRef = fs.doc(db, "fishao_market_daily", monthId);
+      var snaps = await Promise.all([tx.get(summaryRef), tx.get(dailyRef)]);
+      var summarySnap = snaps[0];
+      var dailySnap = snaps[1];
 
-      var duplicate = list.find(function (it) {
-        return it.date === d && Number(it.price) === p;
-      });
-      if (duplicate) {
+      var summaryData = summarySnap.exists() ? summarySnap.data() : {};
+      var summaryPrices = clonePriceSummary(summaryData && summaryData.prices ? summaryData.prices : {});
+
+      var dailyData = dailySnap.exists() ? dailySnap.data() : {};
+      var days = (dailyData && dailyData.days && typeof dailyData.days === "object")
+        ? Object.assign({}, dailyData.days)
+        : {};
+      var dayBucket = (days[d] && typeof days[d] === "object")
+        ? Object.assign({}, days[d])
+        : {};
+
+      var dayList = toDayEntryList(dayBucket[fidStr]);
+      if (dayList.indexOf(p) !== -1) {
         return {
-          write: false,
-          result: { status: "duplicate", entry: duplicate, list: sortPriceEntriesNewestFirst(list) }
+          status: "duplicate",
+          date: d,
+          summaryPrices: summaryPrices,
+          days: days
         };
       }
 
-      list.push({ date: d, price: p });
-      prices[fidStr] = sortPriceEntriesNewestFirst(list);
+      dayList.push(p);
+      dayBucket[fidStr] = encodeDayEntryList(dayList);
+      days[d] = dayBucket;
+
+      applyPriceToSummaryMap(summaryPrices, fidStr, d, p, todayISO);
+      var nowIso = new Date().toISOString();
+
+      tx.set(summaryRef, { prices: summaryPrices, lastUpdated: nowIso });
+      tx.set(dailyRef, { days: days, lastUpdated: nowIso });
 
       return {
-        write: true,
-        data: { prices: prices, lastUpdated: new Date().toISOString() },
-        result: { status: "added", list: prices[fidStr] }
+        status: "added",
+        summaryPrices: summaryPrices,
+        days: days,
+        lastUpdated: nowIso
       };
     });
 
+    if (result && result.days) {
+      dailyMonthsCache.set(monthId, result.days);
+    }
+
     if (!result || result.status === "duplicate") {
-      var dupEntry = result && result.entry ? result.entry : null;
-      applyCloudFishPriceList(fidStr, (result && result.list) || []);
+      if (result && result.summaryPrices) {
+        applyCloudPriceSummary(result.summaryPrices, false);
+      }
       renderModalHistory(fid);
       applyFilters();
       showToast(t('price_exists', {
         price: p.toLocaleString(getLocale()),
-        date: dupEntry ? formatPriceDate(dupEntry.date) : "--"
+        date: result && result.date ? formatPriceDate(result.date) : "--"
       }), "error");
       return;
     }
 
-    applyCloudFishPriceList(fidStr, result.list);
+    applyCloudPriceSummary(result.summaryPrices, result.lastUpdated);
     renderModalHistory(fid);
     applyFilters();
     document.getElementById("newPriceValue").value = "";
@@ -1091,8 +1434,10 @@ async function deletePriceEntry(fid, price, date) {
 
   var fidStr = fid.toString();
   var priceNum = Number(price);
-  var targetDate = typeof date === "string" && date ? date : null;
-  if (!priceHistory[fidStr] || !isFinite(priceNum)) return;
+  var targetDate = (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) ? date : null;
+  if (!isFinite(priceNum)) return;
+  if (!priceSummary[fidStr] && !priceHistory[fidStr]) return;
+
   var ok = await showConfirmModal(
     t('price_delete_admin_title'),
     t('price_delete_confirm'),
@@ -1101,49 +1446,101 @@ async function deletePriceEntry(fid, price, date) {
   );
   if (!ok) return;
 
-  var shouldKeep = function (it) {
-    if (Number(it.price) !== priceNum) return true;
-    return targetDate ? it.date !== targetDate : false;
-  };
+  var monthId = targetDate ? targetDate.slice(0, 7) : "";
 
   // Local-only mode (no Firestore connection available).
-  if (!db || !firebaseDocRef || !window.FISHAO_FS_TX) {
-    var localMap = clonePriceMap(priceHistory);
-    var localList = (localMap[fidStr] || []).filter(shouldKeep);
-    if (localList.length > 0) {
-      localMap[fidStr] = localList;
-    } else {
-      delete localMap[fidStr];
-    }
-    priceHistory = localMap;
-    saveLocalPriceHistory();
+  var summaryRef = firebaseSummaryDocRef || null;
+  if (!db || !summaryRef || !window.FISHAO_FS_TX) {
+    var localSummary = clonePriceSummary(priceSummary);
+    removePriceFromSummaryMap(localSummary, fidStr, priceNum, targetDate, false, "");
+    priceSummary = localSummary;
+    saveLocalPriceSummary(new Date().toISOString());
     renderModalHistory(fid);
     applyFilters();
     return;
   }
 
   try {
-    var result = await window.FISHAO_FS_TX.readModifyWrite(db, firebaseDocRef, function (currentData) {
-      var prices = clonePriceMap(currentData && currentData.prices ? currentData.prices : {});
-      var list = Array.isArray(prices[fidStr]) ? prices[fidStr] : [];
+    var txResult = await window.FISHAO_FS_TX.runTx(db, async function (tx, fs) {
+      var dailyRef = monthId ? fs.doc(db, "fishao_market_daily", monthId) : null;
+      var reads = [tx.get(summaryRef)];
+      if (dailyRef) reads.push(tx.get(dailyRef));
+      var snaps = await Promise.all(reads);
 
-      // Removing matching (date, price) rows makes the normalized row disappear.
-      var filtered = list.filter(shouldKeep);
+      var summarySnap = snaps[0];
+      var dailySnap = snaps[1] || null;
 
-      if (filtered.length > 0) {
-        prices[fidStr] = filtered;
-      } else {
-        delete prices[fidStr];
+      var summaryData = summarySnap.exists() ? summarySnap.data() : {};
+      var summaryPrices = clonePriceSummary(summaryData && summaryData.prices ? summaryData.prices : {});
+
+      var removedFromDaily = false;
+      var replacementLastDate = "";
+      var updatedDays = null;
+
+      if (dailyRef && dailySnap && dailySnap.exists()) {
+        var dailyData = dailySnap.data() || {};
+        updatedDays = (dailyData.days && typeof dailyData.days === "object")
+          ? Object.assign({}, dailyData.days)
+          : {};
+
+        if (targetDate && updatedDays[targetDate] && updatedDays[targetDate][fidStr] !== undefined) {
+          var dayBucket = Object.assign({}, updatedDays[targetDate]);
+          var prevList = toDayEntryList(dayBucket[fidStr]);
+          var nextList = prevList.filter(function (v) { return v !== priceNum; });
+          if (nextList.length !== prevList.length) {
+            removedFromDaily = true;
+            if (nextList.length > 0) {
+              dayBucket[fidStr] = encodeDayEntryList(nextList);
+            } else {
+              delete dayBucket[fidStr];
+            }
+            if (Object.keys(dayBucket).length > 0) {
+              updatedDays[targetDate] = dayBucket;
+            } else {
+              delete updatedDays[targetDate];
+            }
+          }
+        }
+
+        // Look up newest remaining date for (fidStr, priceNum) in this month & cached months.
+        if (removedFromDaily) {
+          var scanDays = function (daysObj) {
+            Object.keys(daysObj || {}).forEach(function (dKey) {
+              if (!daysObj[dKey]) return;
+              if (toDayEntryList(daysObj[dKey][fidStr]).indexOf(priceNum) !== -1) {
+                if (!replacementLastDate || dKey > replacementLastDate) {
+                  replacementLastDate = dKey;
+                }
+              }
+            });
+          };
+          scanDays(updatedDays);
+          dailyMonthsCache.forEach(function (cachedObj, cMonthId) {
+            if (cMonthId !== monthId) scanDays(cachedObj);
+          });
+        }
+      }
+
+      removePriceFromSummaryMap(summaryPrices, fidStr, priceNum, targetDate, removedFromDaily, replacementLastDate);
+
+      var nowIso = new Date().toISOString();
+      tx.set(summaryRef, { prices: summaryPrices, lastUpdated: nowIso });
+      if (dailyRef && removedFromDaily && updatedDays) {
+        tx.set(dailyRef, { days: updatedDays, lastUpdated: nowIso });
       }
 
       return {
-        write: true,
-        data: { prices: prices, lastUpdated: new Date().toISOString() },
-        result: { list: filtered }
+        summaryPrices: summaryPrices,
+        days: updatedDays,
+        removedFromDaily: removedFromDaily,
+        lastUpdated: nowIso
       };
     });
 
-    applyCloudFishPriceList(fidStr, (result && result.list) || []);
+    if (txResult && monthId && txResult.removedFromDaily && txResult.days) {
+      dailyMonthsCache.set(monthId, txResult.days);
+    }
+    applyCloudPriceSummary(txResult ? txResult.summaryPrices : priceSummary, txResult ? txResult.lastUpdated : false);
     renderModalHistory(fid);
     applyFilters();
   } catch (err) {
@@ -1374,32 +1771,11 @@ function addFishToBulkList() {
   nameInput.focus({ preventScroll: true });
 }
 
-async function processBulkImport() {
-  if (!currentUser) {
-    showAuthNotice(t('auth_notice_bulk'));
-    return;
+function getBulkFishNameIndex() {
+  var lang = (typeof getLang === "function") ? getLang() : "cs";
+  if (_bulkFishNameCacheMap && _bulkFishNameCacheLang === lang) {
+    return _bulkFishNameCacheMap;
   }
-  var dateVal = document.getElementById("bulkImportDate").value || getTodayISO();
-  var text = document.getElementById("bulkInputText").value.trim();
-  var resEl = document.getElementById("bulkResultMsg");
-
-  if (isDateSunday(dateVal)) {
-    resEl.style.display = "block";
-    resEl.style.background = "rgba(239,68,68,0.2)";
-    resEl.style.color = "#f87171";
-    resEl.innerText = t('bulk_sunday_blocked');
-    return;
-  }
-
-  if (!text) {
-    resEl.style.display = "block";
-    resEl.style.background = "rgba(239,68,68,0.2)";
-    resEl.style.color = "#f87171";
-    resEl.innerText = t('bulk_empty_error');
-    return;
-  }
-
-  // Index both Czech and English fish names so bulk import works in any active language
   var nameToFish = new Map();
   for (var i = 0; i < allFishes.length; i++) {
     var f = allFishes[i];
@@ -1416,11 +1792,54 @@ async function processBulkImport() {
       if (csName) nameToFish.set(normStr(csName), f);
     }
   }
+  _bulkFishNameCacheLang = lang;
+  _bulkFishNameCacheMap = nameToFish;
+  return nameToFish;
+}
+
+async function processBulkImport() {
+  if (!currentUser) {
+    showAuthNotice(t('auth_notice_bulk'));
+    return;
+  }
+  var dateVal = document.getElementById("bulkImportDate").value || getTodayISO();
+  var text = document.getElementById("bulkInputText").value.trim();
+  var resEl = document.getElementById("bulkResultMsg");
+
+  if (db && typeof isManualImportEnabled === "function" && !isManualImportEnabled() && !isAdmin) {
+    resEl.style.display = "block";
+    resEl.style.background = "rgba(239,68,68,0.2)";
+    resEl.style.color = "#f87171";
+    resEl.innerText = t('admin_manual_import_off');
+    return;
+  }
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateVal) || isDateSunday(dateVal)) {
+    resEl.style.display = "block";
+    resEl.style.background = "rgba(239,68,68,0.2)";
+    resEl.style.color = "#f87171";
+    resEl.innerText = t('bulk_sunday_blocked');
+    return;
+  }
+
+  if (!text) {
+    resEl.style.display = "block";
+    resEl.style.background = "rgba(239,68,68,0.2)";
+    resEl.style.color = "#f87171";
+    resEl.innerText = t('bulk_empty_error');
+    return;
+  }
+
+  var nameToFish = getBulkFishNameIndex();
 
   var additions = {};
   var skipped = 0;
   var duplicates = 0;
   var lines = text.split(/\r?\n/);
+
+  var monthId = dateVal.slice(0, 7);
+  var cachedDays = dailyMonthsCache.get(monthId);
+  var todayISO = getTodayISO();
 
   for (var li = 0; li < lines.length; li++) {
     var l = lines[li].trim();
@@ -1433,12 +1852,12 @@ async function processBulkImport() {
       var parts = l.split(":");
       fishName = parts[0].trim();
       var match = parts[1].match(/\d+/);
-      if (match) priceNum = parseInt(match[0]);
+      if (match) priceNum = parseInt(match[0], 10);
     } else {
       var match2 = l.match(/^(.*?)\s+(\d+)\s*(?:fb|fishbuck|fishbucks|fishmena|fishměna|fiszdolar|fiszdolary|fiszdolarów|fiszdolarow|dolar|dolary|\$|minc|coins|kc|b)?$/i);
       if (match2) {
         fishName = match2[1].trim();
-        priceNum = parseInt(match2[2]);
+        priceNum = parseInt(match2[2], 10);
       }
     }
 
@@ -1459,6 +1878,9 @@ async function processBulkImport() {
     var existsLocally = localList.some(function (it) {
       return it.date === dateVal && Number(it.price) === priceNum;
     });
+    if (!existsLocally && cachedDays && cachedDays[dateVal]) {
+      existsLocally = toDayEntryList(cachedDays[dateVal][fidStr]).indexOf(priceNum) !== -1;
+    }
 
     var bucket = additions[fidStr];
     var seenInImport = !!(bucket && bucket.prices.indexOf(priceNum) !== -1);
@@ -1481,78 +1903,94 @@ async function processBulkImport() {
   });
 
   var added = 0;
+  var summaryRef = firebaseSummaryDocRef || null;
 
   if (planned > 0) {
-    if (!db || !firebaseDocRef || !window.FISHAO_FS_TX) {
+    if (!db || !summaryRef || !window.FISHAO_FS_TX) {
       // Local-only mode.
-      var localMap = clonePriceMap(priceHistory);
+      var localSummary = clonePriceSummary(priceSummary);
       Object.keys(additions).forEach(function (key) {
         var bucket = additions[key];
-        var list = Array.isArray(localMap[key]) ? localMap[key] : [];
         bucket.prices.forEach(function (price) {
-          list.push({ date: bucket.date, price: price });
+          applyPriceToSummaryMap(localSummary, key, bucket.date, price, todayISO);
         });
-        localMap[key] = sortPriceEntriesNewestFirst(list);
       });
-      priceHistory = localMap;
-      saveLocalPriceHistory();
+      priceSummary = localSummary;
+      saveLocalPriceSummary(new Date().toISOString());
       added = planned;
       var prevScrollLocal = window.scrollY;
       applyFilters();
       window.scrollTo(0, prevScrollLocal);
     } else {
       try {
-        var txResult = await window.FISHAO_FS_TX.readModifyWrite(db, firebaseDocRef, function (currentData) {
-          var prices = clonePriceMap(currentData && currentData.prices ? currentData.prices : {});
+        var txResult = await window.FISHAO_FS_TX.runTx(db, async function (tx, fs) {
+          var dailyRef = fs.doc(db, "fishao_market_daily", monthId);
+          var snaps = await Promise.all([tx.get(summaryRef), tx.get(dailyRef)]);
+          var summarySnap = snaps[0];
+          var dailySnap = snaps[1];
+
+          var summaryData = summarySnap.exists() ? summarySnap.data() : {};
+          var summaryPrices = clonePriceSummary(summaryData && summaryData.prices ? summaryData.prices : {});
+
+          var dailyData = dailySnap.exists() ? dailySnap.data() : {};
+          var days = (dailyData && dailyData.days && typeof dailyData.days === "object")
+            ? Object.assign({}, dailyData.days)
+            : {};
+          var dayBucket = (days[dateVal] && typeof days[dateVal] === "object")
+            ? Object.assign({}, days[dateVal])
+            : {};
+
           var cloudAdded = 0;
           var cloudDuplicates = 0;
 
           Object.keys(additions).forEach(function (key) {
             var bucket = additions[key];
-            var list = Array.isArray(prices[key]) ? prices[key] : [];
-            var known = Object.create(null);
-            list.forEach(function (it) {
-              if (it.date === bucket.date) {
-                known[String(Number(it.price))] = true;
-              }
-            });
+            var dayList = toDayEntryList(dayBucket[key]);
 
             bucket.prices.forEach(function (price) {
-              if (known[String(price)]) {
+              if (dayList.indexOf(price) !== -1) {
                 cloudDuplicates++;
                 return;
               }
-              known[String(price)] = true;
-              list.push({ date: bucket.date, price: price });
+              dayList.push(price);
+              applyPriceToSummaryMap(summaryPrices, key, bucket.date, price, todayISO);
               cloudAdded++;
             });
 
-            if (list.length > 0) {
-              prices[key] = sortPriceEntriesNewestFirst(list);
+            if (dayList.length > 0) {
+              dayBucket[key] = encodeDayEntryList(dayList);
             }
           });
 
           if (cloudAdded === 0) {
             return {
-              write: false,
-              result: {
-                prices: (currentData && currentData.prices) ? currentData.prices : {},
-                added: 0,
-                duplicates: cloudDuplicates
-              }
+              summaryPrices: summaryPrices,
+              days: days,
+              added: 0,
+              duplicates: cloudDuplicates,
+              lastUpdated: false
             };
           }
 
+          var nowIso = new Date().toISOString();
+          days[dateVal] = dayBucket;
+          tx.set(summaryRef, { prices: summaryPrices, lastUpdated: nowIso });
+          tx.set(dailyRef, { days: days, lastUpdated: nowIso });
+
           return {
-            write: true,
-            data: { prices: prices, lastUpdated: new Date().toISOString() },
-            result: { prices: prices, added: cloudAdded, duplicates: cloudDuplicates }
+            summaryPrices: summaryPrices,
+            days: days,
+            added: cloudAdded,
+            duplicates: cloudDuplicates,
+            lastUpdated: nowIso
           };
         });
 
-        if (txResult && txResult.prices) {
-          priceHistory = txResult.prices;
-          saveLocalPriceHistory();
+        if (txResult && txResult.days) {
+          dailyMonthsCache.set(monthId, txResult.days);
+        }
+        if (txResult && txResult.summaryPrices) {
+          applyCloudPriceSummary(txResult.summaryPrices, txResult.lastUpdated);
         }
         added = (txResult && txResult.added) || 0;
         duplicates += (txResult && txResult.duplicates) || 0;
@@ -1579,13 +2017,15 @@ async function processBulkImport() {
 }
 
 function exportPricesJson() {
-  var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(priceHistory, null, 2));
+  var blob = new Blob([JSON.stringify(priceHistory, null, 2)], { type: "application/json;charset=utf-8" });
+  var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
-  a.setAttribute("href", dataStr);
+  a.setAttribute("href", url);
   a.setAttribute("download", "fishao_prices_" + getTodayISO() + ".json");
   document.body.appendChild(a);
   a.click();
   a.remove();
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
 }
 
 var MARKET_RESET_ALERT_STORAGE_KEY = 'fishao_market_reset_alert_dismissed_v1';

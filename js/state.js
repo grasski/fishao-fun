@@ -137,20 +137,8 @@ var currentUser = null;
 var userProfile = null;
 var caughtFishIds = new Set();
 var backyardFishIds = new Set();
-try {
-  var localBackyard = localStorage.getItem('fishao_backyard_fish_ids');
-  if (localBackyard) {
-    backyardFishIds = new Set(JSON.parse(localBackyard));
-  }
-} catch (e) {}
 var allPlayersList = [];
 var friendUids = new Set();
-try {
-  var localFriends = localStorage.getItem('fishao_friends_uids');
-  if (localFriends) {
-    friendUids = new Set(JSON.parse(localFriends));
-  }
-} catch (e) {}
 var filterPlayerFriendsOnly = false;
 var filterPlayerBackyardOnly = false;
 var filterPlayerActiveNow = false;
@@ -165,7 +153,8 @@ var isAdmin = false;
 // Firebase service instances
 var db = null;
 var auth = null;
-var firebaseDocRef = null;
+var firebaseDocRef = null;         // Legacy /fishao_market/prices_history fallback
+var firebaseSummaryDocRef = null;  // Primary /fishao_market/prices_summary
 var estimatedPricesDocRef = null;
 var marketConfigDocRef = null;
 var firebaseApp = null;
@@ -173,13 +162,137 @@ var firebaseApp = null;
 // Remote feature flag (/fishao_market/config -> manualImportEnabled)
 var manualImportEnabled = false;
 
-// Market price history
+// Market price summary, derived display map, and monthly daily cache
+var priceSummary = {};
 var priceHistory = {};
+var dailyMonthsCache = new Map();
+var _priceDataVersion = 0;
+
+function bumpPriceDataVersion() {
+  _priceDataVersion++;
+}
+
+function legacyHistoryToSummaryMap(legacyMap, refTodayISO) {
+  var src = (legacyMap && typeof legacyMap === "object") ? legacyMap : {};
+  var out = {};
+  var todayStr = refTodayISO || getTodayISO();
+
+  Object.keys(src).forEach(function (fidKey) {
+    var list = Array.isArray(src[fidKey]) ? src[fidKey] : [];
+    var byPrice = {};
+    var seenPairs = Object.create(null);
+    var todayPrices = [];
+
+    list.forEach(function (item) {
+      if (!item || typeof item !== "object") return;
+      var dateStr = typeof item.date === "string" ? item.date.trim() : "";
+      var priceNum = Number(item.price);
+      if (!dateStr || !isFinite(priceNum) || priceNum <= 0) return;
+
+      var pairKey = dateStr + "|" + String(priceNum);
+      if (seenPairs[pairKey]) return;
+      seenPairs[pairKey] = true;
+
+      var pKey = String(priceNum);
+      var prev = byPrice[pKey];
+      if (!prev) {
+        byPrice[pKey] = { l: dateStr, c: 1 };
+      } else {
+        byPrice[pKey] = {
+          l: (!prev.l || dateStr > prev.l) ? dateStr : prev.l,
+          c: (prev.c || 0) + 1
+        };
+      }
+
+      if (dateStr === todayStr && todayPrices.indexOf(priceNum) === -1) {
+        todayPrices.push(priceNum);
+      }
+    });
+
+    if (Object.keys(byPrice).length > 0) {
+      out[fidKey] = {
+        byPrice: byPrice,
+        td: todayPrices.length > 0 ? todayStr : "",
+        t: todayPrices
+      };
+    }
+  });
+
+  return out;
+}
+
+function summaryMapToPriceHistory(summaryMap) {
+  var src = (summaryMap && typeof summaryMap === "object") ? summaryMap : {};
+  var out = {};
+  var todayStr = getTodayISO();
+
+  Object.keys(src).forEach(function (fidKey) {
+    var fishSum = src[fidKey];
+    if (!fishSum || typeof fishSum !== "object") return;
+    var byPrice = (fishSum.byPrice && typeof fishSum.byPrice === "object") ? fishSum.byPrice : {};
+    var list = [];
+    var seenPrices = Object.create(null);
+
+    Object.keys(byPrice).forEach(function (pStr) {
+      var priceNum = Number(pStr);
+      var info = byPrice[pStr];
+      if (!isFinite(priceNum) || priceNum <= 0 || !info || typeof info !== "object") return;
+      var lastDate = typeof info.l === "string" ? info.l : "";
+      var countNum = Math.max(1, parseInt(info.c, 10) || 1);
+      if (!lastDate) return;
+      seenPrices[pStr] = true;
+      list.push({ date: lastDate, price: priceNum, count: countNum });
+    });
+
+    // Ensure today's prices appear with todayStr if td matches today
+    if (fishSum.td === todayStr && Array.isArray(fishSum.t)) {
+      fishSum.t.forEach(function (pVal) {
+        var priceNum = Number(pVal);
+        if (!isFinite(priceNum) || priceNum <= 0) return;
+        var pStr = String(priceNum);
+        if (!seenPrices[pStr]) {
+          seenPrices[pStr] = true;
+          list.push({ date: todayStr, price: priceNum, count: 1 });
+        } else {
+          for (var i = 0; i < list.length; i++) {
+            if (list[i].price === priceNum && list[i].date < todayStr) {
+              list[i].date = todayStr;
+              break;
+            }
+          }
+        }
+      });
+    }
+
+    if (list.length > 0) {
+      list.sort(function (a, b) {
+        var dc = String(b.date || "").localeCompare(String(a.date || ""));
+        return dc !== 0 ? dc : (b.price - a.price);
+      });
+      out[fidKey] = list;
+    }
+  });
+
+  return out;
+}
+
 try {
-  var saved = localStorage.getItem('fishao_price_history_v1');
-  priceHistory = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(initialPrices));
+  var savedSummary = localStorage.getItem('fishao_price_summary_v2');
+  if (savedSummary) {
+    var parsedSum = JSON.parse(savedSummary);
+    if (parsedSum && typeof parsedSum === "object") {
+      priceSummary = parsedSum;
+      priceHistory = summaryMapToPriceHistory(priceSummary);
+    }
+  } else {
+    var savedLegacy = localStorage.getItem('fishao_price_history_v1');
+    var legacyMap = savedLegacy ? JSON.parse(savedLegacy) : JSON.parse(JSON.stringify(initialPrices));
+    priceSummary = legacyHistoryToSummaryMap(legacyMap);
+    priceHistory = summaryMapToPriceHistory(priceSummary);
+  }
 } catch (e) {
-  priceHistory = JSON.parse(JSON.stringify(initialPrices));
+  priceSummary = legacyHistoryToSummaryMap(initialPrices);
+  priceHistory = summaryMapToPriceHistory(priceSummary);
 }
 
 // Estimated min/max fish prices (loaded from Firestore /fishao_market/estimated_prices with static fallback)
@@ -236,13 +349,38 @@ try {
 // -------------------------------------------------------------
 
 function escapeHtml(str) {
-  if (!str) return "";
+  if (str === null || str === undefined) return "";
   return String(str)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function debounce(fn, delayMs) {
+  var timer = null;
+  var wait = typeof delayMs === "number" ? delayMs : 150;
+  return function () {
+    var ctx = this;
+    var args = arguments;
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(function () {
+      timer = null;
+      fn.apply(ctx, args);
+    }, wait);
+  };
+}
+
+function isValidHttpsUrl(val) {
+  if (!val || typeof val !== "string") return false;
+  var trimmed = val.trim();
+  if (trimmed.indexOf("https://") !== 0) return false;
+  return !/[<>\"'`\s]/.test(trimmed);
+}
+
+function sanitizeDomId(raw) {
+  return String(raw || "").replace(/[^A-Za-z0-9_-]/g, "");
 }
 
 function normStr(s) {
@@ -285,10 +423,13 @@ function getFirestoreModule() {
 
 function renderAvatarHtml(avatarVal, fallbackEmoji, imgCss) {
   var fb = fallbackEmoji || "🎣";
-  var val = avatarVal || fb;
-  if (val.indexOf("http://") === 0 || val.indexOf("https://") === 0) {
+  var val = (avatarVal || fb).trim();
+  if (isValidHttpsUrl(val)) {
     var styleStr = imgCss || "width:100%; height:100%; object-fit:cover; border-radius:inherit;";
-    return '<img src="' + escapeHtml(val) + '" alt="" style="' + styleStr + '" onerror="this.style.display=\'none\'; this.parentElement.innerText=\'' + fb + '\';">';
+    return '<img src="' + escapeHtml(val) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="' + styleStr + '" data-fallback="' + escapeHtml(fb) + '" onerror="var p=this.parentElement;var f=this.getAttribute(\'data-fallback\')||\'🎣\';this.remove();if(p)p.textContent=f;">';
+  }
+  if (val.indexOf("http://") === 0 || /[<>]/.test(val)) {
+    return escapeHtml(fb);
   }
   return escapeHtml(val);
 }
@@ -464,12 +605,15 @@ function renderBaitInline(baitCode) {
 }
 
 function closeAllBaitDropdowns(exceptWrapper) {
+  var closedAny = false;
   document.querySelectorAll('.bait-select-wrapper.open').forEach(function (w) {
     if (exceptWrapper && w === exceptWrapper) return;
     w.classList.remove('open');
     var trig = w.querySelector('.bait-custom-trigger');
     if (trig) trig.setAttribute('aria-expanded', 'false');
+    closedAny = true;
   });
+  return closedAny;
 }
 
 function bindGlobalBaitDropdownListeners() {
@@ -479,13 +623,11 @@ function bindGlobalBaitDropdownListeners() {
     var wrapper = e.target && e.target.closest ? e.target.closest('.bait-select-wrapper') : null;
     if (!wrapper) closeAllBaitDropdowns(null);
   });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeAllBaitDropdowns(null);
-  });
 }
 
 /**
  * Render and sync an image-enabled custom dropdown inside .bait-select-wrapper.
+ * Rebuilds the menu DOM only when options or language change.
  */
 function syncBaitSelectIcon(selectId, iconId) {
   var selectEl = document.getElementById(selectId);
@@ -546,31 +688,190 @@ function syncBaitSelectIcon(selectId, iconId) {
   var curLabel = selectedOpt ? selectedOpt.textContent : '';
   var curImg = renderBaitIconImg(curVal, 'bait-option-icon', false);
 
-  triggerEl.innerHTML =
-    '<span class="bait-trigger-content">' +
-      curImg +
-      '<span class="bait-trigger-label">' + escapeHtml(curLabel) + '</span>' +
-    '</span>' +
-    '<span class="bait-trigger-arrow" aria-hidden="true">▼</span>';
-
-  var optsHtml = '';
-  for (var i = 0; i < selectEl.options.length; i++) {
-    var opt = selectEl.options[i];
-    var optVal = opt.value || '';
-    var isSel = (optVal === curVal);
-    var optImg = renderBaitIconImg(optVal, 'bait-option-icon', false);
-    optsHtml += '<button type="button" role="option" class="bait-custom-option' +
-      (isSel ? ' active' : '') + '" data-value="' + escapeHtml(optVal) + '" aria-selected="' +
-      (isSel ? 'true' : 'false') + '">' +
-      optImg +
-      '<span>' + escapeHtml(opt.textContent) + '</span>' +
-    '</button>';
+  var triggerSig = curVal + '|' + curLabel;
+  if (wrapper._triggerSig !== triggerSig) {
+    wrapper._triggerSig = triggerSig;
+    triggerEl.innerHTML =
+      '<span class="bait-trigger-content">' +
+        curImg +
+        '<span class="bait-trigger-label">' + escapeHtml(curLabel) + '</span>' +
+      '</span>' +
+      '<span class="bait-trigger-arrow" aria-hidden="true">▼</span>';
   }
-  menuEl.innerHTML = optsHtml;
+
+  var optSigParts = [getLang()];
+  for (var si = 0; si < selectEl.options.length; si++) {
+    optSigParts.push(selectEl.options[si].value + ':' + selectEl.options[si].textContent);
+  }
+  var menuSig = optSigParts.join('|');
+
+  if (wrapper._menuSig !== menuSig) {
+    wrapper._menuSig = menuSig;
+    var optsHtml = '';
+    for (var i = 0; i < selectEl.options.length; i++) {
+      var opt = selectEl.options[i];
+      var optVal = opt.value || '';
+      var isSel = (optVal === curVal);
+      var optImg = renderBaitIconImg(optVal, 'bait-option-icon', false);
+      optsHtml += '<button type="button" role="option" class="bait-custom-option' +
+        (isSel ? ' active' : '') + '" data-value="' + escapeHtml(optVal) + '" aria-selected="' +
+        (isSel ? 'true' : 'false') + '">' +
+        optImg +
+        '<span>' + escapeHtml(opt.textContent) + '</span>' +
+      '</button>';
+    }
+    menuEl.innerHTML = optsHtml;
+  } else if (wrapper._lastSelectedVal !== curVal) {
+    var btns = menuEl.querySelectorAll('.bait-custom-option');
+    btns.forEach(function (btn) {
+      var isSel = (btn.getAttribute('data-value') || '') === curVal;
+      btn.classList.toggle('active', isSel);
+      btn.setAttribute('aria-selected', isSel ? 'true' : 'false');
+    });
+  }
+  wrapper._lastSelectedVal = curVal;
 }
 
 // -------------------------------------------------------------
-// Smart Bait Competition & Recommendation Engine
+// Shared Time, Date & Filter Helpers (Memoized)
+// -------------------------------------------------------------
+
+var _parsedTimeCache = new Map();
+var _parsedDateCache = new Map();
+
+function parseTimeWindowsToMinutes(rawTimes) {
+  if (!rawTimes || rawTimes.length === 0) return [[0, 1440]];
+  var key = rawTimes.join(',');
+  var cached = _parsedTimeCache.get(key);
+  if (cached) return cached;
+
+  var ranges = [];
+  for (var i = 0; i < rawTimes.length; i++) {
+    var clean = String(rawTimes[i] || '').trim();
+    if (clean.indexOf('-') === -1) continue;
+    var parts = clean.split('-');
+    var sParts = parts[0].split(':').map(Number);
+    var eParts = parts[1].split(':').map(Number);
+    var st = (sParts[0] || 0) * 60 + (sParts[1] || 0);
+    var et = (eParts[0] || 0) * 60 + (eParts[1] || 0);
+    if (et === 0) et = 1440;
+    if (et <= st) {
+      ranges.push([st, 1440], [0, et]);
+    } else {
+      ranges.push([st, et]);
+    }
+  }
+  var out = ranges.length > 0 ? ranges : [[0, 1440]];
+  _parsedTimeCache.set(key, out);
+  return out;
+}
+
+function parseDateWindowsToMMDD(rawDates) {
+  if (!rawDates || rawDates.length === 0) return [[101, 1231]];
+  var key = rawDates.join(',');
+  var cached = _parsedDateCache.get(key);
+  if (cached) return cached;
+
+  var ranges = [];
+  for (var i = 0; i < rawDates.length; i++) {
+    var clean = String(rawDates[i] || '').trim();
+    if (clean.indexOf('-') === -1) continue;
+    var parts = clean.split('-');
+    var sParts = parts[0].split('.').map(Number);
+    var eParts = parts[1].split('.').map(Number);
+    var sm = sParts[0] || 1;
+    var sd = sParts[1] || 1;
+    var em = eParts[0] || 12;
+    var ed = eParts[1] || 31;
+    var sVal = sm * 100 + sd;
+    // Treat 02.28 range end as valid on leap day 02.29 as well
+    var eVal = (em === 2 && ed === 28) ? 229 : (em * 100 + ed);
+    if (eVal < sVal) {
+      ranges.push([sVal, 1231], [101, eVal]);
+    } else {
+      ranges.push([sVal, eVal]);
+    }
+  }
+  var out = ranges.length > 0 ? ranges : [[101, 1231]];
+  _parsedDateCache.set(key, out);
+  return out;
+}
+
+function isFishInSeasonOnUtcDate(rawDates, month, day) {
+  if (!Array.isArray(rawDates) || rawDates.length === 0) return true;
+  var curVal = month * 100 + day;
+  var ranges = parseDateWindowsToMMDD(rawDates);
+  for (var i = 0; i < ranges.length; i++) {
+    if (curVal >= ranges[i][0] && curVal <= ranges[i][1]) return true;
+  }
+  return false;
+}
+
+function isFishInSeasonNow(rawDates) {
+  if (!rawDates || rawDates.length === 0) return true;
+  var now = new Date();
+  return isFishInSeasonOnUtcDate(rawDates, now.getUTCMonth() + 1, now.getUTCDate());
+}
+
+function isFishActiveAtUTCHour(rawTimes, testUtcHour) {
+  if (!rawTimes || rawTimes.length === 0) return true;
+  var cur = testUtcHour * 60;
+  var ranges = parseTimeWindowsToMinutes(rawTimes);
+  for (var i = 0; i < ranges.length; i++) {
+    if (cur >= ranges[i][0] && cur <= ranges[i][1]) return true;
+  }
+  return false;
+}
+
+function isFishActiveAtLocalHour(rawTimes, testLocalHour) {
+  if (userTimezone === "utc") {
+    return isFishActiveAtUTCHour(rawTimes, testLocalHour);
+  }
+  var d = new Date();
+  d.setHours(testLocalHour, 0, 0, 0);
+  return isFishActiveAtUTCHour(rawTimes, d.getUTCHours());
+}
+
+function isFishActiveNow(rawTimes, rawDates) {
+  if (rawDates && rawDates.length > 0 && !isFishInSeasonNow(rawDates)) {
+    return false;
+  }
+  if (!rawTimes || rawTimes.length === 0) return true;
+  var now = new Date();
+  var curUtcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+  var ranges = parseTimeWindowsToMinutes(rawTimes);
+  for (var i = 0; i < ranges.length; i++) {
+    if (curUtcMinutes >= ranges[i][0] && curUtcMinutes <= ranges[i][1]) return true;
+  }
+  return false;
+}
+
+function matchesFishTimeFilter(f, timeVal) {
+  if (!f) return false;
+  if (!timeVal) return true;
+  if (timeVal === "now") return isFishActiveNow(f.raw_times, f.raw_dates);
+  if (timeVal === "seasonal") return !!(f.raw_dates && f.raw_dates.length > 0);
+  if (timeVal === "night") return !!f.is_night;
+  if (timeVal === "day") return !f.is_night;
+  if (timeVal === "morning") return isFishActiveAtLocalHour(f.raw_times, 9);
+  if (timeVal === "afternoon") return isFishActiveAtLocalHour(f.raw_times, 15);
+  if (timeVal === "evening") return isFishActiveAtLocalHour(f.raw_times, 21);
+  if (timeVal === "deepnight") return isFishActiveAtLocalHour(f.raw_times, 3);
+  return true;
+}
+
+function matchesFishRatingFilter(f, ratingVal) {
+  if (!f) return false;
+  if (!ratingVal) return true;
+  var r = f.rating || 1;
+  if (ratingVal === "min3") return r >= 3;
+  if (ratingVal === "min4") return r >= 4;
+  if (/^\d$/.test(String(ratingVal))) return r === parseInt(ratingVal, 10);
+  return true;
+}
+
+// -------------------------------------------------------------
+// Smart Bait Competition & Recommendation Engine (Indexed + Memoized)
 // -------------------------------------------------------------
 
 var EFPT_PARENT_MAP = {
@@ -596,12 +897,15 @@ var RATING_SPAWN_WEIGHTS = { 1: 1.0, 2: 0.65, 3: 0.35, 4: 0.15, 5: 0.06 };
 
 function getFishPlacesForLocation(fish, locKey) {
   if (!fish || !Array.isArray(fish.places) || fish.places.length === 0) return [null];
+  if (fish._placesByLoc && fish._placesByLoc[locKey]) return fish._placesByLoc[locKey];
   var matching = fish.places.filter(function (p) {
     if (!p) return false;
     var parents = EFPT_PARENT_MAP[p];
     return !parents || parents.indexOf(locKey) !== -1;
   });
-  return matching.length > 0 ? matching : [null];
+  var res = matching.length > 0 ? matching : [null];
+  if (fish._placesByLoc) fish._placesByLoc[locKey] = res;
+  return res;
 }
 
 function isFishInSpot(fish, locKey, placeKey) {
@@ -612,47 +916,6 @@ function isFishInSpot(fish, locKey, placeKey) {
   var placesInLoc = getFishPlacesForLocation(fish, locKey);
   if (placesInLoc.indexOf(null) !== -1) return true;
   return placesInLoc.indexOf(placeKey || null) !== -1;
-}
-
-function parseTimeWindowsToMinutes(rawTimes) {
-  if (!rawTimes || rawTimes.length === 0) return [[0, 1440]];
-  var ranges = [];
-  for (var i = 0; i < rawTimes.length; i++) {
-    var clean = String(rawTimes[i] || '').trim();
-    if (clean.indexOf('-') === -1) continue;
-    var parts = clean.split('-');
-    var sParts = parts[0].split(':').map(Number);
-    var eParts = parts[1].split(':').map(Number);
-    var st = (sParts[0] || 0) * 60 + (sParts[1] || 0);
-    var et = (eParts[0] || 0) * 60 + (eParts[1] || 0);
-    if (et === 0) et = 1440;
-    if (et <= st) {
-      ranges.push([st, 1440], [0, et]);
-    } else {
-      ranges.push([st, et]);
-    }
-  }
-  return ranges.length > 0 ? ranges : [[0, 1440]];
-}
-
-function parseDateWindowsToMMDD(rawDates) {
-  if (!rawDates || rawDates.length === 0) return [[101, 1231]];
-  var ranges = [];
-  for (var i = 0; i < rawDates.length; i++) {
-    var clean = String(rawDates[i] || '').trim();
-    if (clean.indexOf('-') === -1) continue;
-    var parts = clean.split('-');
-    var sParts = parts[0].split('.').map(Number);
-    var eParts = parts[1].split('.').map(Number);
-    var sVal = (sParts[0] || 1) * 100 + (sParts[1] || 1);
-    var eVal = (eParts[0] || 12) * 100 + (eParts[1] || 31);
-    if (eVal < sVal) {
-      ranges.push([sVal, 1231], [101, eVal]);
-    } else {
-      ranges.push([sVal, eVal]);
-    }
-  }
-  return ranges.length > 0 ? ranges : [[101, 1231]];
 }
 
 function doNumericRangesOverlap(rangesA, rangesB, inclusive) {
@@ -682,11 +945,60 @@ function doFishDatesOverlap(datesA, datesB) {
  */
 function getFishSpawnWeight(fish) {
   if (!fish) return 0.35;
+  if (typeof fish._spawnWeight === 'number') return fish._spawnWeight;
   var starWeight = RATING_SPAWN_WEIGHTS[fish.rating] || 0.35;
   var rf = (typeof fish.rarity_factor === 'number') ? fish.rarity_factor : parseFloat(fish.rarity_factor);
   var rarityFactor = (isFinite(rf) && rf > 0) ? Math.min(1, rf) : 1.0;
   return starWeight * rarityFactor;
 }
+
+// Build static pre-parsed metadata & spot index once at startup
+var _spotFishesIndex = new Map();
+var _baitRecCache = new Map();
+
+(function buildStaticSpotIndex() {
+  if (!Array.isArray(allFishes) || allFishes.length === 0) return;
+  var locPlacesMap = Object.create(null);
+
+  allFishes.forEach(function (f) {
+    if (!f) return;
+    f._spawnWeight = getFishSpawnWeight(f);
+    f._baitsSet = new Set(Array.isArray(f.baits) ? f.baits : []);
+    f._placesByLoc = Object.create(null);
+    f._timeRanges = (f.raw_times && f.raw_times.length) ? parseTimeWindowsToMinutes(f.raw_times) : null;
+    f._dateRanges = (f.raw_dates && f.raw_dates.length) ? parseDateWindowsToMMDD(f.raw_dates) : null;
+
+    var locs = (Array.isArray(f.locations) && f.locations.length)
+      ? f.locations.slice()
+      : [];
+    if (f.is_club && locs.indexOf('location_112') === -1) {
+      locs.push('location_112');
+    }
+
+    locs.forEach(function (locKey) {
+      if (!locPlacesMap[locKey]) locPlacesMap[locKey] = new Set();
+      var places = getFishPlacesForLocation(f, locKey);
+      places.forEach(function (pk) {
+        locPlacesMap[locKey].add(pk || '');
+      });
+    });
+  });
+
+  Object.keys(locPlacesMap).forEach(function (locKey) {
+    var candidates = allFishes.filter(function (f) {
+      return (Array.isArray(f.locations) && f.locations.indexOf(locKey) !== -1) ||
+        (locKey === 'location_112' && Boolean(f.is_club));
+    });
+
+    locPlacesMap[locKey].forEach(function (placeStr) {
+      var placeKey = placeStr || null;
+      var pool = candidates.filter(function (f) {
+        return isFishInSpot(f, locKey, placeKey);
+      });
+      _spotFishesIndex.set(locKey + '|' + placeStr, pool);
+    });
+  });
+})();
 
 function formatCompetitorCountLabel(count) {
   var num = Math.max(0, parseInt(count, 10) || 0);
@@ -709,7 +1021,7 @@ function isBaitScoreTied(a, b) {
 
 /**
  * Ranks a fish's valid baits per location/sub-area by fewest competing fish
- * and lowest competitor spawn weight.
+ * and lowest competitor spawn weight (uses spot index + memoization).
  */
 function computeFishBaitRecommendations(fish, options) {
   var opts = options || {};
@@ -717,44 +1029,81 @@ function computeFishBaitRecommendations(fish, options) {
   var result = { spots: [], bestOverall: null, timeMode: timeMode };
   if (!fish || !Array.isArray(allFishes)) return result;
 
+  var filterLoc = opts.filterLoc || '';
+  var filterArea = opts.filterArea || '';
+  var onlyUnlockedClub = Boolean(opts.onlyUnlockedClub);
+  var lang = getLang();
+
+  var cacheKey = lang + '|' + timeMode + '|' + fish.id + '|' + filterLoc + '|' + filterArea;
+  if (timeMode === 'now') {
+    var nowMin = Math.floor(Date.now() / 60000);
+    cacheKey = nowMin + '|' + cacheKey;
+  }
+  if (onlyUnlockedClub) {
+    cacheKey += '|club:' + currentClubPoints + ':' +
+      currentClubUnlockedFcFishIds.size + ':' + currentClubUnlockedMonsterIds.size;
+  }
+
+  var cachedRec = _baitRecCache.get(cacheKey);
+  if (cachedRec) return cachedRec;
+
+  // Keep cache bounded when switching UTC minutes over long-lived tabs
+  if (_baitRecCache.size > 4000) {
+    _baitRecCache.clear();
+  }
+
   var locKeys = (Array.isArray(fish.locations) && fish.locations.length)
     ? fish.locations.slice()
     : (fish.is_club ? ['location_112'] : []);
-  if (opts.filterLoc && locKeys.indexOf(opts.filterLoc) !== -1) {
-    locKeys = [opts.filterLoc];
+  if (filterLoc && locKeys.indexOf(filterLoc) !== -1) {
+    locKeys = [filterLoc];
   }
 
   var targetWeight = getFishSpawnWeight(fish);
   var targetBaits = Array.isArray(fish.baits) ? fish.baits : [];
+  var targetTimeRanges = fish._timeRanges || (fish.raw_times && fish.raw_times.length ? parseTimeWindowsToMinutes(fish.raw_times) : null);
+  var targetDateRanges = fish._dateRanges || (fish.raw_dates && fish.raw_dates.length ? parseDateWindowsToMMDD(fish.raw_dates) : null);
   var spots = [];
 
   locKeys.forEach(function (locKey) {
     var places = getFishPlacesForLocation(fish, locKey);
-    if (opts.filterArea && places.indexOf(opts.filterArea) !== -1) {
-      places = [opts.filterArea];
+    if (filterArea && places.indexOf(filterArea) !== -1) {
+      places = [filterArea];
     }
 
     places.forEach(function (placeKey) {
-      var spotFishes = allFishes.filter(function (other) {
-        if (!other || other.id === fish.id) return false;
-        if (!isFishInSpot(other, locKey, placeKey)) return false;
-        if (opts.onlyUnlockedClub && locKey === 'location_112' && typeof getUnlockStatus === 'function') {
-          if (!getUnlockStatus(other, currentClubPoints).isUnlocked) return false;
+      var spotKey = locKey + '|' + (placeKey || '');
+      var indexedPool = _spotFishesIndex.get(spotKey) || allFishes;
+      var spotFishes = [];
+
+      for (var idx = 0; idx < indexedPool.length; idx++) {
+        var other = indexedPool[idx];
+        if (!other || other.id === fish.id) continue;
+        if (indexedPool === allFishes && !isFishInSpot(other, locKey, placeKey)) continue;
+        if (onlyUnlockedClub && locKey === 'location_112' && typeof getUnlockStatus === 'function') {
+          if (!getUnlockStatus(other, currentClubPoints).isUnlocked) continue;
         }
         if (timeMode === 'now') {
-          return typeof isFishActiveNow === 'function' ? isFishActiveNow(other.raw_times, other.raw_dates) : true;
+          if (!isFishActiveNow(other.raw_times, other.raw_dates)) continue;
+        } else if (timeMode === 'overlap') {
+          if (targetTimeRanges && other._timeRanges && !doNumericRangesOverlap(targetTimeRanges, other._timeRanges, false)) {
+            continue;
+          }
+          if (targetDateRanges && other._dateRanges && !doNumericRangesOverlap(targetDateRanges, other._dateRanges, true)) {
+            continue;
+          }
         }
-        if (timeMode === 'overlap') {
-          return doFishTimesOverlap(fish.raw_times, other.raw_times) &&
-            doFishDatesOverlap(fish.raw_dates, other.raw_dates);
-        }
-        return true;
-      });
+        spotFishes.push(other);
+      }
 
       var baitResults = targetBaits.map(function (baitCode) {
-        var competitors = spotFishes.filter(function (other) {
-          return Array.isArray(other.baits) && other.baits.indexOf(baitCode) !== -1;
-        });
+        var competitors = [];
+        for (var si = 0; si < spotFishes.length; si++) {
+          var cand = spotFishes[si];
+          if (cand._baitsSet ? cand._baitsSet.has(baitCode) : (Array.isArray(cand.baits) && cand.baits.indexOf(baitCode) !== -1)) {
+            competitors.push(cand);
+          }
+        }
 
         competitors.sort(function (a, b) {
           return (getFishSpawnWeight(b) - getFishSpawnWeight(a)) || (a.rating - b.rating);
@@ -856,6 +1205,7 @@ function computeFishBaitRecommendations(fish, options) {
   }
 
   result.spots = spots;
+  _baitRecCache.set(cacheKey, result);
   return result;
 }
 
@@ -863,17 +1213,24 @@ function computeFishBaitRecommendations(fish, options) {
  * Renders the table bait cell with best-bait sorting, highlight, and competition counts
  * evaluated in the active location/area/time filter context.
  */
-function renderFishBaitsCell(fish) {
+function renderFishBaitsCell(fish, filterCtx) {
   if (!fish || !Array.isArray(fish.baits) || fish.baits.length === 0) return '';
 
-  var locEl = document.getElementById('locationFilter');
-  var areaEl = document.getElementById('areaFilter');
-  var hideLockedEl = document.getElementById('hideLockedCheckbox');
-
-  var locFilter = (currentView === 'club') ? 'location_112' : ((locEl && locEl.value) || '');
-  var areaFilter = (areaEl && areaEl.value) || '';
-  var timeMode = filterNowActive ? 'now' : 'overlap';
-  var hideLocked = (currentView === 'club' && hideLockedEl && hideLockedEl.checked);
+  var locFilter, areaFilter, timeMode, hideLocked;
+  if (filterCtx) {
+    locFilter = filterCtx.locFilter;
+    areaFilter = filterCtx.areaFilter;
+    timeMode = filterCtx.timeMode;
+    hideLocked = filterCtx.hideLocked;
+  } else {
+    var locEl = document.getElementById('locationFilter');
+    var areaEl = document.getElementById('areaFilter');
+    var hideLockedEl = document.getElementById('hideLockedCheckbox');
+    locFilter = (currentView === 'club') ? 'location_112' : ((locEl && locEl.value) || '');
+    areaFilter = (areaEl && areaEl.value) || '';
+    timeMode = filterNowActive ? 'now' : 'overlap';
+    hideLocked = (currentView === 'club' && hideLockedEl && hideLockedEl.checked);
+  }
 
   var rec = computeFishBaitRecommendations(fish, {
     timeMode: timeMode,

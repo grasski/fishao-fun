@@ -200,9 +200,13 @@ function toggleLocIncompleteFilter() {
   renderLocationsView();
 }
 
+var _debouncedRenderLocations = (typeof debounce === 'function')
+  ? debounce(function () { renderLocationsView(); }, 150)
+  : function () { renderLocationsView(); };
+
 function onLocSearchInput(val) {
   locSearchQuery = String(val || '');
-  renderLocationsView();
+  _debouncedRenderLocations();
 }
 
 function resetLocationsFilters() {
@@ -412,7 +416,7 @@ function renderLocationsView() {
         sortedPreview.map(function (f) {
           var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
           return '<button type="button" class="loc-fish-chip" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + escapeHtml(fName + t('click_for_detail_suffix')) + '">' +
-            '<img src="images/fish_' + f.id + '.webp" alt="" onerror="this.onerror=null;this.style.display=\'none\';">' +
+            '<img src="images/fish_' + f.id + '.webp" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
             '<span class="loc-fish-chip-name">' + escapeHtml(fName) + '</span>' +
             '<span class="loc-fish-chip-stars">' + (f.rating || 1) + '★</span>' +
           '</button>';
@@ -455,7 +459,7 @@ function renderLocationsView() {
     var thumbHtml;
     if (loc.image) {
       thumbHtml = '<div class="loc-card-thumb' + (loc.image.isIconImg ? ' is-icon-img' : '') + '">' +
-        '<img class="loc-card-thumb-img" src="' + escapeHtml(loc.image.src) + '" alt="' + safeLocName + '" ' +
+        '<img class="loc-card-thumb-img" src="' + escapeHtml(loc.image.src) + '" alt="' + safeLocName + '" loading="lazy" decoding="async" ' +
         'onerror="this.parentElement.classList.add(\'fallback-icon\');this.remove();">' +
         '<span class="loc-card-thumb-fallback" aria-hidden="true">' + loc.icon + '</span>' +
       '</div>';
@@ -496,8 +500,7 @@ function renderLocationsView() {
 var locationImagesPreloaded = false;
 
 /**
- * Preload local location preview thumbnails into the browser cache
- * after initial page load so switching to Locations renders instantly.
+ * Preload local location preview thumbnails lazily when the user interacts with Locations.
  */
 function preloadLocationImages() {
   if (locationImagesPreloaded || typeof Image === 'undefined') return;
@@ -509,19 +512,3 @@ function preloadLocationImages() {
     img.src = 'images/location_preview_' + id + '.webp';
   });
 }
-
-(function scheduleLocationImagePreload() {
-  if (typeof window === 'undefined' || typeof document === 'undefined') return;
-  var runPreload = function () {
-    if (typeof window.requestIdleCallback === 'function') {
-      window.requestIdleCallback(preloadLocationImages, { timeout: 2500 });
-    } else if (typeof setTimeout === 'function') {
-      setTimeout(preloadLocationImages, 800);
-    }
-  };
-  if (document.readyState === 'complete') {
-    runPreload();
-  } else if (typeof window.addEventListener === 'function') {
-    window.addEventListener('load', runPreload, { once: true });
-  }
-})();

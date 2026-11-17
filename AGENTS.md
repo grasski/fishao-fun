@@ -6,21 +6,23 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
 1. **Never read raw 400KB data files in full:**
    * Do NOT read `data/raw/lang_cz.json`, `data/raw/lang_en.json`, `data/raw/lang_pl.json`, `data/fishes.js`, or `data/raw/fish.json` from beginning to end.
    * Full data schemas, object shapes, and Firestore collections are documented in [.agents/skills/fishao/SKILL.md](.agents/skills/fishao/SKILL.md).
-2. **Vanilla JavaScript & GitHub Pages:**
-   * This project has no Node.js/npm build step or bundler. Files are loaded natively by the browser.
-   * Always verify modified or created JavaScript files with `node --check "<filepath>"`.
+2. **Vanilla JavaScript & GitHub Pages Build:**
+   * Files load natively by the browser in local dev without a required local bundler, while `.github/workflows/deploy-pages.yml` builds `_site/` via `scripts/build_dist.py` (CSS/JS concatenation, optional `esbuild` minification, and hashed `dist/app.*.min.css`, `dist/app.*.min.js`, `dist/ui_en.*.min.js`, `dist/ui_pl.*.min.js` bundles).
+   * Always verify modified or created JavaScript files with `node --check "<filepath>"` (also enforced in CI).
 3. **Firebase & Firestore Security Rules (`firestore.rules`):**
    * Firestore rules enforce strict key masking (`hasOnly` / `affectedKeys().hasOnly`). Never write undocumented fields to Firestore.
-   * `/users/{userId}` is readable by authenticated users and writable only by the owner or admin. Allowed keys: `displayName`, `role`, `clubId`, `clubName`, `caughtFishIds`, `backyardFishIds`, `friendUids`, `createdAt`, `lastLogin`, `avatarUrl`.
+   * `/users/{userId}` is public community profile data (readable by signed-in users, writable only by owner or admin). Allowed public keys: `displayName`, `role`, `clubId`, `clubName`, `caughtFishIds`, `backyardFishIds`, `createdAt`, `avatarUrl` (strictly `https://` URLs or emoji presets; `http:`, `javascript:`, `data:` and HTML metacharacters are rejected).
+   * `/users/{userId}/private/settings` is owner/admin-only private data (`friendUids`, `reminders`, `lastLogin`, `updatedAt`). Never write private fields to `/users/{userId}`.
    * Never store user emails or personal Google data in Firestore (GDPR-free: only store nickname and avatar).
    * Always wrap Firestore operations in `try...catch` and maintain `localStorage` fallback.
-4. **Fish Market Rules:**
+4. **Fish Market Rules (Daily Archiving & Summary Model):**
    * The Fish Market is **strictly closed on Sundays** (`getUTCDay() === 0`, UTC server time).
    * No prices can be entered or imported for Sunday dates. On Sundays, price forms keep the Sunday date pre-filled (`getTodayISO()`) so the Sunday closed warning banner and disabled submit button are displayed immediately.
-   * Prices are **variable per player**. One fish may have several distinct prices, including multiple entries on the same date, but a numeric price value is stored **only once per fish across all dates**. New submissions and bulk imports must reject/skip duplicate price values.
-   * All price add/delete/bulk/reset writes go through the generic Firestore transaction helpers in `js/firestore-tx.js` (`window.FISHAO_FS_TX`). Do not write the price document with ad-hoc `setDoc` calls from `market.js`.
-   * Never present a single "today's price" anywhere. Use `normalizePriceEntries()` from `js/market.js` for every display path (table range, modal min/max, counts). Existing duplicate rows are never merged or rewritten in storage; raw JSON export keeps them visible for manual review.
-   * **Manual Price Entry & Bulk Import Feature Flag (`/fishao_market/config`):** Because prices are uploaded automatically, manual price entry (`#priceAddFormBox`, `#priceAddLoginNotice` in the fish detail modal) and bulk import (`#marketImportActionBarRight`, `#marketFloatingImportBtn`) are hidden by default (`manualImportEnabled: false`). Visibility is controlled in real time via Firestore `onSnapshot` on `/fishao_market/config` (`manualImportEnabled` boolean) and `syncManualImportVisibility()` in `js/market.js`. Admins can toggle this flag from the Profile modal (`#profileAdminSection` -> `toggleManualImportFlag()`) or directly in Firebase Console.
+   * Prices are **variable per player and recorded daily**. On a single date, each distinct `(fishId, date, price)` pair is stored at most once; repeating the same price across different dates is allowed and increments its occurrence count.
+   * Storage uses a compact `/fishao_market/prices_summary` document (`{ prices: { [fid]: { byPrice: { [price]: { l: lastISO, c: count } }, td: todayISO, t: [todayPrices] } }, lastUpdated }`) for fast initial load, paired with monthly archives `/fishao_market_daily/{YYYY-MM}` (`{ days: { [dateISO]: { [fid]: num | [nums] } }, lastUpdated }`) loaded on demand. Client code (`js/auth.js`) maintains one-time fallback compatibility with legacy `/fishao_market/prices_history`, and `scripts/sync-market-prices.mjs --migrate-only` handles full migration.
+   * All price add/delete/bulk writes go through the Firestore transaction helpers in `js/firestore-tx.js` (`window.FISHAO_FS_TX.runTx` / `readModifyWrite` / `commitBatch`). Do not write price documents with ad-hoc `setDoc` calls from `market.js`.
+   * Never present a single "today's price" anywhere. Use `normalizePriceEntries()` from `js/market.js` for every display path (table range, modal min/max, counts, occurrence badges).
+   * **Manual Price Entry & Bulk Import Feature Flag (`/fishao_market/config`):** Because prices are synced daily automatically, manual price entry (`#priceAddFormBox`, `#priceAddLoginNotice` in the fish detail modal) and bulk import (`#marketImportActionBarRight`, `#marketFloatingImportBtn`) are hidden by default (`manualImportEnabled: false`) and the summary doc is loaded via `localStorage` TTL + `/fishao_market/sync_status` rather than a permanent `onSnapshot` listener. When `manualImportEnabled === true`, `js/auth.js` attaches `onSnapshot` on `/fishao_market/prices_summary`. Admins can toggle this flag from the Profile modal (`#profileAdminSection` -> `toggleManualImportFlag()`) or directly in Firebase Console.
 5. **Multilingual Localization & Modular i18n (`data/i18n/`):**
    * Supported languages: Czech (`cs`, default), English (`en`), and Polish (`pl`).
    * Fallback chain is configured per language in `data/i18n.js` (`LANGUAGES` registry): `pl -> en -> cs` and `en -> cs`. Missing Polish fish names or UI strings automatically fall back to English, then Czech.
@@ -48,9 +50,10 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
    * All action bar controls maintain a unified 32px height standard (`.pill-btn`, `.toggle-pill`, `.btn-subtle-link`, `.sign-in-btn.sm`).
 
 7. **Modular JavaScript Architecture (`js/`):**
-   * Code is organized into cohesive modules under `js/`: `state.js`, `firestore-tx.js`, `table.js`, `clubs.js`, `market.js`, `filters.js`, `auth.js`, `players.js`, and `main.js`.
-   * `js/firestore-tx.js`: Generic Firestore transaction helpers (`window.FISHAO_FS_TX.readModifyWrite`, `window.FISHAO_FS_TX.setDocument`). Keep it free of app-specific collections, documents, and field names.
-   * `js/players.js`: Community player list, friends management (`friendUids`), backyard fish breeding (`backyardFishIds`, strictly the 83 backyard species), universal player modal, reverse fish-to-player lookups.
+   * Code is organized into cohesive modules under `js/`: `state.js`, `firestore-tx.js`, `table.js`, `clubs.js`, `market.js`, `filters.js`, `auth.js`, `players.js`, `locations.js`, `calendar.js`, `reminders.js`, and `main.js`.
+   * `js/firestore-tx.js`: Generic Firestore transaction helpers (`window.FISHAO_FS_TX.loadFirestoreModule`, `readModifyWrite`, `setDocument`, `runTx`, `commitBatch`). Keep it free of app-specific collections, documents, and field names.
+   * `js/players.js`: Community player list, friends management (`friendUids` in `/users/{uid}/private/settings`), backyard fish breeding (`backyardFishIds`, strictly the 83 backyard species), universal player modal, reverse fish-to-player lookups.
+   * `js/reminders.js`: Game event reminders persisted to `/users/{uid}/private/settings` with `localStorage` fallback.
    * Public browser handlers are exposed on `window.fishaoApp` in `js/main.js`. Do not edit the legacy monolithic `app.js`.
 
 8. **Backyard Fish Breeding ("Za domem") & Community Directory:**

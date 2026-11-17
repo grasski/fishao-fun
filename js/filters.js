@@ -180,13 +180,9 @@ function applyFilters() {
       if (!isMatch) return false;
     }
 
-    if (bait && !f.baits.includes(bait)) return false;
+    if (bait && (!Array.isArray(f.baits) || !f.baits.includes(bait))) return false;
 
-    if (rating) {
-      if (rating === "min3" && f.rating < 3) return false;
-      if (rating === "min4" && f.rating < 4) return false;
-      if (rating.match(/^\d$/) && f.rating !== parseInt(rating)) return false;
-    }
+    if (rating && !matchesFishRatingFilter(f, rating)) return false;
 
     if (location && currentView !== "club" &&
         !((f.locations && f.locations.includes(location)) ||
@@ -196,23 +192,7 @@ function applyFilters() {
     if (!isNaN(minSize) && f.max_l < minSize) return false;
     if (!isNaN(maxSize) && f.min_l > maxSize) return false;
 
-    if (timeVal === "now") {
-      if (!isFishActiveNow(f.raw_times, f.raw_dates)) return false;
-    } else if (timeVal === "seasonal") {
-      if (!f.raw_dates || f.raw_dates.length === 0) return false;
-    } else if (timeVal === "night") {
-      if (!f.is_night) return false;
-    } else if (timeVal === "day") {
-      if (f.is_night) return false;
-    } else if (timeVal === "morning") {
-      if (!isFishActiveAtLocalHour(f.raw_times, 9)) return false;
-    } else if (timeVal === "afternoon") {
-      if (!isFishActiveAtLocalHour(f.raw_times, 15)) return false;
-    } else if (timeVal === "evening") {
-      if (!isFishActiveAtLocalHour(f.raw_times, 21)) return false;
-    } else if (timeVal === "deepnight") {
-      if (!isFishActiveAtLocalHour(f.raw_times, 3)) return false;
-    }
+    if (timeVal && !matchesFishTimeFilter(f, timeVal)) return false;
 
     if (filterTodayHighPrice) {
       var est = (typeof getEstimatedPrice === "function") ? getEstimatedPrice(f.id) : null;
@@ -284,18 +264,23 @@ function applyFilters() {
           (a.id - b.id);
       });
     }
-  } else if (sortBy === "price_desc") {
-    filtered.sort(function (a, b) {
-      var pa = (getMaxPrice(a.id) || {}).price || 0;
-      var pb = (getMaxPrice(b.id) || {}).price || 0;
-      return pb - pa || b.rating - a.rating;
-    });
-  } else if (sortBy === "price_asc") {
-    filtered.sort(function (a, b) {
-      var pa = (getMaxPrice(a.id) || {}).price || 999999;
-      var pb = (getMaxPrice(b.id) || {}).price || 999999;
-      return pa - pb || b.rating - a.rating;
-    });
+  } else if (sortBy === "price_desc" || sortBy === "price_asc") {
+    var maxPriceMap = Object.create(null);
+    for (var mpi = 0; mpi < filtered.length; mpi++) {
+      var mpf = filtered[mpi];
+      maxPriceMap[mpf.id] = (getMaxPrice(mpf.id) || {}).price || 0;
+    }
+    if (sortBy === "price_desc") {
+      filtered.sort(function (a, b) {
+        return maxPriceMap[b.id] - maxPriceMap[a.id] || b.rating - a.rating;
+      });
+    } else {
+      filtered.sort(function (a, b) {
+        var pa = maxPriceMap[a.id] || 999999;
+        var pb = maxPriceMap[b.id] || 999999;
+        return pa - pb || b.rating - a.rating;
+      });
+    }
   } else if (sortBy === "name_asc") {
     filtered.sort(function (a, b) {
       var nameA = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(a) : a.name;

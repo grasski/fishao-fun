@@ -17,7 +17,7 @@ This skill provides the complete reference for developing and maintaining the **
 * **Platform:** Static Single-Page Application (SPA) hosted on **GitHub Pages**.
 * **Repository:** `https://github.com/grasski/fishao-fun` on branch `main`.
 * **Runtime Stack:** Pure **Vanilla JavaScript (ES6)**, native CSS3 with custom properties, HTML5.
-* **No Build Step:** No Webpack, Vite, or npm compilation. Edits are deployed directly via Git pushes.
+* **Static Build & CI Pipeline:** Raw modular files load directly in local development without any bundler step. On deployment (`.github/workflows/deploy-pages.yml`), `scripts/build_dist.py` bundles & minifies (with `esbuild` when installed) CSS/JS and hashed `en`/`pl` i18n chunks into `_site/dist/`.
 * **Backend Services (Firebase):**
   * **Firebase Auth:** Google Identity Popup sign-in.
   * **Cloud Firestore:** Real-time synchronization of Fish Market prices, Clubs, and User Profiles.
@@ -102,36 +102,56 @@ header, and the shared "specific area" filter is populated from
 > * **21 Fishcoin Fishes:** `unlock_type: "fc"`, unlocked manually by club creator/members.
 > * **3 Monster Fishes:** `unlock_type: "monster"`, unlocked manually for the club.
 
-### 2.2 Fish Market Pricing Schema (`prices_history.json` & Firestore)
-Prices are stored as a map from `fishId` (as string) to an array of price entries sorted descending by date (`YYYY-MM-DD`). Each new write keeps the shape but enforces one entry per distinct numeric price value per fish; any duplicates are preserved in storage and hidden on display by `normalizePriceEntries`.
+### 2.2 Fish Market Pricing Schema (`prices_summary` + `/fishao_market_daily/{YYYY-MM}`)
+Market prices are stored compactly in `/fishao_market/prices_summary` for fast initial load, while full per-day price logs live in monthly archives `/fishao_market_daily/{YYYY-MM}` (loaded lazily per fish/month in the modal).
 
 ```javascript
+// /fishao_market/prices_summary -> data.prices
 {
-  "1": [
-    { "date": "2026-11-07", "price": 142 },
-    { "date": "2026-11-06", "price": 138 }
-  ]
+  "1": {
+    "byPrice": {
+      "142": { "l": "2026-11-07", "c": 3 },
+      "138": { "l": "2026-11-06", "c": 1 }
+    },
+    "td": "2026-11-07",
+    "t": [142]
+  }
+}
+
+// /fishao_market_daily/2026-11 -> data.days
+{
+  "2026-11-07": { "1": 142, "12": [45, 50] },
+  "2026-11-06": { "1": 138 }
 }
 ```
 
+In memory (`js/state.js` / `js/market.js`), `summaryMapToPriceHistory(priceSummary)` expands `prices_summary` into `{ [fid]: [ { date, price, count } ] }` (sorted newest-first) for UI tables, sorting, and charts.
+
 #### Fish Market Business Rules:
 1. **Sunday Closed:** Every Sunday (`getUTCDay() === 0`), the Fish Market is **closed**.
-   * No prices can be entered for Sunday dates (validated in modal and bulk import).
+   * No prices can be entered for Sunday dates (validated in modal and bulk import, and skipped by `scripts/sync-market-prices.mjs`).
    * Default input dates use the current UTC date (`getTodayISO()`), so on Sundays the Sunday date is pre-filled, immediately displaying the red Sunday warning and disabling the submit button.
-2. **Variable Community Prices:** Prices differ per player, so one fish can have several distinct prices. Multiple entries for the same fish and date are allowed when their price values differ.
-3. **Price-Value Dedupe:** A numeric `price` is stored only once per fish across **all dates**. Re-submitting a known price is rejected (single form and bulk import alike). Duplicate checks and writes happen inside a Firestore transaction (`window.FISHAO_FS_TX.readModifyWrite`) so concurrent submissions cannot create duplicates.
-4. **Display Normalization:** `normalizePriceEntries(list)` in `js/market.js` is the only display normalization. It returns a new newest-first array with one entry per distinct price and never mutates storage. Tables, the fish modal, counts and summaries use it; raw export keeps legacy duplicates visible.
-5. **Admin Rights:** Administrators (`isAdmin === true`) can delete a normalized price row, which removes **all** raw rows with that price value. There is no overwrite flow.
+2. **Variable Community Prices & Daily Recording:** Prices differ per player and change daily. Multiple prices for the same fish on the same day are allowed when values differ, and the same price reoccurring on a **new date** is recorded in `fishao_market_daily/{YYYY-MM}` and increments `{ c }` (`count`) and updates `{ l }` (`lastDate`) in `prices_summary`.
+3. **Per-Day Dedupe:** An identical `(fishId, date, price)` triple is stored at most once. Duplicate checks and dual-document updates (`prices_summary` + `fishao_market_daily/{YYYY-MM}`) execute atomically inside Firestore transactions (`window.FISHAO_FS_TX.runTx`).
+4. **Display Normalization:** `normalizePriceEntries(list)` in `js/market.js` is the single display normalization. It returns a newest-first array preserving `count`, never mutating storage. Collapsible daily history logs load individual month documents via `loadDailyMonth(monthId)` cached in `dailyMonthsCache`.
+5. **Admin Rights:** Administrators (`isAdmin === true`) can delete entries from either the summary table or an expanded daily log row; deletion updates `fishao_market_daily/{YYYY-MM}` and decrements or removes the price bucket in `prices_summary`.
 
 ### 2.3 Cloud Firestore Collections
 
+* `/fishao_market/prices_summary`:
+  * Document `prices_summary`: Contains `{ prices: { [fishId]: { byPrice, td, t } }, lastUpdated: ISOString }`.
+  * Publicly readable. Writable by admins or signed-in users when `manualImportEnabled == true` (plus automated CI sync via Admin SDK).
+* `/fishao_market_daily/{YYYY-MM}`:
+  * Monthly daily log document `{ days: { [YYYY-MM-DD]: { [fishId]: number | number[] } }, lastUpdated: ISOString }`.
+  * Publicly readable; writable under the same rule as `prices_summary`.
 * `/fishao_market/prices_history`:
-  * Document `prices_history`: Contains `{ prices: { [fishId]: [ { date, price } ] }, lastUpdated: Timestamp }`.
-  * Readable by everyone. Writable only by authenticated users.
+  * Legacy flat price history doc kept read-compatible during migration (`--migrate-only`).
+* `/fishao_market/sync_status`:
+  * Compact `{ lastSuccessDate, lastSuccessAt, pricesFetched, addedCount, duplicateCount }` marker used by `js/auth.js` for cheap staleness checks when `manualImportEnabled == false`.
 * `/fishao_market/config`:
   * Document `config`: Feature flag document `{ manualImportEnabled: boolean, lastUpdated: string }`.
-  * Readable by everyone; writable only by admins (`isAdmin()`).
-  * Subscribed in real time via `onSnapshot` in `js/auth.js` (`marketConfigDocRef`). When `manualImportEnabled !== true` (or the document does not exist), all manual price entry and bulk import UI (`#marketImportActionBarRight`, `#marketFloatingImportBtn`, `#priceAddFormBox`, `#priceAddLoginNotice`) stays hidden via `syncManualImportVisibility()` in `js/market.js`. Admins can toggle it via `toggleManualImportFlag()` in the Profile modal (`#profileAdminSection`).
+  * Readable by everyone; writable only by admins (`isAdmin()`), restricted to keys `['manualImportEnabled', 'lastUpdated']` with `manualImportEnabled is bool`.
+  * Subscribed via `onSnapshot` in `js/auth.js`. When `manualImportEnabled !== true`, manual entry/bulk import UI stays hidden via `syncManualImportVisibility()` and market prices load via `getDoc` + `localStorage` TTL / `sync_status`. When `manualImportEnabled === true`, `js/auth.js` switches to real-time `onSnapshot` on `prices_summary`.
 * `/clubs/{clubId}`:
   * `name`: String (Club name, 2–40 chars).
   * `name_lower`: String (Lowercase name for search indexing).
@@ -140,29 +160,33 @@ Prices are stored as a map from `fishId` (as string) to an array of price entrie
   * `unlockedFcFishIds`: Array<Number> (List of unlocked FC fish IDs).
   * `unlockedMonsterIds`: Array<Number> (List of unlocked Monster fish IDs).
   * `memberCount`: Number (Current member count).
-  * `members`: Map<UID, { displayName, avatarUrl, joinedAt, caughtCount, caughtClubCount }>.
+  * `members`: Map<UID, { displayName, avatarUrl, isCreator, joinedAt, caughtCount, caughtClubCount }>.
   * `createdAt`, `updatedAt`, `lastUpdatedBy`.
-* `/users/{userId}`:
+* `/users/{userId}` (public community profile):
   * `displayName`: String (Player game nickname, max 40 chars).
-  * `avatarUrl`: String (URL or emoji icon, max 500 chars).
-  * `role`: String ('member' | 'admin').
+  * `avatarUrl`: String (strictly `https://` URL max 500 chars, or emoji preset).
+  * `role`: String ('member' | 'admin', immutable by client).
   * `clubId`: String | null.
   * `clubName`: String | null.
   * `caughtFishIds`: Array<Number> (List of caught fish IDs, max 1000).
   * `backyardFishIds`: Array<Number> (List of backyard bred fish IDs, max 300; strictly the 83 backyard breedable species).
-  * `friendUids`: Array<String> (List of favorited/friend player UIDs, max 300).
-  * `createdAt`, `lastLogin`.
+  * `createdAt`.
+* `/users/{userId}/private/settings` (owner & admin only):
+  * `friendUids`: Array<String> (Favorited player UIDs, max 300).
+  * `reminders`: Array<Object> (Custom event reminders, max 100).
+  * `lastLogin`, `updatedAt`.
 
 ### 2.4 Firebase Security Rules & Communication Best Practices (`firestore.rules`)
 
 1. **Strict Key Masking (Strict Schemas):**
-   * `firestore.rules` enforces `.hasOnly([...])` on creates and `.affectedKeys().hasOnly([...])` on updates.
+   * `firestore.rules` enforces `.hasOnly([...])` on creates and `.affectedKeys().hasOnly([...])` / `diff().addedKeys()/changedKeys()` on updates.
    * **Rule for agents:** Never add arbitrary fields to Firestore documents without updating `firestore.rules`. Any extraneous field triggers an immediate `permission-denied` error from Firebase.
 2. **Read vs Write Permissions:**
-   * `/users/{userId}`: Readable by any authenticated user (`request.auth != null`) so club member catch stats can be rendered. Writeable ONLY by document owner (`request.auth.uid == userId`) or admin (`isAdmin()`).
-   * `/clubs/{clubId}`: Publicly readable (`allow read: if true`). Updates allowed only by authenticated users for valid club fields.
-   * `/fishao_market/prices_history`: Publicly readable (`allow read: if true`). Create/update allowed for authenticated users. Delete strictly reserved for admins.
-   * `/fishao_market/config`: Publicly readable (`allow read: if true`). Create/update/delete strictly reserved for admins (`isAdmin()`), restricted to keys `['manualImportEnabled', 'lastUpdated']` with `manualImportEnabled is bool`.
+   * `/users/{userId}`: Readable by any signed-in user (`request.auth != null`) for club & community rendering; writable ONLY by owner (without altering `role`/`createdAt` or writing private fields) or admin (`isAdmin()`). Legacy private keys may be removed via `deleteField()`.
+   * `/users/{userId}/private/settings`: Readable/writable/deletable strictly by owner (`request.auth.uid == userId`) or admin (`isAdmin()`).
+   * `/clubs/{clubId}`: Publicly readable (`allow read: if true`). Role-aware updates enforce member-diff rules: non-members can only add themselves (`isCreator == false`), regular members can only remove themselves on leave or update points/unlocks/own member stats; only creators or admins can rename clubs, promote creators, or remove other members.
+   * `/fishao_market/{docId}` (`prices_summary`, `prices_history`) & `/fishao_market_daily/{monthId}`: Publicly readable; writable by admins or signed-in users when `isManualImportEnabled()`; delete strictly admin-only.
+   * `/fishao_market/config`: Publicly readable; create/update/delete strictly reserved for admins (`isAdmin()`).
 3. **GDPR-free Storage:**
    * Never store a player's Google email, full name, or private tokens in Firestore. Only store the user-chosen `displayName`, `avatarUrl`, and game state.
 4. **Google Identity Auth Handler & Referrer Rules:**
@@ -259,9 +283,9 @@ View Key        | Tab Button       | Main Header Sub-Toolbar
 ## 5. Development Guidelines for Agents
 
 1. **Do not read whole 400KB data files:** Never use `read_file` on `data/fishes.js`, `fish.json`, `lang_cz.json`, `lang_en.json`, or `lang_pl.json` without `StartLine` and `EndLine` limits.
-2. **Preserve Vanilla JS purity:** Do not introduce Node.js or build-tool dependencies. Everything must run natively in the browser on GitHub Pages.
-3. **Always syntax-check:** Validate any edited or created JavaScript files with `node --check "<filepath>"`.
-4. **Multilingual integrity:** When introducing new UI labels or messages, provide keys in Czech (`cs`), English (`en`), and Polish (`pl`) across `data/i18n/ui_cs.js`, `data/i18n/ui_en.js`, and `data/i18n/ui_pl.js`. Regenerate `data/i18n/fish_names.js` using `python build_i18n.py` if `lang_*.json` changes.
+2. **Preserve Vanilla JS compatibility:** Raw modular JS/CSS must run directly in the browser without requiring a dev server compiler, while `scripts/build_dist.py` prepares `_site/dist/` for GitHub Pages.
+3. **Always syntax-check:** Validate any edited or created JavaScript files with `node --check "<filepath>"` before deployment (also verified in CI).
+4. **Multilingual integrity:** When introducing new UI labels or messages, provide keys in Czech (`cs`), English (`en`), and Polish (`pl`) across `data/i18n/ui_cs.js`, `data/i18n/ui_en.js`, and `data/i18n/ui_pl.js`. Regenerate `data/i18n/fish_names.js` using `python scripts/build_i18n.py` if `lang_*.json` changes.
 5. **Enforce Sunday market rules:** Fish Market prices can never be submitted or imported for Sunday dates.
-6. **Enforce price-value dedupe:** A numeric price is stored only once per fish across all dates. New writes go through Firestore transactions in `js/firestore-tx.js`; never merge or rewrite existing duplicate rows during display or migration. Use `normalizePriceEntries` for every display path.
+6. **Enforce per-day price dedupe:** Each `(fishId, date, price)` triple is stored at most once, while repeated prices across different dates are recorded daily in `/fishao_market_daily/{YYYY-MM}` and aggregated in `/fishao_market/prices_summary`. All writes go through Firestore transactions in `js/firestore-tx.js`. Use `normalizePriceEntries` for every display path.
 

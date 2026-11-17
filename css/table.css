@@ -158,16 +158,6 @@ tbody tr:hover .fish-img {
   display: inline-block;
   white-space: nowrap;
 }
-.badge-salt {
-  background: rgba(2, 132, 199, 0.16);
-  color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.35);
-}
-.badge-fresh {
-  background: rgba(16, 185, 129, 0.16);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.35);
-}
 .badge-club-tag {
   background: rgba(245, 158, 11, 0.16);
   color: #fbbf24;
@@ -288,12 +278,6 @@ tbody tr:hover .fish-img {
   color: #ecfdf5;
   font-weight: 700;
   box-shadow: 0 0 8px rgba(16, 185, 129, 0.14);
-}
-
-.bait-best-star {
-  font-size: 10.5px;
-  line-height: 1;
-  flex-shrink: 0;
 }
 
 .bait-comp-count {
@@ -417,12 +401,11 @@ tbody tr:hover .fish-img {
   padding: 1px 5px;
   border-radius: 999px;
   letter-spacing: 0.5px;
-  animation: pulse 2s infinite;
+  animation: pulse 2.6s ease-in-out infinite;
 }
 @keyframes pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.05); opacity: 0.8; }
-  100% { transform: scale(1); opacity: 1; }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.72; }
 }
 
 .len-box { white-space: nowrap; }

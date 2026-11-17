@@ -40,7 +40,25 @@ self.addEventListener('fetch', (event) => {
           }
           return res;
         })
-        .catch(() => caches.match(req))
+        .catch(() =>
+          caches.match(req, { ignoreSearch: true }).then((match) => match || caches.match('./'))
+        )
+    );
+    return;
+  }
+
+  // Lazy unhashed i18n bundles: Stale-While-Revalidate so edits propagate without breaking offline
+  if (url.pathname.includes('/data/i18n/')) {
+    event.respondWith(
+      caches.open(CACHE_STATIC).then((cache) =>
+        cache.match(req).then((cached) => {
+          const networkPromise = fetch(req).then((res) => {
+            if (res && res.ok) cache.put(req, res.clone());
+            return res;
+          }).catch(() => cached);
+          return cached || networkPromise;
+        })
+      )
     );
     return;
   }
@@ -75,4 +93,27 @@ self.addEventListener('fetch', (event) => {
       )
     );
   }
+});
+
+self.addEventListener('message', (event) => {
+  const data = event.data;
+  if (!data || data.type !== 'PRUNE_STATIC' || !Array.isArray(data.activeAssets)) return;
+  const activeSet = new Set(data.activeAssets);
+  event.waitUntil(
+    caches.open(CACHE_STATIC).then((cache) =>
+      cache.keys().then((requests) =>
+        Promise.all(
+          requests.map((req) => {
+            try {
+              const p = new URL(req.url).pathname;
+              if (p.includes('/dist/') && !activeSet.has(p)) {
+                return cache.delete(req);
+              }
+            } catch (e) {}
+            return Promise.resolve(false);
+          })
+        )
+      )
+    )
+  );
 });

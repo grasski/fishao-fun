@@ -14,6 +14,10 @@ on:
         description: 'Force sync even if already synced today (or on Sunday)'
         type: boolean
         default: false
+      migrate_only:
+        description: 'Only migrate legacy prices_history to prices_summary + daily archive'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -30,16 +34,26 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install firebase-admin
+      - name: Cache firebase-admin
+        id: cache-firebase-admin
         if: ${{ !inputs.dry_run }}
-        run: npm install --no-save firebase-admin
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-firebase-admin-13
+
+      - name: Install firebase-admin
+        if: ${{ !inputs.dry_run && steps.cache-firebase-admin.outputs.cache-hit != 'true' }}
+        run: npm install --no-save --no-audit --no-fund firebase-admin
 
       - name: Sync market prices to Firestore
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           FORCE_SYNC: ${{ inputs.force && '1' || '' }}
         run: |
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
+          if [ "${{ inputs.migrate_only }}" = "true" ]; then
+            node scripts/sync-market-prices.mjs --migrate-only
+          elif [ "${{ inputs.dry_run }}" = "true" ]; then
             node scripts/sync-market-prices.mjs --dry-run
           else
             node scripts/sync-market-prices.mjs

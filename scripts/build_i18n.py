@@ -130,7 +130,7 @@ def build_fish_names(langs):
         if entry:
             names[str(fid)] = entry
 
-    body = json.dumps(names, ensure_ascii=False, indent=4)
+    body = json.dumps(names, ensure_ascii=False, separators=(",", ":"))
     codes = " / ".join(code.upper() for code, _ in LANG_FILES)
     with open(OUT_FISH_NAMES, "w", encoding="utf-8", newline="\r\n") as f:
         f.write("/**\n")
@@ -189,7 +189,7 @@ def build_taxonomies(langs):
         "cities": CITIES,
     }
 
-    body = json.dumps(taxonomies, ensure_ascii=False, indent=4)
+    body = json.dumps(taxonomies, ensure_ascii=False, separators=(",", ":"))
     codes = " / ".join(code.upper() for code, _ in LANG_FILES)
     with open(OUT_TAXONOMIES, "w", encoding="utf-8", newline="\r\n") as f:
         f.write("/**\n")

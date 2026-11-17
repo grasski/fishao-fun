@@ -2,11 +2,12 @@
  * FISHAO - Daily Fish Market Price Sync (scripts/sync-market-prices.mjs)
  * ----------------------------------------------------------------------
  * Fetches daily Fish Market prices from https://www.fishao.net/wiki/fish/<id>/__data.json
- * for all fish IDs in fish.json and merges daily market prices into
- * Firestore document `fishao_market/prices_history`.
+ * for all fish IDs in fish.json and merges daily market prices into:
+ *   - `fishao_market/prices_summary` (compact unique-price summary for fast loads)
+ *   - `fishao_market_daily/{YYYY-MM}` (monthly daily archive, immune to 1 MiB limit)
  *
  * Usage:
- *   node scripts/sync-market-prices.mjs [--dry-run] [--limit=N]
+ *   node scripts/sync-market-prices.mjs [--dry-run] [--limit=N] [--migrate-only]
  *
  * Environment:
  *   FIREBASE_SERVICE_ACCOUNT  JSON string of a Firebase service account key
@@ -24,9 +25,10 @@ const REQUEST_TIMEOUT_MS = 10000;
 const MAX_RETRIES = 2;
 
 function parseArgs(argv) {
-  const args = { dryRun: false, limit: 0 };
+  const args = { dryRun: false, migrateOnly: false, limit: 0 };
   for (const arg of argv) {
     if (arg === '--dry-run') args.dryRun = true;
+    else if (arg === '--migrate-only') args.migrateOnly = true;
     else if (arg.startsWith('--limit=')) {
       const n = Number(arg.slice('--limit='.length));
       if (Number.isInteger(n) && n > 0) args.limit = n;
@@ -36,11 +38,9 @@ function parseArgs(argv) {
 }
 
 /**
- * Resolves SvelteKit `devalue` pointers from `/wiki/fish/<id>/__data.json`
- * to extract the numeric market price, or returns null if unavailable.
+ * Extracts market price from a SvelteKit `devalue` node.
  */
-function extractMarketPrice(payload) {
-  const node = payload?.nodes?.[2];
+function extractPriceFromNode(node) {
   if (!node || node.type !== 'data' || !Array.isArray(node.data)) return null;
 
   const data = node.data;
@@ -52,6 +52,24 @@ function extractMarketPrice(payload) {
 
   const price = Number(data[market.price]);
   return Number.isFinite(price) && price > 0 ? price : null;
+}
+
+/**
+ * Resolves SvelteKit `devalue` pointers from `/wiki/fish/<id>/__data.json`
+ * to extract the numeric market price, or returns null if unavailable.
+ */
+function extractMarketPrice(payload) {
+  const nodes = Array.isArray(payload?.nodes) ? payload.nodes : [];
+  if (nodes[2]) {
+    const p = extractPriceFromNode(nodes[2]);
+    if (p !== null) return p;
+  }
+  for (let i = 0; i < nodes.length; i++) {
+    if (i === 2) continue;
+    const p = extractPriceFromNode(nodes[i]);
+    if (p !== null) return p;
+  }
+  return null;
 }
 
 async function fetchFishPrice(fishId) {
@@ -161,34 +179,163 @@ async function markTodaySynced(db, todayISO, stats) {
   });
 }
 
+function toDayEntryList(rawVal) {
+  if (Array.isArray(rawVal)) {
+    return rawVal.map(Number).filter((n) => Number.isFinite(n) && n > 0);
+  }
+  const single = Number(rawVal);
+  return Number.isFinite(single) && single > 0 ? [single] : [];
+}
+
+function encodeDayEntryList(list) {
+  if (!list || list.length === 0) return undefined;
+  return list.length === 1 ? list[0] : list;
+}
+
+function applyPriceToSummary(summaryPrices, fidKey, dateISO, priceNum, todayISO) {
+  let fishSum = summaryPrices[fidKey];
+  if (!fishSum || typeof fishSum !== 'object') {
+    fishSum = { byPrice: {}, td: '', t: [] };
+  }
+  const byPrice = (fishSum.byPrice && typeof fishSum.byPrice === 'object')
+    ? { ...fishSum.byPrice }
+    : {};
+
+  const pKey = String(priceNum);
+  const curInfo = byPrice[pKey];
+  const prevLast = curInfo && typeof curInfo.l === 'string' ? curInfo.l : '';
+  const prevCount = curInfo && Number.isFinite(Number(curInfo.c)) ? Number(curInfo.c) : 0;
+
+  byPrice[pKey] = {
+    l: (!prevLast || dateISO > prevLast) ? dateISO : prevLast,
+    c: prevCount + 1
+  };
+
+  let td = typeof fishSum.td === 'string' ? fishSum.td : '';
+  let t = Array.isArray(fishSum.t) ? [...fishSum.t] : [];
+  if (dateISO === todayISO) {
+    if (td === todayISO) {
+      if (!t.includes(priceNum)) t.push(priceNum);
+    } else {
+      td = todayISO;
+      t = [priceNum];
+    }
+  }
+
+  summaryPrices[fidKey] = { byPrice, td, t };
+}
+
+async function migrateLegacyPricesIfNeeded(db, todayISO) {
+  const summaryRef = db.collection('fishao_market').doc('prices_summary');
+  const summarySnap = await summaryRef.get();
+  if (summarySnap.exists) {
+    return false;
+  }
+
+  const legacyRef = db.collection('fishao_market').doc('prices_history');
+  const legacySnap = await legacyRef.get();
+  if (!legacySnap.exists) {
+    return false;
+  }
+
+  const legacyPrices = legacySnap.data()?.prices;
+  if (!legacyPrices || typeof legacyPrices !== 'object') {
+    return false;
+  }
+
+  const summaryPrices = {};
+  const monthlyDays = {};
+  let migratedEntries = 0;
+
+  for (const [fidKey, rawList] of Object.entries(legacyPrices)) {
+    if (!Array.isArray(rawList)) continue;
+    const seenPairs = new Set();
+
+    for (const item of rawList) {
+      if (!item || typeof item !== 'object') continue;
+      const dateISO = typeof item.date === 'string' ? item.date.trim() : '';
+      const priceNum = Number(item.price);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dateISO) || !Number.isFinite(priceNum) || priceNum <= 0) {
+        continue;
+      }
+      const pairKey = `${dateISO}|${priceNum}`;
+      if (seenPairs.has(pairKey)) continue;
+      seenPairs.add(pairKey);
+
+      applyPriceToSummary(summaryPrices, fidKey, dateISO, priceNum, todayISO);
+
+      const monthId = dateISO.slice(0, 7);
+      if (!monthlyDays[monthId]) monthlyDays[monthId] = {};
+      if (!monthlyDays[monthId][dateISO]) monthlyDays[monthId][dateISO] = {};
+
+      const existing = toDayEntryList(monthlyDays[monthId][dateISO][fidKey]);
+      if (!existing.includes(priceNum)) {
+        existing.push(priceNum);
+        monthlyDays[monthId][dateISO][fidKey] = encodeDayEntryList(existing);
+      }
+      migratedEntries++;
+    }
+  }
+
+  const nowIso = new Date().toISOString();
+  const monthEntries = Object.entries(monthlyDays);
+  for (let i = 0; i < monthEntries.length; i += 400) {
+    const chunk = monthEntries.slice(i, i + 400);
+    const batch = db.batch();
+    for (const [monthId, days] of chunk) {
+      const dailyRef = db.collection('fishao_market_daily').doc(monthId);
+      batch.set(dailyRef, { days, lastUpdated: nowIso }, { merge: true });
+    }
+    await batch.commit();
+  }
+  await summaryRef.set({ prices: summaryPrices, lastUpdated: nowIso });
+
+  console.log(
+    `Migrated legacy prices_history -> prices_summary + ${monthEntries.length} monthly docs (${migratedEntries} entries).`
+  );
+  return true;
+}
+
 async function writeToFirestore(db, fetchedPrices, todayISO) {
-  const docRef = db.collection('fishao_market').doc('prices_history');
+  const summaryRef = db.collection('fishao_market').doc('prices_summary');
+  const monthId = todayISO.slice(0, 7);
+  const dailyRef = db.collection('fishao_market_daily').doc(monthId);
 
   let addedCount = 0;
   let duplicateCount = 0;
   const addedSample = [];
 
   await db.runTransaction(async (tx) => {
-    const snap = await tx.get(docRef);
-    const existingData = snap.exists ? snap.data() : {};
-    const prices = (existingData?.prices && typeof existingData.prices === 'object')
-      ? { ...existingData.prices }
+    const [summarySnap, dailySnap] = await Promise.all([
+      tx.get(summaryRef),
+      tx.get(dailyRef)
+    ]);
+
+    const summaryData = summarySnap.exists ? summarySnap.data() : {};
+    const summaryPrices = (summaryData?.prices && typeof summaryData.prices === 'object')
+      ? { ...summaryData.prices }
+      : {};
+
+    const dailyData = dailySnap.exists ? dailySnap.data() : {};
+    const days = (dailyData?.days && typeof dailyData.days === 'object')
+      ? { ...dailyData.days }
+      : {};
+    const dayBucket = (days[todayISO] && typeof days[todayISO] === 'object')
+      ? { ...days[todayISO] }
       : {};
 
     for (const { id, price } of fetchedPrices) {
       const key = String(id);
-      const list = Array.isArray(prices[key]) ? [...prices[key]] : [];
-      const alreadyExists = list.some(
-        (entry) => entry && entry.date === todayISO && Number(entry.price) === price
-      );
+      const dayList = toDayEntryList(dayBucket[key]);
 
-      if (alreadyExists) {
+      if (dayList.includes(price)) {
         duplicateCount++;
         continue;
       }
 
-      list.push({ date: todayISO, price });
-      prices[key] = list;
+      dayList.push(price);
+      dayBucket[key] = encodeDayEntryList(dayList);
+      applyPriceToSummary(summaryPrices, key, todayISO, price, todayISO);
       addedCount++;
       if (addedSample.length < 15) {
         addedSample.push({ id, price });
@@ -196,9 +343,15 @@ async function writeToFirestore(db, fetchedPrices, todayISO) {
     }
 
     if (addedCount > 0) {
-      tx.set(docRef, {
-        prices,
-        lastUpdated: new Date().toISOString()
+      const nowIso = new Date().toISOString();
+      days[todayISO] = dayBucket;
+      tx.set(summaryRef, {
+        prices: summaryPrices,
+        lastUpdated: nowIso
+      });
+      tx.set(dailyRef, {
+        days,
+        lastUpdated: nowIso
       });
     }
   });
@@ -221,6 +374,13 @@ async function main() {
   const now = new Date();
   const todayISO = now.toISOString().slice(0, 10);
 
+  if (args.migrateOnly) {
+    const db = await initFirestore();
+    const migrated = await migrateLegacyPricesIfNeeded(db, todayISO);
+    console.log(migrated ? 'Migration complete.' : 'Nothing to migrate (prices_summary already exists or legacy missing).');
+    return;
+  }
+
   if (now.getUTCDay() === 0 && !process.env.FORCE_SYNC && !args.dryRun) {
     console.log(`[${todayISO}] Sunday (UTC): Fish Market is closed. Skipping sync.`);
     writeStepSummary([
@@ -234,6 +394,7 @@ async function main() {
   let db = null;
   if (!args.dryRun) {
     db = await initFirestore();
+    await migrateLegacyPricesIfNeeded(db, todayISO);
     if (!process.env.FORCE_SYNC) {
       const existingSync = await getTodaySyncStatus(db, todayISO);
       if (existingSync) {

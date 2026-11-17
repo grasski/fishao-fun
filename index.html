@@ -16,7 +16,7 @@
   <meta name="theme-color" content="#1a2736">
 
   <!-- Canonical & Alternates -->
-  <link rel="canonical" href="https://fishao-tracker.cz/">
+  <link rel="canonical" id="canonicalLink" href="https://fishao-tracker.cz/">
   <link rel="alternate" hreflang="cs" href="https://fishao-tracker.cz/?lang=cs">
   <link rel="alternate" hreflang="en" href="https://fishao-tracker.cz/?lang=en">
   <link rel="alternate" hreflang="pl" href="https://fishao-tracker.cz/?lang=pl">
@@ -120,11 +120,14 @@
   }
   </script>
 
-  <!-- Preconnect to Firebase / Google CDN -->
+  <!-- Preconnect & Modulepreload for Firebase / Google CDN -->
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://www.google.com" crossorigin>
+  <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js" crossorigin>
+  <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js" crossorigin>
+  <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js" crossorigin>
 
   <!-- Modern Modular Stylesheets -->
   <link rel="stylesheet" href="css/base.css?v=3.2">
@@ -158,11 +161,11 @@
         <!-- Time widget with automatic timezone detection -->
         <div class="time-widget">
           <div class="tz-btn-group">
-            <button class="tz-toggle active" id="tzLocalBtn" onclick="window.fishaoApp.setTimezone('local')"
+            <button type="button" class="tz-toggle active" id="tzLocalBtn" onclick="window.fishaoApp.setTimezone('local')"
               title="Automaticky podle tvého zařízení" data-i18n="tz_local_btn" data-i18n-title="tz_local_btn_title">
               📍 Místní
             </button>
-            <button class="tz-toggle" id="tzUtcBtn" onclick="window.fishaoApp.setTimezone('utc')"
+            <button type="button" class="tz-toggle" id="tzUtcBtn" onclick="window.fishaoApp.setTimezone('utc')"
               title="Herní čas FISHAO (UTC+0)" data-i18n="tz_utc_btn" data-i18n-title="tz_utc_btn_title">
               🌐 UTC
             </button>
@@ -194,7 +197,7 @@
 
         <!-- Auth panel -->
         <div class="auth-panel" id="authPanel">
-          <button class="sign-in-btn" id="signInBtn" onclick="window.fishaoApp.signIn()" style="display: none;"
+          <button type="button" class="sign-in-btn" id="signInBtn" onclick="window.fishaoApp.signIn()" style="display: none;"
             title="Přihlásit se přes Google" data-i18n-title="sign_in_google">
             <svg width="16" height="16" viewBox="0 0 24 24">
               <path fill="#4285F4"
@@ -211,19 +214,19 @@
           <div class="user-info-bar" id="userInfoBar" style="display: none;"
             onclick="window.fishaoApp.openProfileModal()" title="Upravit hráčský profil"
             data-i18n-title="profile_edit_tooltip">
-            <img class="user-avatar-img" id="userAvatarImg" src="" alt="Avatar" style="display: none;"
+            <img class="user-avatar-img" id="userAvatarImg" src="" alt="Avatar" referrerpolicy="no-referrer" style="display: none;"
               onerror="this.style.display='none'; document.getElementById('userAvatarBadge').style.display='flex';">
             <div class="user-avatar-badge" id="userAvatarBadge">🎣</div>
             <div class="user-details">
               <div class="user-name-row">
                 <span class="user-name" id="userName" data-i18n="user_default">Uživatel</span>
-                <button class="edit-nick-btn" onclick="event.stopPropagation(); window.fishaoApp.openProfileModal()"
+                <button type="button" class="edit-nick-btn" onclick="event.stopPropagation(); window.fishaoApp.openProfileModal()"
                   title="Změnit přezdívku a avatar" data-i18n-title="modal_profile_title">✏️</button>
               </div>
               <span class="admin-badge" id="adminBadge" style="display: none;">🛡️ <span
                   data-i18n="admin_badge">Admin</span></span>
             </div>
-            <button class="sign-out-btn" onclick="event.stopPropagation(); window.fishaoApp.signOut()"
+            <button type="button" class="sign-out-btn" onclick="event.stopPropagation(); window.fishaoApp.signOut()"
               title="Odhlásit se" data-i18n="sign_out" data-i18n-title="sign_out">Odhlásit</button>
           </div>
         </div>
@@ -232,22 +235,22 @@
 
     <!-- Main Navigation Bar (4 Primary Pillars) -->
     <nav class="main-nav-bar" id="mainNavBar">
-      <button class="nav-tab blue active" id="tabAll" onclick="window.fishaoApp.switchView('all')">
+      <button type="button" class="nav-tab blue active" id="tabAll" onclick="window.fishaoApp.switchView('all')">
         <span class="tab-icon">🌐</span>
         <span class="tab-title" data-i18n="nav_all">Fishdex</span>
         <span class="tab-pill" data-i18n="nav_all_pill">615 ryb</span>
       </button>
-      <button class="nav-tab yellow" id="tabMarket" onclick="window.fishaoApp.switchView('market')">
+      <button type="button" class="nav-tab yellow" id="tabMarket" onclick="window.fishaoApp.switchView('market')">
         <span class="tab-icon">💵</span>
         <span class="tab-title" data-i18n="nav_market">Fish Market</span>
         <span class="tab-pill" id="tabMarketPill" data-i18n="nav_market_pill">Výkup</span>
       </button>
-      <button class="nav-tab purple" id="tabClubManage" onclick="window.fishaoApp.switchView('club_manage')">
+      <button type="button" class="nav-tab purple" id="tabClubManage" onclick="window.fishaoApp.switchView('club_manage')">
         <span class="tab-icon">🏰</span>
         <span class="tab-title" data-i18n="nav_manage">Můj Klub &amp; Milníky</span>
         <span class="tab-pill" id="navClubPtsBadge">Zamčeno 🔒</span>
       </button>
-      <button class="nav-tab teal" id="tabPlayers" onclick="window.fishaoApp.switchView('players')">
+      <button type="button" class="nav-tab teal" id="tabPlayers" onclick="window.fishaoApp.switchView('players')">
         <span class="tab-icon">👥</span>
         <span class="tab-title" data-i18n="nav_players">Hráči &amp; Dvorek</span>
         <span class="tab-pill" id="tabPlayersPill" data-i18n="nav_players_pill">Komunita</span>
@@ -257,17 +260,17 @@
     <!-- Sub-Navigation Bar: Encyclopedia Views -->
     <div class="sub-nav-bar" id="subNavEncyclopedia">
       <span class="sub-nav-label" data-i18n="subnav_view_label">Zobrazení:</span>
-      <button class="sub-nav-tab blue active" id="subTabAll" onclick="window.fishaoApp.switchView('all')">
+      <button type="button" class="sub-nav-tab blue active" id="subTabAll" onclick="window.fishaoApp.switchView('all')">
         <span class="tab-icon">📋</span>
         <span class="tab-title" data-i18n="subnav_all_fishes">Seznam ryb</span>
         <span class="tab-pill" data-i18n="nav_all_pill">615 ryb</span>
       </button>
-      <button class="sub-nav-tab cyan" id="tabLocations" onclick="window.fishaoApp.switchView('locations')">
+      <button type="button" class="sub-nav-tab cyan" id="tabLocations" onclick="window.fishaoApp.switchView('locations')">
         <span class="tab-icon">🗺️</span>
         <span class="tab-title" data-i18n="nav_locations">Lokace</span>
         <span class="tab-pill" id="tabLocationsPill" data-i18n="nav_locations_pill">24 lokací</span>
       </button>
-      <button class="sub-nav-tab orange" id="tabCalendar" onclick="window.fishaoApp.switchView('calendar')">
+      <button type="button" class="sub-nav-tab orange" id="tabCalendar" onclick="window.fishaoApp.switchView('calendar')">
         <span class="tab-icon">📅</span>
         <span class="tab-title" data-i18n="nav_calendar">Sezónní kalendář</span>
         <span class="tab-pill" id="tabCalendarPill" data-i18n="nav_calendar_pill">47 ryb</span>
@@ -277,11 +280,11 @@
     <!-- Sub-Navigation Bar: Club Views (shown when user belongs to a club) -->
     <div class="sub-nav-bar" id="subNavClub" style="display: none;">
       <span class="sub-nav-label" data-i18n="subnav_view_label">Zobrazení:</span>
-      <button class="sub-nav-tab purple active" id="subTabClubManage" onclick="window.fishaoApp.switchView('club_manage')">
+      <button type="button" class="sub-nav-tab purple active" id="subTabClubManage" onclick="window.fishaoApp.switchView('club_manage')">
         <span class="tab-icon">🏰</span>
         <span class="tab-title" data-i18n="subnav_club_overview">Přehled &amp; Milníky</span>
       </button>
-      <button class="sub-nav-tab gold" id="tabClub" onclick="window.fishaoApp.switchView('club')">
+      <button type="button" class="sub-nav-tab gold" id="tabClub" onclick="window.fishaoApp.switchView('club')">
         <span class="tab-icon">🏆</span>
         <span class="tab-title" data-i18n="nav_club">Klubové ryby</span>
         <span class="tab-pill" id="tabClubBadge" data-i18n="nav_club_pill">80 ryb</span>
@@ -309,12 +312,12 @@
         </div>
         <span class="action-bar-hint" id="nextUnlockHint" data-i18n="club_next_unlock_loading">🎯 Načítání
           postupu...</span>
-        <button class="btn-subtle-link" onclick="window.fishaoApp.switchView('club_manage')"
+        <button type="button" class="btn-subtle-link" onclick="window.fishaoApp.switchView('club_manage')"
           data-i18n="club_bar_edit_btn">⚙️ Upravit body v Klubu</button>
       </div>
       <div class="action-bar-right">
         <label class="toggle-pill" id="lblHideLocked">
-          <input type="checkbox" id="hideLockedCheckbox" onchange="window.fishaoApp.applyFilters()">
+          <input type="checkbox" id="hideLockedCheckbox" onchange="if(window.fishaoApp.saveHideLockedClubPreference){window.fishaoApp.saveHideLockedClubPreference(this.checked);}window.fishaoApp.applyFilters()">
           <span data-i18n="club_hide_locked">Skrýt zamčené</span>
         </label>
         <label class="toggle-pill" id="lblFilterUncaught">
@@ -343,13 +346,13 @@
         </div>
         <div class="action-bar-right">
           <div class="btn-group-pills">
-            <button class="pill-btn active" id="collFilterAll"
+            <button type="button" class="pill-btn active" id="collFilterAll"
               onclick="window.fishaoApp.setCollectionFilter('all', this)" data-i18n="coll_filter_all">Všechny
               ryby</button>
-            <button class="pill-btn" id="collFilterCaught"
+            <button type="button" class="pill-btn" id="collFilterCaught"
               onclick="window.fishaoApp.setCollectionFilter('caught', this)" data-i18n="coll_filter_caught">✅ Pouze
               chycené</button>
-            <button class="pill-btn" id="collFilterMissing"
+            <button type="button" class="pill-btn" id="collFilterMissing"
               onclick="window.fishaoApp.setCollectionFilter('missing', this)" data-i18n="coll_filter_missing">❓
               Chybějící</button>
           </div>
@@ -366,7 +369,7 @@
             stačí přihlásit přes Google účet.</span>
         </div>
         <div class="action-bar-right">
-          <button class="sign-in-btn sm" onclick="window.fishaoApp.signIn()">
+          <button type="button" class="sign-in-btn sm" onclick="window.fishaoApp.signIn()">
             <svg width="14" height="14" viewBox="0 0 24 24" style="flex-shrink:0;">
               <path fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -393,7 +396,7 @@
         <span id="marketAutoSyncNote" class="action-bar-hint market-auto-sync-note" data-i18n="market_auto_sync_note">🔄 Ceny se nově automaticky synchronizují z oficiálních zdrojů</span>
         <!-- Temporarily hidden while prices are uploaded automatically; kept for manual fallback -->
         <div id="marketImportActionBarRight" style="display: none;">
-          <button class="btn-action sm" onclick="window.fishaoApp.openBulkModal()"
+          <button type="button" class="btn-action sm" onclick="window.fishaoApp.openBulkModal()"
             title="Hromadný import cen do Fish Marketu" data-i18n="market_btn_import" data-i18n-title="market_btn_import">
             📥 Import cen do Marketu </button>
         </div>
@@ -629,7 +632,7 @@
         <p data-i18n="players_gate_desc">Tento komunitní přehled a dvorek slouží pro sdílení mezi hráči encyklopedie.
           Data nejsou napojena na herní servery hry FISHAO (neodpovídají stavu ve hře) a zobrazují se pouze rybáři
           registrovaní na tomto webu. Pro zobrazení se prosím přihlas.</p>
-        <button class="sign-in-btn" onclick="window.fishaoApp.signIn()" style="margin-top: 6px;">
+        <button type="button" class="sign-in-btn" onclick="window.fishaoApp.signIn()" style="margin-top: 6px;">
           <svg width="16" height="16" viewBox="0 0 24 24">
             <path fill="#4285F4"
               d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" />
@@ -677,7 +680,7 @@
         <p data-i18n="club_gate_desc">Správa klubů a milníků je komunitní nástroj této encyklopedie (není propojen se
           servery hry FISHAO). Zobrazují se pouze kluby a hráči registrovaní na tomto webu. Přihlas se svým Google účtem
           pro správu nebo připojení ke klubu.</p>
-        <button class="sign-in-btn" onclick="window.fishaoApp.signIn()" style="margin-top: 6px;">
+        <button type="button" class="sign-in-btn" onclick="window.fishaoApp.signIn()" style="margin-top: 6px;">
           <svg width="16" height="16" viewBox="0 0 24 24">
             <path fill="#4285F4"
               d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" />
@@ -724,7 +727,7 @@
                     <input type="text" id="clubSearchInput" class="dash-input" placeholder="Hledat klub podle názvu..."
                       data-i18n-placeholder="club_search_placeholder"
                       onkeydown="if(event.key==='Enter') window.fishaoApp.searchClubs()">
-                    <button class="pill-btn purple active" onclick="window.fishaoApp.searchClubs()"
+                    <button type="button" class="pill-btn purple active" onclick="window.fishaoApp.searchClubs()"
                       data-i18n="club_btn_search">Hledat</button>
                   </div>
                   <div id="clubSearchResults" class="club-search-results">
@@ -740,7 +743,7 @@
                     <input type="text" id="newClubNameInput" class="dash-input"
                       placeholder="Zadej název nového klubu..." data-i18n-placeholder="club_create_placeholder"
                       maxlength="40" onkeydown="if(event.key==='Enter') window.fishaoApp.createClub()">
-                    <button class="pill-btn gold active" onclick="window.fishaoApp.createClub()"
+                    <button type="button" class="pill-btn gold active" onclick="window.fishaoApp.createClub()"
                       style="white-space: nowrap;" data-i18n="club_btn_create">➕ Vytvořit klub</button>
                   </div>
                   <p style="font-size: 12px; color: var(--text-muted); margin-top: 10px; line-height: 1.4;"
@@ -765,7 +768,7 @@
                 <span class="stat-chip club-chip-points" id="activeClubPtsHint">⭐ <strong id="activeClubPtsDisplay" style="color: #fbbf24;">0</strong> <span data-i18n="unit_points_full">bodů</span></span>
               </div>
               <div class="club-header-actions-wrap">
-                <button class="pill-btn danger" onclick="window.fishaoApp.leaveClub()" data-i18n="club_btn_leave">🚪 Opustit klub</button>
+                <button type="button" class="pill-btn danger" onclick="window.fishaoApp.leaveClub()" data-i18n="club_btn_leave">🚪 Opustit klub</button>
               </div>
             </div>
             <div class="dash-card-body">
@@ -794,10 +797,10 @@
                   <span style="font-size: 11px; color: var(--text-muted);" data-i18n="club_quick_add">Rychlé přidání
                     bodů všem:</span>
                   <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
-                    <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(100)">+100</button>
-                    <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(500)">+500</button>
-                    <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(1000)">+1 000</button>
-                    <button class="pill-btn" onclick="window.fishaoApp.addClubPoints(5000)">+5 000</button>
+                    <button type="button" class="pill-btn" onclick="window.fishaoApp.addClubPoints(100)">+100</button>
+                    <button type="button" class="pill-btn" onclick="window.fishaoApp.addClubPoints(500)">+500</button>
+                    <button type="button" class="pill-btn" onclick="window.fishaoApp.addClubPoints(1000)">+1 000</button>
+                    <button type="button" class="pill-btn" onclick="window.fishaoApp.addClubPoints(5000)">+5 000</button>
                   </div>
                 </div>
               </div>
@@ -843,12 +846,12 @@
                 <p data-i18n="club_special_desc">Odemčením ryby ji zpřístupníš všem členům klubu v reálném čase.</p>
               </div>
               <div class="special-header-filters">
-                <button class="pill-btn active" id="filterSpecialAll"
+                <button type="button" class="pill-btn active" id="filterSpecialAll"
                   onclick="window.fishaoApp.filterSpecialFishes('all', this)"
                   data-i18n="club_special_filter_all">Všechny speciální (24)</button>
-                <button class="pill-btn" id="filterSpecialFc" onclick="window.fishaoApp.filterSpecialFishes('fc', this)"
+                <button type="button" class="pill-btn" id="filterSpecialFc" onclick="window.fishaoApp.filterSpecialFishes('fc', this)"
                   data-i18n="club_special_filter_fc">Fishcoins (21)</button>
-                <button class="pill-btn" id="filterSpecialMonsters"
+                <button type="button" class="pill-btn" id="filterSpecialMonsters"
                   onclick="window.fishaoApp.filterSpecialFishes('monster', this)"
                   data-i18n="club_special_filter_monsters">Monstra (3)</button>
               </div>
@@ -866,16 +869,16 @@
                 červených vidíš zbývající body.</p>
             </div>
             <div class="roadmap-header-filters">
-              <button class="pill-btn active" id="filterMilestoneAll"
+              <button type="button" class="pill-btn active" id="filterMilestoneAll"
                 onclick="window.fishaoApp.filterMilestones('all', this)" data-i18n="roadmap_filter_all">Všechny
                 (80)</button>
-              <button class="pill-btn" id="filterMilestoneUnlocked"
+              <button type="button" class="pill-btn" id="filterMilestoneUnlocked"
                 onclick="window.fishaoApp.filterMilestones('unlocked', this)" data-i18n="roadmap_filter_unlocked">✓
                 Odemčené</button>
-              <button class="pill-btn" id="filterMilestoneLocked"
+              <button type="button" class="pill-btn" id="filterMilestoneLocked"
                 onclick="window.fishaoApp.filterMilestones('locked', this)" data-i18n="roadmap_filter_locked">🔒
                 Zamčené</button>
-              <button class="pill-btn" id="filterMilestoneFc" onclick="window.fishaoApp.filterMilestones('fc', this)"
+              <button type="button" class="pill-btn" id="filterMilestoneFc" onclick="window.fishaoApp.filterMilestones('fc', this)"
                 data-i18n="roadmap_filter_fc">🪙 FC &amp; Monstra</button>
             </div>
           </div>
@@ -1010,25 +1013,25 @@
               </label>
             </div>
             <div class="size-quick-presets">
-              <button class="pill-btn pill-btn-size"
+              <button type="button" class="pill-btn pill-btn-size"
                 onclick="window.fishaoApp.setSizeFilter(100, null, this)">100+ cm</button>
-              <button class="pill-btn pill-btn-size"
+              <button type="button" class="pill-btn pill-btn-size"
                 onclick="window.fishaoApp.setSizeFilter(200, null, this)">200+ cm</button>
-              <button class="pill-btn pill-btn-size"
+              <button type="button" class="pill-btn pill-btn-size"
                 onclick="window.fishaoApp.setSizeFilter(500, null, this)">500+ cm</button>
-              <button class="pill-btn pill-btn-size" onclick="window.fishaoApp.setSizeFilter(null, 50, this)">&lt;
+              <button type="button" class="pill-btn pill-btn-size" onclick="window.fishaoApp.setSizeFilter(null, 50, this)">&lt;
                 50 cm</button>
             </div>
           </div>
 
           <div class="quick-status-toggles">
-            <button class="pill-btn" id="btnNow" onclick="window.fishaoApp.toggleNowActive()"
+            <button type="button" class="pill-btn" id="btnNow" onclick="window.fishaoApp.toggleNowActive()"
               data-i18n="filter_btn_now">⚡ Právě bere</button>
-            <button class="pill-btn" id="btnBestChance" onclick="window.fishaoApp.toggleBestChanceSort()"
+            <button type="button" class="pill-btn" id="btnBestChance" onclick="window.fishaoApp.toggleBestChanceSort()"
               data-i18n="filter_btn_best_chance" data-i18n-title="filter_btn_best_chance_title"
               title="Seřadit ryby podle nejvyšší šance na úlovek">🎯 Nejvyšší šance</button>
             <div class="today-high-price-group" id="todayHighPriceGroup">
-              <button class="pill-btn" id="btnTodayHighPrice" onclick="window.fishaoApp.toggleTodayHighPrice()"
+              <button type="button" class="pill-btn" id="btnTodayHighPrice" onclick="window.fishaoApp.toggleTodayHighPrice()"
                 data-i18n="filter_btn_today_high_price" data-i18n-title="filter_btn_today_high_price_title"
                 title="Zobrazit ryby s dnešní cenou alespoň zadané % odhadovaného maxima">🔥 Top ceny dnes</button>
               <label class="pct-input-wrap" data-i18n-title="filter_today_high_pct_title"
@@ -1040,7 +1043,7 @@
                 <span class="pct-input-unit">%</span>
               </label>
             </div>
-            <button class="pill-btn" id="btnOnlyCaught" onclick="window.fishaoApp.toggleOnlyCaught()"
+            <button type="button" class="pill-btn" id="btnOnlyCaught" onclick="window.fishaoApp.toggleOnlyCaught()"
               data-i18n="filter_btn_only_caught" data-i18n-title="filter_btn_only_caught_title"
               title="Zobrazit pouze ryby, které už máš chycené">✅ Pouze chycené</button>
           </div>
@@ -1108,15 +1111,15 @@
     musíš nejdříve přihlásit přes Google účet. </div>
 
   <!-- Price detail and history modal -->
-  <div class="modal-overlay" id="priceModalOverlay"
+  <div class="modal-overlay" id="priceModalOverlay" role="dialog" aria-modal="true" aria-labelledby="priceModalTitleText"
     onclick="window.fishaoApp.onModalOverlayClick(event, 'priceModalOverlay')">
     <div class="modal-box">
       <div class="modal-header">
-        <div class="modal-title">
+        <div class="modal-title" id="priceModalTitleText">
           <span data-i18n="modal_fish_detail">🐟 Detail ryby &amp; Fish Market</span>
           <span id="modalTitleFishName" style="color: #cbd5e1; font-weight: 700;"></span>
         </div>
-        <button class="modal-close" onclick="window.fishaoApp.closePriceModal()">&times;</button>
+        <button type="button" class="modal-close" aria-label="Close" onclick="window.fishaoApp.closePriceModal()">&times;</button>
       </div>
       <div class="modal-body">
         <!-- Fish Hero Card -->
@@ -1134,10 +1137,10 @@
                 <span id="modalFishClubTag" class="badge-club-tag" style="display: none;">🏆 Klubová</span>
               </div>
               <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <button id="modalBtnCaught" class="btn-caught-pill" onclick="window.fishaoApp.toggleCaughtFromModal()">
+                <button type="button" id="modalBtnCaught" class="btn-caught-pill" onclick="window.fishaoApp.toggleCaughtFromModal()">
                   ✓ Chyceno
                 </button>
-                <button id="modalBtnBackyard" class="btn-backyard-pill"
+                <button type="button" id="modalBtnBackyard" class="btn-backyard-pill"
                   onclick="window.fishaoApp.toggleBackyardFromModal()">
                   🏡 Za domem
                 </button>
@@ -1278,20 +1281,21 @@
             </thead>
             <tbody id="modalPriceHistoryTbody"></tbody>
           </table>
+          <div id="modalDailyHistoryBox" class="modal-daily-history-box"></div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Bulk price import and export modal -->
-  <div class="modal-overlay" id="bulkModalOverlay"
+  <div class="modal-overlay" id="bulkModalOverlay" role="dialog" aria-modal="true" aria-labelledby="bulkModalTitleText"
     onclick="window.fishaoApp.onModalOverlayClick(event, 'bulkModalOverlay')">
     <div class="modal-box" style="max-width: 640px;">
       <div class="modal-header">
-        <div class="modal-title">
+        <div class="modal-title" id="bulkModalTitleText">
           <span data-i18n="bulk_header_title">💵 Správa a hromadný import cen do Fish Marketu</span>
         </div>
-        <button class="modal-close" onclick="window.fishaoApp.closeBulkModal()">&times;</button>
+        <button type="button" class="modal-close" aria-label="Close" onclick="window.fishaoApp.closeBulkModal()">&times;</button>
       </div>
       <div class="modal-body">
         <p style="font-size: 13px; color: var(--text-muted);" data-i18n="bulk_desc"> Zde můžeš vložit seznam cen
@@ -1350,7 +1354,7 @@
           <button type="button" id="btnProcessBulk" class="btn-submit" style="flex: 2;"
             onclick="window.fishaoApp.processBulkImport()" data-i18n="bulk_import_btn"> ⚡ Importovat do historie
           </button>
-          <button id="btnExportPrices" class="btn-action" style="flex: 1; display: none;"
+          <button type="button" id="btnExportPrices" class="btn-action" style="flex: 1; display: none;"
             onclick="window.fishaoApp.exportPricesJson()" data-i18n="bulk_export_btn"> 📥 Export JSON (Admin) </button>
         </div>
 
@@ -1366,14 +1370,14 @@
   </div>
 
   <!-- Profile & Avatar Edit Modal -->
-  <div class="modal-overlay" id="profileModalOverlay"
+  <div class="modal-overlay" id="profileModalOverlay" role="dialog" aria-modal="true" aria-labelledby="profileModalTitleText"
     onclick="window.fishaoApp.onModalOverlayClick(event, 'profileModalOverlay')">
     <div class="modal-box profile-modal-box" style="max-width: 820px; width: 95%;">
       <div class="modal-header">
-        <div class="modal-title">
+        <div class="modal-title" id="profileModalTitleText">
           <span data-i18n="modal_profile_title">👤 Hráčský profil &amp; Avatar</span>
         </div>
-        <button class="modal-close" onclick="window.fishaoApp.closeProfileModal()">&times;</button>
+        <button type="button" class="modal-close" aria-label="Close" onclick="window.fishaoApp.closeProfileModal()">&times;</button>
       </div>
       <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
         <!-- Avatar & Nickname Grid -->
@@ -1386,7 +1390,7 @@
             </label>
             <div class="profile-avatar-row">
               <div class="profile-preview-box">
-                <img id="profilePreviewImg" src="" alt="Avatar" style="display: none;"
+                <img id="profilePreviewImg" src="" alt="Avatar" referrerpolicy="no-referrer" style="display: none;"
                   onerror="this.style.display='none'; document.getElementById('profilePreviewBadge').style.display='flex';">
                 <div id="profilePreviewBadge" class="user-avatar-badge big">🎣</div>
               </div>
@@ -1512,14 +1516,14 @@
   </div>
 
   <!-- Generic Confirmation Modal -->
-  <div class="modal-overlay" id="confirmModalOverlay"
+  <div class="modal-overlay" id="confirmModalOverlay" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle"
     onclick="window.fishaoApp.onModalOverlayClick(event, 'confirmModalOverlay')">
     <div class="modal-box" style="max-width: 440px;">
       <div class="modal-header">
         <div class="modal-title">
           <span id="confirmModalTitle">Potvrzení akce</span>
         </div>
-        <button class="modal-close" onclick="window.fishaoApp.resolveConfirmModal(false)">&times;</button>
+        <button type="button" class="modal-close" aria-label="Close" onclick="window.fishaoApp.resolveConfirmModal(false)">&times;</button>
       </div>
       <div class="modal-body" style="padding: 18px 20px;">
         <p id="confirmModalMessage" style="font-size: 14px; color: #cbd5e1; margin: 0 0 20px 0; line-height: 1.5;"></p>
@@ -1534,11 +1538,11 @@
   </div>
 
   <!-- Player Profile Detail Modal -->
-  <div class="modal-overlay" id="playerModalOverlay"
+  <div class="modal-overlay" id="playerModalOverlay" role="dialog" aria-modal="true" aria-labelledby="playerModalName"
     onclick="window.fishaoApp.onModalOverlayClick(event, 'playerModalOverlay')">
     <div class="modal-box" style="max-width: 500px; text-align: center;">
       <div class="modal-header" style="justify-content: flex-end; padding-bottom: 0; border-bottom: none;">
-        <button class="modal-close" onclick="window.fishaoApp.closePlayerModal()">&times;</button>
+        <button type="button" class="modal-close" aria-label="Close" onclick="window.fishaoApp.closePlayerModal()">&times;</button>
       </div>
       <div class="modal-body" style="padding-top: 0;">
         <div class="player-modal-avatar-wrap" id="playerModalAvatarWrap">
@@ -1585,14 +1589,14 @@
         <div id="playerModalBackyardWrap"></div>
 
         <div id="playerModalSelfActions" style="margin-top: 16px; display: none;">
-          <button class="pill-btn purple" style="width: 100%; height: 38px; font-weight: 700;"
+          <button type="button" class="pill-btn purple" style="width: 100%; height: 38px; font-weight: 700;"
             onclick="window.fishaoApp.closePlayerModal(); window.fishaoApp.openProfileModal();">
             ✏️ <span data-i18n="player_modal_edit_profile">Upravit můj profil (přezdívka / avatar)</span>
           </button>
         </div>
 
         <div id="playerModalCreatorActions" style="margin-top: 12px; display: none;">
-          <button id="btnPlayerModalKick" class="pill-btn danger" style="width: 100%; height: 38px; font-weight: 700;">
+          <button type="button" id="btnPlayerModalKick" class="pill-btn danger" style="width: 100%; height: 38px; font-weight: 700;">
             🚪 <span data-i18n="club_btn_kick">Odebrat hráče z klubu</span>
           </button>
         </div>
@@ -1601,14 +1605,14 @@
   </div>
 
   <!-- Privacy Policy & GDPR Modal -->
-  <div class="modal-overlay" id="privacyModalOverlay"
+  <div class="modal-overlay" id="privacyModalOverlay" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitleText"
     onclick="window.fishaoApp.onModalOverlayClick(event, 'privacyModalOverlay')">
     <div class="modal-box" style="max-width: 620px;">
       <div class="modal-header">
-        <div class="modal-title">
+        <div class="modal-title" id="privacyModalTitleText">
           <span>🛡️ <span data-i18n="privacy_modal_title">Zásady ochrany soukromí &amp; GDPR</span></span>
         </div>
-        <button class="modal-close" onclick="window.fishaoApp.closePrivacyModal()">&times;</button>
+        <button type="button" class="modal-close" aria-label="Close" onclick="window.fishaoApp.closePrivacyModal()">&times;</button>
       </div>
       <div class="modal-body" style="padding: 20px 24px; max-height: 70vh; overflow-y: auto;">
         <div
@@ -1788,7 +1792,7 @@
       <span class="cookie-icon">🍪</span>
       <span>
         <span data-i18n="cookie_banner_text">Tento web používá volitelné anonymní analytické cookies (Firebase Analytics) pro měření návštěvnosti. Bez tvého souhlasu jsou zcela vypnuté.</span>
-        <a class="cookie-link" onclick="window.fishaoApp.openPrivacyModal();" data-i18n="cookie_banner_learn_more">Více informací</a>
+        <button type="button" class="cookie-link" style="background:none;border:none;padding:0;font:inherit;" onclick="window.fishaoApp.openPrivacyModal();" data-i18n="cookie_banner_learn_more">Více informací</button>
       </span>
     </div>
     <div class="cookie-actions">

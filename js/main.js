@@ -134,10 +134,20 @@ function syncUrlRoute(view, fishId, replace) {
       targetHash = '#' + view;
     }
 
-    var curHash = window.location.hash || '';
-    if (curHash === targetHash || (curHash === '' && targetHash === '')) return;
+    var urlObj = new URL(window.location.href);
+    var hadStaleQuery = false;
+    ['tab', 'view', 'fish', 'ryba'].forEach(function (qk) {
+      if (urlObj.searchParams.has(qk)) {
+        urlObj.searchParams.delete(qk);
+        hadStaleQuery = true;
+      }
+    });
 
-    var newUrl = targetHash ? (window.location.pathname + window.location.search + targetHash) : (window.location.pathname + window.location.search);
+    var curHash = window.location.hash || '';
+    if (!hadStaleQuery && (curHash === targetHash || (curHash === '' && targetHash === ''))) return;
+
+    var cleanSearch = urlObj.searchParams.toString();
+    var newUrl = window.location.pathname + (cleanSearch ? ('?' + cleanSearch) : '') + targetHash;
 
     if (window.history) {
       if (replace && window.history.replaceState) {
@@ -145,6 +155,11 @@ function syncUrlRoute(view, fishId, replace) {
       } else if (window.history.pushState) {
         window.history.pushState({ view: view, fishId: fishId }, '', newUrl);
       }
+    }
+
+    var canLink = document.getElementById('canonicalLink');
+    if (canLink) {
+      canLink.setAttribute('href', window.location.origin + newUrl);
     }
   } catch (e) { }
 }
@@ -182,6 +197,7 @@ function handleRoute() {
 }
 
 function switchView(view, skipSync) {
+  var prevView = currentView;
   var isInClub = !!(currentUser && currentClubId);
   if (view === "club" && !isInClub) {
     view = "all";
@@ -303,6 +319,7 @@ function switchView(view, skipSync) {
     if (secCalendar) secCalendar.style.display = "none";
     if (secTable) secTable.style.display = "none";
     if (filterCard) filterCard.style.display = "none";
+    if (typeof preloadLocationImages === 'function') preloadLocationImages();
     updateCaughtStats();
     return;
   } else {
@@ -333,9 +350,24 @@ function switchView(view, skipSync) {
     if (sizeCluster) sizeCluster.style.display = (view === "all") ? "flex" : "none";
   }
 
-  // Reset filters completely when switching tabs
+  if (view === "market" && typeof updateMarketSundayCountdown === "function") {
+    updateMarketSundayCountdown();
+  }
+
+  var preserveSharedFilters = ((prevView === "all" && view === "market") || (prevView === "market" && view === "all"));
   updateSortByOptions();
-  resetFilters();
+  if (preserveSharedFilters) {
+    filterTodayHighPrice = false;
+    var highBtn = document.getElementById("highPriceToggle");
+    if (highBtn) highBtn.classList.remove("active");
+    if (view !== "all") {
+      if (typeof currentSizeMin !== "undefined") currentSizeMin = "";
+      if (typeof currentSizeMax !== "undefined") currentSizeMax = "";
+    }
+    applyFilters();
+  } else {
+    resetFilters();
+  }
   updateCaughtStats();
 }
 
@@ -393,15 +425,17 @@ function updateStaticTranslations() {
   updateMarketTabStatus();
 }
 
-function setLanguage(lang) {
+function setLanguage(lang, opts) {
+  opts = opts || {};
   if (window.FISHAO_I18N && typeof window.FISHAO_I18N.setLang === 'function') {
     lang = window.FISHAO_I18N.setLang(lang);
-    if (typeof window.FISHAO_I18N.isLangLoaded === 'function' &&
+    if (!opts.skipEnsure &&
+        typeof window.FISHAO_I18N.isLangLoaded === 'function' &&
         typeof window.FISHAO_I18N.ensureLangLoaded === 'function' &&
         !window.FISHAO_I18N.isLangLoaded(lang)) {
       window.FISHAO_I18N.ensureLangLoaded(lang).then(function (loaded) {
         if (loaded && window.FISHAO_I18N.currentLang === lang) {
-          setLanguage(lang);
+          setLanguage(lang, { skipEnsure: true });
         }
       });
     }
@@ -415,7 +449,6 @@ function setLanguage(lang) {
   updateStaticTranslations();
   updateTzButtonsUI();
   updateClock();
-  updateAuthUI();
   initLocationOptions();
   updateAreaFilterOptions();
   initBaitOptions();
@@ -423,6 +456,10 @@ function setLanguage(lang) {
   updateSortByOptions();
   updateRatingFilterOptions();
   renderTableHead();
+
+  if (opts.skipRender) return;
+
+  updateAuthUI();
   updateCaughtStats();
   updateClubStats();
   renderClubMilestones();
@@ -514,7 +551,8 @@ function onModalOverlayClick(e, id) {
 }
 
 document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape' || e.key === 'Esc' || e.keyCode === 27) {
+  if (e.key === 'Escape') {
+    if (typeof closeAllBaitDropdowns === 'function') closeAllBaitDropdowns();
     closeAllModals();
   }
 });
@@ -672,42 +710,83 @@ window.fishaoApp = {
   editReminder: editReminder,
   resetReminderForm: resetReminderForm,
   deleteReminder: deleteReminder,
+  saveHideLockedClubPreference: typeof saveHideLockedClubPreference === 'function' ? saveHideLockedClubPreference : null,
   t: t
 };
 
-// Initialize localization & application
-var initialLang = (window.FISHAO_I18N && window.FISHAO_I18N.currentLang) || localStorage.getItem('fishao_lang') || 'cs';
-setLanguage(initialLang);
+// Initialize localization & application (avoid double initial render)
+(async function bootApplication() {
+  var initialLang = (window.FISHAO_I18N && window.FISHAO_I18N.currentLang) || localStorage.getItem('fishao_lang') || 'cs';
+  var needsLangFetch = !!(window.FISHAO_I18N &&
+    typeof window.FISHAO_I18N.isLangLoaded === 'function' &&
+    typeof window.FISHAO_I18N.ensureLangLoaded === 'function' &&
+    !window.FISHAO_I18N.isLangLoaded(initialLang));
 
-// Initialize routing from URL hash or query params
-var initialRoute = getHashOrQueryRoute();
-if (initialRoute.tab && initialRoute.tab !== "all") {
-  switchView(initialRoute.tab, true);
-} else {
-  switchView("all", true);
-}
+  var langPromise = null;
+  if (needsLangFetch) {
+    langPromise = window.FISHAO_I18N.ensureLangLoaded(initialLang);
+    await Promise.race([
+      langPromise,
+      new Promise(function (resolve) { setTimeout(resolve, 250); })
+    ]);
+  }
 
-if (initialRoute.fishId) {
-  openPriceModal(initialRoute.fishId, true);
-}
+  setLanguage(initialLang, { skipRender: true, skipEnsure: true });
 
-// Setup popstate & hashchange listeners for back/forward browser navigation
-window.addEventListener('popstate', handleRoute);
-window.addEventListener('hashchange', handleRoute);
+  var initialRoute = getHashOrQueryRoute();
+  var targetTab = (initialRoute.tab && initialRoute.tab !== "all") ? initialRoute.tab : "all";
+  switchView(targetTab, true);
 
-if (typeof updateRemindersBellBadge === 'function') {
-  updateRemindersBellBadge();
-}
-if (typeof checkRemindersOnStartup === 'function') {
-  checkRemindersOnStartup(false);
-}
+  updateAuthUI();
+  updateCaughtStats();
+  if (typeof populatePlayerFishFilterDropdown === 'function') populatePlayerFishFilterDropdown();
 
-initFirebaseSync();
+  if (initialRoute.fishId) {
+    openPriceModal(initialRoute.fishId, true);
+  }
 
-// Register Service Worker for offline/long-term image caching
+  if (langPromise && !window.FISHAO_I18N.isLangLoaded(initialLang)) {
+    langPromise.then(function (loaded) {
+      if (loaded && window.FISHAO_I18N.currentLang === initialLang) {
+        setLanguage(initialLang, { skipEnsure: true });
+      }
+    });
+  }
+
+  // Setup popstate & hashchange listeners for back/forward browser navigation
+  window.addEventListener('popstate', handleRoute);
+  window.addEventListener('hashchange', handleRoute);
+
+  if (typeof updateRemindersBellBadge === 'function') {
+    updateRemindersBellBadge();
+  }
+  if (typeof checkRemindersOnStartup === 'function') {
+    checkRemindersOnStartup(false);
+  }
+
+  initFirebaseSync();
+})();
+
+// Register Service Worker for offline/long-term image caching and prune stale hashed assets
 if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('sw.js').catch(function () {});
+    navigator.serviceWorker.register('sw.js').then(function (reg) {
+      var sendPrune = function (worker) {
+        if (!worker) return;
+        try {
+          var activeAssets = [];
+          document.querySelectorAll('script[src], link[rel="stylesheet"][href]').forEach(function (el) {
+            var rawUrl = el.getAttribute('src') || el.getAttribute('href') || '';
+            if (rawUrl && !/^https?:\/\//i.test(rawUrl)) {
+              activeAssets.push(new URL(rawUrl, window.location.href).pathname);
+            }
+          });
+          worker.postMessage({ type: 'PRUNE_STATIC', activeAssets: activeAssets });
+        } catch (e) {}
+      };
+      if (reg.active) sendPrune(reg.active);
+      else if (navigator.serviceWorker.controller) sendPrune(navigator.serviceWorker.controller);
+    }).catch(function () {});
   });
 }
 

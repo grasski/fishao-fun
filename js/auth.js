@@ -7,12 +7,65 @@
 
 var firebaseAnalytics = null;
 var analyticsModuleRef = null;
+var userPrivateUnsubscribe = null;
+var marketPricesUnsubscribe = null;
+
+var _refreshRafId = 0;
+var _refreshFlags = {
+  auth: false,
+  stats: false,
+  filters: false,
+  marketTab: false,
+  modal: false
+};
+
+function scheduleViewRefresh(opts) {
+  if (opts) {
+    if (opts.auth) _refreshFlags.auth = true;
+    if (opts.stats) _refreshFlags.stats = true;
+    if (opts.filters) _refreshFlags.filters = true;
+    if (opts.marketTab) _refreshFlags.marketTab = true;
+    if (opts.modal) _refreshFlags.modal = true;
+  } else {
+    _refreshFlags.auth = true;
+    _refreshFlags.stats = true;
+    _refreshFlags.filters = true;
+  }
+
+  if (_refreshRafId) return;
+  _refreshRafId = requestAnimationFrame(function () {
+    _refreshRafId = 0;
+    var flags = {
+      auth: _refreshFlags.auth,
+      stats: _refreshFlags.stats,
+      filters: _refreshFlags.filters,
+      marketTab: _refreshFlags.marketTab,
+      modal: _refreshFlags.modal
+    };
+    _refreshFlags.auth = false;
+    _refreshFlags.stats = false;
+    _refreshFlags.filters = false;
+    _refreshFlags.marketTab = false;
+    _refreshFlags.modal = false;
+
+    if (flags.auth) updateAuthUI();
+    if (flags.stats) updateCaughtStats();
+    if (flags.filters) applyFilters();
+    if (flags.marketTab && typeof updateMarketTabStatus === "function") updateMarketTabStatus();
+    if (flags.modal && selectedModalFishId && typeof renderModalHistory === "function") {
+      renderModalHistory(selectedModalFishId);
+    }
+  });
+}
 
 var PROFILE_CACHE_KEY = 'fishao_cached_profile_v1';
 
-function saveProfileToCache(uid, profile) {
+function saveProfileToCache(uid, profile, privData) {
   if (!uid || !profile) return;
   try {
+    var existingFriends = (privData && Array.isArray(privData.friendUids))
+      ? privData.friendUids
+      : Array.from(friendUids || []);
     localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify({
       uid: uid,
       displayName: profile.displayName || "",
@@ -22,7 +75,7 @@ function saveProfileToCache(uid, profile) {
       clubName: profile.clubName || "",
       caughtFishIds: Array.isArray(profile.caughtFishIds) ? profile.caughtFishIds : [],
       backyardFishIds: Array.isArray(profile.backyardFishIds) ? profile.backyardFishIds : [],
-      friendUids: Array.isArray(profile.friendUids) ? profile.friendUids : []
+      friendUids: existingFriends
     }));
   } catch (e) {}
 }
@@ -49,6 +102,14 @@ function hydrateProfileFromCache(uid) {
   } catch (e) {
     return false;
   }
+}
+
+async function savePrivateUserSettings(partialFields) {
+  if (!currentUser || !db || !partialFields || typeof partialFields !== "object") return;
+  var fsModule = await getFirestoreModule();
+  var privDocRef = fsModule.doc(db, "users", currentUser.uid, "private", "settings");
+  var payload = Object.assign({}, partialFields, { updatedAt: new Date().toISOString() });
+  await fsModule.setDoc(privDocRef, payload, { merge: true });
 }
 
 async function initFirebaseSync() {
@@ -96,8 +157,10 @@ async function initFirebaseSync() {
     db = firestoreModule.getFirestore(firebaseApp);
     auth = authModule.getAuth(firebaseApp);
     firebaseDocRef = firestoreModule.doc(db, "fishao_market", "prices_history");
+    firebaseSummaryDocRef = firestoreModule.doc(db, "fishao_market", "prices_summary");
     estimatedPricesDocRef = firestoreModule.doc(db, "fishao_market", "estimated_prices");
     marketConfigDocRef = firestoreModule.doc(db, "fishao_market", "config");
+    var syncStatusDocRef = firestoreModule.doc(db, "fishao_market", "sync_status");
 
     checkCookieConsentBanner();
     if (localStorage.getItem("fishao_cookie_consent") === "granted") {
@@ -106,10 +169,115 @@ async function initFirebaseSync() {
 
     var hasHandledInitialAuth = false;
     var wasSignedIn = false;
-    var lastPriceHistoryJson = "";
+    var lastPriceSummaryJson = "";
     try {
-      lastPriceHistoryJson = JSON.stringify(priceHistory || {});
+      lastPriceSummaryJson = JSON.stringify(priceSummary || {});
     } catch (e) {}
+
+    var applySummarySnapshot = function (nextSummary, lastUpdatedStr) {
+      var safeSum = (nextSummary && typeof nextSummary === "object") ? nextSummary : {};
+      var nextJson = "";
+      try {
+        nextJson = JSON.stringify(safeSum);
+      } catch (e) {}
+
+      if (nextJson && nextJson === lastPriceSummaryJson) {
+        if (typeof lastUpdatedStr === "string") {
+          try {
+            localStorage.setItem('fishao_price_summary_meta_v2', JSON.stringify({
+              lastUpdated: lastUpdatedStr,
+              fetchedAt: Date.now()
+            }));
+          } catch (e) {}
+        }
+        return;
+      }
+
+      priceSummary = safeSum;
+      lastPriceSummaryJson = nextJson;
+      if (typeof saveLocalPriceSummary === "function") {
+        saveLocalPriceSummary(typeof lastUpdatedStr === "string" ? lastUpdatedStr : "");
+      } else {
+        priceHistory = summaryMapToPriceHistory(priceSummary);
+        if (typeof bumpPriceDataVersion === "function") bumpPriceDataVersion();
+      }
+      scheduleViewRefresh({ filters: true, marketTab: true, modal: true });
+    };
+
+    var fetchSummaryOrLegacyOnce = async function () {
+      try {
+        var sumSnap = await firestoreModule.getDoc(firebaseSummaryDocRef);
+        if (sumSnap.exists()) {
+          var sData = sumSnap.data() || {};
+          applySummarySnapshot(sData.prices || {}, sData.lastUpdated || "");
+          return;
+        }
+        // Backward compatibility: fall back to legacy prices_history until migration runs
+        var legSnap = await firestoreModule.getDoc(firebaseDocRef);
+        if (legSnap.exists()) {
+          var lData = legSnap.data() || {};
+          var converted = legacyHistoryToSummaryMap(lData.prices || {});
+          applySummarySnapshot(converted, lData.lastUpdated || "");
+        }
+      } catch (err) {
+        console.warn("Firestore market price fetch warning:", err);
+      }
+    };
+
+    var syncMarketPricesMode = async function (enableRealtime) {
+      if (marketPricesUnsubscribe) {
+        marketPricesUnsubscribe();
+        marketPricesUnsubscribe = null;
+      }
+
+      if (enableRealtime) {
+        marketPricesUnsubscribe = firestoreModule.onSnapshot(firebaseSummaryDocRef, function (docSnap) {
+          if (docSnap.exists()) {
+            var cloudData = docSnap.data() || {};
+            applySummarySnapshot(cloudData.prices || {}, cloudData.lastUpdated || "");
+          } else {
+            fetchSummaryOrLegacyOnce();
+          }
+        }, function (error) {
+          console.warn("Firestore market realtime warning:", error);
+        });
+        return;
+      }
+
+      // Auto-sync mode: check localStorage TTL + tiny sync_status before downloading prices_summary
+      var SUMMARY_TTL_MS = 15 * 60 * 1000;
+      var needsFetch = !priceSummary || Object.keys(priceSummary).length === 0;
+      if (!needsFetch) {
+        try {
+          var metaRaw = localStorage.getItem('fishao_price_summary_meta_v2');
+          var meta = metaRaw ? JSON.parse(metaRaw) : null;
+          var todayStr = getTodayISO();
+          var fetchedDay = (meta && meta.fetchedAt) ? new Date(meta.fetchedAt).toISOString().slice(0, 10) : "";
+          var isFreshTtl = !!(meta && meta.fetchedAt && (Date.now() - meta.fetchedAt) < SUMMARY_TTL_MS && fetchedDay === todayStr);
+
+          if (!isFreshTtl) {
+            var statusSnap = await firestoreModule.getDoc(syncStatusDocRef);
+            var statusData = statusSnap.exists() ? statusSnap.data() : null;
+            if (!statusData || !meta || !meta.lastUpdated || (statusData.lastSuccessAt && statusData.lastSuccessAt > meta.lastUpdated) || fetchedDay !== todayStr) {
+              needsFetch = true;
+            } else {
+              try {
+                localStorage.setItem('fishao_price_summary_meta_v2', JSON.stringify({
+                  lastUpdated: meta.lastUpdated || "",
+                  fetchedAt: Date.now()
+                }));
+              } catch (e) {}
+            }
+          }
+        } catch (e) {
+          needsFetch = true;
+        }
+      }
+
+      if (needsFetch) {
+        await fetchSummaryOrLegacyOnce();
+      }
+    };
 
     authModule.onAuthStateChanged(auth, function (user) {
       currentUser = user;
@@ -119,21 +287,24 @@ async function initFirebaseSync() {
       if (user) {
         wasSignedIn = true;
         var hadCached = hydrateProfileFromCache(user.uid);
+        var cachedClubId = (hadCached && userProfile && userProfile.clubId) ? userProfile.clubId : "";
         if (hadCached) {
-          if (userProfile.clubId) {
-            bindClubListener(userProfile.clubId);
+          if (cachedClubId) {
+            bindClubListener(cachedClubId);
           }
-          updateAuthUI();
-          updateCaughtStats();
-          applyFilters();
+          scheduleViewRefresh({ auth: true, stats: true, filters: true });
         } else {
           updateAuthUI();
         }
-        loadUserProfile(user, hadCached);
+        loadUserProfile(user, hadCached, cachedClubId);
         return;
       } else {
         wasSignedIn = false;
         clearProfileCache();
+        try {
+          localStorage.removeItem('fishao_backyard_fish_ids');
+          localStorage.removeItem('fishao_friends_uids');
+        } catch (e) {}
         if (isInitialGuest) {
           updateAuthUI();
           return;
@@ -153,6 +324,10 @@ async function initFirebaseSync() {
           userUnsubscribe();
           userUnsubscribe = null;
         }
+        if (userPrivateUnsubscribe) {
+          userPrivateUnsubscribe();
+          userPrivateUnsubscribe = null;
+        }
         if (clubUnsubscribe) {
           clubUnsubscribe();
           clubUnsubscribe = null;
@@ -166,38 +341,7 @@ async function initFirebaseSync() {
         var ptsManage = document.getElementById("clubPointsManageInput");
         if (ptsManage) ptsManage.value = 0;
       }
-      updateAuthUI();
-      updateCaughtStats();
-      applyFilters();
-    });
-
-    firestoreModule.onSnapshot(firebaseDocRef, function (docSnap) {
-      var nextPrices = {};
-      if (docSnap.exists()) {
-        var cloudData = docSnap.data();
-        nextPrices = (cloudData && cloudData.prices && typeof cloudData.prices === "object")
-          ? cloudData.prices
-          : {};
-      }
-      var nextPricesJson = "";
-      try {
-        nextPricesJson = JSON.stringify(nextPrices);
-      } catch (e) {}
-
-      if (nextPricesJson && nextPricesJson === lastPriceHistoryJson) {
-        return;
-      }
-
-      priceHistory = nextPrices;
-      lastPriceHistoryJson = nextPricesJson;
-      try {
-        localStorage.setItem('fishao_price_history_v1', nextPricesJson || JSON.stringify(priceHistory));
-      } catch (e) {}
-      applyFilters();
-      if (typeof updateMarketTabStatus === "function") updateMarketTabStatus();
-      if (selectedModalFishId) renderModalHistory(selectedModalFishId);
-    }, function (error) {
-      console.warn("Firestore connection warning:", error);
+      scheduleViewRefresh({ auth: true, stats: true, filters: true });
     });
 
     // Estimated prices rarely change: use 6-hour localStorage TTL cache + one-time getDoc instead of onSnapshot
@@ -231,8 +375,7 @@ async function initFirebaseSync() {
             } catch (e) {}
 
             if (!prevJson || nextJson !== prevJson) {
-              applyFilters();
-              if (selectedModalFishId) renderModalHistory(selectedModalFishId);
+              scheduleViewRefresh({ filters: true, modal: true });
             }
           }
         }
@@ -241,14 +384,25 @@ async function initFirebaseSync() {
       }
     })();
 
+    var hasBoundMarketMode = false;
+    var prevRealtimeFlag = null;
     firestoreModule.onSnapshot(marketConfigDocRef, function (docSnap) {
       var data = docSnap.exists() ? docSnap.data() : null;
       manualImportEnabled = !!(data && data.manualImportEnabled === true);
       if (typeof syncManualImportVisibility === "function") {
         syncManualImportVisibility();
       }
+      if (!hasBoundMarketMode || prevRealtimeFlag !== manualImportEnabled) {
+        hasBoundMarketMode = true;
+        prevRealtimeFlag = manualImportEnabled;
+        syncMarketPricesMode(manualImportEnabled);
+      }
     }, function (error) {
       console.warn("Firestore market config warning:", error);
+      if (!hasBoundMarketMode) {
+        hasBoundMarketMode = true;
+        syncMarketPricesMode(false);
+      }
     });
 
   } catch (err) {
@@ -339,6 +493,15 @@ function declineCookieConsent(fromPrivacyModal) {
   var banner = document.getElementById("cookieConsentBanner");
   if (banner) banner.style.display = "none";
 
+  if (typeof firebaseConfig !== "undefined" && firebaseConfig && firebaseConfig.measurementId) {
+    window["ga-disable-" + firebaseConfig.measurementId] = true;
+  }
+  if (analyticsModuleRef && firebaseAnalytics && typeof analyticsModuleRef.setAnalyticsCollectionEnabled === "function") {
+    try {
+      analyticsModuleRef.setAnalyticsCollectionEnabled(firebaseAnalytics, false);
+    } catch (e) {}
+  }
+
   firebaseAnalytics = null;
   clearAnalyticsCookies();
   updatePrivacyConsentStatusUI();
@@ -428,19 +591,27 @@ async function signOut() {
   }
 }
 
-async function loadUserProfile(user, hadCachedProfile) {
+async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
   if (!db) return;
   try {
     var fsModule = await getFirestoreModule();
     var userDocRef = fsModule.doc(db, "users", user.uid);
+    var privDocRef = fsModule.doc(db, "users", user.uid, "private", "settings");
 
     if (userUnsubscribe) {
       userUnsubscribe();
       userUnsubscribe = null;
     }
+    if (userPrivateUnsubscribe) {
+      userPrivateUnsubscribe();
+      userPrivateUnsubscribe = null;
+    }
 
     var handledFirstSnapshot = false;
     var lastAppliedProfileSig = "";
+    var activeBoundClubId = cachedClubId || "";
+    var legacyMigrationDone = false;
+
     if (hadCachedProfile && userProfile) {
       try {
         lastAppliedProfileSig = JSON.stringify({
@@ -455,29 +626,91 @@ async function loadUserProfile(user, hadCachedProfile) {
       } catch (e) {}
     }
 
+    userPrivateUnsubscribe = fsModule.onSnapshot(privDocRef, async function (privSnap) {
+      var privData = privSnap.exists() ? (privSnap.data() || {}) : {};
+      var privChanged = false;
+
+      if (Array.isArray(privData.friendUids)) {
+        friendUids = new Set(privData.friendUids);
+        if (userProfile) userProfile.friendUids = privData.friendUids;
+        privChanged = true;
+      }
+      if (Array.isArray(privData.reminders) && typeof syncRemindersFromProfile === "function") {
+        syncRemindersFromProfile({ reminders: privData.reminders });
+      }
+
+      if (!privSnap.exists() && userProfile) {
+        try {
+          await fsModule.setDoc(privDocRef, {
+            friendUids: Array.from(friendUids || []),
+            reminders: (typeof userReminders !== "undefined" && Array.isArray(userReminders)) ? userReminders : [],
+            lastLogin: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+        } catch (privCreateErr) {
+          console.warn("Failed creating private settings doc:", privCreateErr);
+        }
+      }
+
+      if (userProfile) {
+        saveProfileToCache(user.uid, userProfile, privData);
+      }
+      if (privChanged && typeof currentView !== "undefined" && currentView === "players" && typeof renderPlayersList === "function") {
+        renderPlayersList();
+      }
+    }, function (privErr) {
+      console.warn("Private settings snapshot warning:", privErr);
+    });
+
     userUnsubscribe = fsModule.onSnapshot(userDocRef, async function (snap) {
       var isFirst = !handledFirstSnapshot;
       handledFirstSnapshot = true;
 
       var isNewUser = !snap.exists();
-      var oldClubId = userProfile ? userProfile.clubId : "";
+      var oldClubId = userProfile ? userProfile.clubId : activeBoundClubId;
 
       if (snap.exists()) {
-        userProfile = snap.data();
+        var rawData = snap.data() || {};
+        userProfile = rawData;
 
-        // Throttle lastLogin write to once every 15 minutes to avoid redundant snapshot round-trips
+        // Auto-migrate legacy private fields from /users/{uid} into /users/{uid}/private/settings
+        if (!legacyMigrationDone && (rawData.friendUids !== undefined || rawData.reminders !== undefined || rawData.lastLogin !== undefined)) {
+          legacyMigrationDone = true;
+          try {
+            var migPayload = { updatedAt: new Date().toISOString() };
+            if (Array.isArray(rawData.friendUids)) {
+              friendUids = new Set(rawData.friendUids);
+              migPayload.friendUids = rawData.friendUids;
+            }
+            if (Array.isArray(rawData.reminders)) {
+              if (typeof syncRemindersFromProfile === "function") syncRemindersFromProfile({ reminders: rawData.reminders });
+              migPayload.reminders = rawData.reminders;
+            }
+            migPayload.lastLogin = rawData.lastLogin || new Date().toISOString();
+            await fsModule.setDoc(privDocRef, migPayload, { merge: true });
+            var cleanupUpdate = {};
+            if (rawData.friendUids !== undefined) cleanupUpdate.friendUids = fsModule.deleteField();
+            if (rawData.reminders !== undefined) cleanupUpdate.reminders = fsModule.deleteField();
+            if (rawData.lastLogin !== undefined) cleanupUpdate.lastLogin = fsModule.deleteField();
+            await fsModule.updateDoc(userDocRef, cleanupUpdate);
+          } catch (migErr) {
+            console.warn("Private profile migration deferred:", migErr);
+          }
+        }
+
+        // Throttle lastLogin write (onto private settings) to once every 15 minutes
         if (isFirst) {
           try {
             var loginSyncKey = 'fishao_last_login_sync_' + user.uid;
             var lastSync = parseInt(localStorage.getItem(loginSyncKey) || '0', 10);
             if (!lastSync || (Date.now() - lastSync) > 15 * 60 * 1000) {
               localStorage.setItem(loginSyncKey, String(Date.now()));
-              fsModule.updateDoc(userDocRef, { lastLogin: new Date().toISOString() }).catch(function () {});
+              savePrivateUserSettings({ lastLogin: new Date().toISOString() }).catch(function () {});
             }
           } catch (e) {}
         }
       } else {
-        // Privacy / GDPR: zero PII (NO email, NO avatar photo stored)
+        // Privacy / GDPR: zero PII on public profile (NO email, NO avatar photo from OAuth)
         var defaultNick = t('user_default_player') + " #" + Math.floor(1000 + Math.random() * 9000);
         userProfile = {
           displayName: defaultNick,
@@ -486,12 +719,15 @@ async function loadUserProfile(user, hadCachedProfile) {
           clubName: "",
           caughtFishIds: Array.from(caughtFishIds),
           backyardFishIds: Array.from(backyardFishIds),
-          friendUids: Array.from(friendUids),
-          reminders: (typeof userReminders !== 'undefined' && Array.isArray(userReminders)) ? userReminders : [],
-          createdAt: new Date().toISOString(),
-          lastLogin: new Date().toISOString()
+          createdAt: new Date().toISOString()
         };
         await fsModule.setDoc(userDocRef, userProfile);
+        await fsModule.setDoc(privDocRef, {
+          friendUids: Array.from(friendUids || []),
+          reminders: (typeof userReminders !== 'undefined' && Array.isArray(userReminders)) ? userReminders : [],
+          lastLogin: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
       }
 
       isAdmin = (userProfile.role === "admin");
@@ -501,21 +737,17 @@ async function loadUserProfile(user, hadCachedProfile) {
       if (userProfile.backyardFishIds && Array.isArray(userProfile.backyardFishIds)) {
         backyardFishIds = new Set(userProfile.backyardFishIds);
       }
-      if (userProfile.friendUids && Array.isArray(userProfile.friendUids)) {
-        friendUids = new Set(userProfile.friendUids);
-      }
-      if (typeof syncRemindersFromProfile === 'function') {
-        syncRemindersFromProfile(userProfile);
-      }
 
       saveProfileToCache(user.uid, userProfile);
 
-      if (isFirst || userProfile.clubId !== oldClubId) {
-        if (userProfile.clubId) {
+      if (userProfile.clubId) {
+        if (userProfile.clubId !== activeBoundClubId) {
+          activeBoundClubId = userProfile.clubId;
           bindClubListener(userProfile.clubId);
-        } else {
-          unbindClubListener();
         }
+      } else if (activeBoundClubId || oldClubId) {
+        activeBoundClubId = "";
+        unbindClubListener();
       }
 
       var nextSig = "";
@@ -527,15 +759,13 @@ async function loadUserProfile(user, hadCachedProfile) {
           clubId: userProfile.clubId || "",
           caughtFishIds: userProfile.caughtFishIds || [],
           backyardFishIds: userProfile.backyardFishIds || [],
-          friendUids: userProfile.friendUids || []
+          friendUids: Array.from(friendUids || [])
         });
       } catch (e) {}
 
       if (!nextSig || nextSig !== lastAppliedProfileSig) {
         lastAppliedProfileSig = nextSig;
-        updateAuthUI();
-        updateCaughtStats();
-        applyFilters();
+        scheduleViewRefresh({ auth: true, stats: true, filters: true });
       }
 
       if (isFirst) {
@@ -627,7 +857,7 @@ function updateAuthUI() {
     var avatarImg = document.getElementById("userAvatarImg");
     var avatarBadge = document.getElementById("userAvatarBadge");
     var uAv = (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "";
-    if (uAv && (uAv.startsWith("http://") || uAv.startsWith("https://"))) {
+    if (isValidHttpsUrl(uAv)) {
       if (avatarImg) {
         avatarImg.src = uAv;
         avatarImg.style.display = "block";
@@ -636,7 +866,7 @@ function updateAuthUI() {
     } else {
       if (avatarImg) avatarImg.style.display = "none";
       if (avatarBadge) {
-        avatarBadge.innerText = uAv || "🎣";
+        avatarBadge.innerText = /^https?:\/\//i.test(uAv) ? "🎣" : (uAv || "🎣");
         avatarBadge.style.display = "flex";
       }
     }
@@ -727,13 +957,13 @@ function openProfileModal() {
 
   if (nickInput) nickInput.value = curName;
 
-  if (curAv.startsWith("http://") || curAv.startsWith("https://")) {
+  if (isValidHttpsUrl(curAv)) {
     if (urlInput) urlInput.value = curAv;
     selectedProfilePresetEmoji = "🎣";
     updateProfileModalPreview(curAv);
   } else {
     if (urlInput) urlInput.value = "";
-    selectedProfilePresetEmoji = curAv || "🎣";
+    selectedProfilePresetEmoji = /^https?:\/\//i.test(curAv) ? "🎣" : (curAv || "🎣");
     updateProfileModalPreview(selectedProfilePresetEmoji);
   }
 
@@ -775,7 +1005,7 @@ function selectPresetAvatar(emoji) {
 
 function onAvatarUrlInput(val) {
   var trimmed = (val || "").trim();
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+  if (isValidHttpsUrl(trimmed)) {
     var btns = document.querySelectorAll(".emoji-pick-btn");
     btns.forEach(function (b) { b.classList.remove("active"); });
     updateProfileModalPreview(trimmed);
@@ -789,13 +1019,13 @@ function updateProfileModalPreview(val) {
   var badge = document.getElementById("profilePreviewBadge");
   if (!img || !badge) return;
 
-  if (val.startsWith("http://") || val.startsWith("https://")) {
+  if (isValidHttpsUrl(val)) {
     img.src = val;
     img.style.display = "block";
     badge.style.display = "none";
   } else {
     img.style.display = "none";
-    badge.innerText = val || "🎣";
+    badge.innerText = /^https?:\/\//i.test(val) ? "🎣" : (val || "🎣");
     badge.style.display = "flex";
   }
 }
@@ -817,9 +1047,13 @@ async function saveProfile() {
 
   var avatarUrlVal = (urlInput ? urlInput.value : "").trim();
   var finalAvatar = "";
-  if (avatarUrlVal.startsWith("http://") || avatarUrlVal.startsWith("https://")) {
+  if (avatarUrlVal) {
     if (avatarUrlVal.length > 500) {
       showToast(t('avatar_url_too_long'), "error");
+      return;
+    }
+    if (!isValidHttpsUrl(avatarUrlVal)) {
+      showToast(t('avatar_url_https_only'), "error");
       return;
     }
     finalAvatar = avatarUrlVal;
@@ -877,15 +1111,39 @@ async function deleteAccount() {
   if (!ok) return;
 
   try {
+    var authModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+    var lastSignInMs = (currentUser.metadata && currentUser.metadata.lastSignInTime)
+      ? Date.parse(currentUser.metadata.lastSignInTime)
+      : 0;
+    if (!lastSignInMs || (Date.now() - lastSignInMs) > 4 * 60 * 1000) {
+      if (typeof authModule.reauthenticateWithPopup === "function") {
+        showToast(t('auth_reauth_required'), "info");
+        try {
+          var provider = new authModule.GoogleAuthProvider();
+          await authModule.reauthenticateWithPopup(currentUser, provider);
+        } catch (reauthErr) {
+          if (reauthErr && (reauthErr.code === "auth/popup-closed-by-user" || reauthErr.code === "auth/cancelled-popup-request")) {
+            return;
+          }
+          showToast(t('auth_reauth_required'), "error");
+          return;
+        }
+      }
+    }
+
     var fsModule = await getFirestoreModule();
     var uid = currentUser.uid;
     var clubIdToLeave = (userProfile && userProfile.clubId) || currentClubId;
 
     // 1. Immediately detach club & user real-time listeners and clear local state
-    // This CRITICALLY prevents the onSnapshot listener from executing any self-heal re-registration
+    // This prevents onSnapshot listeners from executing any self-heal re-registration
     if (userUnsubscribe) {
       userUnsubscribe();
       userUnsubscribe = null;
+    }
+    if (userPrivateUnsubscribe) {
+      userPrivateUnsubscribe();
+      userPrivateUnsubscribe = null;
     }
     if (typeof unbindClubListener === 'function') {
       unbindClubListener();
@@ -907,16 +1165,23 @@ async function deleteAccount() {
       }
     }
 
-    // 3. Delete user profile document from Firestore
+    // 3. Delete private settings subdoc & public user profile document from Firestore
+    try {
+      var privDocRef = fsModule.doc(db, "users", uid, "private", "settings");
+      await fsModule.deleteDoc(privDocRef);
+    } catch (e) {}
     var userDocRef = fsModule.doc(db, "users", uid);
     await fsModule.deleteDoc(userDocRef);
 
-    // 4. Clear local storage and caches
+    // 4. Clear local storage, profile cache, and session caches
+    clearProfileCache();
     try {
       localStorage.removeItem('fishao_caught_fish_ids');
       localStorage.removeItem('fishao_backyard_fish_ids');
       localStorage.removeItem('fishao_friends_uids');
+      localStorage.removeItem('fishao_reminders_v1');
       localStorage.removeItem('fishao_nick_prompted_' + uid);
+      localStorage.removeItem('fishao_last_login_sync_' + uid);
       sessionStorage.removeItem('fishao_players_cache_v1');
     } catch (e) {}
 
@@ -928,6 +1193,8 @@ async function deleteAccount() {
     caughtFishIds.clear();
     backyardFishIds.clear();
     friendUids.clear();
+    if (typeof userReminders !== 'undefined') userReminders = [];
+    if (typeof updateRemindersBellBadge === 'function') updateRemindersBellBadge();
     userProfile = null;
     currentClubId = "";
     currentClubName = "";
@@ -939,14 +1206,12 @@ async function deleteAccount() {
         await currentUser.delete();
       }
     } catch (authErr) {
-      console.warn("Auth user deletion requires recent login, signing out instead:", authErr);
+      console.warn("Auth user deletion failed, signing out instead:", authErr);
       await signOut();
     }
 
     closeProfileModal();
-    updateAuthUI();
-    updateCaughtStats();
-    applyFilters();
+    scheduleViewRefresh({ auth: true, stats: true, filters: true });
     showToast(t('profile_deleted_success'), "info");
   } catch (err) {
     console.error("Failed to delete account:", err);
@@ -974,26 +1239,44 @@ async function exportFirestoreBackup() {
   try {
     var firestoreModule = await getFirestoreModule();
 
-    // 1. Fetch Market Prices (/fishao_market/prices_history)
-    var marketDocRef = firestoreModule.doc(db, "fishao_market", "prices_history");
-    var marketSnap = await firestoreModule.getDoc(marketDocRef);
-    var marketData = marketSnap.exists() ? marketSnap.data() : null;
+    // 1. Fetch Market docs (summary, legacy history if present, estimated, config, sync_status)
+    var readOptDoc = async function (docId) {
+      try {
+        var s = await firestoreModule.getDoc(firestoreModule.doc(db, "fishao_market", docId));
+        return s.exists() ? s.data() : null;
+      } catch (e) {
+        return null;
+      }
+    };
+    var marketDocs = await Promise.all([
+      readOptDoc("prices_summary"),
+      readOptDoc("prices_history"),
+      readOptDoc("estimated_prices"),
+      readOptDoc("config"),
+      readOptDoc("sync_status")
+    ]);
+    var summaryData = marketDocs[0];
+    var legacyMarketData = marketDocs[1];
+    var estData = marketDocs[2];
+    var configData = marketDocs[3];
+    var syncStatusData = marketDocs[4];
 
-    var estDocRef = firestoreModule.doc(db, "fishao_market", "estimated_prices");
-    var estSnap = await firestoreModule.getDoc(estDocRef);
-    var estData = estSnap.exists() ? estSnap.data() : null;
+    // Fetch monthly daily archives (/fishao_market_daily)
+    var dailySnap = await firestoreModule.getDocs(firestoreModule.collection(db, "fishao_market_daily"));
+    var dailyArchive = {};
+    dailySnap.forEach(function (d) {
+      dailyArchive[d.id] = d.data();
+    });
 
     // 2. Fetch Clubs (/clubs)
-    var clubsColRef = firestoreModule.collection(db, "clubs");
-    var clubsSnap = await firestoreModule.getDocs(clubsColRef);
+    var clubsSnap = await firestoreModule.getDocs(firestoreModule.collection(db, "clubs"));
     var clubsList = [];
     clubsSnap.forEach(function (doc) {
       clubsList.push(Object.assign({ id: doc.id }, doc.data()));
     });
 
     // 3. Fetch Users (/users)
-    var usersColRef = firestoreModule.collection(db, "users");
-    var usersSnap = await firestoreModule.getDocs(usersColRef);
+    var usersSnap = await firestoreModule.getDocs(firestoreModule.collection(db, "users"));
     var usersList = [];
     usersSnap.forEach(function (doc) {
       usersList.push(Object.assign({ id: doc.id }, doc.data()));
@@ -1002,18 +1285,23 @@ async function exportFirestoreBackup() {
     // Compile backup payload
     var backupData = {
       app: "FISHAO Tracker",
-      version: "1.0",
+      version: "2.0",
       exportedAt: new Date().toISOString(),
       stats: {
         usersCount: usersList.length,
         clubsCount: clubsList.length,
-        marketPricesCount: (marketData && marketData.prices) ? Object.keys(marketData.prices).length : 0
+        marketSummaryFishCount: (summaryData && summaryData.prices) ? Object.keys(summaryData.prices).length : 0,
+        dailyMonthsCount: Object.keys(dailyArchive).length
       },
       collections: {
         fishao_market: {
-          prices_history: marketData,
-          estimated_prices: estData
+          prices_summary: summaryData,
+          prices_history: legacyMarketData,
+          estimated_prices: estData,
+          config: configData,
+          sync_status: syncStatusData
         },
+        fishao_market_daily: dailyArchive,
         clubs: clubsList,
         users: usersList
       }

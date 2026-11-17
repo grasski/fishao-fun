@@ -371,25 +371,34 @@
       if (!hasWindow || typeof document === 'undefined') {
         return Promise.resolve(false);
       }
-      return new Promise(function (resolve) {
+      if (!FISHAO_I18N._langPromises) {
+        FISHAO_I18N._langPromises = {};
+      }
+      if (FISHAO_I18N._langPromises[code]) {
+        return FISHAO_I18N._langPromises[code];
+      }
+      FISHAO_I18N._langPromises[code] = new Promise(function (resolve) {
         var globalName = 'FISHAO_I18N_UI_' + code.toUpperCase();
         if (window[globalName]) {
           ui[code] = window[globalName];
           resolve(true);
           return;
         }
+        var bundledUrl = (window.FISHAO_I18N_BUNDLES && window.FISHAO_I18N_BUNDLES[code]) || null;
         var script = document.createElement('script');
-        script.src = 'data/i18n/ui_' + code + '.js?v=5.7';
+        script.src = bundledUrl || ('data/i18n/ui_' + code + '.js?v=5.8');
         script.async = true;
         script.onload = function () {
           ui[code] = window[globalName] || {};
           resolve(true);
         };
         script.onerror = function () {
+          delete FISHAO_I18N._langPromises[code];
           resolve(false);
         };
         document.head.appendChild(script);
       });
+      return FISHAO_I18N._langPromises[code];
     }
   };
 

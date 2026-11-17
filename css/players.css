@@ -557,25 +557,6 @@
   padding-right: 4px;
 }
 
-.player-modal-backyard-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  padding: 8px 10px;
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.18s;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.player-modal-backyard-card:hover {
-  background: rgba(20, 184, 166, 0.16);
-  border-color: rgba(20, 184, 166, 0.5);
-  transform: translateY(-1px);
-}
-
 /* --- High-Contrast Active States for Filter Card Buttons --- */
 #bannerPlayers #filterPlayerFriendsOnlyBtn.active {
   background: linear-gradient(135deg, #d97706, #b45309) !important;
@@ -611,12 +592,6 @@
   display: grid;
   grid-template-columns: 1.3fr 1fr;
   gap: 16px;
-}
-
-@media (max-width: 700px) {
-  .profile-top-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 .profile-backyard-section {
@@ -825,13 +800,4 @@
   width: 34px;
   height: 19px;
   object-fit: contain;
-}
-
-@media (max-width: 640px) {
-  .players-grid {
-    grid-template-columns: 1fr;
-  }
-  .player-modal-backyard-grid {
-    grid-template-columns: 1fr;
-  }
 }

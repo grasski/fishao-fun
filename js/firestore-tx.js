@@ -9,6 +9,8 @@
  * Exposed API (window.FISHAO_FS_TX):
  *   readModifyWrite(db, docRef, modifier) -> Promise<result>
  *   setDocument(db, docRef, data)         -> Promise<data>
+ *   runTx(db, fn)                         -> Promise<result>
+ *   commitBatch(db, fn)                   -> Promise<result>
  */
 
 (function () {
@@ -81,9 +83,44 @@
     });
   }
 
+  /**
+   * Executes an arbitrary multi-document Firestore transaction callback(tx, fsModule).
+   */
+  async function runTx(db, fn) {
+    if (!db) {
+      throw new Error("runTx requires a Firestore db.");
+    }
+    if (typeof fn !== "function") {
+      throw new Error("runTx requires a callback function.");
+    }
+    var fs = await loadFirestoreModule();
+    return fs.runTransaction(db, function (tx) {
+      return fn(tx, fs);
+    });
+  }
+
+  /**
+   * Executes an atomic Firestore writeBatch callback(batch, fsModule) and commits it.
+   */
+  async function commitBatch(db, fn) {
+    if (!db) {
+      throw new Error("commitBatch requires a Firestore db.");
+    }
+    if (typeof fn !== "function") {
+      throw new Error("commitBatch requires a callback function.");
+    }
+    var fs = await loadFirestoreModule();
+    var batch = fs.writeBatch(db);
+    var result = await fn(batch, fs);
+    await batch.commit();
+    return result;
+  }
+
   window.FISHAO_FS_TX = {
     loadFirestoreModule: loadFirestoreModule,
     readModifyWrite: readModifyWrite,
-    setDocument: setDocument
+    setDocument: setDocument,
+    runTx: runTx,
+    commitBatch: commitBatch
   };
 })();

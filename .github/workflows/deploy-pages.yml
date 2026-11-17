@@ -27,6 +27,32 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate JavaScript syntax & i18n keys
+        run: |
+          for f in js/*.js data/*.js data/i18n/*.js scripts/*.mjs; do
+            node --check "$f"
+          done
+          node -e "
+            const cs = Object.keys(require('./data/i18n/ui_cs.js'));
+            const en = Object.keys(require('./data/i18n/ui_en.js'));
+            const pl = Object.keys(require('./data/i18n/ui_pl.js'));
+            const missEn = cs.filter(k => !k.endsWith('_few') && !k.endsWith('_many') && !en.includes(k));
+            const missPl = cs.filter(k => !pl.includes(k));
+            if (missEn.length || missPl.length) {
+              console.error('Missing i18n keys:', { missEn, missPl });
+              process.exit(1);
+            }
+            console.log('i18n parity OK: cs=' + cs.length + ', en=' + en.length + ', pl=' + pl.length);
+          "
+
+      - name: Install esbuild for JS/CSS minification
+        run: npm install --no-save esbuild
+
       - name: Build bundled dist
         run: python scripts/build_dist.py --out _site
 

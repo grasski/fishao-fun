@@ -24,6 +24,41 @@ var PLAYERS_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 var lastPlayersFetchTime = 0;
 var playerCurrentPage = 1;
 var PLAYERS_PER_PAGE = 24;
+var _playerProfileCache = new Map();
+var PLAYER_MODAL_CACHE_TTL_MS = 2 * 60 * 1000;
+
+function computePlayerCatchCounts(caughtIdsArr) {
+  var arr = Array.isArray(caughtIdsArr) ? caughtIdsArr : [];
+  var clubFishIdsSet = new Set(clubFishes.map(function (f) { return f.id; }));
+  var clubC = 0;
+  for (var i = 0; i < arr.length; i++) {
+    if (clubFishIdsSet.has(arr[i])) clubC++;
+  }
+  return { caughtCount: arr.length, caughtClubCount: clubC };
+}
+
+function savePlayersSessionCache(ts) {
+  try {
+    var compact = allPlayersList.map(function (p) {
+      return {
+        uid: p.uid,
+        displayName: p.displayName,
+        avatarUrl: p.avatarUrl,
+        role: p.role,
+        clubId: p.clubId,
+        clubName: p.clubName,
+        caughtCount: typeof p.caughtCount === "number" ? p.caughtCount : ((p.caughtFishIds && p.caughtFishIds.length) || 0),
+        caughtClubCount: typeof p.caughtClubCount === "number" ? p.caughtClubCount : 0,
+        backyardFishIds: Array.isArray(p.backyardFishIds) ? p.backyardFishIds : [],
+        createdAt: p.createdAt || ""
+      };
+    });
+    sessionStorage.setItem(PLAYERS_CACHE_KEY, JSON.stringify({
+      timestamp: ts,
+      list: compact
+    }));
+  } catch (e) {}
+}
 
 /**
  * Load all players from Firestore collection 'users' (cached for 5 minutes)
@@ -63,6 +98,7 @@ async function loadAllPlayers(force) {
   if (!db) {
     // Local / Offline fallback with current user
     if (userProfile) {
+      var localCounts = computePlayerCatchCounts(Array.from(caughtFishIds));
       allPlayersList = [{
         uid: currentUser ? currentUser.uid : "local_user",
         displayName: userProfile.displayName || t('user_default_player'),
@@ -70,7 +106,8 @@ async function loadAllPlayers(force) {
         role: userProfile.role || "member",
         clubId: userProfile.clubId || "",
         clubName: userProfile.clubName || "",
-        caughtFishIds: Array.from(caughtFishIds),
+        caughtCount: localCounts.caughtCount,
+        caughtClubCount: localCounts.caughtClubCount,
         backyardFishIds: Array.from(backyardFishIds),
         createdAt: userProfile.createdAt || new Date().toISOString()
       }];
@@ -99,6 +136,7 @@ async function loadAllPlayers(force) {
       });
     }
 
+    var clubFishIdsSet = new Set(clubFishes.map(function (f) { return f.id; }));
     var list = [];
 
     snap.forEach(function (doc) {
@@ -114,6 +152,11 @@ async function loadAllPlayers(force) {
           cName = cData.name;
         }
       }
+      var rawCaught = Array.isArray(d.caughtFishIds) ? d.caughtFishIds : [];
+      var clubC = 0;
+      for (var ci = 0; ci < rawCaught.length; ci++) {
+        if (clubFishIdsSet.has(rawCaught[ci])) clubC++;
+      }
       list.push({
         uid: doc.id,
         displayName: d.displayName || t('user_default_player'),
@@ -121,7 +164,8 @@ async function loadAllPlayers(force) {
         role: d.role || "member",
         clubId: cId,
         clubName: cName,
-        caughtFishIds: Array.isArray(d.caughtFishIds) ? d.caughtFishIds : [],
+        caughtCount: rawCaught.length,
+        caughtClubCount: clubC,
         backyardFishIds: Array.isArray(d.backyardFishIds) ? d.backyardFishIds : [],
         createdAt: d.createdAt || ""
       });
@@ -129,12 +173,7 @@ async function loadAllPlayers(force) {
 
     allPlayersList = list;
     lastPlayersFetchTime = Date.now();
-    try {
-      sessionStorage.setItem(PLAYERS_CACHE_KEY, JSON.stringify({
-        timestamp: lastPlayersFetchTime,
-        list: allPlayersList
-      }));
-    } catch (e) {}
+    savePlayersSessionCache(lastPlayersFetchTime);
 
     populatePlayerFishFilterDropdown();
     renderPlayersList();
@@ -195,7 +234,7 @@ function createRichBackyardFishCard(fObj, extraClass, isModal) {
 
   return '<div class="player-backyard-fish-card ' + (extraClass || '') + '" onclick="' + clickAction + '" title="' + escapeHtml(fName + t('click_for_detail_suffix')) + '">' +
     '<div class="pbfc-top">' +
-      '<img class="pbfc-img" src="images/fish_' + fid + '.webp" alt="" onerror="this.onerror=null;this.style.display=\'none\';">' +
+      '<img class="pbfc-img" src="images/fish_' + fid + '.webp" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
       '<div class="pbfc-info">' +
         '<span class="pbfc-name">' + escapeHtml(fName) + '</span>' +
         '<span class="pbfc-stars">' + stars + '</span>' +
@@ -281,23 +320,19 @@ async function toggleFriend(uid, event) {
     friendUids.add(uid);
   }
 
-  // Persist locally
-  try {
-    localStorage.setItem('fishao_friends_uids', JSON.stringify(Array.from(friendUids)));
-  } catch (e) {}
-
   if (userProfile) {
     userProfile.friendUids = Array.from(friendUids);
+    if (typeof saveProfileToCache === "function") {
+      saveProfileToCache(currentUser.uid, userProfile, { friendUids: userProfile.friendUids });
+    }
   }
 
-  // Sync to Firestore
+  // Sync to private Firestore settings (/users/{uid}/private/settings)
   if (currentUser && db) {
     try {
-      var fsModule = await getFirestoreModule();
-      var userRef = fsModule.doc(db, "users", currentUser.uid);
-      await fsModule.updateDoc(userRef, {
-        friendUids: Array.from(friendUids)
-      });
+      if (typeof savePrivateUserSettings === "function") {
+        await savePrivateUserSettings({ friendUids: Array.from(friendUids) });
+      }
     } catch (err) {
       console.warn("Failed to sync friends to Firestore:", err);
     }
@@ -386,10 +421,14 @@ function onPlayerRatingFilterChange(val) {
   renderPlayersList();
 }
 
+var _debouncedRenderPlayersList = (typeof debounce === "function")
+  ? debounce(function () { renderPlayersList(); }, 150)
+  : function () { renderPlayersList(); };
+
 function onPlayerSearchInput(val) {
   filterPlayerSearchText = (val || "").trim();
   playerCurrentPage = 1;
-  renderPlayersList();
+  _debouncedRenderPlayersList();
 }
 
 function clearPlayerSearch() {
@@ -452,7 +491,7 @@ function toggleBackyardMenu(uid, event) {
   }
   closeBackyardMenu();
   activeBackyardMenuUid = uid;
-  var menu = document.getElementById("backyardMenu_" + uid);
+  var menu = document.getElementById("backyardMenu_" + sanitizeDomId(uid));
   if (menu) {
     menu.style.display = "flex";
   }
@@ -464,7 +503,7 @@ function closeBackyardMenu(uid, event) {
   }
   var targetUid = uid || activeBackyardMenuUid;
   if (targetUid) {
-    var menu = document.getElementById("backyardMenu_" + targetUid);
+    var menu = document.getElementById("backyardMenu_" + sanitizeDomId(targetUid));
     if (menu) {
       menu.style.display = "none";
     }
@@ -477,7 +516,7 @@ function closeBackyardMenu(uid, event) {
 if (typeof document !== 'undefined') {
   document.addEventListener('click', function (e) {
     if (activeBackyardMenuUid) {
-      var menu = document.getElementById("backyardMenu_" + activeBackyardMenuUid);
+      var menu = document.getElementById("backyardMenu_" + sanitizeDomId(activeBackyardMenuUid));
       if (menu && !menu.contains(e.target)) {
         closeBackyardMenu();
       }
@@ -514,34 +553,21 @@ function renderPlayersList() {
     if (effectiveTime) {
       var hasTime = pBackyard.some(function (fid) {
         var fObj = (typeof getFishById === 'function') ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
-        if (!fObj) return false;
-        if (effectiveTime === "now") return isFishActiveNow(fObj.raw_times, fObj.raw_dates);
-        if (effectiveTime === "seasonal") return !!(fObj.raw_dates && fObj.raw_dates.length > 0);
-        if (effectiveTime === "night") return !!fObj.is_night;
-        if (effectiveTime === "day") return !fObj.is_night;
-        if (effectiveTime === "morning") return isFishActiveAtLocalHour(fObj.raw_times, 9);
-        if (effectiveTime === "afternoon") return isFishActiveAtLocalHour(fObj.raw_times, 15);
-        if (effectiveTime === "evening") return isFishActiveAtLocalHour(fObj.raw_times, 21);
-        if (effectiveTime === "deepnight") return isFishActiveAtLocalHour(fObj.raw_times, 3);
-        return true;
+        return fObj && matchesFishTimeFilter(fObj, effectiveTime);
       });
       if (!hasTime) return false;
     }
     if (filterPlayerBait) {
       var hasBait = pBackyard.some(function (fid) {
         var fObj = (typeof getFishById === 'function') ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
-        return fObj && fObj.baits && fObj.baits.indexOf(filterPlayerBait) !== -1;
+        return fObj && Array.isArray(fObj.baits) && fObj.baits.indexOf(filterPlayerBait) !== -1;
       });
       if (!hasBait) return false;
     }
     if (filterPlayerRating) {
       var hasRating = pBackyard.some(function (fid) {
         var fObj = (typeof getFishById === 'function') ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
-        if (!fObj) return false;
-        var r = fObj.rating || 1;
-        if (filterPlayerRating === "min3") return r >= 3;
-        if (filterPlayerRating === "min4") return r >= 4;
-        return r === parseInt(filterPlayerRating, 10);
+        return fObj && matchesFishRatingFilter(fObj, filterPlayerRating);
       });
       if (!hasRating) return false;
     }
@@ -586,8 +612,8 @@ function renderPlayersList() {
     var bCountB = (b.backyardFishIds && b.backyardFishIds.length) || 0;
     if (bCountB !== bCountA) return bCountB - bCountA;
 
-    var cCountA = (a.caughtFishIds && a.caughtFishIds.length) || 0;
-    var cCountB = (b.caughtFishIds && b.caughtFishIds.length) || 0;
+    var cCountA = typeof a.caughtCount === "number" ? a.caughtCount : ((a.caughtFishIds && a.caughtFishIds.length) || 0);
+    var cCountB = typeof b.caughtCount === "number" ? b.caughtCount : ((b.caughtFishIds && b.caughtFishIds.length) || 0);
     return cCountB - cCountA;
   });
 
@@ -634,9 +660,15 @@ function renderPlayersList() {
       : '<span style="color: var(--text-muted);">' + t('player_card_no_club') + '</span>';
 
     // Catch counts
-    var totalCatches = (p.caughtFishIds && p.caughtFishIds.length) || 0;
+    var totalCatches = isMe
+      ? caughtFishIds.size
+      : (typeof p.caughtCount === "number" ? p.caughtCount : ((p.caughtFishIds && p.caughtFishIds.length) || 0));
     var clubCatches = 0;
-    if (p.caughtFishIds && p.caughtFishIds.length) {
+    if (isMe) {
+      clubFishes.forEach(function (cf) { if (caughtFishIds.has(cf.id)) clubCatches++; });
+    } else if (typeof p.caughtClubCount === "number") {
+      clubCatches = p.caughtClubCount;
+    } else if (p.caughtFishIds && p.caughtFishIds.length) {
       clubFishes.forEach(function (cf) {
         if (p.caughtFishIds.indexOf(cf.id) !== -1) clubCatches++;
       });
@@ -644,6 +676,8 @@ function renderPlayersList() {
 
     // Backyard fish rich cards (strictly backyard species)
     var bFishes = (p.backyardFishIds || []).filter(isBackyardBreedable);
+    var safeDomUid = sanitizeDomId(p.uid);
+    var escapedUid = escapeHtml(p.uid);
     var backyardCardsHtml = "";
     if (bFishes.length > 0) {
       var maxPreview = 2;
@@ -659,15 +693,15 @@ function renderPlayersList() {
       backyardCardsHtml += '</div>';
 
       if (bFishes.length > maxPreview) {
-        backyardCardsHtml += '<button type="button" class="player-backyard-expand-btn" onclick="window.fishaoApp.toggleBackyardMenu(\'' + p.uid + '\', event)">' +
-          '+ ' + t('backyard_show_all', { count: bFishes.length }) +
+        backyardCardsHtml += '<button type="button" class="player-backyard-expand-btn" data-uid="' + escapedUid + '">' +
+          '+ ' + escapeHtml(t('backyard_show_all', { count: bFishes.length })) +
           '</button>';
 
         // Floating Popover Menu (renders all fish without expanding card height or stretching grid)
-        backyardCardsHtml += '<div id="backyardMenu_' + p.uid + '" class="player-backyard-popover-menu" style="display: none;" onclick="event.stopPropagation();">' +
+        backyardCardsHtml += '<div id="backyardMenu_' + safeDomUid + '" class="player-backyard-popover-menu" style="display: none;">' +
           '<div class="pbm-header">' +
-            '<span class="pbm-title">🏡 ' + escapeHtml(p.displayName) + ' – ' + t('player_backyard_menu_title', { count: bFishes.length }) + '</span>' +
-            '<button type="button" class="pbm-close" onclick="window.fishaoApp.closeBackyardMenu(\'' + p.uid + '\', event)" title="' + t('action_close') + '">&times;</button>' +
+            '<span class="pbm-title">🏡 ' + escapeHtml(p.displayName) + ' – ' + escapeHtml(t('player_backyard_menu_title', { count: bFishes.length })) + '</span>' +
+            '<button type="button" class="pbm-close" data-uid="' + escapedUid + '" title="' + escapeHtml(t('action_close')) + '">&times;</button>' +
           '</div>' +
           '<div class="pbm-list">';
         bFishes.forEach(function (fid) {
@@ -679,24 +713,24 @@ function renderPlayersList() {
         backyardCardsHtml += '</div></div>';
       }
     } else {
-      backyardCardsHtml = '<div class="player-card-empty-backyard">' + t('player_card_backyard_empty') + '</div>';
+      backyardCardsHtml = '<div class="player-card-empty-backyard">' + escapeHtml(t('player_card_backyard_empty')) + '</div>';
     }
 
     var friendBtnHtml = "";
     if (!isMe && currentUser) {
-      friendBtnHtml = '<button type="button" class="player-friend-star-btn ' + (isFriend ? 'active' : '') + '" onclick="window.fishaoApp.toggleFriend(\'' + p.uid + '\', event)" title="' + (isFriend ? t('btn_friend_remove_title') : t('btn_friend_add_title')) + '">' +
-        (isFriend ? '⭐ ' + t('btn_friend_yes') : '☆ ' + t('btn_friend_add')) +
+      friendBtnHtml = '<button type="button" class="player-friend-star-btn ' + (isFriend ? 'active' : '') + '" data-uid="' + escapedUid + '" title="' + escapeHtml(isFriend ? t('btn_friend_remove_title') : t('btn_friend_add_title')) + '">' +
+        escapeHtml(isFriend ? '⭐ ' + t('btn_friend_yes') : '☆ ' + t('btn_friend_add')) +
         '</button>';
     }
 
-    html += '<div class="player-card' + (isMe ? ' is-me' : '') + (isFriend ? ' is-friend' : '') + '" onclick="window.fishaoApp.openPlayerModal(\'' + p.uid + '\')">' +
+    html += '<div class="player-card' + (isMe ? ' is-me' : '') + (isFriend ? ' is-friend' : '') + '" data-uid="' + escapedUid + '">' +
       '<div>' +
         '<div class="player-card-header">' +
           avatarHtml +
           '<div class="player-card-meta">' +
             '<div class="player-card-name-row">' +
               '<span class="player-card-name">' + escapeHtml(p.displayName) + '</span>' +
-              (isMe ? '<span class="player-card-me-tag">(' + t('player_card_me_tag') + ')</span>' : '') +
+              (isMe ? '<span class="player-card-me-tag">(' + escapeHtml(t('player_card_me_tag')) + ')</span>' : '') +
               roleBadge +
             '</div>' +
             '<div class="player-card-club-row">' + clubInfo + '</div>' +
@@ -706,28 +740,74 @@ function renderPlayersList() {
 
         '<div class="player-card-stats">' +
           '<div class="player-card-stat-line">' +
-            '<span class="player-card-stat-label">🎣 ' + t('player_card_stat_catches') + '</span>' +
+            '<span class="player-card-stat-label">🎣 ' + escapeHtml(t('player_card_stat_catches')) + '</span>' +
             '<span class="player-card-stat-val" style="color: #38bdf8;">' + totalCatches + ' / ' + allFishes.length + '</span>' +
           '</div>' +
           '<div class="player-card-stat-line">' +
-            '<span class="player-card-stat-label">🏆 ' + t('player_card_stat_club_fish') + '</span>' +
+            '<span class="player-card-stat-label">🏆 ' + escapeHtml(t('player_card_stat_club_fish')) + '</span>' +
             '<span class="player-card-stat-val" style="color: #34d399;">' + clubCatches + ' / ' + totalClub + '</span>' +
           '</div>' +
         '</div>' +
 
         '<div class="player-card-backyard">' +
           '<div class="player-card-backyard-header">' +
-            '<span>🏡 ' + t('player_card_backyard_title', { count: bFishes.length }) + '</span>' +
+            '<span>🏡 ' + escapeHtml(t('player_card_backyard_title', { count: bFishes.length })) + '</span>' +
           '</div>' +
           backyardCardsHtml +
         '</div>' +
       '</div>' +
 
-      '<button type="button" class="player-card-btn" onclick="event.stopPropagation(); window.fishaoApp.openPlayerModal(\'' + p.uid + '\')">' +
-        '<span>' + t('player_card_view_profile') + '</span>' +
+      '<button type="button" class="player-card-btn" data-uid="' + escapedUid + '">' +
+        '<span>' + escapeHtml(t('player_card_view_profile')) + '</span>' +
       '</button>' +
     '</div>';
   });
+
+  if (!grid.dataset.boundPlayersActions) {
+    grid.dataset.boundPlayersActions = "1";
+    grid.addEventListener("click", function (ev) {
+      var tEl = ev.target;
+      if (!tEl || !tEl.closest) return;
+
+      var expandBtn = tEl.closest(".player-backyard-expand-btn");
+      if (expandBtn) {
+        ev.stopPropagation();
+        toggleBackyardMenu(expandBtn.dataset.uid, ev);
+        return;
+      }
+
+      var closeBtn = tEl.closest(".pbm-close");
+      if (closeBtn) {
+        ev.stopPropagation();
+        closeBackyardMenu(closeBtn.dataset.uid, ev);
+        return;
+      }
+
+      if (tEl.closest(".player-backyard-popover-menu")) {
+        ev.stopPropagation();
+        return;
+      }
+
+      var friendBtn = tEl.closest(".player-friend-star-btn");
+      if (friendBtn) {
+        ev.stopPropagation();
+        toggleFriend(friendBtn.dataset.uid, ev);
+        return;
+      }
+
+      var viewBtn = tEl.closest(".player-card-btn");
+      if (viewBtn) {
+        ev.stopPropagation();
+        openPlayerModal(viewBtn.dataset.uid);
+        return;
+      }
+
+      var cardEl = tEl.closest(".player-card");
+      if (cardEl && cardEl.dataset.uid && !tEl.closest(".player-backyard-fish-card")) {
+        openPlayerModal(cardEl.dataset.uid);
+      }
+    });
+  }
 
   grid.innerHTML = html;
 
@@ -776,25 +856,18 @@ async function toggleBackyardFish(fishId) {
     backyardFishIds.add(fishId);
   }
 
-  // Persist locally
-  try {
-    localStorage.setItem('fishao_backyard_fish_ids', JSON.stringify(Array.from(backyardFishIds)));
-  } catch (e) {}
-
   if (userProfile) {
     userProfile.backyardFishIds = Array.from(backyardFishIds);
+    if (typeof saveProfileToCache === "function") {
+      saveProfileToCache(currentUser.uid, userProfile);
+    }
   }
 
-  // Update in allPlayersList & session cache
+  // Update in allPlayersList & compact session cache
   var meInList = allPlayersList.find(function (p) { return p.uid === currentUser.uid; });
   if (meInList) {
     meInList.backyardFishIds = Array.from(backyardFishIds);
-    try {
-      sessionStorage.setItem(PLAYERS_CACHE_KEY, JSON.stringify({
-        timestamp: lastPlayersFetchTime,
-        list: allPlayersList
-      }));
-    } catch (e) {}
+    savePlayersSessionCache(lastPlayersFetchTime);
   }
 
   // Sync to Firestore
@@ -901,13 +974,23 @@ function renderModalBackyardOwners(fishId) {
   owners.forEach(function (p) {
     var isFriend = friendUids.has(p.uid);
     var av = p.avatarUrl || "🎣";
-    var avIcon = (av.startsWith("http://") || av.startsWith("https://")) ? "🎣" : av;
-    pillsHtml += '<span class="modal-backyard-owner-pill' + (isFriend ? ' is-friend' : '') + '" onclick="window.fishaoApp.openPlayerModal(\'' + p.uid + '\')" title="' + escapeHtml(p.displayName) + (isFriend ? ' (' + t('btn_friend_yes') + ')' : '') + '">' +
-      (isFriend ? '⭐ ' : '') + avIcon + ' ' + escapeHtml(p.displayName) +
-      '</span>';
+    var avIcon = (isValidHttpsUrl(av) || /^https?:\/\//i.test(av)) ? "🎣" : av;
+    pillsHtml += '<button type="button" class="modal-backyard-owner-pill' + (isFriend ? ' is-friend' : '') + '" data-uid="' + escapeHtml(p.uid) + '" title="' + escapeHtml(p.displayName) + (isFriend ? ' (' + escapeHtml(t('btn_friend_yes')) + ')' : '') + '">' +
+      (isFriend ? '⭐ ' : '') + escapeHtml(avIcon) + ' ' + escapeHtml(p.displayName) +
+      '</button>';
   });
 
-  box.innerHTML = '<div class="modal-backyard-owners-title">🏡 ' + t('modal_backyard_owners_title') + ' (' + owners.length + ')</div>' +
+  if (!box.dataset.boundOwnerClick) {
+    box.dataset.boundOwnerClick = "1";
+    box.addEventListener("click", function (ev) {
+      var pill = ev.target && ev.target.closest ? ev.target.closest(".modal-backyard-owner-pill") : null;
+      if (pill && pill.dataset.uid) {
+        openPlayerModal(pill.dataset.uid);
+      }
+    });
+  }
+
+  box.innerHTML = '<div class="modal-backyard-owners-title">🏡 ' + escapeHtml(t('modal_backyard_owners_title')) + ' (' + owners.length + ')</div>' +
     '<div class="modal-backyard-owners-list">' + pillsHtml + '</div>';
 }
 
@@ -970,7 +1053,7 @@ function renderProfileBackyardCatalog(searchTerm) {
 
     html += '<div class="catalog-fish-card ' + (isSelected ? 'selected' : '') + '" onclick="window.fishaoApp.toggleBackyardFish(' + fid + ')" title="' + escapeHtml(fName) + ' (' + stars + ')">' +
       (isSelected ? '<span class="catalog-fish-check">✓</span>' : '') +
-      '<img src="images/fish_' + fid + '.webp" alt="" onerror="this.onerror=null;this.style.display=\'none\';">' +
+      '<img src="images/fish_' + fid + '.webp" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
       '<span class="catalog-fish-name">' + escapeHtml(fName) + '</span>' +
       '<span class="catalog-fish-stars">' + stars + '</span>' +
     '</div>';
@@ -980,8 +1063,12 @@ function renderProfileBackyardCatalog(searchTerm) {
   container.innerHTML = html;
 }
 
+var _debouncedFilterBackyardCatalog = (typeof debounce === "function")
+  ? debounce(function (val) { renderProfileBackyardCatalog(val); }, 150)
+  : function (val) { renderProfileBackyardCatalog(val); };
+
 function filterBackyardCatalog(val) {
-  renderProfileBackyardCatalog(val);
+  _debouncedFilterBackyardCatalog(val);
 }
 
 /**
@@ -1006,7 +1093,7 @@ function renderBackyardProfilePicker() {
       var fName = fObj ? (window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(fObj) : fObj.name) : ('#' + fid);
       var stars = fObj ? '★'.repeat(fObj.rating || 1) : '';
       html += '<span class="profile-backyard-chip">' +
-        '<img src="images/fish_' + fid + '.webp" alt="" onerror="this.onerror=null;this.style.display=\'none\';">' +
+        '<img src="images/fish_' + fid + '.webp" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
         '<span>' + escapeHtml(fName) + '</span>' +
         '<span class="chip-stars">' + stars + '</span>' +
         '<button type="button" class="profile-backyard-chip-remove" onclick="window.fishaoApp.removeBackyardFish(' + fid + ')" title="' + escapeHtml(t('profile_chip_remove_title')) + '">&times;</button>' +
@@ -1055,7 +1142,7 @@ function onBackyardSearchInput(val) {
   matches.forEach(function (f) {
     var fName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
     html += '<div class="profile-backyard-sugg-item" onclick="window.fishaoApp.selectBackyardSearchResult(' + f.id + ')">' +
-      '<img src="images/fish_' + f.id + '.webp" alt="" onerror="this.onerror=null;this.style.display=\'none\';">' +
+      '<img src="images/fish_' + f.id + '.webp" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
       '<span style="font-weight: 600;">' + escapeHtml(fName) + '</span>' +
       '<span style="font-size: 11px; color: #2dd4bf; margin-left: auto;">' + escapeHtml(t('modal_btn_backyard_no')) + '</span>' +
       '</div>';
@@ -1100,13 +1187,17 @@ async function openPlayerModal(uid) {
   var clubMem = (currentClubMembersMap && currentClubMembersMap[uid]) || null;
   var isMe = !!(currentUser && uid === currentUser.uid);
 
-  // If not found in memory, try to load directly from Firestore
-  if (!player && !clubMem && db) {
+  // Check short in-memory cache for modal lookups
+  var cachedEntry = _playerProfileCache.get(uid);
+  if (cachedEntry && (Date.now() - cachedEntry.ts < PLAYER_MODAL_CACHE_TTL_MS)) {
+    player = cachedEntry.player;
+  } else if (!isMe && (!player || clubMem) && db) {
     try {
       var fsModule = await getFirestoreModule();
       var snap = await fsModule.getDoc(fsModule.doc(db, "users", uid));
       if (snap.exists()) {
         var d = snap.data();
+        var counts = computePlayerCatchCounts(d.caughtFishIds);
         player = {
           uid: uid,
           displayName: d.displayName || t('user_default_player'),
@@ -1114,61 +1205,15 @@ async function openPlayerModal(uid) {
           role: d.role || "member",
           clubId: d.clubId || "",
           clubName: d.clubName || "",
-          caughtFishIds: Array.isArray(d.caughtFishIds) ? d.caughtFishIds : [],
+          caughtCount: counts.caughtCount,
+          caughtClubCount: counts.caughtClubCount,
           backyardFishIds: Array.isArray(d.backyardFishIds) ? d.backyardFishIds : [],
           createdAt: d.createdAt || ""
         };
+        _playerProfileCache.set(uid, { ts: Date.now(), player: player });
       }
     } catch (e) {
       console.warn("Failed to load user doc for modal:", e);
-    }
-  }
-
-  // If clicking on another player in the active club, verify that their user doc still exists
-  if (!isMe && clubMem && db) {
-    try {
-      var fsModule = await getFirestoreModule();
-      var snap = await fsModule.getDoc(fsModule.doc(db, "users", uid));
-      if (!snap.exists()) {
-        // Player has deleted their account: auto-clean ghost member from club!
-        if (currentClubId) {
-          try {
-            var cRef = fsModule.doc(db, "clubs", currentClubId);
-            var cSnap = await fsModule.getDoc(cRef);
-            if (cSnap.exists()) {
-              var cData = cSnap.data();
-              var cnt = cData.memberCount || 1;
-              var delPatch = {
-                memberCount: Math.max(0, cnt - 1),
-                updatedAt: new Date().toISOString(),
-                lastUpdatedBy: currentUser.uid
-              };
-              delPatch["members." + uid] = fsModule.deleteField();
-              await fsModule.updateDoc(cRef, delPatch);
-            }
-          } catch (e) {
-            console.warn("Could not clean up ghost member:", e);
-          }
-        }
-        showToast(t('club_ghost_cleaned'), "info");
-        closePlayerModal();
-        return;
-      } else {
-        var d = snap.data();
-        player = {
-          uid: uid,
-          displayName: d.displayName || t('user_default_player'),
-          avatarUrl: d.avatarUrl || "🎣",
-          role: d.role || "member",
-          clubId: d.clubId || "",
-          clubName: d.clubName || "",
-          caughtFishIds: Array.isArray(d.caughtFishIds) ? d.caughtFishIds : [],
-          backyardFishIds: Array.isArray(d.backyardFishIds) ? d.backyardFishIds : [],
-          createdAt: d.createdAt || ""
-        };
-      }
-    } catch (e) {
-      console.warn("Could not verify user doc for modal:", e);
     }
   }
 
@@ -1188,10 +1233,14 @@ async function openPlayerModal(uid) {
   var clubName = (player && player.clubName) || (clubMem ? currentClubName : "");
 
   // Catches calculation
-  var cCaught = isMe ? caughtFishIds.size : ((player && player.caughtFishIds && player.caughtFishIds.length) || (clubMem && clubMem.caughtCount) || 0);
+  var cCaught = isMe
+    ? caughtFishIds.size
+    : ((player && typeof player.caughtCount === "number" ? player.caughtCount : ((player && player.caughtFishIds && player.caughtFishIds.length) || 0)) || (clubMem && clubMem.caughtCount) || 0);
   var cClub = 0;
   if (isMe) {
     clubFishes.forEach(function (cf) { if (caughtFishIds.has(cf.id)) cClub++; });
+  } else if (player && typeof player.caughtClubCount === "number") {
+    cClub = player.caughtClubCount;
   } else if (player && player.caughtFishIds) {
     clubFishes.forEach(function (cf) { if (player.caughtFishIds.indexOf(cf.id) !== -1) cClub++; });
   } else if (clubMem && clubMem.caughtClubCount !== undefined) {
