@@ -8,6 +8,49 @@
 var firebaseAnalytics = null;
 var analyticsModuleRef = null;
 
+var PROFILE_CACHE_KEY = 'fishao_cached_profile_v1';
+
+function saveProfileToCache(uid, profile) {
+  if (!uid || !profile) return;
+  try {
+    localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify({
+      uid: uid,
+      displayName: profile.displayName || "",
+      avatarUrl: profile.avatarUrl || "",
+      role: profile.role || "member",
+      clubId: profile.clubId || "",
+      clubName: profile.clubName || "",
+      caughtFishIds: Array.isArray(profile.caughtFishIds) ? profile.caughtFishIds : [],
+      backyardFishIds: Array.isArray(profile.backyardFishIds) ? profile.backyardFishIds : [],
+      friendUids: Array.isArray(profile.friendUids) ? profile.friendUids : []
+    }));
+  } catch (e) {}
+}
+
+function clearProfileCache() {
+  try {
+    localStorage.removeItem(PROFILE_CACHE_KEY);
+  } catch (e) {}
+}
+
+function hydrateProfileFromCache(uid) {
+  if (!uid) return false;
+  try {
+    var raw = localStorage.getItem(PROFILE_CACHE_KEY);
+    if (!raw) return false;
+    var cached = JSON.parse(raw);
+    if (!cached || cached.uid !== uid) return false;
+    userProfile = cached;
+    isAdmin = (cached.role === "admin");
+    caughtFishIds = new Set(Array.isArray(cached.caughtFishIds) ? cached.caughtFishIds : []);
+    backyardFishIds = new Set(Array.isArray(cached.backyardFishIds) ? cached.backyardFishIds : []);
+    friendUids = new Set(Array.isArray(cached.friendUids) ? cached.friendUids : []);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 async function initFirebaseSync() {
   if (!isFirebaseConfigured) {
     updateAuthUI();
@@ -16,17 +59,32 @@ async function initFirebaseSync() {
   }
 
   try {
-    var appModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
-    var firestoreModule = await getFirestoreModule();
-    var authModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+    var importPromises = [
+      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"),
+      getFirestoreModule(),
+      import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js")
+    ];
+    if (firebaseConfig.recaptchaSiteKey) {
+      if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+        self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+      }
+      importPromises.push(
+        import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js").catch(function (err) {
+          console.warn("[FISHAO AppCheck] Failed to load:", err);
+          return null;
+        })
+      );
+    }
+
+    var modules = await Promise.all(importPromises);
+    var appModule = modules[0];
+    var firestoreModule = modules[1];
+    var authModule = modules[2];
+    var appCheckModule = modules[3] || null;
 
     firebaseApp = appModule.initializeApp(firebaseConfig);
-    if (firebaseConfig.recaptchaSiteKey) {
+    if (firebaseConfig.recaptchaSiteKey && appCheckModule) {
       try {
-        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-          self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-        }
-        var appCheckModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js");
         appCheckModule.initializeAppCheck(firebaseApp, {
           provider: new appCheckModule.ReCaptchaEnterpriseProvider(firebaseConfig.recaptchaSiteKey),
           isTokenAutoRefreshEnabled: true
@@ -60,9 +118,22 @@ async function initFirebaseSync() {
 
       if (user) {
         wasSignedIn = true;
-        loadUserProfile(user);
+        var hadCached = hydrateProfileFromCache(user.uid);
+        if (hadCached) {
+          if (userProfile.clubId) {
+            bindClubListener(userProfile.clubId);
+          }
+          updateAuthUI();
+          updateCaughtStats();
+          applyFilters();
+        } else {
+          updateAuthUI();
+        }
+        loadUserProfile(user, hadCached);
+        return;
       } else {
         wasSignedIn = false;
+        clearProfileCache();
         if (isInitialGuest) {
           updateAuthUI();
           return;
@@ -357,115 +428,139 @@ async function signOut() {
   }
 }
 
-async function loadUserProfile(user) {
+async function loadUserProfile(user, hadCachedProfile) {
   if (!db) return;
   try {
     var fsModule = await getFirestoreModule();
     var userDocRef = fsModule.doc(db, "users", user.uid);
-    var docSnap = await fsModule.getDoc(userDocRef);
-
-    var isNewUser = !docSnap.exists();
-    if (docSnap.exists()) {
-      userProfile = docSnap.data();
-      fsModule.updateDoc(userDocRef, { lastLogin: new Date().toISOString() });
-    } else {
-      // Privacy / GDPR: zero PII (NO email, NO avatar photo stored)
-      var defaultNick = t('user_default_player') + " #" + Math.floor(1000 + Math.random() * 9000);
-      userProfile = {
-        displayName: defaultNick,
-        role: "member",
-        clubId: "",
-        clubName: "",
-        caughtFishIds: Array.from(caughtFishIds),
-        backyardFishIds: Array.from(backyardFishIds),
-        friendUids: Array.from(friendUids),
-        reminders: (typeof userReminders !== 'undefined' && Array.isArray(userReminders)) ? userReminders : [],
-        createdAt: new Date().toISOString(),
-        lastLogin: new Date().toISOString()
-      };
-      await fsModule.setDoc(userDocRef, userProfile);
-    }
-
-    isAdmin = (userProfile.role === "admin");
-    if (userProfile.caughtFishIds && Array.isArray(userProfile.caughtFishIds)) {
-      caughtFishIds = new Set(userProfile.caughtFishIds);
-    }
-    if (userProfile.backyardFishIds && Array.isArray(userProfile.backyardFishIds)) {
-      backyardFishIds = new Set(userProfile.backyardFishIds);
-    }
-    if (userProfile.friendUids && Array.isArray(userProfile.friendUids)) {
-      friendUids = new Set(userProfile.friendUids);
-    }
-    if (typeof syncRemindersFromProfile === 'function') {
-      syncRemindersFromProfile(userProfile);
-    }
-
-    if (userProfile.clubId) {
-      bindClubListener(userProfile.clubId);
-    } else {
-      unbindClubListener();
-    }
-
-    updateAuthUI();
-    updateCaughtStats();
-    applyFilters();
-
-    // Automatically prompt new users to set their custom nickname and avatar
-    var nickStorageKey = 'fishao_nick_prompted_' + user.uid;
-    var hasDefaultNick = userProfile && userProfile.displayName && (
-      userProfile.displayName.startsWith(t('user_default_player')) ||
-      userProfile.displayName.startsWith("Rybář #") ||
-      userProfile.displayName.startsWith("Angler #") ||
-      userProfile.displayName.startsWith("Gracz #") ||
-      userProfile.displayName.startsWith("Wędkarz #") ||
-      userProfile.displayName.startsWith("Player #")
-    );
-    if (isNewUser || (hasDefaultNick && localStorage.getItem(nickStorageKey) !== '1')) {
-      localStorage.setItem(nickStorageKey, '1');
-      setTimeout(function () {
-        openProfileModal();
-        var nickInput = document.getElementById("inputProfileNickname");
-        if (nickInput) {
-          nickInput.focus();
-          nickInput.select();
-        }
-        showToast(t('auth_welcome_new_user'), 'info');
-      }, 450);
-    }
 
     if (userUnsubscribe) {
       userUnsubscribe();
       userUnsubscribe = null;
     }
 
-    userUnsubscribe = fsModule.onSnapshot(userDocRef, function (snap) {
+    var handledFirstSnapshot = false;
+    var lastAppliedProfileSig = "";
+    if (hadCachedProfile && userProfile) {
+      try {
+        lastAppliedProfileSig = JSON.stringify({
+          displayName: userProfile.displayName || "",
+          avatarUrl: userProfile.avatarUrl || "",
+          role: userProfile.role || "member",
+          clubId: userProfile.clubId || "",
+          caughtFishIds: userProfile.caughtFishIds || [],
+          backyardFishIds: userProfile.backyardFishIds || [],
+          friendUids: userProfile.friendUids || []
+        });
+      } catch (e) {}
+    }
+
+    userUnsubscribe = fsModule.onSnapshot(userDocRef, async function (snap) {
+      var isFirst = !handledFirstSnapshot;
+      handledFirstSnapshot = true;
+
+      var isNewUser = !snap.exists();
+      var oldClubId = userProfile ? userProfile.clubId : "";
+
       if (snap.exists()) {
-        var updated = snap.data();
-        var oldClubId = userProfile ? userProfile.clubId : "";
-        userProfile = updated;
-        isAdmin = (userProfile.role === "admin");
-        if (userProfile.caughtFishIds && Array.isArray(userProfile.caughtFishIds)) {
-          caughtFishIds = new Set(userProfile.caughtFishIds);
+        userProfile = snap.data();
+
+        // Throttle lastLogin write to once every 15 minutes to avoid redundant snapshot round-trips
+        if (isFirst) {
+          try {
+            var loginSyncKey = 'fishao_last_login_sync_' + user.uid;
+            var lastSync = parseInt(localStorage.getItem(loginSyncKey) || '0', 10);
+            if (!lastSync || (Date.now() - lastSync) > 15 * 60 * 1000) {
+              localStorage.setItem(loginSyncKey, String(Date.now()));
+              fsModule.updateDoc(userDocRef, { lastLogin: new Date().toISOString() }).catch(function () {});
+            }
+          } catch (e) {}
         }
-        if (userProfile.backyardFishIds && Array.isArray(userProfile.backyardFishIds)) {
-          backyardFishIds = new Set(userProfile.backyardFishIds);
+      } else {
+        // Privacy / GDPR: zero PII (NO email, NO avatar photo stored)
+        var defaultNick = t('user_default_player') + " #" + Math.floor(1000 + Math.random() * 9000);
+        userProfile = {
+          displayName: defaultNick,
+          role: "member",
+          clubId: "",
+          clubName: "",
+          caughtFishIds: Array.from(caughtFishIds),
+          backyardFishIds: Array.from(backyardFishIds),
+          friendUids: Array.from(friendUids),
+          reminders: (typeof userReminders !== 'undefined' && Array.isArray(userReminders)) ? userReminders : [],
+          createdAt: new Date().toISOString(),
+          lastLogin: new Date().toISOString()
+        };
+        await fsModule.setDoc(userDocRef, userProfile);
+      }
+
+      isAdmin = (userProfile.role === "admin");
+      if (userProfile.caughtFishIds && Array.isArray(userProfile.caughtFishIds)) {
+        caughtFishIds = new Set(userProfile.caughtFishIds);
+      }
+      if (userProfile.backyardFishIds && Array.isArray(userProfile.backyardFishIds)) {
+        backyardFishIds = new Set(userProfile.backyardFishIds);
+      }
+      if (userProfile.friendUids && Array.isArray(userProfile.friendUids)) {
+        friendUids = new Set(userProfile.friendUids);
+      }
+      if (typeof syncRemindersFromProfile === 'function') {
+        syncRemindersFromProfile(userProfile);
+      }
+
+      saveProfileToCache(user.uid, userProfile);
+
+      if (isFirst || userProfile.clubId !== oldClubId) {
+        if (userProfile.clubId) {
+          bindClubListener(userProfile.clubId);
+        } else {
+          unbindClubListener();
         }
-        if (userProfile.friendUids && Array.isArray(userProfile.friendUids)) {
-          friendUids = new Set(userProfile.friendUids);
-        }
-        if (typeof syncRemindersFromProfile === 'function') {
-          syncRemindersFromProfile(userProfile);
-        }
-        if (userProfile.clubId !== oldClubId) {
-          if (userProfile.clubId) {
-            bindClubListener(userProfile.clubId);
-          } else {
-            unbindClubListener();
-          }
-        }
+      }
+
+      var nextSig = "";
+      try {
+        nextSig = JSON.stringify({
+          displayName: userProfile.displayName || "",
+          avatarUrl: userProfile.avatarUrl || "",
+          role: userProfile.role || "member",
+          clubId: userProfile.clubId || "",
+          caughtFishIds: userProfile.caughtFishIds || [],
+          backyardFishIds: userProfile.backyardFishIds || [],
+          friendUids: userProfile.friendUids || []
+        });
+      } catch (e) {}
+
+      if (!nextSig || nextSig !== lastAppliedProfileSig) {
+        lastAppliedProfileSig = nextSig;
         updateAuthUI();
         updateCaughtStats();
         applyFilters();
+      }
+
+      if (isFirst) {
+        // Automatically prompt new users to set their custom nickname and avatar
+        var nickStorageKey = 'fishao_nick_prompted_' + user.uid;
+        var hasDefaultNick = userProfile && userProfile.displayName && (
+          userProfile.displayName.startsWith(t('user_default_player')) ||
+          userProfile.displayName.startsWith("Rybář #") ||
+          userProfile.displayName.startsWith("Angler #") ||
+          userProfile.displayName.startsWith("Gracz #") ||
+          userProfile.displayName.startsWith("Wędkarz #") ||
+          userProfile.displayName.startsWith("Player #")
+        );
+        if (isNewUser || (hasDefaultNick && localStorage.getItem(nickStorageKey) !== '1')) {
+          localStorage.setItem(nickStorageKey, '1');
+          setTimeout(function () {
+            openProfileModal();
+            var nickInput = document.getElementById("inputProfileNickname");
+            if (nickInput) {
+              nickInput.focus();
+              nickInput.select();
+            }
+            showToast(t('auth_welcome_new_user'), 'info');
+          }, 450);
+        }
       }
     }, function (err) {
       console.warn("User profile snapshot warning:", err);
