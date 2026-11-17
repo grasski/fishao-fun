@@ -11,7 +11,8 @@
  * Environment:
  *   FIREBASE_SERVICE_ACCOUNT  JSON string of a Firebase service account key
  *                             (required unless --dry-run is passed).
- *   FORCE_SYNC=1              Allow running on Sunday (UTC) if needed.
+ *   FORCE_SYNC=1              Allow running on Sunday (UTC) or re-syncing on
+ *                             the same day if needed.
  */
 
 import fs from 'node:fs';
@@ -128,7 +129,7 @@ function loadFishIds() {
   return ids;
 }
 
-async function writeToFirestore(fetchedPrices, todayISO) {
+async function initFirestore() {
   const rawCreds = process.env.FIREBASE_SERVICE_ACCOUNT;
   if (!rawCreds) {
     throw new Error('Missing FIREBASE_SERVICE_ACCOUNT environment variable.');
@@ -140,7 +141,27 @@ async function writeToFirestore(fetchedPrices, todayISO) {
   const serviceAccount = JSON.parse(rawCreds);
   initializeApp({ credential: cert(serviceAccount) });
 
-  const db = getFirestore();
+  return getFirestore();
+}
+
+async function getTodaySyncStatus(db, todayISO) {
+  const snap = await db.collection('fishao_market').doc('sync_status').get();
+  if (!snap.exists) return null;
+  const data = snap.data();
+  return data?.lastSuccessDate === todayISO ? data : null;
+}
+
+async function markTodaySynced(db, todayISO, stats) {
+  await db.collection('fishao_market').doc('sync_status').set({
+    lastSuccessDate: todayISO,
+    lastSuccessAt: new Date().toISOString(),
+    pricesFetched: stats.pricesFetched,
+    addedCount: stats.addedCount,
+    duplicateCount: stats.duplicateCount
+  });
+}
+
+async function writeToFirestore(db, fetchedPrices, todayISO) {
   const docRef = db.collection('fishao_market').doc('prices_history');
 
   let addedCount = 0;
@@ -210,6 +231,24 @@ async function main() {
     return;
   }
 
+  let db = null;
+  if (!args.dryRun) {
+    db = await initFirestore();
+    if (!process.env.FORCE_SYNC) {
+      const existingSync = await getTodaySyncStatus(db, todayISO);
+      if (existingSync) {
+        const syncedAt = existingSync.lastSuccessAt || todayISO;
+        console.log(`[${todayISO}] Already synced today at ${syncedAt}. Skipping fetch.`);
+        writeStepSummary([
+          `## Fish Market Sync (${todayISO})`,
+          '',
+          `⏭️ **Skipped:** Market prices were already synced today at \`${syncedAt}\`.`
+        ]);
+        return;
+      }
+    }
+  }
+
   let fishIds = loadFishIds();
   if (args.limit > 0) {
     fishIds = fishIds.slice(0, args.limit);
@@ -260,7 +299,14 @@ async function main() {
     throw new Error('No prices were fetched; aborting Firestore write.');
   }
 
-  const { addedCount, duplicateCount, addedSample } = await writeToFirestore(ok, todayISO);
+  const { addedCount, duplicateCount, addedSample } = await writeToFirestore(db, ok, todayISO);
+  if (args.limit === 0) {
+    await markTodaySynced(db, todayISO, {
+      pricesFetched: ok.length,
+      addedCount,
+      duplicateCount
+    });
+  }
   console.log(
     `Firestore sync complete: ${addedCount} new price entries added, ` +
     `${duplicateCount} same-day duplicates skipped.`

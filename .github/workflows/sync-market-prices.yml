@@ -10,6 +10,10 @@ on:
         description: 'Fetch prices without writing to Firestore'
         type: boolean
         default: false
+      force:
+        description: 'Force sync even if already synced today (or on Sunday)'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -33,6 +37,7 @@ jobs:
       - name: Sync market prices to Firestore
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FORCE_SYNC: ${{ inputs.force && '1' || '' }}
         run: |
           if [ "${{ inputs.dry_run }}" = "true" ]; then
             node scripts/sync-market-prices.mjs --dry-run
