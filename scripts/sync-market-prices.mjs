@@ -23,6 +23,8 @@ const BASE_URL = 'https://www.fishao.net/wiki/fish';
 const CONCURRENCY = 12;
 const REQUEST_TIMEOUT_MS = 10000;
 const MAX_RETRIES = 2;
+const FIRESTORE_DOC_LIMIT_BYTES = 1024 * 1024;
+const SUMMARY_WARN_THRESHOLD_BYTES = 700 * 1024;
 
 function parseArgs(argv) {
   const args = { dryRun: false, migrateOnly: false, limit: 0 };
@@ -162,6 +164,64 @@ async function initFirestore() {
   return getFirestore();
 }
 
+function estimateFirestoreValueBytes(val) {
+  if (val === null || val === undefined || typeof val === 'boolean') return 1;
+  if (typeof val === 'number') return 8;
+  if (typeof val === 'string') return Buffer.byteLength(val, 'utf8') + 1;
+  if (Array.isArray(val)) {
+    let sum = 0;
+    for (let i = 0; i < val.length; i++) {
+      sum += estimateFirestoreValueBytes(val[i]);
+    }
+    return sum;
+  }
+  if (typeof val === 'object') {
+    let sum = 32; // Nested map / document overhead
+    for (const [k, v] of Object.entries(val)) {
+      if (v === undefined) continue;
+      sum += Buffer.byteLength(k, 'utf8') + 1 + estimateFirestoreValueBytes(v);
+    }
+    return sum;
+  }
+  return 0;
+}
+
+function estimateFirestoreDocBytes(collectionId, docId, data) {
+  const nameBytes =
+    Buffer.byteLength(collectionId, 'utf8') + 1 +
+    Buffer.byteLength(docId, 'utf8') + 1 +
+    16;
+  return nameBytes + estimateFirestoreValueBytes(data || {});
+}
+
+function measureSummaryDocument(summaryPrices, lastUpdated) {
+  const safePrices = (summaryPrices && typeof summaryPrices === 'object') ? summaryPrices : {};
+  let fishCount = 0;
+  let uniquePrices = 0;
+
+  for (const fishSum of Object.values(safePrices)) {
+    if (!fishSum || typeof fishSum !== 'object') continue;
+    fishCount++;
+    if (fishSum.byPrice && typeof fishSum.byPrice === 'object') {
+      uniquePrices += Object.keys(fishSum.byPrice).length;
+    }
+  }
+
+  const payload = { prices: safePrices, lastUpdated: lastUpdated || '' };
+  const jsonBytes = Buffer.byteLength(JSON.stringify(payload), 'utf8');
+  const firestoreBytes = estimateFirestoreDocBytes('fishao_market', 'prices_summary', payload);
+  const limitPct = Number(((firestoreBytes / FIRESTORE_DOC_LIMIT_BYTES) * 100).toFixed(1));
+
+  return {
+    fishCount,
+    uniquePrices,
+    jsonBytes,
+    firestoreBytes,
+    limitPct,
+    isNearLimit: firestoreBytes >= SUMMARY_WARN_THRESHOLD_BYTES
+  };
+}
+
 async function getTodaySyncStatus(db, todayISO) {
   const snap = await db.collection('fishao_market').doc('sync_status').get();
   if (!snap.exists) return null;
@@ -170,13 +230,19 @@ async function getTodaySyncStatus(db, todayISO) {
 }
 
 async function markTodaySynced(db, todayISO, stats) {
-  await db.collection('fishao_market').doc('sync_status').set({
+  const doc = {
     lastSuccessDate: todayISO,
     lastSuccessAt: new Date().toISOString(),
     pricesFetched: stats.pricesFetched,
     addedCount: stats.addedCount,
     duplicateCount: stats.duplicateCount
-  });
+  };
+  if (stats.summaryMetrics) {
+    doc.summaryBytes = stats.summaryMetrics.firestoreBytes;
+    doc.summaryLimitPct = stats.summaryMetrics.limitPct;
+    doc.summaryUniquePrices = stats.summaryMetrics.uniquePrices;
+  }
+  await db.collection('fishao_market').doc('sync_status').set(doc);
 }
 
 function toDayEntryList(rawVal) {
@@ -301,11 +367,7 @@ async function writeToFirestore(db, fetchedPrices, todayISO) {
   const monthId = todayISO.slice(0, 7);
   const dailyRef = db.collection('fishao_market_daily').doc(monthId);
 
-  let addedCount = 0;
-  let duplicateCount = 0;
-  const addedSample = [];
-
-  await db.runTransaction(async (tx) => {
+  const txResult = await db.runTransaction(async (tx) => {
     const [summarySnap, dailySnap] = await Promise.all([
       tx.get(summaryRef),
       tx.get(dailyRef)
@@ -324,26 +386,32 @@ async function writeToFirestore(db, fetchedPrices, todayISO) {
       ? { ...days[todayISO] }
       : {};
 
+    let txAdded = 0;
+    let txDupes = 0;
+    const txSample = [];
+
     for (const { id, price } of fetchedPrices) {
       const key = String(id);
       const dayList = toDayEntryList(dayBucket[key]);
 
       if (dayList.includes(price)) {
-        duplicateCount++;
+        txDupes++;
         continue;
       }
 
       dayList.push(price);
       dayBucket[key] = encodeDayEntryList(dayList);
       applyPriceToSummary(summaryPrices, key, todayISO, price, todayISO);
-      addedCount++;
-      if (addedSample.length < 15) {
-        addedSample.push({ id, price });
+      txAdded++;
+      if (txSample.length < 15) {
+        txSample.push({ id, price });
       }
     }
 
-    if (addedCount > 0) {
+    let finalLastUpdated = (typeof summaryData?.lastUpdated === 'string') ? summaryData.lastUpdated : '';
+    if (txAdded > 0) {
       const nowIso = new Date().toISOString();
+      finalLastUpdated = nowIso;
       days[todayISO] = dayBucket;
       tx.set(summaryRef, {
         prices: summaryPrices,
@@ -354,9 +422,23 @@ async function writeToFirestore(db, fetchedPrices, todayISO) {
         lastUpdated: nowIso
       });
     }
+
+    return {
+      addedCount: txAdded,
+      duplicateCount: txDupes,
+      addedSample: txSample,
+      summaryPrices,
+      lastUpdated: finalLastUpdated
+    };
   });
 
-  return { addedCount, duplicateCount, addedSample };
+  const summaryMetrics = measureSummaryDocument(txResult.summaryPrices, txResult.lastUpdated);
+  return {
+    addedCount: txResult.addedCount,
+    duplicateCount: txResult.duplicateCount,
+    addedSample: txResult.addedSample,
+    summaryMetrics
+  };
 }
 
 function writeStepSummary(lines) {
@@ -460,18 +542,29 @@ async function main() {
     throw new Error('No prices were fetched; aborting Firestore write.');
   }
 
-  const { addedCount, duplicateCount, addedSample } = await writeToFirestore(db, ok, todayISO);
+  const { addedCount, duplicateCount, addedSample, summaryMetrics } = await writeToFirestore(db, ok, todayISO);
   if (args.limit === 0) {
     await markTodaySynced(db, todayISO, {
       pricesFetched: ok.length,
       addedCount,
-      duplicateCount
+      duplicateCount,
+      summaryMetrics
     });
   }
+  const fsKb = (summaryMetrics.firestoreBytes / 1024).toFixed(1);
+  const jsonKb = (summaryMetrics.jsonBytes / 1024).toFixed(1);
   console.log(
     `Firestore sync complete: ${addedCount} new price entries added, ` +
-    `${duplicateCount} same-day duplicates skipped.`
+    `${duplicateCount} same-day duplicates skipped. ` +
+    `prices_summary size: ${fsKb} KB / 1024 KB (${summaryMetrics.limitPct}% Firestore est., ` +
+    `${jsonKb} KB JSON, ${summaryMetrics.uniquePrices} unique prices across ${summaryMetrics.fishCount} fish).`
   );
+  if (summaryMetrics.isNearLimit) {
+    console.warn(
+      `::warning::fishao_market/prices_summary reached ${fsKb} KB (${summaryMetrics.limitPct}% of 1 MiB limit). ` +
+      `Consider compacting entries or sharding summaries from fishao_market_daily.`
+    );
+  }
 
   const summaryLines = [
     `## Fish Market Sync (${todayISO})`,
@@ -484,8 +577,18 @@ async function main() {
     `| Without market price | ${noPrice.length} |`,
     `| Errors | ${errors.length} |`,
     `| **New prices added** | **${addedCount}** |`,
-    `| Same-day duplicates skipped | ${duplicateCount} |`
+    `| Same-day duplicates skipped | ${duplicateCount} |`,
+    `| Unique prices in summary | ${summaryMetrics.uniquePrices} (${summaryMetrics.fishCount} fish) |`,
+    `| \`prices_summary\` size (est.) | ${fsKb} KB / 1,024 KB (${summaryMetrics.limitPct}%) |`
   ];
+
+  if (summaryMetrics.isNearLimit) {
+    summaryLines.push(
+      '',
+      '> [!WARNING]',
+      `> \`fishao_market/prices_summary\` reached **${fsKb} KB (${summaryMetrics.limitPct}%)** of Firestore's 1 MiB document limit (JSON: ${jsonKb} KB). Time to switch to compact strings or sharded summary docs using \`fishao_market_daily\`.`
+    );
+  }
 
   if (addedSample.length > 0) {
     const preview = addedSample.map((e) => `#${e.id}: ${e.price} FB`).join(', ');

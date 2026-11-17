@@ -147,7 +147,7 @@ In memory (`js/state.js` / `js/market.js`), `summaryMapToPriceHistory(priceSumma
 * `/fishao_market/prices_history`:
   * Legacy flat price history doc kept read-compatible during migration (`--migrate-only`).
 * `/fishao_market/sync_status`:
-  * Compact `{ lastSuccessDate, lastSuccessAt, pricesFetched, addedCount, duplicateCount }` marker used both for daily idempotency in `.github/workflows/sync-market-prices.yml` (primary external **cron-job.org** trigger at **00:02 UTC** via `workflow_dispatch`, fallback GitHub `schedule` at **00:05 UTC**) and by `js/auth.js` for cheap staleness checks when `manualImportEnabled == false`.
+  * Compact `{ lastSuccessDate, lastSuccessAt, pricesFetched, addedCount, duplicateCount, summaryBytes?, summaryLimitPct?, summaryUniquePrices? }` marker used both for daily idempotency in `.github/workflows/sync-market-prices.yml` (primary external **cron-job.org** trigger at **00:02 UTC** via `workflow_dispatch`, fallback GitHub `schedule` at **00:05 UTC**), `prices_summary` size monitoring (logs GitHub warning at >= 700 KiB), and by `js/auth.js` for cheap staleness checks when `manualImportEnabled == false`.
 * `/fishao_market/config`:
   * Document `config`: Feature flag document `{ manualImportEnabled: boolean, lastUpdated: string }`.
   * Readable by everyone; writable only by admins (`isAdmin()`), restricted to keys `['manualImportEnabled', 'lastUpdated']` with `manualImportEnabled is bool`.
