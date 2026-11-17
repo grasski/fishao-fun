@@ -715,7 +715,6 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
     var userDocExists = false;
     var lastAppliedProfileSig = "";
     var activeBoundClubId = cachedClubId || "";
-    var legacyMigrationDone = false;
 
     if (hadCachedProfile && userProfile) {
       try {
@@ -778,31 +777,6 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
       if (snap.exists()) {
         var rawData = snap.data() || {};
         userProfile = rawData;
-
-        // Auto-migrate legacy private fields from /users/{uid} into /users/{uid}/private/settings
-        if (!legacyMigrationDone && (rawData.friendUids !== undefined || rawData.reminders !== undefined || rawData.lastLogin !== undefined)) {
-          legacyMigrationDone = true;
-          try {
-            var migPayload = { updatedAt: new Date().toISOString() };
-            if (Array.isArray(rawData.friendUids)) {
-              friendUids = new Set(rawData.friendUids);
-              migPayload.friendUids = rawData.friendUids;
-            }
-            if (Array.isArray(rawData.reminders)) {
-              if (typeof syncRemindersFromProfile === "function") syncRemindersFromProfile({ reminders: rawData.reminders });
-              migPayload.reminders = rawData.reminders;
-            }
-            migPayload.lastLogin = rawData.lastLogin || new Date().toISOString();
-            await fsModule.setDoc(privDocRef, migPayload, { merge: true });
-            var cleanupUpdate = {};
-            if (rawData.friendUids !== undefined) cleanupUpdate.friendUids = fsModule.deleteField();
-            if (rawData.reminders !== undefined) cleanupUpdate.reminders = fsModule.deleteField();
-            if (rawData.lastLogin !== undefined) cleanupUpdate.lastLogin = fsModule.deleteField();
-            await fsModule.updateDoc(userDocRef, cleanupUpdate);
-          } catch (migErr) {
-            console.warn("Private profile migration deferred:", migErr);
-          }
-        }
 
         // Throttle lastLogin write (onto private settings) to once every 15 minutes
         if (isFirst) {

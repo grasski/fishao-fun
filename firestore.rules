@@ -224,7 +224,7 @@ service cloud.firestore {
              'displayName', 'clubId', 'clubName', 'caughtFishIds', 'backyardFishIds', 'avatarUrl'
            ])
         && request.resource.data.diff(resource.data).removedKeys().hasOnly([
-             'friendUids', 'reminders', 'lastLogin', 'avatarUrl'
+             'avatarUrl'
            ])
         && validPublicUserFields())
         || isAdmin();
