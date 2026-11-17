@@ -11,7 +11,7 @@ service cloud.firestore {
     }
 
     // Market prices: public read, update allowed for authenticated users (cannot delete, strictly prices_history only)
-    // Estimated prices: public read, admin-only write for estimated_prices
+    // Estimated prices & market config: public read, admin-only write
     match /fishao_market/{docId} {
       allow read: if true;
       allow create: if (request.auth != null
@@ -21,7 +21,11 @@ service cloud.firestore {
         || (isAdmin()
         && docId == 'estimated_prices'
         && request.resource.data.keys().hasOnly(['prices', 'lastUpdated', 'note'])
-        && request.resource.data.prices is map);
+        && request.resource.data.prices is map)
+        || (isAdmin()
+        && docId == 'config'
+        && request.resource.data.keys().hasOnly(['manualImportEnabled', 'lastUpdated'])
+        && request.resource.data.manualImportEnabled is bool);
       allow update: if (request.auth != null
         && docId == 'prices_history'
         && request.resource.data.keys().hasOnly(['prices', 'lastUpdated'])
@@ -30,7 +34,11 @@ service cloud.firestore {
         || (isAdmin()
         && docId == 'estimated_prices'
         && request.resource.data.keys().hasOnly(['prices', 'lastUpdated', 'note'])
-        && request.resource.data.prices is map);
+        && request.resource.data.prices is map)
+        || (isAdmin()
+        && docId == 'config'
+        && request.resource.data.keys().hasOnly(['manualImportEnabled', 'lastUpdated'])
+        && request.resource.data.manualImportEnabled is bool);
       allow delete: if isAdmin();
     }
 

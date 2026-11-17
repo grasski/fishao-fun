@@ -561,6 +561,7 @@ window.fishaoApp = {
   saveProfile: saveProfile,
   deleteAccount: deleteAccount,
   exportFirestoreBackup: exportFirestoreBackup,
+  toggleManualImportFlag: toggleManualImportFlag,
   resolveConfirmModal: resolveConfirmModal,
   showToast: showToast,
   toggleCaughtFish: toggleCaughtFish,

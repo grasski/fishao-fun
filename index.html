@@ -383,7 +383,8 @@
         <span class="action-bar-title" style="color: #34d399;" data-i18n="market_bar_title">💵 Fish Market:</span>
         <span class="action-bar-hint" id="marketStatsSummary" data-i18n="market_bar_subtitle">Komunitní katalog známých výkupních cen (FB)</span>
       </div>
-      <div class="action-bar-right">
+      <!-- Temporarily hidden while prices are uploaded automatically; kept for manual fallback -->
+      <div class="action-bar-right" id="marketImportActionBarRight" style="display: none;">
         <button class="btn-action sm" onclick="window.fishaoApp.openBulkModal()"
           title="Hromadný import cen do Fish Marketu" data-i18n="market_btn_import" data-i18n-title="market_btn_import">
           📥 Import cen do Marketu </button>
@@ -1466,6 +1467,20 @@
               📥 <span data-i18n="admin_backup_btn">Zálohovat databázi (JSON)</span>
             </button>
           </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(56, 189, 248, 0.2);">
+            <div style="flex: 1; min-width: 200px;">
+              <div style="font-size: 12.5px; font-weight: 700; color: #e2e8f0; display: flex; align-items: center; gap: 6px;">
+                <span>💵</span> <span data-i18n="admin_manual_import_title">Ruční import a zadávání cen (Market)</span>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" data-i18n="admin_manual_import_desc">
+                Povolí hráčům ruční zadávání cen v detailu ryby i hromadný import v Marketu (záložní režim při výpadku automatiky).
+              </div>
+            </div>
+            <button type="button" id="btnAdminToggleManualImport" class="pill-btn" onclick="window.fishaoApp.toggleManualImportFlag()" aria-pressed="false" style="height: 32px; padding: 0 14px; font-size: 12px; font-weight: 700;">
+              <span id="btnAdminToggleManualImportText" data-i18n="admin_manual_import_off">⚪ Vypnuto</span>
+            </button>
+          </div>
         </div>
 
         <!-- Action buttons -->
@@ -1777,9 +1792,9 @@
   <div id="appToast" class="app-toast" style="display: none;"></div>
 
   <!-- Data scripts and localization -->
-  <script src="data/i18n/ui_cs.js?v=5.5"></script>
-  <script src="data/i18n/ui_en.js?v=5.5"></script>
-  <script src="data/i18n/ui_pl.js?v=5.5"></script>
+  <script src="data/i18n/ui_cs.js?v=5.6"></script>
+  <script src="data/i18n/ui_en.js?v=5.6"></script>
+  <script src="data/i18n/ui_pl.js?v=5.6"></script>
   <script src="data/i18n/taxonomies.js?v=3.4"></script>
   <script src="data/i18n/fish_names.js?v=3.3"></script>
   <script src="data/i18n.js?v=3.2"></script>
@@ -1788,18 +1803,18 @@
   <script src="data/estimated_prices.js?v=1.0"></script>
   <script src="firebase-config.js?v=3.2"></script>
   <!-- Modular FISHAO Application Logic -->
-  <script src="js/state.js?v=4.8"></script>
+  <script src="js/state.js?v=4.9"></script>
   <script src="js/firestore-tx.js?v=3.2"></script>
   <script src="js/table.js?v=4.1"></script>
   <script src="js/clubs.js?v=3.9"></script>
-  <script src="js/market.js?v=4.15"></script>
+  <script src="js/market.js?v=4.16"></script>
   <script src="js/filters.js?v=4.5"></script>
-  <script src="js/auth.js?v=4.2"></script>
+  <script src="js/auth.js?v=4.3"></script>
   <script src="js/players.js?v=3.9"></script>
   <script src="js/locations.js?v=1.1"></script>
   <script src="js/calendar.js?v=1.0"></script>
   <script src="js/reminders.js?v=1.1"></script>
-  <script src="js/main.js?v=4.8"></script>
+  <script src="js/main.js?v=4.9"></script>
 
 </body>
 

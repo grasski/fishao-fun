@@ -39,6 +39,7 @@ async function initFirebaseSync() {
     auth = authModule.getAuth(firebaseApp);
     firebaseDocRef = firestoreModule.doc(db, "fishao_market", "prices_history");
     estimatedPricesDocRef = firestoreModule.doc(db, "fishao_market", "estimated_prices");
+    marketConfigDocRef = firestoreModule.doc(db, "fishao_market", "config");
 
     checkCookieConsentBanner();
     if (localStorage.getItem("fishao_cookie_consent") === "granted") {
@@ -116,6 +117,16 @@ async function initFirebaseSync() {
       }
     }, function (error) {
       console.warn("Firestore estimated prices warning:", error);
+    });
+
+    firestoreModule.onSnapshot(marketConfigDocRef, function (docSnap) {
+      var data = docSnap.exists() ? docSnap.data() : null;
+      manualImportEnabled = !!(data && data.manualImportEnabled === true);
+      if (typeof syncManualImportVisibility === "function") {
+        syncManualImportVisibility();
+      }
+    }, function (error) {
+      console.warn("Firestore market config warning:", error);
     });
 
   } catch (err) {
@@ -490,6 +501,7 @@ function updateAuthUI() {
 
     // Admin-only action column in the fish modal price history.
     if (typeof syncPriceHistoryActionColumn === "function") syncPriceHistoryActionColumn();
+    if (typeof syncManualImportVisibility === "function") syncManualImportVisibility();
     if (selectedModalFishId && typeof renderModalHistory === "function") {
       renderModalHistory(selectedModalFishId);
     }
@@ -591,6 +603,9 @@ function openProfileModal() {
   var adminSection = document.getElementById("profileAdminSection");
   if (adminSection) {
     adminSection.style.display = (userProfile && userProfile.role === 'admin') ? "block" : "none";
+  }
+  if (typeof syncManualImportVisibility === "function") {
+    syncManualImportVisibility();
   }
 
   if (overlay) overlay.classList.add("active");

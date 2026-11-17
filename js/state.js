@@ -167,7 +167,11 @@ var db = null;
 var auth = null;
 var firebaseDocRef = null;
 var estimatedPricesDocRef = null;
+var marketConfigDocRef = null;
 var firebaseApp = null;
+
+// Remote feature flag (/fishao_market/config -> manualImportEnabled)
+var manualImportEnabled = false;
 
 // Market price history
 var priceHistory = {};

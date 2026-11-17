@@ -128,6 +128,10 @@ Prices are stored as a map from `fishId` (as string) to an array of price entrie
 * `/fishao_market/prices_history`:
   * Document `prices_history`: Contains `{ prices: { [fishId]: [ { date, price } ] }, lastUpdated: Timestamp }`.
   * Readable by everyone. Writable only by authenticated users.
+* `/fishao_market/config`:
+  * Document `config`: Feature flag document `{ manualImportEnabled: boolean, lastUpdated: string }`.
+  * Readable by everyone; writable only by admins (`isAdmin()`).
+  * Subscribed in real time via `onSnapshot` in `js/auth.js` (`marketConfigDocRef`). When `manualImportEnabled !== true` (or the document does not exist), all manual price entry and bulk import UI (`#marketImportActionBarRight`, `#marketFloatingImportBtn`, `#priceAddFormBox`, `#priceAddLoginNotice`) stays hidden via `syncManualImportVisibility()` in `js/market.js`. Admins can toggle it via `toggleManualImportFlag()` in the Profile modal (`#profileAdminSection`).
 * `/clubs/{clubId}`:
   * `name`: String (Club name, 2–40 chars).
   * `name_lower`: String (Lowercase name for search indexing).
@@ -158,6 +162,7 @@ Prices are stored as a map from `fishId` (as string) to an array of price entrie
    * `/users/{userId}`: Readable by any authenticated user (`request.auth != null`) so club member catch stats can be rendered. Writeable ONLY by document owner (`request.auth.uid == userId`) or admin (`isAdmin()`).
    * `/clubs/{clubId}`: Publicly readable (`allow read: if true`). Updates allowed only by authenticated users for valid club fields.
    * `/fishao_market/prices_history`: Publicly readable (`allow read: if true`). Create/update allowed for authenticated users. Delete strictly reserved for admins.
+   * `/fishao_market/config`: Publicly readable (`allow read: if true`). Create/update/delete strictly reserved for admins (`isAdmin()`), restricted to keys `['manualImportEnabled', 'lastUpdated']` with `manualImportEnabled is bool`.
 3. **GDPR-free Storage:**
    * Never store a player's Google email, full name, or private tokens in Firestore. Only store the user-chosen `displayName`, `avatarUrl`, and game state.
 4. **Google Identity Auth Handler & Referrer Rules:**

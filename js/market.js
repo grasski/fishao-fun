@@ -684,10 +684,7 @@ function openPriceModal(fid, skipSync) {
 
   onPriceDateChange(initialPriceDate);
 
-  var formBox = document.getElementById("priceAddFormBox");
-  var loginNotice = document.getElementById("priceAddLoginNotice");
-  if (formBox) formBox.style.display = currentUser ? "block" : "none";
-  if (loginNotice) loginNotice.style.display = currentUser ? "none" : "block";
+  syncManualImportVisibility();
 
   renderModalHistory(fid);
   var overlayEl = document.getElementById("priceModalOverlay");
@@ -1624,6 +1621,76 @@ function dismissMarketResetAlert() {
   updateMarketResetAlertVisibility();
 }
 
+function isManualImportEnabled() {
+  return typeof manualImportEnabled !== "undefined" && manualImportEnabled === true;
+}
+
+/**
+ * Syncs visibility of all manual price entry / bulk import UI controls
+ * according to the Firestore feature flag (/fishao_market/config -> manualImportEnabled).
+ */
+function syncManualImportVisibility() {
+  var enabled = isManualImportEnabled();
+
+  var actionBarRight = document.getElementById("marketImportActionBarRight");
+  if (actionBarRight) {
+    actionBarRight.style.display = enabled ? "" : "none";
+  }
+
+  updateMarketFloatingImportBtn();
+
+  var formBox = document.getElementById("priceAddFormBox");
+  var loginNotice = document.getElementById("priceAddLoginNotice");
+  if (formBox) {
+    formBox.style.display = (enabled && currentUser) ? "block" : "none";
+  }
+  if (loginNotice) {
+    loginNotice.style.display = (enabled && !currentUser) ? "block" : "none";
+  }
+
+  var toggleBtn = document.getElementById("btnAdminToggleManualImport");
+  var toggleText = document.getElementById("btnAdminToggleManualImportText");
+  if (toggleBtn) {
+    toggleBtn.classList.toggle("active", enabled);
+    toggleBtn.setAttribute("aria-pressed", enabled ? "true" : "false");
+  }
+  if (toggleText) {
+    toggleText.innerText = enabled ? t('admin_manual_import_on') : t('admin_manual_import_off');
+  }
+}
+
+/**
+ * Admin-only toggle for the /fishao_market/config manualImportEnabled feature flag.
+ */
+async function toggleManualImportFlag() {
+  if (!isAdmin || !currentUser || !userProfile || userProfile.role !== "admin") {
+    return;
+  }
+  if (!isFirebaseConfigured || !db || !marketConfigDocRef || !window.FISHAO_FS_TX) {
+    showToast(t('admin_manual_import_error', { msg: "Firestore not ready" }));
+    return;
+  }
+
+  var toggleBtn = document.getElementById("btnAdminToggleManualImport");
+  var nextVal = !isManualImportEnabled();
+  if (toggleBtn) toggleBtn.disabled = true;
+
+  try {
+    await window.FISHAO_FS_TX.setDocument(db, marketConfigDocRef, {
+      manualImportEnabled: nextVal,
+      lastUpdated: new Date().toISOString()
+    });
+    manualImportEnabled = nextVal;
+    syncManualImportVisibility();
+    showToast(nextVal ? t('admin_manual_import_enabled_toast') : t('admin_manual_import_disabled_toast'));
+  } catch (err) {
+    console.error("Failed to toggle manualImportEnabled:", err);
+    showToast(t('admin_manual_import_error', { msg: err && err.message ? err.message : String(err) }));
+  } finally {
+    if (toggleBtn) toggleBtn.disabled = false;
+  }
+}
+
 /**
  * Updates visibility of the floating Bulk Import button in the Fish Market view
  * when the user scrolls past the top Market action bar.
@@ -1632,7 +1699,7 @@ function updateMarketFloatingImportBtn() {
   var btn = document.getElementById("marketFloatingImportBtn");
   if (!btn) return;
 
-  if (currentView !== "market") {
+  if (!isManualImportEnabled() || currentView !== "market") {
     btn.style.display = "none";
     return;
   }
