@@ -356,6 +356,40 @@
         }
       }
       return '';
+    },
+
+    isLangLoaded: function (lang) {
+      var code = normalizeLang(lang);
+      return !!(ui[code] && Object.keys(ui[code]).length > 0);
+    },
+
+    ensureLangLoaded: function (lang) {
+      var code = normalizeLang(lang);
+      if (FISHAO_I18N.isLangLoaded(code)) {
+        return Promise.resolve(true);
+      }
+      if (!hasWindow || typeof document === 'undefined') {
+        return Promise.resolve(false);
+      }
+      return new Promise(function (resolve) {
+        var globalName = 'FISHAO_I18N_UI_' + code.toUpperCase();
+        if (window[globalName]) {
+          ui[code] = window[globalName];
+          resolve(true);
+          return;
+        }
+        var script = document.createElement('script');
+        script.src = 'data/i18n/ui_' + code + '.js?v=5.7';
+        script.async = true;
+        script.onload = function () {
+          ui[code] = window[globalName] || {};
+          resolve(true);
+        };
+        script.onerror = function () {
+          resolve(false);
+        };
+        document.head.appendChild(script);
+      });
     }
   };
 

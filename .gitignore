@@ -13,3 +13,5 @@ Desktop.ini
 *.xls
 
 backup/
+_site/
+dist/

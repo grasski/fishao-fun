@@ -450,11 +450,31 @@ function renderTableHead() {
 }
 
 var _tableRenderToken = 0;
+var _fishRenderCacheKey = "";
+var _fishRenderCache = new Map();
+
+function getFishRenderData(f) {
+  var cached = _fishRenderCache.get(f.id);
+  if (cached) return cached;
+
+  var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
+  var data = {
+    fishName: fishName,
+    safeFishName: escapeHtml(fishName),
+    timeInfo: formatCatchTime(f.raw_times),
+    dateInfo: formatCatchDate(f.raw_dates),
+    locLabels: getFishLocationLabels(f),
+    areaName: getFishAreaLabels(f)[0] || ""
+  };
+  _fishRenderCache.set(f.id, data);
+  return data;
+}
 
 function renderFishRowHtml(f, idx, ctx) {
   var isNow = isFishActiveNow(f.raw_times, f.raw_dates);
-  var timeInfo = formatCatchTime(f.raw_times);
-  var dateInfo = formatCatchDate(f.raw_dates);
+  var rc = getFishRenderData(f);
+  var timeInfo = rc.timeInfo;
+  var dateInfo = rc.dateInfo;
   var dateBadgeHtml = "";
   if (dateInfo.isSeasonal) {
     var sClass = dateInfo.inSeason ? "date-badge in-season" : "date-badge out-of-season";
@@ -462,19 +482,18 @@ function renderFishRowHtml(f, idx, ctx) {
     dateBadgeHtml = '<div class="' + sClass + '" title="' + sTitle + '"><span class="date-icon">📅</span> ' + dateInfo.text + '</div>';
   }
 
-  var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
   var altMatch = (ctx.searchQ && window.FISHAO_I18N && typeof window.FISHAO_I18N.getMatchingFishAltName === 'function')
     ? window.FISHAO_I18N.getMatchingFishAltName(f, ctx.searchQ)
     : "";
   var altMatchHtml = altMatch ? '<div style="font-size: 11px; color: #38bdf8; font-weight: 500; margin-top: 2px;">' + escapeHtml(altMatch) + '</div>' : '';
-  var safeFishName = escapeHtml(fishName);
+  var safeFishName = rc.safeFishName;
 
   if (ctx.isClubView) {
     var unlock = getUnlockStatus(f, currentClubPoints);
     var rowClass = [];
     if (!unlock.isUnlocked) rowClass.push("row-locked");
     if (caughtFishIds.has(f.id)) rowClass.push("row-caught");
-    var areaName = getFishAreaLabels(f)[0] || "";
+    var areaName = rc.areaName;
 
     return '<tr class="' + rowClass.join(' ') + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + ctx.rowClickTitle + '">' +
       '<td style="color: var(--text-muted); font-weight: 600;">' + f.order + '</td>' +
@@ -500,7 +519,7 @@ function renderFishRowHtml(f, idx, ctx) {
   }
 
   var rowCls = caughtFishIds.has(f.id) ? "row-caught" : "";
-  var locLabels = getFishLocationLabels(f);
+  var locLabels = rc.locLabels;
 
   return '<tr class="' + rowCls + '" onclick="window.fishaoApp.openPriceModal(' + f.id + ')" title="' + ctx.rowClickTitle + '">' +
     '<td style="color: var(--text-muted); font-weight: 600;">' + (idx + 1) + '</td>' +
@@ -532,6 +551,14 @@ function renderTableBody(data) {
   var tbody = document.getElementById("tableBody");
   var total = currentView === "club" ? clubFishes.length : allFishes.length;
   var token = ++_tableRenderToken;
+
+  var now = new Date();
+  var langKey = (window.FISHAO_I18N && window.FISHAO_I18N.currentLang) || 'cs';
+  var cacheKey = langKey + '|' + userTimezone + '|' + now.getUTCFullYear() + '-' + (now.getUTCMonth() + 1) + '-' + now.getUTCDate();
+  if (cacheKey !== _fishRenderCacheKey) {
+    _fishRenderCacheKey = cacheKey;
+    _fishRenderCache.clear();
+  }
 
   if (data.length === 0) {
     var colCount = currentView === "club" ? 11 : 10;

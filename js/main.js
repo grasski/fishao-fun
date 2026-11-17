@@ -396,6 +396,15 @@ function updateStaticTranslations() {
 function setLanguage(lang) {
   if (window.FISHAO_I18N && typeof window.FISHAO_I18N.setLang === 'function') {
     lang = window.FISHAO_I18N.setLang(lang);
+    if (typeof window.FISHAO_I18N.isLangLoaded === 'function' &&
+        typeof window.FISHAO_I18N.ensureLangLoaded === 'function' &&
+        !window.FISHAO_I18N.isLangLoaded(lang)) {
+      window.FISHAO_I18N.ensureLangLoaded(lang).then(function (loaded) {
+        if (loaded && window.FISHAO_I18N.currentLang === lang) {
+          setLanguage(lang);
+        }
+      });
+    }
   } else {
     if (!lang) lang = 'cs';
     try {
@@ -694,4 +703,68 @@ if (typeof checkRemindersOnStartup === 'function') {
 }
 
 initFirebaseSync();
+
+// Register Service Worker for offline/long-term image caching
+if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+
+// Check for new build when returning to a long-lived background tab
+(function setupUpdateCheck() {
+  var lastVisibleCheck = Date.now();
+  var CHECK_INTERVAL_MS = 10 * 60 * 1000;
+  var initialVersion = window.FISHAO_APP_VERSION || null;
+
+  function checkAppVersion() {
+    if (window.location.protocol === 'file:') return;
+    fetch('version.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (data) {
+        if (!data || !data.version) return;
+        if (!initialVersion) {
+          initialVersion = data.version;
+          return;
+        }
+        if (data.version !== initialVersion) {
+          showUpdateBanner();
+        }
+      })
+      .catch(function () {});
+  }
+
+  function showUpdateBanner() {
+    if (document.getElementById('appUpdateBanner')) return;
+    var banner = document.createElement('div');
+    banner.id = 'appUpdateBanner';
+    banner.style.cssText = 'position:fixed;top:16px;right:16px;z-index:10000;background:#1e293b;color:#f8fafc;border:1px solid #38bdf8;border-radius:12px;padding:12px 16px;box-shadow:0 10px 25px rgba(0,0,0,0.45);display:flex;align-items:center;gap:12px;font-size:13px;max-width:340px;';
+    var msg = document.createElement('span');
+    msg.textContent = '🔄 ' + (typeof t === 'function' && t('app_update_available') !== 'app_update_available' ? t('app_update_available') : 'Je dostupná nová verze webu.');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = (typeof t === 'function' && t('app_update_reload') !== 'app_update_reload' ? t('app_update_reload') : 'Obnovit');
+    btn.style.cssText = 'background:#38bdf8;color:#0f172a;border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;white-space:nowrap;';
+    btn.onclick = function () { window.location.reload(); };
+    var closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.textContent = '×';
+    closeBtn.style.cssText = 'background:transparent;color:#94a3b8;border:none;font-size:18px;line-height:1;cursor:pointer;padding:0 4px;';
+    closeBtn.onclick = function () { banner.remove(); };
+    banner.appendChild(msg);
+    banner.appendChild(btn);
+    banner.appendChild(closeBtn);
+    document.body.appendChild(banner);
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') {
+      var now = Date.now();
+      if (now - lastVisibleCheck > CHECK_INTERVAL_MS) {
+        lastVisibleCheck = now;
+        checkAppVersion();
+      }
+    }
+  });
+})();
 
