@@ -241,7 +241,7 @@
 
 .price-stats-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
 }
 .price-stat-card {
@@ -251,8 +251,15 @@
   border-radius: 8px;
   text-align: center;
 }
+.price-stat-today-card {
+  border-color: rgba(56, 189, 248, 0.25);
+  background: rgba(56, 189, 248, 0.05);
+}
 .price-stat-label { font-size: 11px; color: var(--text-muted); }
 .price-stat-val { font-size: 15px; font-weight: 800; color: #fbbf24; margin-top: 2px; }
+.price-stat-val.today-val { color: #38bdf8; }
+.price-stat-val.today-val.muted { color: var(--text-muted); }
+.price-stat-val.today-val.is-high { color: #fbbf24; text-shadow: 0 0 8px rgba(251, 191, 36, 0.35); }
 
 /* Subtle estimated min/max range hint (fish modal) */
 .estimated-price-box {

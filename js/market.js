@@ -1139,18 +1139,46 @@ function renderModalHistory(fid) {
   var locale = getLocale();
 
   var minPriceEl = document.getElementById("statMinPrice");
+  var todayPriceEl = document.getElementById("statTodayPrice");
   var maxPriceEl = document.getElementById("statMaxPrice");
   var emptyNoticeEl = document.getElementById("modalPriceEmptyNotice");
   var estBoxEl = document.getElementById("modalEstimatedPriceBox");
   var estValEl = document.getElementById("modalEstimatedPriceVal");
 
+  var est = (typeof getEstimatedPrice === "function") ? getEstimatedPrice(fid) : null;
   if (estBoxEl && estValEl) {
-    var est = (typeof getEstimatedPrice === "function") ? getEstimatedPrice(fid) : null;
     if (est) {
       estValEl.innerText = est.min.toLocaleString(locale) + " – " + est.max.toLocaleString(locale) + " FB";
       estBoxEl.style.display = "block";
     } else {
       estBoxEl.style.display = "none";
+    }
+  }
+
+  var todayISO = (typeof getTodayISO === "function") ? getTodayISO() : "";
+  var todayEntries = todayISO ? list.filter(function (x) { return x.date === todayISO; }) : [];
+  if (todayPriceEl) {
+    todayPriceEl.classList.remove("is-high", "muted");
+    todayPriceEl.removeAttribute("title");
+    if (todayEntries.length > 0) {
+      var tVals = todayEntries.map(function (x) { return x.price; });
+      var tMin = Math.min.apply(null, tVals);
+      var tMax = Math.max.apply(null, tVals);
+      todayPriceEl.innerText = (tMin === tMax)
+        ? (tMin.toLocaleString(locale) + " FB")
+        : (tMin.toLocaleString(locale) + "–" + tMax.toLocaleString(locale) + " FB");
+      var highPct = (typeof getTodayHighPricePct === "function") ? getTodayHighPricePct() : 90;
+      if (est && est.max > 0 && tMax >= est.max * (highPct / 100)) {
+        todayPriceEl.classList.add("is-high");
+      }
+    } else {
+      todayPriceEl.classList.add("muted");
+      if (typeof isMarketClosedToday === "function" && isMarketClosedToday()) {
+        todayPriceEl.innerText = "🚫";
+        todayPriceEl.setAttribute("title", t('market_sunday_badge'));
+      } else {
+        todayPriceEl.innerText = "--";
+      }
     }
   }
 

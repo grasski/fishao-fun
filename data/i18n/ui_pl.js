@@ -201,6 +201,7 @@
       "modal_chart_prev": "Poprzedni punkt",
       "modal_chart_next": "Następny punkt",
       "modal_min_price": "Minimalna cena",
+      "modal_today_price": "Dzisiejsza cena",
       "modal_est_price_label": "Szacowany zakres (obliczenia):",
       "modal_est_price_badge": "Tylko szacunek",
       "modal_est_price_note": "Szacunek na podstawie rzadkości (★), najniższego poziomu łowiska i obniżki o 10%. Nie jest to oficjalna cena.",

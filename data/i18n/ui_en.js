@@ -201,6 +201,7 @@
       "modal_chart_prev": "Previous point",
       "modal_chart_next": "Next point",
       "modal_min_price": "Minimum price",
+      "modal_today_price": "Today's price",
       "modal_est_price_label": "Estimated range (calculated):",
       "modal_est_price_badge": "Estimate only",
       "modal_est_price_note": "Estimated from rarity (★), lowest location level, and the 10% price cut. Not an official price.",

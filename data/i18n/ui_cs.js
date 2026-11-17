@@ -201,6 +201,7 @@
       "modal_chart_prev": "Předchozí bod",
       "modal_chart_next": "Další bod",
       "modal_min_price": "Minimální cena",
+      "modal_today_price": "Dnešní cena",
       "modal_est_price_label": "Odhadované rozpětí (výpočet):",
       "modal_est_price_badge": "Pouze odhad",
       "modal_est_price_note": "Orientační výpočet podle vzácnosti (★), nejnižší úrovně lokace a 10% snížení cen. Nejde o oficiální cenu.",
