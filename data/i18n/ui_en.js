@@ -158,6 +158,7 @@
       "filter_sort_label": "Sort by:",
       "filter_time_label": "Biting time:",
       "loc_unspecified": "Unspecified",
+      "market_auto_sync_note": "🔄 Prices are now automatically synchronized from official sources",
       "market_bar_subtitle": "Community catalog of known buying prices (FB)",
       "market_bar_title": "💵 Fish Market:",
       "market_btn_import": "📥 Import Prices to Market",

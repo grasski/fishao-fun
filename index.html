@@ -383,11 +383,14 @@
         <span class="action-bar-title" style="color: #34d399;" data-i18n="market_bar_title">💵 Fish Market:</span>
         <span class="action-bar-hint" id="marketStatsSummary" data-i18n="market_bar_subtitle">Komunitní katalog známých výkupních cen (FB)</span>
       </div>
-      <!-- Temporarily hidden while prices are uploaded automatically; kept for manual fallback -->
-      <div class="action-bar-right" id="marketImportActionBarRight" style="display: none;">
-        <button class="btn-action sm" onclick="window.fishaoApp.openBulkModal()"
-          title="Hromadný import cen do Fish Marketu" data-i18n="market_btn_import" data-i18n-title="market_btn_import">
-          📥 Import cen do Marketu </button>
+      <div class="action-bar-right">
+        <span id="marketAutoSyncNote" class="action-bar-hint market-auto-sync-note" data-i18n="market_auto_sync_note">🔄 Ceny se nově automaticky synchronizují z oficiálních zdrojů</span>
+        <!-- Temporarily hidden while prices are uploaded automatically; kept for manual fallback -->
+        <div id="marketImportActionBarRight" style="display: none;">
+          <button class="btn-action sm" onclick="window.fishaoApp.openBulkModal()"
+            title="Hromadný import cen do Fish Marketu" data-i18n="market_btn_import" data-i18n-title="market_btn_import">
+            📥 Import cen do Marketu </button>
+        </div>
       </div>
     </div>
 

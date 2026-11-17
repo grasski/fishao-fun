@@ -1637,6 +1637,11 @@ function syncManualImportVisibility() {
     actionBarRight.style.display = enabled ? "" : "none";
   }
 
+  var autoSyncNote = document.getElementById("marketAutoSyncNote");
+  if (autoSyncNote) {
+    autoSyncNote.style.display = enabled ? "none" : "";
+  }
+
   updateMarketFloatingImportBtn();
 
   var formBox = document.getElementById("priceAddFormBox");

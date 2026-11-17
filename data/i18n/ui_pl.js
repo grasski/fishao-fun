@@ -158,6 +158,7 @@
       "filter_sort_label": "Sortuj według:",
       "filter_time_label": "Pora połowu:",
       "loc_unspecified": "Nieokreślono",
+      "market_auto_sync_note": "🔄 Ceny są teraz automatycznie synchronizowane z oficjalnych źródeł",
       "market_bar_subtitle": "Społecznościowy katalog znanych cen skupu (FB)",
       "market_bar_title": "💵 Fish Market:",
       "market_btn_import": "📥 Importuj ceny do Marketu",

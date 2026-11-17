@@ -163,6 +163,10 @@
     font-size: 11px;
     width: 100%;
   }
+  .market-auto-sync-note {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
 
   /* Collection filter pills side-by-side on mobile */
   #bannerCollection .btn-group-pills {

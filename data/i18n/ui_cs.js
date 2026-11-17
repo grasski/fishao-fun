@@ -155,6 +155,7 @@
       "filter_sort_label": "Řadit podle",
       "filter_time_label": "Čas a aktivita",
       "loc_unspecified": "Nespecifikováno",
+      "market_auto_sync_note": "🔄 Ceny se nově automaticky synchronizují z oficiálních zdrojů",
       "market_bar_subtitle": "Komunitní katalog známých výkupních cen (FB)",
       "market_bar_title": "💵 Fish Market:",
       "market_btn_import": "📥 Import cen do Marketu",
