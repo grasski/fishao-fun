@@ -43,22 +43,29 @@ function setTimezone(tz) {
   }
 }
 
+var _lastClockLabelText = "";
+
 function updateClock() {
   var now = new Date();
   var h, m, s;
   var labelEl = document.getElementById("clockLabel");
   var city = getLocalizedTzCity();
+  var nextLabelText = "";
 
   if (userTimezone === "utc") {
     h = now.getUTCHours();
     m = now.getUTCMinutes();
     s = now.getUTCSeconds();
-    if (labelEl) labelEl.innerText = t('clock_utc_server');
+    nextLabelText = t('clock_utc_server');
   } else {
     h = now.getHours();
     m = now.getMinutes();
     s = now.getSeconds();
-    if (labelEl) labelEl.innerText = t('clock_local_time') + (detectedCityRaw ? " (" + city + ")" : "");
+    nextLabelText = t('clock_local_time') + (detectedCityRaw ? " (" + city + ")" : "");
+  }
+  if (labelEl && nextLabelText !== _lastClockLabelText) {
+    _lastClockLabelText = nextLabelText;
+    labelEl.innerText = nextLabelText;
   }
   var clockEl = document.getElementById("liveClock");
   if (clockEl) {
@@ -607,6 +614,7 @@ window.fishaoApp = {
   kickMemberFromClub: kickMemberFromClub,
   unbindClubListener: unbindClubListener,
   openFishDetail: openPriceModal,
+  onSearchInput: onSearchInput,
   onPriceDateChange: onPriceDateChange,
   onBulkDateChange: onBulkDateChange,
   isDateSunday: isDateSunday,

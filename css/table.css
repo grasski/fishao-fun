@@ -72,6 +72,8 @@ tbody tr {
   cursor: pointer;
   transition: background 0.12s ease;
   background: #0f1624;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 70px;
 }
 tbody tr:nth-child(even) {
   background: #111a2c;

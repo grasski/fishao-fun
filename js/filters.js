@@ -5,9 +5,25 @@
  * rarity/rating, active time, mission sizes, and market prices.
  */
 
+var _filterDebounceTimer = null;
+
+function scheduleApplyFilters(delayMs) {
+  if (_filterDebounceTimer) {
+    clearTimeout(_filterDebounceTimer);
+  }
+  _filterDebounceTimer = setTimeout(function () {
+    _filterDebounceTimer = null;
+    applyFilters();
+  }, typeof delayMs === 'number' ? delayMs : 150);
+}
+
+function onSearchInput() {
+  scheduleApplyFilters(150);
+}
+
 function onRangeSizeInput() {
   document.querySelectorAll(".pill-btn-size").forEach(function (p) { p.classList.remove("active"); });
-  applyFilters();
+  scheduleApplyFilters(150);
 }
 
 function setSizeFilter(min, max, btn) {
@@ -52,7 +68,7 @@ function onTodayHighPricePctInput() {
     syncTodayHighPriceUI();
   }
   if (filterTodayHighPrice) {
-    applyFilters();
+    scheduleApplyFilters(150);
   }
 }
 

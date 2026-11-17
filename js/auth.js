@@ -46,11 +46,27 @@ async function initFirebaseSync() {
       initFirebaseAnalytics();
     }
 
+    var hasHandledInitialAuth = false;
+    var wasSignedIn = false;
+    var lastPriceHistoryJson = "";
+    try {
+      lastPriceHistoryJson = JSON.stringify(priceHistory || {});
+    } catch (e) {}
+
     authModule.onAuthStateChanged(auth, function (user) {
       currentUser = user;
+      var isInitialGuest = !hasHandledInitialAuth && !user && !wasSignedIn;
+      hasHandledInitialAuth = true;
+
       if (user) {
+        wasSignedIn = true;
         loadUserProfile(user);
       } else {
+        wasSignedIn = false;
+        if (isInitialGuest) {
+          updateAuthUI();
+          return;
+        }
         userProfile = null;
         isAdmin = false;
         caughtFishIds = new Set();
@@ -85,16 +101,26 @@ async function initFirebaseSync() {
     });
 
     firestoreModule.onSnapshot(firebaseDocRef, function (docSnap) {
+      var nextPrices = {};
       if (docSnap.exists()) {
         var cloudData = docSnap.data();
-        priceHistory = (cloudData && cloudData.prices && typeof cloudData.prices === "object")
+        nextPrices = (cloudData && cloudData.prices && typeof cloudData.prices === "object")
           ? cloudData.prices
           : {};
-      } else {
-        priceHistory = {};
       }
+      var nextPricesJson = "";
       try {
-        localStorage.setItem('fishao_price_history_v1', JSON.stringify(priceHistory));
+        nextPricesJson = JSON.stringify(nextPrices);
+      } catch (e) {}
+
+      if (nextPricesJson && nextPricesJson === lastPriceHistoryJson) {
+        return;
+      }
+
+      priceHistory = nextPrices;
+      lastPriceHistoryJson = nextPricesJson;
+      try {
+        localStorage.setItem('fishao_price_history_v1', nextPricesJson || JSON.stringify(priceHistory));
       } catch (e) {}
       applyFilters();
       if (typeof updateMarketTabStatus === "function") updateMarketTabStatus();
@@ -103,21 +129,46 @@ async function initFirebaseSync() {
       console.warn("Firestore connection warning:", error);
     });
 
-    firestoreModule.onSnapshot(estimatedPricesDocRef, function (docSnap) {
-      if (docSnap.exists()) {
-        var estData = docSnap.data();
-        if (estData && estData.prices && typeof estData.prices === "object" && Object.keys(estData.prices).length > 0) {
-          estimatedPrices = Object.assign({}, window.FISHAO_ESTIMATED_PRICES || {}, estData.prices);
-          try {
-            localStorage.setItem('fishao_estimated_prices_v1', JSON.stringify(estimatedPrices));
-          } catch (e) {}
-          applyFilters();
-          if (selectedModalFishId) renderModalHistory(selectedModalFishId);
+    // Estimated prices rarely change: use 6-hour localStorage TTL cache + one-time getDoc instead of onSnapshot
+    (async function syncEstimatedPricesWithCache() {
+      var EST_TTL_MS = 6 * 60 * 60 * 1000;
+      try {
+        var cachedEst = localStorage.getItem('fishao_estimated_prices_v1');
+        var cachedTs = parseInt(localStorage.getItem('fishao_estimated_prices_ts_v1') || '0', 10);
+        if (cachedEst && cachedTs && (Date.now() - cachedTs) < EST_TTL_MS) {
+          return;
         }
+      } catch (e) {}
+
+      try {
+        var docSnap = await firestoreModule.getDoc(estimatedPricesDocRef);
+        if (docSnap.exists()) {
+          var estData = docSnap.data();
+          if (estData && estData.prices && typeof estData.prices === "object" && Object.keys(estData.prices).length > 0) {
+            var nextEstimated = Object.assign({}, window.FISHAO_ESTIMATED_PRICES || {}, estData.prices);
+            var prevJson = "";
+            var nextJson = "";
+            try {
+              prevJson = JSON.stringify(estimatedPrices || {});
+              nextJson = JSON.stringify(nextEstimated);
+            } catch (e) {}
+
+            estimatedPrices = nextEstimated;
+            try {
+              localStorage.setItem('fishao_estimated_prices_v1', nextJson || JSON.stringify(estimatedPrices));
+              localStorage.setItem('fishao_estimated_prices_ts_v1', String(Date.now()));
+            } catch (e) {}
+
+            if (!prevJson || nextJson !== prevJson) {
+              applyFilters();
+              if (selectedModalFishId) renderModalHistory(selectedModalFishId);
+            }
+          }
+        }
+      } catch (error) {
+        console.warn("Firestore estimated prices warning:", error);
       }
-    }, function (error) {
-      console.warn("Firestore estimated prices warning:", error);
-    });
+    })();
 
     firestoreModule.onSnapshot(marketConfigDocRef, function (docSnap) {
       var data = docSnap.exists() ? docSnap.data() : null;
