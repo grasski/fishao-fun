@@ -619,6 +619,8 @@ function openChatModal(preferredChatId) {
   var overlay = document.getElementById('chatModalOverlay');
   if (!overlay) return;
 
+  var isMobileViewport = (typeof window !== 'undefined' && window.innerWidth <= 768);
+
   if (preferredChatId) {
     var prefObj = allMyChats.find(function (c) { return c.id === preferredChatId; });
     if (prefObj && (prefObj.status === 'blocked' || prefObj.status === 'rejected') && chatFilterMode !== 'blocked') {
@@ -628,9 +630,9 @@ function openChatModal(preferredChatId) {
       });
     }
     selectChatThread(preferredChatId);
-  } else if (activeChatId && allMyChats.some(function (c) { return c.id === activeChatId; })) {
+  } else if (!isMobileViewport && activeChatId && allMyChats.some(function (c) { return c.id === activeChatId; })) {
     selectChatThread(activeChatId);
-  } else if (allMyChats.length > 0 && window.innerWidth > 768) {
+  } else if (!isMobileViewport && allMyChats.length > 0) {
     var firstVisible = allMyChats.find(function (c) { return c.status !== 'blocked' && c.status !== 'rejected'; });
     if (firstVisible) {
       selectChatThread(firstVisible.id);
@@ -664,6 +666,17 @@ function closeChatModal() {
 function backToChatList() {
   var layout = document.getElementById('chatLayout');
   if (layout) layout.classList.remove('is-thread-open');
+  if (typeof window !== 'undefined' && window.innerWidth <= 768 && activeChatId) {
+    activeChatId = null;
+    if (chatMessagesUnsubscribe) {
+      try { chatMessagesUnsubscribe(); } catch (e) {}
+      chatMessagesUnsubscribe = null;
+    }
+    _boundMessagesChatId = null;
+    activeChatMessages = [];
+    resetChatPaneRenderState();
+    renderChatSidebarList();
+  }
 }
 
 function ensureChatPlayersForSearch() {
@@ -1541,15 +1554,15 @@ function renderChatActivePane() {
   var headerActionsHtml = '';
   if (isPeerDeleted) {
     if (chatObj.status === 'accepted' || chatObj.preBlockStatus === 'accepted' || !!chatObj.lastMessageAt) {
-      headerActionsHtml += '<button type="button" class="chat-hdr-action-btn" onclick="window.fishaoApp.openChatReportModal(\'' + safeChatId + '\')" title="' + escapeHtml(t('chat_btn_report')) + '">🚩 ' + escapeHtml(t('chat_btn_report')) + '</button>';
+      headerActionsHtml += '<button type="button" class="chat-hdr-action-btn" onclick="window.fishaoApp.openChatReportModal(\'' + safeChatId + '\')" title="' + escapeHtml(t('chat_btn_report')) + '" aria-label="' + escapeHtml(t('chat_btn_report')) + '">🚩<span class="chat-hdr-btn-label"> ' + escapeHtml(t('chat_btn_report')) + '</span></button>';
     }
-    headerActionsHtml += '<button type="button" class="chat-hdr-action-btn danger" onclick="window.fishaoApp.dismissDeletedChatThread(\'' + safeChatId + '\')" title="' + escapeHtml(t('chat_btn_delete_thread')) + '">🗑️ ' + escapeHtml(t('chat_btn_delete_thread')) + '</button>';
+    headerActionsHtml += '<button type="button" class="chat-hdr-action-btn danger" onclick="window.fishaoApp.dismissDeletedChatThread(\'' + safeChatId + '\')" title="' + escapeHtml(t('chat_btn_delete_thread')) + '" aria-label="' + escapeHtml(t('chat_btn_delete_thread')) + '">🗑️<span class="chat-hdr-btn-label"> ' + escapeHtml(t('chat_btn_delete_thread')) + '</span></button>';
   } else {
-    headerActionsHtml += '<button type="button" class="chat-hdr-action-btn" onclick="window.fishaoApp.openChatReportModal(\'' + safeChatId + '\')" title="' + escapeHtml(t('chat_btn_report')) + '">🚩 ' + escapeHtml(t('chat_btn_report')) + '</button>';
+    headerActionsHtml += '<button type="button" class="chat-hdr-action-btn" onclick="window.fishaoApp.openChatReportModal(\'' + safeChatId + '\')" title="' + escapeHtml(t('chat_btn_report')) + '" aria-label="' + escapeHtml(t('chat_btn_report')) + '">🚩<span class="chat-hdr-btn-label"> ' + escapeHtml(t('chat_btn_report')) + '</span></button>';
     if (chatObj.status === 'accepted' || chatObj.status === 'pending' || chatObj.status === 'rejected') {
-      headerActionsHtml += '<button type="button" class="chat-hdr-action-btn danger" onclick="window.fishaoApp.blockChatUser(\'' + safeChatId + '\')" title="' + escapeHtml(t('chat_btn_block')) + '">🚫 ' + escapeHtml(t('chat_btn_block')) + '</button>';
+      headerActionsHtml += '<button type="button" class="chat-hdr-action-btn danger" onclick="window.fishaoApp.blockChatUser(\'' + safeChatId + '\')" title="' + escapeHtml(t('chat_btn_block')) + '" aria-label="' + escapeHtml(t('chat_btn_block')) + '">🚫<span class="chat-hdr-btn-label"> ' + escapeHtml(t('chat_btn_block')) + '</span></button>';
     } else if (chatObj.status === 'blocked' && chatObj.blockedBy === myUid) {
-      headerActionsHtml += '<button type="button" class="chat-hdr-action-btn" onclick="window.fishaoApp.unblockChatUser(\'' + safeChatId + '\')">🔓 ' + escapeHtml(t('chat_btn_unblock')) + '</button>';
+      headerActionsHtml += '<button type="button" class="chat-hdr-action-btn" onclick="window.fishaoApp.unblockChatUser(\'' + safeChatId + '\')" title="' + escapeHtml(t('chat_btn_unblock')) + '" aria-label="' + escapeHtml(t('chat_btn_unblock')) + '">🔓<span class="chat-hdr-btn-label"> ' + escapeHtml(t('chat_btn_unblock')) + '</span></button>';
     }
   }
 
