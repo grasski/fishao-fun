@@ -306,6 +306,7 @@
     width: 100%;
     max-width: 100%;
     max-height: 90vh;
+    max-height: 90dvh;
     border-radius: 16px 16px 10px 10px;
     margin: 0;
   }
@@ -319,6 +320,7 @@
     padding: 12px;
     gap: 10px;
     max-height: calc(90vh - 54px);
+    max-height: calc(90dvh - 54px);
   }
   .modal-fish-hero {
     padding: 10px;
@@ -542,6 +544,15 @@
   }
   .reminder-item-actions {
     justify-content: flex-end;
+  }
+}
+
+/* Prevent iOS Safari auto-zoom on modal form controls (< 16px triggers zoom) */
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+  .modal-overlay input:not([type="checkbox"]):not([type="radio"]),
+  .modal-overlay select,
+  .modal-overlay textarea {
+    font-size: 16px !important;
   }
 }
 
