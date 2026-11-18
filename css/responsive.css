@@ -547,12 +547,15 @@
   }
 }
 
-/* Prevent iOS Safari auto-zoom on modal form controls (< 16px triggers zoom) */
+/* Prevent iOS Safari auto-zoom on all form controls (< 16px triggers zoom) */
 @media (max-width: 768px), (hover: none) and (pointer: coarse) {
-  .modal-overlay input:not([type="checkbox"]):not([type="radio"]),
-  .modal-overlay select,
-  .modal-overlay textarea {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
     font-size: 16px !important;
+  }
+  .pct-input {
+    width: 40px;
   }
 }
 
