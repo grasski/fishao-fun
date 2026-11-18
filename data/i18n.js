@@ -386,7 +386,7 @@
         }
         var bundledUrl = (window.FISHAO_I18N_BUNDLES && window.FISHAO_I18N_BUNDLES[code]) || null;
         var script = document.createElement('script');
-        script.src = bundledUrl || ('data/i18n/ui_' + code + '.js?v=5.8');
+        script.src = bundledUrl || ('data/i18n/ui_' + code + '.js?v=7.0');
         script.async = true;
         script.onload = function () {
           ui[code] = window[globalName] || {};

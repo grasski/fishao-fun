@@ -418,8 +418,15 @@
   padding: 6px 0;
 }
 
+.player-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .player-card-btn {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   height: 34px;
   background: rgba(20, 184, 166, 0.12);
   color: #2dd4bf;
@@ -439,6 +446,37 @@
   background: rgba(20, 184, 166, 0.25);
   color: #5eead4;
   border-color: #14b8a6;
+}
+
+.player-card-chat-btn {
+  height: 34px;
+  padding: 0 12px;
+  background: rgba(56, 189, 248, 0.14);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.38);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.18s;
+}
+
+.player-card-chat-btn:hover {
+  background: rgba(56, 189, 248, 0.26);
+  color: #ffffff;
+  border-color: #38bdf8;
+}
+
+.player-card-chat-btn.is-active {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.45);
 }
 
 /* --- Fish Detail Modal Backyard Toggle Pill --- */

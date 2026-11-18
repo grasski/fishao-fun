@@ -1,0 +1,48 @@
+name: Daily Chat Cleanup
+
+on:
+  schedule:
+    # Runs once daily at 03:15 UTC (7 days a week, free tier delete quota)
+    - cron: '15 3 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Scan without deleting documents'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup-chat:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache firebase-admin
+        id: cache-firebase-admin
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-firebase-admin-13
+
+      - name: Install firebase-admin
+        if: steps.cache-firebase-admin.outputs.cache-hit != 'true'
+        run: npm install --no-save --no-audit --no-fund firebase-admin@^13.0.0
+
+      - name: Clean up expired chat messages (>14 days)
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            node scripts/cleanup-chat.mjs --dry-run
+          else
+            node scripts/cleanup-chat.mjs
+          fi

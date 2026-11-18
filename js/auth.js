@@ -9,6 +9,7 @@ var firebaseAnalytics = null;
 var analyticsModuleRef = null;
 var userPrivateUnsubscribe = null;
 var marketPricesUnsubscribe = null;
+var _firebaseInitPromise = null;
 
 var _refreshRafId = 0;
 var _refreshFlags = {
@@ -112,7 +113,13 @@ async function savePrivateUserSettings(partialFields) {
   await fsModule.setDoc(privDocRef, payload, { merge: true });
 }
 
-async function initFirebaseSync() {
+function initFirebaseSync() {
+  if (_firebaseInitPromise) return _firebaseInitPromise;
+  _firebaseInitPromise = _runInitFirebaseSync();
+  return _firebaseInitPromise;
+}
+
+async function _runInitFirebaseSync() {
   if (!isFirebaseConfigured) {
     updateAuthUI();
     checkCookieConsentBanner();
@@ -343,9 +350,15 @@ async function initFirebaseSync() {
           updateAuthUI();
         }
         loadUserProfile(user, hadCached, cachedClubId);
+        if (typeof initChatSync === 'function') {
+          initChatSync();
+        }
         return;
       } else {
         wasSignedIn = false;
+        if (typeof unbindChatListeners === 'function') {
+          unbindChatListeners();
+        }
         clearProfileCache();
         try {
           localStorage.removeItem('fishao_backyard_fish_ids');
@@ -662,8 +675,14 @@ function updatePrivacyConsentStatusUI() {
 }
 
 async function signIn() {
+  if (!auth && _firebaseInitPromise) {
+    try {
+      await _firebaseInitPromise;
+    } catch (e) {}
+  }
   if (!auth) {
     showAuthNotice(t('auth_need_config'));
+    showToast(t('auth_need_config'), "error");
     return;
   }
   try {
@@ -922,6 +941,13 @@ function updateAuthUI() {
     playersContent.style.display = currentUser ? "block" : "none";
   }
 
+  if (typeof updateChatHeaderBadge === "function") {
+    updateChatHeaderBadge();
+  }
+  if (typeof syncAdminReportsWatcher === "function") {
+    syncAdminReportsWatcher();
+  }
+
   if (!isFirebaseConfigured) {
     if (signInBtn) signInBtn.style.display = "none";
     if (userInfoBar) userInfoBar.style.display = "none";
@@ -1029,7 +1055,7 @@ function updateAuthUI() {
   }
 }
 
-function openProfileModal() {
+function openProfileModal(scrollToAdmin) {
   if (!currentUser) {
     signIn();
     return;
@@ -1063,14 +1089,28 @@ function openProfileModal() {
   }
 
   var adminSection = document.getElementById("profileAdminSection");
+  var isProfileAdmin = !!(userProfile && userProfile.role === 'admin');
   if (adminSection) {
-    adminSection.style.display = (userProfile && userProfile.role === 'admin') ? "block" : "none";
+    adminSection.style.display = isProfileAdmin ? "block" : "none";
   }
   if (typeof syncManualImportVisibility === "function") {
     syncManualImportVisibility();
   }
+  if (typeof updateAdminReportsAlertUI === "function") {
+    updateAdminReportsAlertUI();
+  }
+  if (isProfileAdmin && (scrollToAdmin === true || (typeof adminOpenReportsCount !== "undefined" && adminOpenReportsCount > 0))) {
+    if (typeof loadAdminChatReports === "function") {
+      loadAdminChatReports();
+    }
+  }
 
   if (overlay) overlay.classList.add("active");
+  if (isProfileAdmin && scrollToAdmin === true && adminSection && typeof adminSection.scrollIntoView === "function") {
+    setTimeout(function () {
+      adminSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  }
 }
 
 function closeProfileModal() {
@@ -1264,13 +1304,19 @@ async function deleteAccount() {
       }
     }
 
-    // 3. Delete private settings subdoc & public user profile document from Firestore
+    // 3. Delete private settings subdoc & public user profile document from Firestore, then anonymize user's chats
+    if (typeof unbindChatListeners === 'function') {
+      unbindChatListeners();
+    }
     try {
       var privDocRef = fsModule.doc(db, "users", uid, "private", "settings");
       await fsModule.deleteDoc(privDocRef);
     } catch (e) {}
     var userDocRef = fsModule.doc(db, "users", uid);
     await fsModule.deleteDoc(userDocRef);
+    if (typeof cleanupUserChatsOnAccountDelete === 'function') {
+      await cleanupUserChatsOnAccountDelete(uid);
+    }
 
     // 4. Clear local storage, profile cache, and session caches
     clearProfileCache();
@@ -1280,6 +1326,7 @@ async function deleteAccount() {
     safeStorageRemove('fishao_reminders_v1');
     safeStorageRemove('fishao_nick_prompted_' + uid);
     safeStorageRemove('fishao_last_login_sync_' + uid);
+    safeStorageRemove('fishao_chat_rules_v1_' + uid);
     safeStorageRemove('fishao_players_cache_v1');
     try {
       sessionStorage.removeItem('fishao_players_cache_v1');

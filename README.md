@@ -14,6 +14,7 @@ Moderní webová aplikace a interaktivní encyklopedie pro hráče rybářské h
 - **Klubový postup**: Nastavení bodů klubu s vizuálním odlišením odemčených ryb a odpočtem bodů do dalších milníků.
 - **Tržní ceny**: Evidence a přehled prodejních cen ryb na trhu včetně historie a statistik (v neděli zavřeno).
 - **Komunita & Ryby Za domem**: Přehled všech hráčů, jejich klubů a úlovků. Možnost nastavit své odchované ryby za domem a zpětné zjištění, kteří hráči mají danou rybu k dispozici.
+- **Soukromý chat mezi hráči (1-on-1)**: Bezpečné zprávy mezi přihlášenými hráči na principu schválení žádosti (Double Opt-In), vyhledávání hráčů přímo v chatu, pouze prostý text do 300 znaků bez odkazů a příloh, 14denní automatická retence zpráv přes GitHub Actions a systém hlášení a moderace (Notice & Action).
 - **Hybridní úložiště**: Plně funkční lokálně v prohlížeči (`localStorage`) s volitelnou synchronizací v reálném čase přes Firebase (Google přihlášení).
 
 ---
@@ -33,6 +34,7 @@ fishao/
 │   ├── clubs.css       # Klubová sekce, statistiky, milníky a seznam členů
 │   ├── players.css     # Komunita hráčů, karty uživatelů a dvorek (za domem)
 │   ├── modals.css      # Modální okna (detail ryby, ceny, hromadný import, profil, toast)
+│   ├── chat.css        # Soukromý 1-on-1 chat, vyhledávání hráčů a moderace
 │   └── responsive.css  # Responzivní pravidla pro mobilní a tabletová zobrazení
 ├── js/                 # Modulární aplikační logika
 │   ├── state.js        # Globální stav, lokalizační a datumové pomocné funkce, dialogy
@@ -43,6 +45,7 @@ fishao/
 │   ├── filters.js      # Filtrování (hledání, lokace, konkrétní místa, čas, velikosti, řazení)
 │   ├── auth.js         # Firebase autentizace a GDPR-compliant synchronizace profilu
 │   ├── players.js      # Komunita, ryby za domem, univerzální profil a reverzní vyhledávání
+│   ├── chat.js         # Soukromý 1-on-1 chat mezi hráči, žádosti, blokace a moderace
 │   └── main.js         # Přepínání pohledů, hodiny, překlady, window.fishaoApp a start
 ├── firebase-config.js  # Konfigurace Firebase projektu
 ├── firestore.rules     # Bezpečnostní pravidla pro Firestore databázi
@@ -50,7 +53,8 @@ fishao/
 ├── scripts/            # Pomocné a automatizační skripty
 │   ├── build_data.py   # Nástroj pro generování dat ryb z herních zdrojů
 │   ├── build_i18n.py   # Nástroj pro generování překladů ryb z data/raw/lang_*.json
-│   └── sync-market-prices.mjs # Denní synchronizace cen ryb do Firestore
+│   ├── sync-market-prices.mjs # Denní synchronizace cen ryb do Firestore
+│   └── cleanup-chat.mjs # Denní úklid zpráv starších 14 dnů a osiřelých chatů (GitHub Actions)
 ├── data/
 │   ├── raw/            # Surová herní JSON data (fish.json, lang_*.json)
 │   ├── i18n.js         # Jádro lokalizace (CZ / EN / PL, fallbacky, plurály)

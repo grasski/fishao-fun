@@ -493,6 +493,12 @@ function setLanguage(lang, opts) {
   if (remAlert && remAlert.classList.contains("active") && typeof renderRemindersAlertModal === 'function') {
     renderRemindersAlertModal();
   }
+  var chatModal = document.getElementById("chatModalOverlay");
+  if (chatModal && chatModal.classList.contains("active")) {
+    if (typeof resetChatPaneRenderState === 'function') resetChatPaneRenderState();
+    if (typeof renderChatSidebarList === 'function') renderChatSidebarList();
+    if (typeof renderChatActivePane === 'function') renderChatActivePane();
+  }
 }
 
 function openPrivacyModal() {
@@ -514,13 +520,13 @@ function closeAllModals() {
   closeProfileModal();
   closePlayerModal();
   closePrivacyModal();
+  if (typeof closeChatReportModal === 'function') closeChatReportModal();
+  if (typeof closeChatRequestModal === 'function') closeChatRequestModal();
+  if (typeof closeChatModal === 'function') closeChatModal();
+  if (typeof closeChatIntroModal === 'function') closeChatIntroModal(false);
   var remModal = document.getElementById("remindersModalOverlay");
   if (remModal && remModal.classList.contains("active") && typeof closeRemindersModal === 'function') {
     closeRemindersModal();
-  }
-  var remIntro = document.getElementById("remindersIntroModalOverlay");
-  if (remIntro && remIntro.classList.contains("active") && typeof closeRemindersIntroModal === 'function') {
-    closeRemindersIntroModal(false);
   }
   var remAlert = document.getElementById("remindersAlertModalOverlay");
   if (remAlert && remAlert.classList.contains("active") && typeof closeRemindersAlertModal === 'function') {
@@ -529,17 +535,42 @@ function closeAllModals() {
   resolveConfirmModal(false);
 }
 
+function closeModalById(id) {
+  if (id === 'priceModalOverlay') closePriceModal();
+  else if (id === 'bulkModalOverlay') closeBulkModal();
+  else if (id === 'profileModalOverlay') closeProfileModal();
+  else if (id === 'playerModalOverlay') closePlayerModal();
+  else if (id === 'privacyModalOverlay') closePrivacyModal();
+  else if (id === 'chatModalOverlay' && typeof closeChatModal === 'function') closeChatModal();
+  else if (id === 'chatIntroModalOverlay' && typeof closeChatIntroModal === 'function') closeChatIntroModal(false);
+  else if (id === 'chatRequestModalOverlay' && typeof closeChatRequestModal === 'function') closeChatRequestModal();
+  else if (id === 'chatReportModalOverlay' && typeof closeChatReportModal === 'function') closeChatReportModal();
+  else if (id === 'remindersModalOverlay' && typeof closeRemindersModal === 'function') closeRemindersModal();
+  else if (id === 'remindersAlertModalOverlay' && typeof closeRemindersAlertModal === 'function') closeRemindersAlertModal(false);
+  else if (id === 'confirmModalOverlay') resolveConfirmModal(false);
+}
+
+function getTopActiveModal() {
+  if (typeof document === 'undefined') return null;
+  var actives = document.querySelectorAll('.modal-overlay.active');
+  if (!actives.length) return null;
+  var best = actives[0];
+  var bestZ = -Infinity;
+  for (var i = 0; i < actives.length; i++) {
+    var zRaw = window.getComputedStyle ? window.getComputedStyle(actives[i]).zIndex : '0';
+    var zNum = parseInt(zRaw, 10);
+    if (isNaN(zNum)) zNum = 0;
+    if (zNum >= bestZ) {
+      bestZ = zNum;
+      best = actives[i];
+    }
+  }
+  return best;
+}
+
 function onModalOverlayClick(e, id) {
   if (e.target.id === id) {
-    if (id === 'priceModalOverlay') closePriceModal();
-    if (id === 'bulkModalOverlay') closeBulkModal();
-    if (id === 'profileModalOverlay') closeProfileModal();
-    if (id === 'playerModalOverlay') closePlayerModal();
-    if (id === 'privacyModalOverlay') closePrivacyModal();
-    if (id === 'remindersModalOverlay' && typeof closeRemindersModal === 'function') closeRemindersModal();
-    if (id === 'remindersIntroModalOverlay' && typeof closeRemindersIntroModal === 'function') closeRemindersIntroModal(false);
-    if (id === 'remindersAlertModalOverlay' && typeof closeRemindersAlertModal === 'function') closeRemindersAlertModal(false);
-    if (id === 'confirmModalOverlay') resolveConfirmModal(false);
+    closeModalById(id);
   }
 }
 
@@ -549,11 +580,6 @@ function onModalOverlayClick(e, id) {
   var _isLocked = false;
   var _touchStartY = 0;
   var _lastFocusedBeforeModal = null;
-
-  function getTopActiveModal() {
-    var actives = document.querySelectorAll('.modal-overlay.active');
-    return actives.length ? actives[actives.length - 1] : null;
-  }
 
   function getModalFocusableElements(modalEl) {
     if (!modalEl) return [];
@@ -708,7 +734,12 @@ function onModalOverlayClick(e, id) {
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') {
     if (typeof closeAllBaitDropdowns === 'function') closeAllBaitDropdowns();
-    closeAllModals();
+    var topModal = getTopActiveModal();
+    if (topModal && topModal.id) {
+      closeModalById(topModal.id);
+    } else {
+      closeAllModals();
+    }
   }
 });
 
@@ -855,8 +886,6 @@ window.fishaoApp = {
   closeRemindersModal: closeRemindersModal,
   openRemindersAlertModal: openRemindersAlertModal,
   closeRemindersAlertModal: closeRemindersAlertModal,
-  openRemindersIntroModal: openRemindersIntroModal,
-  closeRemindersIntroModal: closeRemindersIntroModal,
   applyReminderPreset: applyReminderPreset,
   setReminderQuickTime: setReminderQuickTime,
   setReminderQuickInterval: setReminderQuickInterval,
@@ -865,6 +894,37 @@ window.fishaoApp = {
   editReminder: editReminder,
   resetReminderForm: resetReminderForm,
   deleteReminder: deleteReminder,
+  openChatModal: typeof openChatModal === 'function' ? openChatModal : null,
+  closeChatModal: typeof closeChatModal === 'function' ? closeChatModal : null,
+  openChatIntroModal: typeof openChatIntroModal === 'function' ? openChatIntroModal : null,
+  closeChatIntroModal: typeof closeChatIntroModal === 'function' ? closeChatIntroModal : null,
+  backToChatList: typeof backToChatList === 'function' ? backToChatList : null,
+  setChatFilterMode: typeof setChatFilterMode === 'function' ? setChatFilterMode : null,
+  onChatPlayerSearchInput: typeof onChatPlayerSearchInput === 'function' ? onChatPlayerSearchInput : null,
+  clearChatPlayerSearch: typeof clearChatPlayerSearch === 'function' ? clearChatPlayerSearch : null,
+  toggleChatSafetyPanel: typeof toggleChatSafetyPanel === 'function' ? toggleChatSafetyPanel : null,
+  openChatWithPlayer: typeof openChatWithPlayer === 'function' ? openChatWithPlayer : null,
+  openChatRequestModal: typeof openChatRequestModal === 'function' ? openChatRequestModal : null,
+  closeChatRequestModal: typeof closeChatRequestModal === 'function' ? closeChatRequestModal : null,
+  submitChatRequest: typeof submitChatRequest === 'function' ? submitChatRequest : null,
+  selectChatThread: typeof selectChatThread === 'function' ? selectChatThread : null,
+  acceptChatRequest: typeof acceptChatRequest === 'function' ? acceptChatRequest : null,
+  rejectChatRequest: typeof rejectChatRequest === 'function' ? rejectChatRequest : null,
+  cancelChatRequest: typeof cancelChatRequest === 'function' ? cancelChatRequest : null,
+  blockChatUser: typeof blockChatUser === 'function' ? blockChatUser : null,
+  unblockChatUser: typeof unblockChatUser === 'function' ? unblockChatUser : null,
+  sendChatMessage: typeof sendChatMessage === 'function' ? sendChatMessage : null,
+  updateChatCharCounter: typeof updateChatCharCounter === 'function' ? updateChatCharCounter : null,
+  onChatInputKeyDown: typeof onChatInputKeyDown === 'function' ? onChatInputKeyDown : null,
+  openChatReportModal: typeof openChatReportModal === 'function' ? openChatReportModal : null,
+  closeChatReportModal: typeof closeChatReportModal === 'function' ? closeChatReportModal : null,
+  submitChatReport: typeof submitChatReport === 'function' ? submitChatReport : null,
+  loadAdminChatReports: typeof loadAdminChatReports === 'function' ? loadAdminChatReports : null,
+  setAdminReportsFilterMode: typeof setAdminReportsFilterMode === 'function' ? setAdminReportsFilterMode : null,
+  adminBanChatUser: typeof adminBanChatUser === 'function' ? adminBanChatUser : null,
+  adminUpdateReportStatus: typeof adminUpdateReportStatus === 'function' ? adminUpdateReportStatus : null,
+  adminUnbanChatUser: typeof adminUnbanChatUser === 'function' ? adminUnbanChatUser : null,
+  dismissDeletedChatThread: typeof dismissDeletedChatThread === 'function' ? dismissDeletedChatThread : null,
   saveHideLockedClubPreference: typeof saveHideLockedClubPreference === 'function' ? saveHideLockedClubPreference : null,
   scrollToTop: scrollToTop,
   t: t
@@ -961,6 +1021,9 @@ if (typeof window !== 'undefined') {
 
   if (typeof updateRemindersBellBadge === 'function') {
     updateRemindersBellBadge();
+  }
+  if (typeof checkChatIntroOnStartup === 'function') {
+    checkChatIntroOnStartup();
   }
   if (typeof checkRemindersOnStartup === 'function') {
     checkRemindersOnStartup(false);

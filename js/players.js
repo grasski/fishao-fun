@@ -369,6 +369,9 @@ async function toggleFriend(uid, event) {
   var modalNameEl = document.getElementById("playerModalName");
   if (modalNameEl && modalNameEl.dataset.currentUid === uid) {
     updateModalFriendBtn(uid);
+    if (typeof updatePlayerModalChatBtn === 'function') {
+      updatePlayerModalChatBtn(uid);
+    }
   }
 
   // If fish detail modal is open, re-render owners box so friends are highlighted
@@ -775,9 +778,14 @@ function renderPlayersList() {
         '</div>' +
       '</div>' +
 
-      '<button type="button" class="player-card-btn" data-uid="' + escapedUid + '">' +
-        '<span>' + escapeHtml(t('player_card_view_profile')) + '</span>' +
-      '</button>' +
+      '<div class="player-card-actions">' +
+        '<button type="button" class="player-card-btn" data-uid="' + escapedUid + '">' +
+          '<span>' + escapeHtml(t('player_card_view_profile')) + '</span>' +
+        '</button>' +
+        ((!isMe && currentUser && typeof getPlayerCardChatButtonHtml === 'function')
+          ? getPlayerCardChatButtonHtml(p.uid)
+          : '') +
+      '</div>' +
     '</div>';
   });
 
@@ -810,6 +818,15 @@ function renderPlayersList() {
       if (friendBtn) {
         ev.stopPropagation();
         toggleFriend(friendBtn.dataset.uid, ev);
+        return;
+      }
+
+      var chatBtn = tEl.closest(".player-card-chat-btn");
+      if (chatBtn) {
+        ev.stopPropagation();
+        if (typeof openChatWithPlayer === 'function') {
+          openChatWithPlayer(chatBtn.dataset.uid);
+        }
         return;
       }
 
@@ -1234,6 +1251,12 @@ async function openPlayerModal(uid) {
   var clubMem = (currentClubMembersMap && currentClubMembersMap[uid]) || null;
   var isMe = !!(currentUser && uid === currentUser.uid);
 
+  if (!isMe && typeof isChatUserKnownDeleted === 'function' && isChatUserKnownDeleted(uid)) {
+    if (typeof purgeDeletedPlayerFromLocalList === 'function') purgeDeletedPlayerFromLocalList(uid);
+    showToast(t('player_profile_deleted_toast'), 'info');
+    return;
+  }
+
   // Check short in-memory cache for modal lookups (skip extra Firestore read if already in fresh allPlayersList)
   var cachedEntry = _playerProfileCache.get(uid);
   if (cachedEntry && (Date.now() - cachedEntry.ts < PLAYER_MODAL_CACHE_TTL_MS)) {
@@ -1258,6 +1281,10 @@ async function openPlayerModal(uid) {
           createdAt: d.createdAt || ""
         };
         _playerProfileCache.set(uid, { ts: Date.now(), player: player });
+      } else {
+        if (typeof markChatUserDeleted === 'function') markChatUserDeleted(uid);
+        showToast(t('player_profile_deleted_toast'), 'info');
+        return;
       }
     } catch (e) {
       console.warn("Failed to load user doc for modal:", e);
@@ -1326,6 +1353,9 @@ async function openPlayerModal(uid) {
   }
 
   updateModalFriendBtn(uid);
+  if (typeof updatePlayerModalChatBtn === 'function') {
+    updatePlayerModalChatBtn(uid);
+  }
 
   var totalClub = clubFishes.length || 80;
   var clubCountEl = document.getElementById("playerModalClubCount");

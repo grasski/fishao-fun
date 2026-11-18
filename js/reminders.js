@@ -8,7 +8,6 @@
  */
 
 var REMINDERS_STORAGE_KEY = 'fishao_reminders_v1';
-var REMINDERS_INTRO_KEY = 'fishao_reminders_intro_seen';
 var REMINDERS_SESSION_DISMISS_KEY = 'fishao_reminders_due_dismissed';
 var REMINDERS_TODAY_NOTIFIED_KEY = 'fishao_reminders_today_notified_date';
 
@@ -227,25 +226,6 @@ function formatReminderCountdown(isoString) {
 }
 
 function checkRemindersOnStartup(fromAuthLoad) {
-  var introSeen = false;
-  try {
-    introSeen = localStorage.getItem(REMINDERS_INTRO_KEY) === '1';
-  } catch (e) { }
-
-  if (!introSeen) {
-    // Do not interrupt anonymous first-time visitors with a blocking popup on landing;
-    // show intro only after sign-in or via user interaction.
-    if (!remindersStartupChecked && fromAuthLoad && typeof currentUser !== 'undefined' && currentUser) {
-      remindersStartupChecked = true;
-      setTimeout(function () {
-        if (!document.querySelector('.modal-overlay.active')) {
-          openRemindersIntroModal();
-        }
-      }, 650);
-    }
-    return;
-  }
-
   var dismissedSession = false;
   try {
     dismissedSession = sessionStorage.getItem(REMINDERS_SESSION_DISMISS_KEY) === '1';
@@ -279,22 +259,6 @@ function checkRemindersOnStartup(fromAuthLoad) {
     }
   } else {
     remindersStartupChecked = true;
-  }
-}
-
-function openRemindersIntroModal() {
-  var modal = document.getElementById('remindersIntroModalOverlay');
-  if (modal) modal.classList.add('active');
-}
-
-function closeRemindersIntroModal(openRemindersAfter) {
-  try {
-    localStorage.setItem(REMINDERS_INTRO_KEY, '1');
-  } catch (e) { }
-  var modal = document.getElementById('remindersIntroModalOverlay');
-  if (modal) modal.classList.remove('active');
-  if (openRemindersAfter) {
-    openRemindersModal();
   }
 }
 

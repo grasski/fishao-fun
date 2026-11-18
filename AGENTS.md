@@ -46,14 +46,16 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
      - `css/clubs.css`: Club dashboard, active club bar, milestone roadmap, roster cards, special fish cards.
      - `css/players.css`: Community player directory, player cards, and backyard bred fish styles.
      - `css/modals.css`: Modals layout, fish detail hero, price forms, bulk modal, profile/player modals, toasts.
+     - `css/chat.css`: Private 1-on-1 player chat modal, sidebar player search, thread view, safety notice, admin moderation cards, and modal `z-index` stacking.
      - `css/responsive.css`: Unified media queries (<=900px, <=768px, <=640px, <=420px).
    * `style.css` acts as the master `@import` bundle for backward compatibility.
    * All action bar controls maintain a unified 32px height standard (`.pill-btn`, `.toggle-pill`, `.btn-subtle-link`, `.sign-in-btn.sm`).
 
 7. **Modular JavaScript Architecture (`js/`):**
-   * Code is organized into cohesive modules under `js/`: `state.js`, `firestore-tx.js`, `table.js`, `clubs.js`, `market.js`, `filters.js`, `auth.js`, `players.js`, `locations.js`, `calendar.js`, `reminders.js`, and `main.js`.
+   * Code is organized into cohesive modules under `js/`: `state.js`, `firestore-tx.js`, `table.js`, `clubs.js`, `market.js`, `filters.js`, `auth.js`, `players.js`, `chat.js`, `locations.js`, `calendar.js`, `reminders.js`, and `main.js`.
    * `js/firestore-tx.js`: Generic Firestore transaction helpers (`window.FISHAO_FS_TX.loadFirestoreModule`, `readModifyWrite`, `setDocument`, `runTx`, `commitBatch`). Keep it free of app-specific collections, documents, and field names.
    * `js/players.js`: Community player list, friends management (`friendUids` in `/users/{uid}/private/settings`), backyard fish breeding (`backyardFishIds`, strictly the 83 backyard species), universal player modal, reverse fish-to-player lookups.
+   * `js/chat.js`: Private 1-on-1 plain-text player chat, double opt-in contact requests, sidebar player search, block/unblock state restoration, deleted-account handling, Notice & Action abuse reporting, and admin moderation panel.
    * `js/reminders.js`: Game event reminders persisted to `/users/{uid}/private/settings` with `localStorage` fallback.
    * Public browser handlers are exposed on `window.fishaoApp` in `js/main.js`. Do not edit the legacy monolithic `app.js`.
 
@@ -62,5 +64,12 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
    * The community tab allows browsing all registered players, their catch progress, club affiliation, and bred fish.
    * In the fish detail modal, players can see who currently has that fish bred ("Kdo má tuto rybu za domem").
    * Friends system (`friendUids`): players can add friends (⭐), filter exclusively by friends, and have friends pinned at the top of the community list and reverse lookups.
+
+9. **Private 1-on-1 Player Chat & Moderation (`js/chat.js`, `css/chat.css`, `scripts/cleanup-chat.mjs`):**
+   * **Double Opt-In & Deterministic Pair IDs:** Players cannot send free text without mutual approval. Requests use deterministic document IDs `/chats/{minUid_maxUid}` and only carry a structured `reason` (`meetup`, `backyard`, `club`, `trading`, `discord`, `general`).
+   * **Strict Plain-Text Security:** Messages (`/chats/{pairId}/messages/{msgId}`) are immutable (`allow update, delete: if false`), limited to 1–300 characters of plain text, and checked both client-side and server-side in `firestore.rules` against `<`/`>`, URLs/schemes, link shorteners, and bare domains, with a 2-second per-sender cooldown enforced atomically via `window.FISHAO_FS_TX.commitBatch` + `getAfter()`.
+   * **Privacy & Notice and Action:** `/chats` and `/messages` are readable strictly by the two participants (not even admins can read regular chats). Reporting abuse creates `/chat_reports/{reporterUid}_{reportedUid}` with a snapshot of the last 15 messages (`evidenceMessages`). At most 1 `open` report per `(reporterUid, reportedUid)` pair is permitted until an admin marks it `resolved` or `dismissed`.
+   * **Block, Unblock & Deleted Profiles:** Blocking stores `preBlockStatus`; unblocking restores a previously `accepted` chat (or any chat with `lastMessageAt != null`) back to `accepted` without orphaning `/messages`, while unblocking a never-accepted request deletes the record. Deleted accounts anonymize `participantInfo[uid]` with `deleted: true`; surviving peers cannot message deleted accounts and remove `accepted` threads via `hiddenBy`.
+   * **Daily GitHub Actions Cleanup (`.github/workflows/cleanup-chat.yml` + `scripts/cleanup-chat.mjs`):** Runs daily on **GitHub Actions** at `03:15 UTC` using `FIREBASE_SERVICE_ACCOUNT` to delete expired messages (>14 days, keeping `accepted` threads active), expired `pending` requests (>14 days), orphaned chats of deleted accounts (via `listDocuments()`), expired temporary `/chat_bans`, and closed `/chat_reports` (>90 days) on the free Firebase Spark tier.
 
 For detailed documentation, refer to the Antigravity Skill at `.agents/skills/fishao/SKILL.md`.

@@ -133,8 +133,9 @@
   <link rel="stylesheet" href="css/filters.css?v=3.5">
   <link rel="stylesheet" href="css/table.css?v=3.9">
   <link rel="stylesheet" href="css/clubs.css?v=3.3">
-  <link rel="stylesheet" href="css/players.css?v=3.2">
+  <link rel="stylesheet" href="css/players.css?v=3.3">
   <link rel="stylesheet" href="css/modals.css?v=4.0">
+  <link rel="stylesheet" href="css/chat.css?v=1.3">
   <link rel="stylesheet" href="css/locations-calendar.css?v=1.2">
   <link rel="stylesheet" href="css/responsive.css?v=3.8">
 </head>
@@ -192,6 +193,15 @@
           <span class="reminders-badge" id="remindersBadge" style="display: none;">0</span>
         </button>
 
+        <!-- Private Player Chat -->
+        <button type="button" class="chat-header-btn" id="chatHeaderBtn" style="display: none;"
+          onclick="window.fishaoApp.openChatModal()"
+          title="Zprávy &amp; Žádosti o chat" data-i18n-title="chat_header_btn_title"
+          aria-label="Zprávy &amp; Žádosti o chat" data-i18n-aria-label="chat_header_btn_title">
+          <span class="chat-header-icon" aria-hidden="true">💬</span>
+          <span class="chat-header-badge" id="chatHeaderBadge" style="display: none;">0</span>
+        </button>
+
         <!-- Auth panel -->
         <div class="auth-panel" id="authPanel">
           <button type="button" class="sign-in-btn" id="signInBtn" onclick="window.fishaoApp.signIn()" style="display: none;"
@@ -220,8 +230,9 @@
                 <button type="button" class="edit-nick-btn" onclick="event.stopPropagation(); window.fishaoApp.openProfileModal()"
                   title="Změnit přezdívku a avatar" data-i18n-title="modal_profile_title">✏️</button>
               </div>
-              <span class="admin-badge" id="adminBadge" style="display: none;">🛡️ <span
-                  data-i18n="admin_badge">Admin</span></span>
+              <span class="admin-badge" id="adminBadge" style="display: none;"
+                onclick="event.stopPropagation(); window.fishaoApp.openProfileModal(true);">🛡️ <span
+                  data-i18n="admin_badge">Admin</span><span id="adminHeaderReportCount" class="admin-header-report-count" style="display: none;">🚩 0</span></span>
             </div>
             <button type="button" class="sign-out-btn" onclick="event.stopPropagation(); window.fishaoApp.signOut()"
               title="Odhlásit se" data-i18n="sign_out" data-i18n-title="sign_out">Odhlásit</button>
@@ -1483,6 +1494,39 @@
               <span id="btnAdminToggleManualImportText" data-i18n="admin_manual_import_off">⚪ Vypnuto</span>
             </button>
           </div>
+
+          <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(56, 189, 248, 0.2);">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+              <div style="flex: 1; min-width: 200px;">
+                <div style="font-size: 12.5px; font-weight: 700; color: #e2e8f0; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                  <span>🚩</span> <span data-i18n="admin_reports_title">Moderace chatu &amp; Nahlášení</span>
+                  <span id="adminSectionReportCountBadge" class="admin-reports-count-badge" style="display: none;"></span>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" data-i18n="admin_reports_desc">
+                  Běžné chaty zůstávají soukromé. Zde vidíš pouze incidenty nahlášené uživateli (Notice &amp; Action).
+                </div>
+              </div>
+              <button type="button" class="pill-btn primary" onclick="window.fishaoApp.loadAdminChatReports()" style="height: 32px; padding: 0 14px; font-size: 12px; font-weight: 700;">
+                📋 <span data-i18n="admin_reports_load_btn">Načíst nahlášení</span>
+              </button>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center;">
+              <input type="text" id="adminUnbanUidInput" class="dash-input" style="flex: 1; min-width: 180px; height: 30px; font-size: 11.5px; padding: 4px 10px;"
+                placeholder="UID pro zrušení banu..." data-i18n-placeholder="admin_unban_uid_ph">
+              <button type="button" class="pill-btn" onclick="window.fishaoApp.adminUnbanChatUser()" style="height: 30px; padding: 0 12px; font-size: 11.5px; font-weight: 700;">
+                🔓 <span data-i18n="admin_unban_btn">Zrušit ban</span>
+              </button>
+            </div>
+            <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">
+              <button type="button" class="chat-filter-pill admin-report-filter-pill active" data-report-filter="open"
+                onclick="window.fishaoApp.setAdminReportsFilterMode('open')" data-i18n="admin_reports_filter_open">Nevyřízená</button>
+              <button type="button" class="chat-filter-pill admin-report-filter-pill" data-report-filter="all"
+                onclick="window.fishaoApp.setAdminReportsFilterMode('all')" data-i18n="admin_reports_filter_all">Vše (archiv)</button>
+              <button type="button" class="chat-filter-pill admin-report-filter-pill" data-report-filter="bans"
+                onclick="window.fishaoApp.setAdminReportsFilterMode('bans')" data-i18n="admin_reports_filter_bans">🚫 Zabanovaní</button>
+            </div>
+            <div id="adminChatReportsList" class="admin-reports-list"></div>
+          </div>
         </div>
 
         <!-- Action buttons -->
@@ -1546,6 +1590,11 @@
             style="display: none; padding: 3px 12px; font-size: 11px; font-weight: 700;"
             onclick="window.fishaoApp.toggleFriend(document.getElementById('playerModalName').dataset.currentUid)">
             ⭐ Přidat do přátel
+          </button>
+          <button type="button" id="playerModalChatBtn" class="pill-btn chat-action-pill"
+            style="display: none;"
+            onclick="window.fishaoApp.openChatWithPlayer(document.getElementById('playerModalName').dataset.currentUid)">
+            💬 Poslat žádost o chat
           </button>
         </div>
 
@@ -1651,6 +1700,18 @@
               přímo v okně profilu tlačítkem 'Smazat účet a data' – tím se kompletně a nevratně smažou veškerá herní data
               z databáze Firestore i samotný účet a e-mail z Firebase Authentication.</p>
           </div>
+
+          <div>
+            <h4 style="color: #38bdf8; margin: 0 0 6px 0; font-size: 14px;" data-i18n="privacy_sec6_title">6. Soukromý
+              chat mezi hráči</h4>
+            <p style="margin: 0;" data-i18n="privacy_sec6_desc">Soukromé zprávy fungují výhradně na základě oboustranného
+              schválení žádosti a bez sdílení e-mailových adres. Chat podporuje pouze prostý text do 300 znaků (bez
+              odkazů, obrázků a souborů). Zprávy jsou ukládány v databázi jako prostý text přístupný výhradně oběma
+              účastníkům a po 14 dnech se automaticky mažou (schválené spojení zůstává aktivní). Správce chaty nečte;
+              výjimkou je explicitní nahlášení zneužití tlačítkem Nahlásit (Notice &amp; Action), kdy se posledních 15
+              zpráv předá správci k posouzení a případnému zablokování účtu či předání závažných deliktů orgánům činným
+              v trestním řízení.</p>
+          </div>
         </div>
       </div>
       <div class="modal-footer"
@@ -1721,33 +1782,6 @@
     </div>
   </div>
 
-  <!-- First-time Feature Intro Modal: Reminders -->
-  <div class="modal-overlay" id="remindersIntroModalOverlay" onclick="window.fishaoApp.onModalOverlayClick(event, 'remindersIntroModalOverlay')">
-    <div class="modal-box reminders-intro-dialog" role="dialog" aria-modal="true" aria-labelledby="remindersIntroTitle">
-      <div class="modal-header">
-        <div class="modal-title-group">
-          <span class="reminders-hero-icon">🔔</span>
-          <h3 id="remindersIntroTitle" data-i18n="reminders_intro_title">Novinka: Herní upomínky!</h3>
-        </div>
-        <button type="button" class="modal-close" onclick="window.fishaoApp.closeRemindersIntroModal(false)" aria-label="Zavřít">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p class="reminders-intro-desc" data-i18n="reminders_intro_desc">
-          Nově si můžeš nastavit osobní upozornění na pravidelné herní akce s přesným datem i časem (například Bobovu minihru v Rio Tropical každých 7 dní nebo Továrnu na nábytek v Mystic Desert každé 2 dny).
-        </p>
-        <ul class="reminders-intro-list">
-          <li data-i18n="reminders_intro_point_1">⏰ Upozornění se zobrazí automaticky při otevření webu v daný den i po vypršení nastaveného času.</li>
-          <li data-i18n="reminders_intro_point_2">🔄 Kliknutím na „Splněno“ se další termín posune přesně o nastavený počet dní od chvíle splnění.</li>
-          <li data-i18n="reminders_intro_point_3">☁️ Přihlášeným hráčům se upomínky ukládají přímo do profilu ve Firestore.</li>
-        </ul>
-      </div>
-      <div class="modal-footer reminders-intro-footer">
-        <button type="button" class="pill-btn" onclick="window.fishaoApp.closeRemindersIntroModal(false)" data-i18n="reminders_intro_later">Rozumím</button>
-        <button type="button" class="pill-btn primary" onclick="window.fishaoApp.closeRemindersIntroModal(true)" data-i18n="reminders_intro_open">Nastavit upomínky</button>
-      </div>
-    </div>
-  </div>
-
   <!-- Focused Due / Today Reminders Alert Modal (shown automatically on startup) -->
   <div class="modal-overlay" id="remindersAlertModalOverlay" onclick="window.fishaoApp.onModalOverlayClick(event, 'remindersAlertModalOverlay')">
     <div class="modal-box reminders-alert-dialog" role="dialog" aria-modal="true" aria-labelledby="remindersAlertTitle">
@@ -1802,14 +1836,188 @@
     </div>
   </div>
 
+  <!-- First-time Feature Intro Modal: Private Player Chat (shown once, max 7 days from launch) -->
+  <div class="modal-overlay" id="chatIntroModalOverlay" onclick="window.fishaoApp.onModalOverlayClick(event, 'chatIntroModalOverlay')">
+    <div class="modal-box reminders-intro-dialog" role="dialog" aria-modal="true" aria-labelledby="chatIntroTitle">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="reminders-hero-icon">💬</span>
+          <h3 id="chatIntroTitle" data-i18n="chat_intro_title">Novinka: Soukromé zprávy mezi hráči!</h3>
+        </div>
+        <button type="button" class="modal-close" onclick="window.fishaoApp.closeChatIntroModal(false)" aria-label="Zavřít">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="reminders-intro-desc" data-i18n="chat_intro_desc">
+          Nově můžeš přímo na webu bezpečně kontaktovat ostatní hráče – domluvit se na výměně, rybách za domem, klubu nebo společném chytání.
+        </p>
+        <ul class="reminders-intro-list">
+          <li data-i18n="chat_intro_point_1">🤝 Chat na vyžádání: psát zprávy (do 300 znaků, bez odkazů) lze až po schválení žádosti druhou stranou.</li>
+          <li data-i18n="chat_intro_point_2">🔍 Hráče oslovíš přes ikonu 💬 v horní liště, na kartách v sekci Hráči nebo v detailu ryby (Kdo má rybu za domem).</li>
+          <li data-i18n="chat_intro_point_3">🔒 Soukromí na prvním místě: žádné e-maily se nesdílejí, zprávy se po 14 dnech automaticky mažou a k dispozici je blokace i nahlášení.</li>
+        </ul>
+      </div>
+      <div class="modal-footer reminders-intro-footer">
+        <button type="button" class="pill-btn" onclick="window.fishaoApp.closeChatIntroModal(false)" data-i18n="chat_intro_later">Rozumím</button>
+        <button type="button" class="pill-btn primary" onclick="window.fishaoApp.closeChatIntroModal(true)" data-i18n="chat_intro_open">💬 Vyzkoušet zprávy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Private 1-on-1 Player Chat Modal -->
+  <div class="modal-overlay" id="chatModalOverlay" onclick="window.fishaoApp.onModalOverlayClick(event, 'chatModalOverlay')">
+    <div class="modal-box chat-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="chatModalTitle">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="reminders-hero-icon">💬</span>
+          <h3 id="chatModalTitle" data-i18n="chat_modal_title">Zprávy &amp; Žádosti o chat</h3>
+        </div>
+        <button type="button" class="modal-close" onclick="window.fishaoApp.closeChatModal()" aria-label="Zavřít">&times;</button>
+      </div>
+      <div class="modal-body chat-modal-body">
+        <div id="chatLayout" class="chat-layout">
+          <div class="chat-sidebar">
+            <div class="chat-sidebar-search">
+              <input type="text" id="chatPlayerSearchInput" class="chat-search-input"
+                placeholder="🔍 Hledat hráče pro chat..."
+                data-i18n-placeholder="chat_player_search_ph"
+                oninput="window.fishaoApp.onChatPlayerSearchInput(this.value)"
+                autocomplete="off">
+              <button type="button" id="chatPlayerSearchClearBtn" class="chat-search-clear-btn"
+                style="display: none;" onclick="window.fishaoApp.clearChatPlayerSearch()"
+                aria-label="Vymazat">&times;</button>
+            </div>
+            <div class="chat-sidebar-filters">
+              <button type="button" class="chat-filter-pill active" data-chat-filter="all"
+                onclick="window.fishaoApp.setChatFilterMode('all')" data-i18n="chat_filter_all">Vše</button>
+              <button type="button" class="chat-filter-pill" data-chat-filter="unread"
+                onclick="window.fishaoApp.setChatFilterMode('unread')" data-i18n="chat_filter_unread">Nepřečtené</button>
+              <button type="button" class="chat-filter-pill" data-chat-filter="requests"
+                onclick="window.fishaoApp.setChatFilterMode('requests')" data-i18n="chat_filter_requests">Žádosti</button>
+              <button type="button" class="chat-filter-pill" data-chat-filter="blocked"
+                onclick="window.fishaoApp.setChatFilterMode('blocked')" data-i18n="chat_filter_blocked">Blokované</button>
+            </div>
+            <div id="chatThreadsList" class="chat-threads-list"></div>
+          </div>
+          <div id="chatThreadPane" class="chat-thread-pane"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Send Chat Request Modal (Double Opt-In, Reason Categories Only) -->
+  <div class="modal-overlay" id="chatRequestModalOverlay" onclick="window.fishaoApp.onModalOverlayClick(event, 'chatRequestModalOverlay')">
+    <div class="modal-box" style="max-width: 480px;" role="dialog" aria-modal="true" aria-labelledby="chatRequestModalTitle">
+      <div class="modal-header">
+        <div class="modal-title" id="chatRequestModalTitle">
+          <span>💬 <span data-i18n="chat_req_modal_title">Poslat žádost o chat</span></span>
+        </div>
+        <button type="button" class="modal-close" onclick="window.fishaoApp.closeChatRequestModal()" aria-label="Zavřít">&times;</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 14px;">
+        <div id="chatRequestTargetBox" class="chat-req-target-box"></div>
+
+        <div>
+          <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 6px;"
+            data-i18n="chat_req_reason_label">Důvod žádosti (vyber kategorii):</label>
+          <div class="chat-reason-list">
+            <label class="chat-reason-option">
+              <input type="radio" name="chatRequestReason" value="meetup" checked>
+              <span data-i18n="chat_reason_meetup">🕒 Domluvit čas ve hře / přátelství</span>
+            </label>
+            <label class="chat-reason-option">
+              <input type="radio" name="chatRequestReason" value="backyard">
+              <span data-i18n="chat_reason_backyard">🏡 Ryby za domem</span>
+            </label>
+            <label class="chat-reason-option">
+              <input type="radio" name="chatRequestReason" value="club">
+              <span data-i18n="chat_reason_club">🏰 Klub a spolupráce</span>
+            </label>
+            <label class="chat-reason-option">
+              <input type="radio" name="chatRequestReason" value="trading">
+              <span data-i18n="chat_reason_trading">🤝 Obchodování (Trading)</span>
+            </label>
+            <label class="chat-reason-option">
+              <input type="radio" name="chatRequestReason" value="discord">
+              <span data-i18n="chat_reason_discord">🎮 Discord jméno</span>
+            </label>
+            <label class="chat-reason-option">
+              <input type="radio" name="chatRequestReason" value="general">
+              <span data-i18n="chat_reason_general">💬 Obecná herní domluva</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="chat-req-info-note" data-i18n="chat_req_info_note">
+          🔒 Žádost odešle pouze tvou herní přezdívku a zvolenou kategorii (žádný e-mail ani vlastní text). Psát zprávy (max 300 znaků, pouze prostý text bez odkazů a příloh) lze až po schválení druhou stranou. Zprávy se po 14 dnech automaticky mažou.
+        </div>
+
+        <label id="chatRequestRulesAgreeWrap" class="chat-rules-agree-row">
+          <input type="checkbox" id="chatRequestRulesAgreeChk">
+          <span data-i18n="chat_rules_checkbox_label">Souhlasím s pravidly chatu: zakázán je nelegální obsah, obtěžování, phishingové podvody a obchod za reálné peníze. Zprávy jsou ukládány v plain textu po dobu 14 dnů.</span>
+        </label>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="pill-btn" onclick="window.fishaoApp.closeChatRequestModal()" data-i18n="confirm_cancel">Zrušit</button>
+          <button type="button" id="btnSubmitChatRequest" class="pill-btn primary active" onclick="window.fishaoApp.submitChatRequest()" data-i18n="chat_req_submit_btn">📨 Odeslat žádost</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Chat Abuse / Illegal Content Modal (Notice & Action) -->
+  <div class="modal-overlay" id="chatReportModalOverlay" onclick="window.fishaoApp.onModalOverlayClick(event, 'chatReportModalOverlay')">
+    <div class="modal-box" style="max-width: 480px;" role="dialog" aria-modal="true" aria-labelledby="chatReportModalTitle">
+      <div class="modal-header">
+        <div class="modal-title" id="chatReportModalTitle">
+          <span>🚩 <span data-i18n="chat_report_modal_title">Nahlásit konverzaci / hráče</span></span>
+        </div>
+        <button type="button" class="modal-close" onclick="window.fishaoApp.closeChatReportModal()" aria-label="Zavřít">&times;</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 14px;">
+        <div>
+          <label for="chatReportCategorySelect" style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 6px;"
+            data-i18n="chat_report_cat_label">Důvod nahlášení:</label>
+          <select id="chatReportCategorySelect" class="filter-control" style="width: 100%;">
+            <option value="illegal_content" data-i18n="chat_report_cat_illegal">🚨 Nelegální obsah / ohrožení</option>
+            <option value="phishing_scam" data-i18n="chat_report_cat_phishing">🎣 Phishing / podvod</option>
+            <option value="harassment" data-i18n="chat_report_cat_harassment">😡 Obtěžování / urážky</option>
+            <option value="spam" data-i18n="chat_report_cat_spam">📢 Spam / reklama</option>
+            <option value="other" data-i18n="chat_report_cat_other">❓ Jiné porušení pravidel</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="chatReportNoteInput" style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 6px;"
+            data-i18n="chat_report_note_label">Doplňující poznámka (volitelné, max 300 znaků):</label>
+          <textarea id="chatReportNoteInput" class="chat-textarea" rows="3" maxlength="300" style="width: 100%;"
+            placeholder="Popiš stručně problém..." data-i18n-placeholder="chat_report_note_ph"></textarea>
+        </div>
+
+        <label class="chat-rules-agree-row">
+          <input type="checkbox" id="chatReportAlsoBlockChk" checked>
+          <span data-i18n="chat_report_also_block">Zároveň tohoto hráče zablokovat (okamžitě zastaví další zprávy)</span>
+        </label>
+
+        <div class="chat-req-info-note" data-i18n="chat_report_info_note">
+          🛡️ Odesláním nahlášení předáš správci webu snímek posledních 15 zpráv k posouzení a případnému zablokování účtu. Závažné protiprávní jednání může být předáno příslušným orgánům.
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="pill-btn" onclick="window.fishaoApp.closeChatReportModal()" data-i18n="confirm_cancel">Zrušit</button>
+          <button type="button" id="btnSubmitChatReport" class="pill-btn danger active" onclick="window.fishaoApp.submitChatReport()" data-i18n="chat_report_submit_btn">🚩 Odeslat nahlášení</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- App Floating Toast Notification -->
   <div id="appToast" class="app-toast" style="display: none;"></div>
 
   <!-- Data scripts and localization (only base CS loaded upfront; EN/PL load on demand) -->
-  <script defer src="data/i18n/ui_cs.js?v=5.7"></script>
+  <script defer src="data/i18n/ui_cs.js?v=7.0"></script>
   <script defer src="data/i18n/taxonomies.js?v=3.4"></script>
   <script defer src="data/i18n/fish_names.js?v=3.3"></script>
-  <script defer src="data/i18n.js?v=3.3"></script>
+  <script defer src="data/i18n.js?v=4.5"></script>
   <script defer src="data/fishes.js?v=3.2"></script>
   <script defer src="data/estimated_prices.js?v=1.0"></script>
   <script defer src="firebase-config.js?v=3.2"></script>
@@ -1820,12 +2028,13 @@
   <script defer src="js/clubs.js?v=4.0"></script>
   <script defer src="js/market.js?v=4.17"></script>
   <script defer src="js/filters.js?v=4.6"></script>
-  <script defer src="js/auth.js?v=4.5"></script>
-  <script defer src="js/players.js?v=4.0"></script>
+  <script defer src="js/auth.js?v=4.9"></script>
+  <script defer src="js/players.js?v=4.2"></script>
+  <script defer src="js/chat.js?v=2.5"></script>
   <script defer src="js/locations.js?v=1.2"></script>
   <script defer src="js/calendar.js?v=1.1"></script>
-  <script defer src="js/reminders.js?v=1.1"></script>
-  <script defer src="js/main.js?v=5.1"></script>
+  <script defer src="js/reminders.js?v=1.2"></script>
+  <script defer src="js/main.js?v=5.8"></script>
 
 </body>
 

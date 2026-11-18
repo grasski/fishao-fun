@@ -1,5 +1,6 @@
 const CACHE_IMAGES = 'fishao-images-v1';
-const CACHE_STATIC = 'fishao-static-v1';
+const CACHE_STATIC = 'fishao-static-v2';
+const IS_LOCAL_DEV = (self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1');
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -10,7 +11,10 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((keys) =>
       Promise.all(
         keys
-          .filter((k) => k !== CACHE_IMAGES && k !== CACHE_STATIC)
+          .filter((k) => {
+            if (IS_LOCAL_DEV) return k !== CACHE_IMAGES;
+            return k !== CACHE_IMAGES && k !== CACHE_STATIC;
+          })
           .map((k) => caches.delete(k))
       )
     ).then(() => self.clients.claim())
@@ -18,6 +22,7 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  if (IS_LOCAL_DEV) return;
   const req = event.request;
   if (req.method !== 'GET') return;
 

@@ -30,6 +30,7 @@ CSS_FILES = [
     "css/clubs.css",
     "css/players.css",
     "css/modals.css",
+    "css/chat.css",
     "css/locations-calendar.css",
     "css/responsive.css",
 ]
@@ -50,6 +51,7 @@ JS_FILES = [
     "js/filters.js",
     "js/auth.js",
     "js/players.js",
+    "js/chat.js",
     "js/locations.js",
     "js/calendar.js",
     "js/reminders.js",

@@ -175,6 +175,31 @@ In memory (`js/state.js` / `js/market.js`), `summaryMapToPriceHistory(priceSumma
   * `friendUids`: Array<String> (Favorited player UIDs, max 300).
   * `reminders`: Array<Object> (Custom event reminders, max 100).
   * `lastLogin`, `updatedAt`.
+* `/chats/{pairId}` (private to the 2 participants; deterministic `minUid_maxUid`):
+  * `participants`: `[uid0, uid1]` (`uid0 < uid1`).
+  * `participantInfo`: `{ [uid]: { displayName, avatarUrl, deleted? } }`.
+  * `status`: `'pending' | 'accepted' | 'rejected' | 'blocked'`.
+  * `requestedBy`: String (UID of request sender).
+  * `blockedBy`: String | null (UID of blocker when `status == 'blocked'`).
+  * `preBlockStatus`: String | null (`'pending' | 'accepted' | 'rejected'`, saved when blocking to allow restoring `'accepted'` on unblock).
+  * `reason`: `'meetup' | 'backyard' | 'club' | 'trading' | 'discord' | 'general'`.
+  * `lastMessagePreview`: String (max 80 chars, plain text, no links/HTML).
+  * `lastSenderUid`: String | null.
+  * `lastMessageId`: String | null (ID of the latest message created in the same atomic `writeBatch`, verified via `getAfter()`).
+  * `lastMessageAt`: Timestamp | null.
+  * `lastReadAt`: `{ [uid]: Timestamp }`.
+  * `hiddenBy`: Array<String> (optional; set by surviving participant to hide an `accepted` thread when the peer deleted their account).
+  * `createdAt`, `updatedAt`, `expiresAt` (Timestamp +14d on `pending`, `null` on `accepted`/`rejected`/`blocked`).
+* `/chats/{pairId}/messages/{msgId}` (private to the 2 participants; immutable):
+  * `senderUid`: String.
+  * `text`: String (1–300 chars plain text; `<`, `>`, URLs, link shorteners, and bare domains rejected in `firestore.rules`).
+  * `createdAt`: Timestamp (`request.time`, enforced with `getAfter()` on parent chat doc and 2s cooldown).
+  * `expiresAt`: Timestamp (+14 days).
+* `/chat_reports/{reportId}` (deterministic `{reporterUid}_{reportedUid}`; readable/manageable by admins, single-doc `get` allowed for reporter):
+  * `chatId`, `reporterUid`, `reportedUid`, `category` (`'illegal_content' | 'phishing_scam' | 'harassment' | 'spam' | 'other'`), `note` (<=300 chars), `evidenceMessages` (snapshot of up to 15 messages), `status` (`'open' | 'resolved' | 'dismissed'`), `createdAt`, `expiresAt` (+90 days).
+  * At most 1 `'open'` report per `(reporterUid, reportedUid)` pair; reporter can only overwrite after status becomes `'resolved'` or `'dismissed'`.
+* `/chat_bans/{userId}` (readable by affected user or admin; writable strictly by admin):
+  * `reason` (<=120 chars), `bannedAt`, `bannedUntil` (Timestamp or `null` for permanent), `bannedBy`.
 
 ### 2.4 Firebase Security Rules & Communication Best Practices (`firestore.rules`)
 
@@ -187,13 +212,8 @@ In memory (`js/state.js` / `js/market.js`), `summaryMapToPriceHistory(priceSumma
    * `/clubs/{clubId}`: Publicly readable (`allow read: if true`). Role-aware updates enforce member-diff rules: non-members can only add themselves (`isCreator == false`), regular members can only remove themselves on leave or update points/unlocks/own member stats; only creators or admins can rename clubs, promote creators, or remove other members.
    * `/fishao_market/{docId}` (`prices_summary`, `prices_history`) & `/fishao_market_daily/{monthId}`: Publicly readable; writable by admins or signed-in users when `isManualImportEnabled()`; delete strictly admin-only.
    * `/fishao_market/config`: Publicly readable; create/update/delete strictly reserved for admins (`isAdmin()`).
-3. **GDPR-free Storage:**
-   * Never store a player's Google email, full name, or private tokens in Firestore. Only store the user-chosen `displayName`, `avatarUrl`, and game state.
-4. **Google Identity Auth Handler & Referrer Rules:**
-   * The Firebase web API key in Google Cloud Console must NOT use HTTP referrer restrictions ("Websites"), because the Firebase OAuth popup (`fishao-fun.firebaseapp.com/__/auth/handler`) sets `<meta name="referrer" content="no-referrer">`. Use "None" (API keys are public client identifiers; Firestore security rules guard the data).
-5. **Safe Error Handling & Offline Fallback:**
-   * Always wrap Firestore writes and reads in `try / catch`. If a user is offline or Firebase is blocked, gracefully fall back to local `localStorage` so the UI never crashes.
-
+   * `/chats/{pairId}` & `/chats/{pairId}/messages/{msgId}`: Strictly private to the two participants (`request.auth.uid in participants`). Messages require `chatOtherParticipantExists`, `!isChatBanned()`, `validChatText`, and atomic parent metadata update. Client `deleteDoc` on `/chats/{pairId}` is forbidden whenever `preBlockStatus == 'accepted'` or `lastMessageAt != null` so `/messages` subcollections are never orphaned.
+   * `/chat_reports/{reportId}` & `/chat_bans/{userId}`: Admin-moderated Notice & Action collections.
 
 ### 2.5 Modular JavaScript Architecture (`js/`)
 
@@ -203,10 +223,11 @@ The monolithic `app.js` was refactored into modular, cohesive files loaded direc
 3. `js/clubs.js`: Real-time club synchronization via Firestore (`bindClubListener`), deterministic member roster rendering (`renderClubMembers`), member profile modal (`openPlayerModal`), club search, creation, joining, and leaving, club points management, milestones roadmap (`renderClubMilestones`), and FC / Monster special fish unlocks.
 4. `js/market.js`: Fish market price history persistence (`saveLocalPriceHistory`), Sunday detection, display normalization (`normalizePriceEntries`), price lookups (`getLatestPrice`, `getMaxPrice` — highest distinct price, ties resolved to the most recent date), single price submission/deletion through Firestore transactions (`submitNewPrice`, `deletePriceEntry`), fish detail modal rendering (`openPriceModal`, including the `rarity_factor` → tier badge helpers `getRarityTier` / `formatRarityPercent`), normalized modal price history rendering (`renderModalHistory`), visual price range scale with average/median markers (`computePriceStats`, `renderModalPriceScale` → `#modalPriceScale`), bulk price import with duplicate skipping and autocomplete suggestions (`processBulkImport`), default reset (`resetPriceHistoryToDefault`), and JSON export (`exportPricesJson`).
 5. `js/filters.js`: Multi-criteria fish filtering engine (`applyFilters`, `resetFilters`), parent-location and specific-area dropdown logic (`initLocationOptions`, `onLocationFilterChange`, `updateAreaFilterOptions`), mission size handlers (`setSizeFilter`, `onRangeSizeInput`), collection filters, the Market "missing price" toggle (`toggleNeedsPrice`, `fishNeedsPrice` = 0 normalized entries, `#btnNeedsPrice` with live count; mutually exclusive with `toggleOnlyPrice`), and dropdown options initializers. The specific-area dropdown follows the selected parent location in the fishdex/market views and falls back to `getClubAreas()` in the club view.
-6. `js/auth.js`: Firebase authentication (`signIn`, `signOut`), GDPR-compliant profile synchronization (`loadUserProfile`, `saveProfile`), and UI state synchronization (`updateAuthUI`).
+6. `js/auth.js`: Firebase authentication (`signIn`, `signOut`), GDPR-compliant profile synchronization (`loadUserProfile`, `saveProfile`), account deletion cleanup (`deleteAccount` -> `cleanupUserChatsOnAccountDelete`), and UI state synchronization (`updateAuthUI`).
 7. `js/players.js`: Community player list, backyard fish breeding (`backyardFishIds`), universal player modal, reverse fish-to-player lookups.
-8. `js/main.js`: Live clock and timezone switching (`setTimezone`, `updateClock`), view routing (`switchView`), static DOM translations (`setLanguage`, `updateStaticTranslations`), modal listeners, `window.fishaoApp` exports, and application boot.
-9. `js/firestore-tx.js`: Generic, app-agnostic Firestore transaction helpers exposed as `window.FISHAO_FS_TX` (`readModifyWrite(db, docRef, modifier)` and `setDocument(db, docRef, data)`). It contains no collection, document or field names; `js/market.js` supplies those.
+8. `js/chat.js`: Private 1-on-1 player chat (`initChatSync`, `openChatModal`, `openChatWithPlayer`, `submitChatRequest`, `sendChatMessage`), sidebar player search (`onChatPlayerSearchInput`), block/unblock with `preBlockStatus` restoration (`blockChatUser`, `unblockChatUser`), deleted-peer detection & thread dismissal (`verifyChatPeerExists`, `dismissDeletedChatThread`), abuse reporting (`openChatReportModal`, `submitChatReport`), real-time admin open-report watcher (`syncAdminReportsWatcher`), and admin moderation views (`Nevyřízená`, `Vše (archiv)`, `🚫 Zabanovaní`).
+9. `js/main.js`: Live clock and timezone switching (`setTimezone`, `updateClock`), view routing (`switchView`), static DOM translations (`setLanguage`, `updateStaticTranslations`), `z-index`-aware modal focus trap (`getTopActiveModal`), `window.fishaoApp` exports, and application boot.
+10. `js/firestore-tx.js`: Generic, app-agnostic Firestore transaction helpers exposed as `window.FISHAO_FS_TX` (`readModifyWrite(db, docRef, modifier)`, `setDocument(db, docRef, data)`, `runTx`, `commitBatch`).
 
 ### 2.6 Modular Stylesheets (`css/`)
 
@@ -219,7 +240,8 @@ The 3,200+ line monolithic `style.css` was refactored into targeted CSS modules:
 6. `css/clubs.css`: Active club header bar, roadmap milestones, member cards, special fish cards.
 7. `css/players.css`: Community player cards, grid, backyard chips, and detail modal extensions.
 8. `css/modals.css`: Fish detail modal hero, fish market single & bulk modals, auth gate cards, player profile modal, emoji picker, toast messages.
-9. `css/responsive.css`: Mobile and tablet media queries (`<=900px`, `<=768px`, `<=640px`, `<=420px`).
+9. `css/chat.css`: Header chat badge, 2-pane chat dialog, sidebar player search, message bubbles, safety banner, admin report/ban cards, and modal `z-index` layering (`#chatModalOverlay` 1000 < `#priceModalOverlay` 1050 < `#playerModalOverlay` 1100 < `#chatRequestModalOverlay`/`#chatReportModalOverlay` 1200 < `#confirmModalOverlay` 10000).
+10. `css/responsive.css`: Mobile and tablet media queries (`<=900px`, `<=768px`, `<=640px`, `<=420px`).
 
 `style.css` acts as the master `@import` orchestrator for backward compatibility.
 
@@ -238,6 +260,19 @@ Evaluates which bait gives a target fish the highest bite share in each location
    * Sorting evaluates `computeFishBaitRecommendations` dynamically against active location, area, `#btnNow`, and club unlock filters.
 3. **Fish Detail Modal (`js/market.js`):**
    * `renderModalBaitAdvisor()` renders per-spot bait rankings, the `⚡ Právě teď` (`modalBaitAdvisorTimeMode`, defaulting to `'now'`, toggleable to `'overlap'`) mode button, a collapsible `ℹ️ Jak to funguje?` info panel (`toggleModalBaitAdvisorInfo()`), expandable competitor lists, and `filterTableByBaitSpot()` to jump straight to that spot in the table.
+
+### 2.8 Private 1-on-1 Player Chat, Moderation & Daily GitHub Actions Cleanup
+
+1. **Lifecycle & Double Opt-In (`js/chat.js`):**
+   * Initiated from player cards (`.player-card-chat-btn`), player profile modal (`#playerModalChatBtn`), or directly via the chat sidebar player search (`#chatPlayerSearchInput`).
+   * Creates `/chats/{minUid_maxUid}` with `status: 'pending'` and a category `reason` (`meetup`, `backyard`, `club`, `trading`, `discord`, `general`).
+   * Once accepted by the recipient (`status: 'accepted'`), both players can exchange plain-text messages (`1..300` chars, no HTML/URLs).
+   * Active pane rendering preserves `#chatMessageInput` focus/value across background snapshot updates (`_renderedChatPaneId` guard) and deduplicates read-receipt writes (`{ serverTimestamps: 'estimate' }` + `_lastMarkedReadMsgMs`).
+2. **Automated Daily Cleanup via GitHub Actions (`.github/workflows/cleanup-chat.yml` + `scripts/cleanup-chat.mjs`):**
+   * Executed daily by **GitHub Actions** (`cron: '15 3 * * *'`, plus manual `workflow_dispatch` with `dry_run`), authenticating to Firebase via `FIREBASE_SERVICE_ACCOUNT` (free on the Firebase Spark tier, using standard Admin SDK `delete()` calls).
+   * Deletes messages older than 14 days while keeping `accepted` threads active (clearing stale `lastMessagePreview` once no newer messages remain).
+   * Deletes unanswered `pending` requests older than 14 days, expired temporary bans in `/chat_bans`, and closed (`resolved`/`dismissed`) `/chat_reports` older than 90 days.
+   * Uses `db.collection('chats').listDocuments()` + `db.getAll()` to clean up orphaned chats and parentless `/messages` subcollections whenever a participant account no longer exists in `/users` (or has `deleted: true`), provided no `open` report references that `chatId`. Active `blocked` and `rejected` records between live accounts are never deleted so anti-spam blocks persist.
 
 ---
 
