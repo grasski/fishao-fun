@@ -567,13 +567,15 @@ function getFishRenderData(f) {
   if (cached) return cached;
 
   var fishName = window.FISHAO_I18N ? window.FISHAO_I18N.getFishName(f) : f.name;
+  var areaLabels = getFishAreaLabels(f);
   var data = {
     fishName: fishName,
     safeFishName: escapeHtml(fishName),
     timeInfo: formatCatchTime(f.raw_times),
     dateInfo: formatCatchDate(f.raw_dates),
     locLabels: getFishLocationLabels(f),
-    areaName: getFishAreaLabels(f)[0] || ""
+    areaLabels: areaLabels,
+    areaName: areaLabels[0] || ""
   };
   _fishRenderCache.set(f.id, data);
   return data;
@@ -629,6 +631,14 @@ function renderFishRowHtml(f, idx, ctx) {
 
   var rowCls = caughtFishIds.has(f.id) ? "row-caught" : "";
   var locLabels = rc.locLabels;
+  var areaLabels = rc.areaLabels;
+  var locHtml = locLabels.map(function (locName) {
+    return '<span class="loc-tag">' + escapeHtml(locName) + '</span>';
+  }).join('') + areaLabels.map(function (areaName) {
+    return '<span class="loc-area-chip" title="' +
+      escapeHtml(t('modal_area_title', { name: areaName })) + '">📍 ' +
+      escapeHtml(areaName) + '</span>';
+  }).join('');
 
   return '<tr class="' + rowCls + '" tabindex="0" data-fish-id="' + f.id + '" title="' + ctx.rowClickTitle + '">' +
     '<td style="color: var(--text-muted); font-weight: 600;">' + (idx + 1) + '</td>' +
@@ -640,9 +650,7 @@ function renderFishRowHtml(f, idx, ctx) {
     '<td>' + renderRatingBadge(f.rating) + '</td>' +
     '<td>' + renderPriceCell(f.id, ctx.priceCtx) + '</td>' +
     '<td class="loc-box">' +
-    (locLabels.length ? locLabels.map(function (locName) {
-      return '<span class="loc-tag">' + escapeHtml(locName) + '</span>';
-    }).join('') : '<span class="loc-unspecified">' + ctx.unspecText + '</span>') +
+    (locHtml || '<span class="loc-unspecified">' + ctx.unspecText + '</span>') +
     '</td>' +
     '<td>' + (typeof renderFishBaitsCell === 'function' ? renderFishBaitsCell(f, ctx.baitFilterCtx) : f.baits.map(function (b) {
       return renderBaitTag(b);
