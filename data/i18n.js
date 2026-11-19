@@ -70,7 +70,7 @@
     return chain;
   }
 
-  /** Initial language: ?lang= URL param > saved choice > browser language > default. */
+  /** Initial language: ?lang= URL param > URL path prefix (/en/, /pl/) > <html lang> > saved choice > browser language > default. */
   function detectInitialLang() {
     try {
       if (hasWindow && window.location && typeof URLSearchParams !== 'undefined') {
@@ -79,8 +79,30 @@
       }
     } catch (e) { }
     try {
+      if (hasWindow && window.location && typeof window.location.pathname === 'string') {
+        var pathMatch = /^\/(en|pl)(\/|$)/i.exec(window.location.pathname);
+        if (pathMatch && isSupported(pathMatch[1].toLowerCase())) {
+          return pathMatch[1].toLowerCase();
+        }
+        // Only treat root "/" as explicit Czech if the user came from /en/ or /pl/ on the same origin
+        if ((window.location.pathname === '/' || window.location.pathname === '/index.html') &&
+            typeof document !== 'undefined' && document.referrer) {
+          var refUrl = new URL(document.referrer);
+          if (refUrl.origin === window.location.origin && /^\/(en|pl)(\/|$)/i.test(refUrl.pathname)) {
+            return 'cs';
+          }
+        }
+      }
+    } catch (e) { }
+    try {
       var saved = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
       if (saved && isSupported(saved)) return saved;
+    } catch (e) { }
+    try {
+      if (hasWindow && typeof document !== 'undefined' && document.documentElement) {
+        var htmlLang = (document.documentElement.getAttribute('lang') || '').toLowerCase().split(/[-_]/)[0];
+        if (htmlLang && htmlLang !== DEFAULT_LANG && isSupported(htmlLang)) return htmlLang;
+      }
     } catch (e) { }
     try {
       if (typeof navigator !== 'undefined') {
@@ -386,7 +408,9 @@
         }
         var bundledUrl = (window.FISHAO_I18N_BUNDLES && window.FISHAO_I18N_BUNDLES[code]) || null;
         var script = document.createElement('script');
-        script.src = bundledUrl || ('data/i18n/ui_' + code + '.js?v=7.0');
+        script.src = bundledUrl
+          ? ((bundledUrl.charAt(0) === '/' || /^https?:\/\//i.test(bundledUrl)) ? bundledUrl : ('/' + bundledUrl))
+          : ('/data/i18n/ui_' + code + '.js?v=7.0');
         script.async = true;
         script.onload = function () {
           ui[code] = window[globalName] || {};

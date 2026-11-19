@@ -78,13 +78,13 @@ function saveProfileToCache(uid, profile, privData) {
       backyardFishIds: Array.isArray(profile.backyardFishIds) ? profile.backyardFishIds : [],
       friendUids: existingFriends
     }));
-  } catch (e) {}
+  } catch (e) { }
 }
 
 function clearProfileCache() {
   try {
     localStorage.removeItem(PROFILE_CACHE_KEY);
-  } catch (e) {}
+  } catch (e) { }
 }
 
 function hydrateProfileFromCache(uid) {
@@ -296,7 +296,7 @@ async function _runInitFirebaseSync() {
             clearTimeout(mergeTimer);
             mergeTimer = 0;
           }
-          unsubs.forEach(function (u) { try { u(); } catch (e) {} });
+          unsubs.forEach(function (u) { try { u(); } catch (e) { } });
         };
         return;
       }
@@ -363,7 +363,7 @@ async function _runInitFirebaseSync() {
         try {
           localStorage.removeItem('fishao_backyard_fish_ids');
           localStorage.removeItem('fishao_friends_uids');
-        } catch (e) {}
+        } catch (e) { }
         if (isInitialGuest) {
           updateAuthUI();
           return;
@@ -445,7 +445,7 @@ async function _runInitFirebaseSync() {
             } else {
               try {
                 safeStorageSet('fishao_estimated_prices_v1', JSON.stringify(estimatedPrices));
-              } catch (e) {}
+              } catch (e) { }
             }
             safeStorageSet('fishao_estimated_prices_ts_v1', String(Date.now()));
 
@@ -467,7 +467,7 @@ async function _runInitFirebaseSync() {
       try {
         var rawCfg = safeStorageGet(CONFIG_CACHE_KEY);
         if (rawCfg) cachedCfg = JSON.parse(rawCfg);
-      } catch (e) {}
+      } catch (e) { }
 
       var initialManualFlag = !!(cachedCfg && cachedCfg.manualImportEnabled === true);
       manualImportEnabled = initialManualFlag;
@@ -615,7 +615,7 @@ function declineCookieConsent(fromPrivacyModal) {
   if (analyticsModuleRef && firebaseAnalytics && typeof analyticsModuleRef.setAnalyticsCollectionEnabled === "function") {
     try {
       analyticsModuleRef.setAnalyticsCollectionEnabled(firebaseAnalytics, false);
-    } catch (e) {}
+    } catch (e) { }
   }
 
   firebaseAnalytics = null;
@@ -675,10 +675,13 @@ function updatePrivacyConsentStatusUI() {
 }
 
 async function signIn() {
+  if (!_firebaseInitPromise) {
+    initFirebaseSync();
+  }
   if (!auth && _firebaseInitPromise) {
     try {
       await _firebaseInitPromise;
-    } catch (e) {}
+    } catch (e) { }
   }
   if (!auth) {
     showAuthNotice(t('auth_need_config'));
@@ -746,7 +749,7 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
           backyardFishIds: userProfile.backyardFishIds || [],
           friendUids: userProfile.friendUids || []
         });
-      } catch (e) {}
+      } catch (e) { }
     }
 
     userPrivateUnsubscribe = fsModule.onSnapshot(privDocRef, async function (privSnap) {
@@ -803,7 +806,7 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
           var lastSync = parseInt(safeStorageGet(loginSyncKey) || '0', 10);
           if (!lastSync || (Date.now() - lastSync) > 15 * 60 * 1000) {
             safeStorageSet(loginSyncKey, String(Date.now()));
-            savePrivateUserSettings({ lastLogin: new Date().toISOString() }).catch(function () {});
+            savePrivateUserSettings({ lastLogin: new Date().toISOString() }).catch(function () { });
           }
         }
       } else {
@@ -864,7 +867,7 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
           backyardFishIds: userProfile.backyardFishIds || [],
           friendUids: Array.from(friendUids || [])
         });
-      } catch (e) {}
+      } catch (e) { }
 
       if (!nextSig || nextSig !== lastAppliedProfileSig) {
         lastAppliedProfileSig = nextSig;
@@ -909,10 +912,12 @@ function updateAuthUI() {
   var subNavClub = document.getElementById("subNavClub");
   var isInClub = !!(currentUser && currentClubId);
   if (tabClub) {
-    tabClub.style.display = isInClub ? "" : "none";
+    var wantClubDisplay = isInClub ? "" : "none";
+    if (tabClub.style.display !== wantClubDisplay) tabClub.style.display = wantClubDisplay;
   }
   if (subNavClub) {
-    subNavClub.style.display = (isInClub && (currentView === "club_manage" || currentView === "club")) ? "flex" : "none";
+    var wantSubNavDisplay = (isInClub && (currentView === "club_manage" || currentView === "club")) ? "flex" : "none";
+    if (subNavClub.style.display !== wantSubNavDisplay) subNavClub.style.display = wantSubNavDisplay;
   }
   if (!isInClub && currentView === "club") {
     switchView("all");
@@ -930,15 +935,19 @@ function updateAuthUI() {
   var collBannerAuth = document.getElementById("collBannerAuth");
   var collBannerGuest = document.getElementById("collBannerGuest");
   if (collBannerAuth && collBannerGuest) {
-    collBannerAuth.style.display = currentUser ? "flex" : "none";
-    collBannerGuest.style.display = currentUser ? "none" : "flex";
+    var wantAuthDisp = currentUser ? "flex" : "none";
+    var wantGuestDisp = currentUser ? "none" : "flex";
+    if (collBannerAuth.style.display !== wantAuthDisp) collBannerAuth.style.display = wantAuthDisp;
+    if (collBannerGuest.style.display !== wantGuestDisp) collBannerGuest.style.display = wantGuestDisp;
   }
 
   var gatePlayers = document.getElementById("gatePlayers");
   var playersContent = document.getElementById("playersContent");
   if (gatePlayers && playersContent) {
-    gatePlayers.style.display = currentUser ? "none" : "block";
-    playersContent.style.display = currentUser ? "block" : "none";
+    var wantGateDisp = currentUser ? "none" : "block";
+    var wantPlayersDisp = currentUser ? "block" : "none";
+    if (gatePlayers.style.display !== wantGateDisp) gatePlayers.style.display = wantGateDisp;
+    if (playersContent.style.display !== wantPlayersDisp) playersContent.style.display = wantPlayersDisp;
   }
 
   if (typeof updateChatHeaderBadge === "function") {
@@ -1311,7 +1320,7 @@ async function deleteAccount() {
     try {
       var privDocRef = fsModule.doc(db, "users", uid, "private", "settings");
       await fsModule.deleteDoc(privDocRef);
-    } catch (e) {}
+    } catch (e) { }
     var userDocRef = fsModule.doc(db, "users", uid);
     await fsModule.deleteDoc(userDocRef);
     if (typeof cleanupUserChatsOnAccountDelete === 'function') {
@@ -1330,7 +1339,7 @@ async function deleteAccount() {
     safeStorageRemove('fishao_players_cache_v1');
     try {
       sessionStorage.removeItem('fishao_players_cache_v1');
-    } catch (e) {}
+    } catch (e) { }
 
     // 5. Remove from in-memory allPlayersList
     if (typeof allPlayersList !== 'undefined' && Array.isArray(allPlayersList)) {

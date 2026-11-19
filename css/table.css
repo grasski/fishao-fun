@@ -261,7 +261,7 @@ tbody tr:hover .fish-img {
   background: #151e30;
   border: 1px solid var(--border);
   color: #cbd5e1;
-  font-size: 11px;
+  font-size: 12px;
   padding: 2px 6px;
   border-radius: 5px;
   display: inline-flex;
@@ -358,7 +358,7 @@ tbody tr:hover .fish-img {
   background: #0f1624;
   border: 1px solid var(--border);
   color: #94a3b8;
-  font-size: 11px;
+  font-size: 12px;
   padding: 2px 6px;
   border-radius: 4px;
   display: inline-block;
@@ -370,7 +370,7 @@ tbody tr:hover .fish-img {
   max-width: 250px;
 }
 .loc-box .loc-area-chip {
-  font-size: 11px;
+  font-size: 12px;
   padding: 1px 6px;
   margin: 1px;
   line-height: 1.4;
@@ -396,11 +396,11 @@ tbody tr:hover .fish-img {
 }
 .time-night { color: #818cf8; }
 .time-subtext {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--text-muted);
 }
 .time-now-active {
-  background: #10b981;
+  background: #34d399;
   color: #022c22;
   font-size: 9px;
   font-weight: 900;
@@ -415,7 +415,7 @@ tbody tr:hover .fish-img {
 }
 
 .len-box { white-space: nowrap; }
-.len-dim { color: #64748b; font-size: 11px; }
+.len-dim { color: #8492a6; font-size: 12px; }
 .len-avg { color: #f8fafc; font-weight: 800; font-size: 13px; }
 
 /* PRICE CELLS - Known price range (min–max) plus distinct count */
@@ -458,8 +458,8 @@ tbody tr:hover .fish-img {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: #64748b;
-  font-size: 11px;
+  color: #8492a6;
+  font-size: 12px;
   border: 1px dashed #334155;
   padding: 3px 6px;
   border-radius: 6px;
@@ -473,7 +473,7 @@ tbody tr:hover .fish-img {
   gap: 2px;
 }
 .price-est-sub {
-  font-size: 11px;
+  font-size: 12px;
   color: rgba(251, 191, 36, 0.88);
   font-weight: 700;
   letter-spacing: 0.01em;

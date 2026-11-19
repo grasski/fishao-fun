@@ -879,7 +879,7 @@ function renderClubSpecialFishes() {
 
     return '<div class="special-fish-card ' + (isUnlocked ? 'unlocked' : '') + '">' +
       '<div class="special-fish-left" role="button" tabindex="0" data-fish-id="' + f.id + '" style="cursor: pointer;">' +
-      '<img src="images/fish_' + f.id + '.webp" class="special-fish-img" alt="' + escapeHtml(fishName) + '" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
+      '<img src="/images/fish_' + f.id + '.webp" class="special-fish-img" alt="' + escapeHtml(fishName) + '" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
       '<div class="special-fish-details">' +
       '<span class="special-fish-name" title="' + escapeHtml(fishName) + '">' + escapeHtml(fishName) + '</span>' +
       '<span class="special-fish-cost">' + escapeHtml(costLabel) + '</span>' +
@@ -1028,7 +1028,7 @@ function renderClubMilestones() {
         '<div class="dash-card-body">' +
         '<div class="milestone-fish-row" style="margin-top: 4px;">' +
         '<div class="milestone-fish-img-box" style="width: 84px; height: 52px;">' +
-        '<img src="images/fish_' + nextFish.id + '.webp" class="milestone-fish-img" alt="' + escapeHtml(nextFishName) + '" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
+        '<img src="/images/fish_' + nextFish.id + '.webp" class="milestone-fish-img" alt="' + escapeHtml(nextFishName) + '" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
         '</div>' +
         '<div class="milestone-fish-info">' +
         '<div class="milestone-fish-name" style="font-size: 14px;">' + escapeHtml(nextFishName) + '</div>' +
@@ -1140,7 +1140,7 @@ function renderClubMilestones() {
       '</div>' +
       '<div class="milestone-fish-row">' +
       '<div class="milestone-fish-img-box">' +
-      '<img src="images/fish_' + f.id + '.webp" class="milestone-fish-img" alt="' + escapeHtml(fishName) + '" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
+      '<img src="/images/fish_' + f.id + '.webp" class="milestone-fish-img" alt="' + escapeHtml(fishName) + '" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
       '</div>' +
       '<div class="milestone-fish-info">' +
       '<div class="milestone-fish-name" title="' + escapeHtml(fishName) + '">' + escapeHtml(fishName) + '</div>' +

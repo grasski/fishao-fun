@@ -419,6 +419,7 @@
       "footer_recaptcha_notice": "This site is protected by reCAPTCHA and the Google <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Privacy Policy</a> and <a href=\"https://policies.google.com/terms\" target=\"_blank\" rel=\"noopener noreferrer\">Terms of Service</a> apply.",
       "footer_privacy_link": "Privacy Policy & GDPR",
       "footer_official_link": "FISHAO Community Game",
+      "footer_wiki_link": "Fish Catalog (Wiki)",
       "footer_version": "Made with ❤️ for the fishing community",
       "unit_points_full": "points",
       "privacy_modal_title": "Privacy Policy & GDPR",

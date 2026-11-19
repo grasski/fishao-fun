@@ -583,6 +583,14 @@ function checkChatIntroOnStartup() {
   _chatIntroStartupChecked = true;
   if (Date.now() > CHAT_INTRO_EXPIRES_MS) return;
   if (safeStorageGet(CHAT_INTRO_SEEN_KEY) === '1') return;
+  // Only show the chat intro to players who have signed in or interacted with the tracker before
+  var isReturningUser = !!(
+    currentUser ||
+    safeStorageGet('fishao_cached_profile_v1') ||
+    safeStorageGet('fishao_cookie_consent') ||
+    safeStorageGet('fishao_price_summary_v2')
+  );
+  if (!isReturningUser) return;
 
   setTimeout(function () {
     if (Date.now() > CHAT_INTRO_EXPIRES_MS) return;

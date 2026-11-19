@@ -423,6 +423,7 @@
       "footer_recaptcha_notice": "Ta strona jest chroniona przez reCAPTCHA i obowiązują na niej <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Polityka prywatności</a> oraz <a href=\"https://policies.google.com/terms\" target=\"_blank\" rel=\"noopener noreferrer\">Warunki korzystania z usług</a> Google.",
       "footer_privacy_link": "Polityka prywatności & RODO",
       "footer_official_link": "Gra społecznościowa FISHAO",
+      "footer_wiki_link": "Katalog ryb (Wiki)",
       "footer_version": "Stworzone z ❤️ dla społeczności wędkarzy",
       "unit_points_full": "punktów",
       "privacy_modal_title": "Polityka prywatności & RODO",

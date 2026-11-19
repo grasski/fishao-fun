@@ -159,7 +159,9 @@ function syncUrlRoute(view, fishId, replace) {
 
     var canLink = document.getElementById('canonicalLink');
     if (canLink) {
-      canLink.setAttribute('href', window.location.origin + newUrl);
+      var canPath = window.location.pathname || '/';
+      if (!canPath.endsWith('/') && !canPath.endsWith('.html')) canPath += '/';
+      canLink.setAttribute('href', window.location.origin + canPath);
     }
   } catch (e) { }
 }
@@ -371,6 +373,11 @@ function updateStaticTranslations() {
   var langSelect = document.getElementById("langSelect");
   if (langSelect && langSelect.value !== lang) langSelect.value = lang;
 
+  var wikiLink = document.getElementById("footerWikiLink");
+  if (wikiLink) {
+    wikiLink.setAttribute("href", lang === "en" ? "/en/fish/" : (lang === "pl" ? "/pl/ryby/" : "/ryby/"));
+  }
+
   // Dynamic SEO title & meta description update on language change
   try {
     var pageTitle = t("seo_page_title");
@@ -390,9 +397,11 @@ function updateStaticTranslations() {
     var val = t(key);
     if (val !== undefined && val !== null && val !== key) {
       if (val.indexOf('<') !== -1) {
-        el.innerHTML = val;
+        if (el.innerHTML !== val) el.innerHTML = val;
       } else {
-        el.textContent = val;
+        if (el.textContent.replace(/\s+/g, ' ').trim() !== val.replace(/\s+/g, ' ').trim()) {
+          el.textContent = val;
+        }
       }
     }
   });
@@ -423,9 +432,9 @@ function setLanguage(lang, opts) {
   if (window.FISHAO_I18N && typeof window.FISHAO_I18N.setLang === 'function') {
     lang = window.FISHAO_I18N.setLang(lang);
     if (!opts.skipEnsure &&
-        typeof window.FISHAO_I18N.isLangLoaded === 'function' &&
-        typeof window.FISHAO_I18N.ensureLangLoaded === 'function' &&
-        !window.FISHAO_I18N.isLangLoaded(lang)) {
+      typeof window.FISHAO_I18N.isLangLoaded === 'function' &&
+      typeof window.FISHAO_I18N.ensureLangLoaded === 'function' &&
+      !window.FISHAO_I18N.isLangLoaded(lang)) {
       window.FISHAO_I18N.ensureLangLoaded(lang).then(function (loaded) {
         if (loaded && window.FISHAO_I18N.currentLang === lang) {
           setLanguage(lang, { skipEnsure: true });
@@ -436,6 +445,27 @@ function setLanguage(lang, opts) {
     if (!lang) lang = 'cs';
     try {
       localStorage.setItem('fishao_lang', lang);
+    } catch (e) { }
+  }
+
+  if (!opts.skipRender && typeof window !== 'undefined' && window.history && window.history.replaceState) {
+    try {
+      // Only rewrite the URL path to /en/ or /pl/ when running on the built site (or already on /en/ or /pl/),
+      // so raw local dev servers without /en/index.html don't 404 on F5 reload.
+      var curPath = window.location.pathname || '/';
+      var isBuiltOrSubpath = !!(window.FISHAO_APP_VERSION || /^\/(en|pl)(\/|$)/i.test(curPath));
+      if (isBuiltOrSubpath && /^\/(en|pl)?\/?(index\.html)?$/i.test(curPath)) {
+        var nextPath = (lang === 'en') ? '/en/' : ((lang === 'pl') ? '/pl/' : '/');
+        if (curPath !== nextPath && !(curPath === '/index.html' && nextPath === '/')) {
+          var urlObj = new URL(window.location.href);
+          urlObj.searchParams.delete('lang');
+          var searchStr = urlObj.searchParams.toString();
+          var targetUrl = nextPath + (searchStr ? ('?' + searchStr) : '') + (window.location.hash || '');
+          window.history.replaceState(window.history.state, '', targetUrl);
+          var canLink = document.getElementById('canonicalLink');
+          if (canLink) canLink.setAttribute('href', window.location.origin + nextPath);
+        }
+      }
     } catch (e) { }
   }
 
@@ -604,13 +634,13 @@ function onModalOverlayClick(e, id) {
       if (curModal.contains(document.activeElement)) return;
       var autoEl = curModal.querySelector('[autofocus]');
       if (autoEl && (autoEl.offsetWidth > 0 || autoEl.offsetHeight > 0)) {
-        try { autoEl.focus({ preventScroll: true }); } catch (e) {}
+        try { autoEl.focus({ preventScroll: true }); } catch (e) { }
         return;
       }
       var dialogEl = curModal.matches('[role="dialog"]') ? curModal : (curModal.querySelector('[role="dialog"]') || curModal.querySelector('.modal-box') || curModal);
       if (dialogEl) {
         if (!dialogEl.hasAttribute('tabindex')) dialogEl.setAttribute('tabindex', '-1');
-        try { dialogEl.focus({ preventScroll: true }); } catch (e) {}
+        try { dialogEl.focus({ preventScroll: true }); } catch (e) { }
       }
     });
   }
@@ -649,7 +679,7 @@ function onModalOverlayClick(e, id) {
       var toRestore = _lastFocusedBeforeModal;
       _lastFocusedBeforeModal = null;
       if (toRestore && toRestore.isConnected && typeof toRestore.focus === 'function') {
-        try { toRestore.focus({ preventScroll: true }); } catch (e) {}
+        try { toRestore.focus({ preventScroll: true }); } catch (e) { }
       }
     }
   }
@@ -1046,7 +1076,7 @@ if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
       }
     });
 
-    navigator.serviceWorker.register('sw.js').then(function (reg) {
+    navigator.serviceWorker.register('/sw.js').then(function (reg) {
       var sendPrune = function (worker) {
         if (!worker) return;
         try {
@@ -1058,7 +1088,7 @@ if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
             }
           });
           worker.postMessage({ type: 'PRUNE_STATIC', activeAssets: activeAssets });
-        } catch (e) {}
+        } catch (e) { }
       };
       if (reg.active) sendPrune(reg.active);
       else if (navigator.serviceWorker.controller) sendPrune(navigator.serviceWorker.controller);
@@ -1075,7 +1105,7 @@ if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
           }
         });
       });
-    }).catch(function () {});
+    }).catch(function () { });
   });
 }
 
@@ -1095,7 +1125,7 @@ if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
     }
     lastVersionCheck = now;
 
-    fetch('version.json?t=' + now, { cache: 'no-store' })
+    fetch('/version.json?t=' + now, { cache: 'no-store' })
       .then(function (res) { return res.ok ? res.json() : null; })
       .then(function (data) {
         if (!data || !data.version) return;
@@ -1107,7 +1137,7 @@ if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
           showUpdateBanner();
         }
       })
-      .catch(function () {});
+      .catch(function () { });
   }
 
   function forceHardReload() {

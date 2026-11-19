@@ -1593,6 +1593,9 @@ textarea.bulk-input {
   gap: 10px;
 }
 
+.reminders-modal-dialog .modal-title-group h2,
+.reminders-intro-dialog .modal-title-group h2,
+.reminders-alert-dialog .modal-title-group h2,
 .reminders-modal-dialog .modal-title-group h3,
 .reminders-intro-dialog .modal-title-group h3,
 .reminders-alert-dialog .modal-title-group h3 {

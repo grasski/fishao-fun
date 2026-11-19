@@ -423,6 +423,7 @@
       "footer_recaptcha_notice": "Tento web je chráněn službou reCAPTCHA a platí na něj <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener noreferrer\">Ochrana soukromí</a> a <a href=\"https://policies.google.com/terms\" target=\"_blank\" rel=\"noopener noreferrer\">Smluvní podmínky</a> společnosti Google.",
       "footer_privacy_link": "Zásady ochrany soukromí & GDPR",
       "footer_official_link": "Komunitní hra FISHAO",
+      "footer_wiki_link": "Katalog ryb (Wiki)",
       "footer_version": "Vyrobeno s ❤️ pro komunitu rybářů",
       "unit_points_full": "bodů",
       "privacy_modal_title": "Zásady ochrany soukromí & GDPR",

@@ -609,7 +609,7 @@ function renderFishRowHtml(f, idx, ctx) {
     return '<tr class="' + rowClass.join(' ') + '" tabindex="0" data-fish-id="' + f.id + '" title="' + ctx.rowClickTitle + '">' +
       '<td style="color: var(--text-muted); font-weight: 600;">' + f.order + '</td>' +
       '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
-      '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.webp" alt="' + safeFishName + '" class="fish-img" width="92" height="52" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
+      '<td><div class="fish-img-box"><img src="/images/fish_' + f.id + '.webp" alt="' + safeFishName + '" class="fish-img" width="92" height="52" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
       '<td class="loc-box">' +
       (areaName ? '<span class="loc-tag">' + escapeHtml(areaName) + '</span>' : '<span class="loc-unspecified">' + ctx.unspecText + '</span>') +
       '</td>' +
@@ -643,7 +643,7 @@ function renderFishRowHtml(f, idx, ctx) {
   return '<tr class="' + rowCls + '" tabindex="0" data-fish-id="' + f.id + '" title="' + ctx.rowClickTitle + '">' +
     '<td style="color: var(--text-muted); font-weight: 600;">' + (idx + 1) + '</td>' +
     '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
-    '<td><div class="fish-img-box"><img src="images/fish_' + f.id + '.webp" alt="' + safeFishName + '" class="fish-img" width="92" height="52" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
+    '<td><div class="fish-img-box"><img src="/images/fish_' + f.id + '.webp" alt="' + safeFishName + '" class="fish-img" width="92" height="52" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
     '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName +
     (f.is_club ? '<span class="badge-club-tag">' + ctx.clubTagText + '</span>' : '') +
     '</div>' + altMatchHtml + '</td>' +
@@ -851,7 +851,7 @@ function renderTableBody(data) {
     }
   };
 
-  var FIRST_BATCH = 30;
+  var FIRST_BATCH = 20;
   var firstEnd = Math.min(data.length, FIRST_BATCH);
   var firstHtml = [];
   for (var i = 0; i < firstEnd; i++) {

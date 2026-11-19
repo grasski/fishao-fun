@@ -647,7 +647,7 @@ var BAIT_ICON_IDS = {
 
 function getBaitIconUrl(baitCode) {
   if (!baitCode || !BAIT_ICON_IDS[baitCode]) return '';
-  return 'images/bait_' + String(baitCode) + '.webp';
+  return '/images/bait_' + String(baitCode) + '.webp';
 }
 
 /**

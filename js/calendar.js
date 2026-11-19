@@ -574,7 +574,7 @@ function renderCalendarView() {
       '<div class="cal-card-top">' +
       '<div class="cal-card-caught-wrap">' + renderCaughtBtn(f.id) + '</div>' +
       '<div class="cal-card-img-box">' +
-      '<img src="images/fish_' + f.id + '.webp" alt="' + escapeHtml(fishName) + '" class="fish-img" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
+      '<img src="/images/fish_' + f.id + '.webp" alt="' + escapeHtml(fishName) + '" class="fish-img" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';">' +
       '</div>' +
       '<div class="cal-card-title-wrap">' +
       '<div class="cal-card-name-row">' +

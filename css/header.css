@@ -109,7 +109,7 @@
   white-space: nowrap;
 }
 .tz-toggle:hover { color: #fff; background: #22314a; }
-.tz-toggle.active { background: #0284c7; border-color: #38bdf8; color: #fff; }
+.tz-toggle.active { background: #0369a1; border-color: #38bdf8; color: #fff; }
 
 /* LANGUAGE SWITCHER */
 .lang-widget {
