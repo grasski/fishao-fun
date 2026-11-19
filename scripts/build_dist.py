@@ -28,6 +28,12 @@ import unicodedata
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE_ORIGIN = "https://fishao-tracker.cz"
+CF_ANALYTICS_SNIPPET = (
+    '<!-- Cloudflare Web Analytics -->'
+    '<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" '
+    'data-cf-beacon=\'{"token": "5e576a227071416ea49fa8729d8ee907"}\'></script>'
+    '<!-- End Cloudflare Web Analytics -->'
+)
 
 CSS_FILES = [
     "css/base.css",
@@ -1079,6 +1085,7 @@ def generate_wiki_pages(
       {related_html}
     </main>
   </div>
+  {CF_ANALYTICS_SNIPPET}
 </body>
 </html>
 """
@@ -1167,6 +1174,7 @@ def generate_wiki_pages(
       </div>
     </main>
   </div>
+  {CF_ANALYTICS_SNIPPET}
 </body>
 </html>
 """
