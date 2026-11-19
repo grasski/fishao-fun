@@ -864,6 +864,7 @@ window.fishaoApp = {
   onPlayerFishFilterChange: onPlayerFishFilterChange,
   onPlayerBaitFilterChange: onPlayerBaitFilterChange,
   onPlayerRatingFilterChange: onPlayerRatingFilterChange,
+  onPlayerSortChange: onPlayerSortChange,
   resetPlayerFilters: resetPlayerFilters,
   toggleBackyardMenu: toggleBackyardMenu,
   closeBackyardMenu: closeBackyardMenu,

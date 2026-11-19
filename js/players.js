@@ -51,9 +51,65 @@ var PLAYER_BADGE_DEFS = {
 };
 
 /**
- * Render role & custom achievement badges for player cards and profile modals.
+ * Compute dynamic leaderboard badges (Top 3 caught fish, Top 1 backyard breeder) from allPlayersList.
  */
-function renderPlayerBadgesHtml(role, badgesList, compact) {
+function computeLeaderboardBadgesMap() {
+  var map = Object.create(null);
+  if (!Array.isArray(allPlayersList) || allPlayersList.length === 0) return map;
+
+  var rows = [];
+  for (var i = 0; i < allPlayersList.length; i++) {
+    var p = allPlayersList[i];
+    if (!p || !p.uid) continue;
+    var isMe = !!(currentUser && p.uid === currentUser.uid);
+    var cCount = isMe
+      ? caughtFishIds.size
+      : (typeof p.caughtCount === "number" ? p.caughtCount : ((p.caughtFishIds && p.caughtFishIds.length) || 0));
+    var clubC = typeof p.caughtClubCount === "number" ? p.caughtClubCount : 0;
+    var bArr = isMe ? Array.from(backyardFishIds) : (Array.isArray(p.backyardFishIds) ? p.backyardFishIds : []);
+    var bCount = bArr.filter(isBackyardBreedable).length;
+    rows.push({
+      uid: p.uid,
+      caughtCount: cCount,
+      clubCount: clubC,
+      backyardCount: bCount,
+      createdAt: p.createdAt || "9999"
+    });
+  }
+
+  // Top 3 caught fish (strictly > 0)
+  var catchers = rows.filter(function (r) { return r.caughtCount > 0; });
+  catchers.sort(function (a, b) {
+    if (b.caughtCount !== a.caughtCount) return b.caughtCount - a.caughtCount;
+    if (b.clubCount !== a.clubCount) return b.clubCount - a.clubCount;
+    return a.createdAt < b.createdAt ? -1 : (a.createdAt > b.createdAt ? 1 : 0);
+  });
+  for (var ci = 0; ci < Math.min(3, catchers.length); ci++) {
+    var r = catchers[ci];
+    if (!map[r.uid]) map[r.uid] = [];
+    map[r.uid].push({ type: "catcher", rank: ci + 1, count: r.caughtCount });
+  }
+
+  // Top 3 backyard breeders (strictly > 0)
+  var breeders = rows.filter(function (r) { return r.backyardCount > 0; });
+  breeders.sort(function (a, b) {
+    if (b.backyardCount !== a.backyardCount) return b.backyardCount - a.backyardCount;
+    if (b.caughtCount !== a.caughtCount) return b.caughtCount - a.caughtCount;
+    return a.createdAt < b.createdAt ? -1 : (a.createdAt > b.createdAt ? 1 : 0);
+  });
+  for (var bi = 0; bi < Math.min(3, breeders.length); bi++) {
+    var rb = breeders[bi];
+    if (!map[rb.uid]) map[rb.uid] = [];
+    map[rb.uid].push({ type: "breeder", rank: bi + 1, count: rb.backyardCount });
+  }
+
+  return map;
+}
+
+/**
+ * Render role, custom, and dynamic leaderboard badges for player cards and profile modals.
+ */
+function renderPlayerBadgesHtml(role, badgesList, compact, autoBadges) {
   var parts = [];
   if (role === "admin") {
     var adminStyle = compact
@@ -71,6 +127,29 @@ function renderPlayerBadgesHtml(role, badgesList, compact) {
           def.icon + ' ' + escapeHtml(t(def.labelKey)) +
         '</span>'
       );
+    }
+  }
+  if (Array.isArray(autoBadges)) {
+    for (var j = 0; j < autoBadges.length; j++) {
+      var ab = autoBadges[j];
+      var compactCls = compact ? ' is-compact' : '';
+      if (ab.type === "catcher") {
+        var icons = ["", "🥇", "🥈", "🥉"];
+        var classes = ["", "player-badge-gold", "player-badge-silver", "player-badge-bronze"];
+        var rk = ab.rank;
+        parts.push(
+          '<span class="player-badge-pill ' + classes[rk] + compactCls + '" title="' + escapeHtml(t('badge_top_catcher_' + rk + '_title', { count: ab.count })) + '">' +
+            icons[rk] + ' ' + escapeHtml(t('badge_top_catcher_' + rk)) +
+          '</span>'
+        );
+      } else if (ab.type === "breeder") {
+        var brk = ab.rank || 1;
+        parts.push(
+          '<span class="player-badge-pill player-badge-breeder-' + brk + compactCls + '" title="' + escapeHtml(t('badge_top_breeder_' + brk + '_title', { count: ab.count })) + '">' +
+            '🏡 ' + escapeHtml(t('badge_top_breeder_' + brk)) +
+          '</span>'
+        );
+      }
     }
   }
   return parts;
@@ -481,6 +560,12 @@ function onPlayerRatingFilterChange(val) {
   renderPlayersList();
 }
 
+function onPlayerSortChange(val) {
+  sortPlayersBy = (val === "caught" || val === "backyard") ? val : "default";
+  playerCurrentPage = 1;
+  renderPlayersList();
+}
+
 var _debouncedRenderPlayersList = (typeof debounce === "function")
   ? debounce(function () { renderPlayersList(); }, 150)
   : function () { renderPlayersList(); };
@@ -508,6 +593,7 @@ function resetPlayerFilters(skipRender) {
   filterPlayerFishId = null;
   filterPlayerBait = "";
   filterPlayerRating = null;
+  sortPlayersBy = "default";
   playerCurrentPage = 1;
 
   var sInput = document.getElementById("playerSearchInput");
@@ -524,6 +610,8 @@ function resetPlayerFilters(skipRender) {
   syncBaitSelectIcon('playerBaitFilterSelect', 'playerBaitFilterIcon');
   var sRating = document.getElementById("playerRatingFilterSelect");
   if (sRating) sRating.value = "";
+  var sSort = document.getElementById("playerSortSelect");
+  if (sSort) sSort.value = "default";
   var sTime = document.getElementById("playerTimeFilterSelect");
   if (sTime) sTime.value = "";
 
@@ -663,6 +751,35 @@ function renderPlayersList() {
   // 3. Most backyard fish
   // 4. Most catches
   filtered.sort(function (a, b) {
+    var cCountA = (a.uid === myUid)
+      ? caughtFishIds.size
+      : (typeof a.caughtCount === "number" ? a.caughtCount : ((a.caughtFishIds && a.caughtFishIds.length) || 0));
+    var cCountB = (b.uid === myUid)
+      ? caughtFishIds.size
+      : (typeof b.caughtCount === "number" ? b.caughtCount : ((b.caughtFishIds && b.caughtFishIds.length) || 0));
+    var bArrA = (a.uid === myUid) ? Array.from(backyardFishIds) : (Array.isArray(a.backyardFishIds) ? a.backyardFishIds : []);
+    var bArrB = (b.uid === myUid) ? Array.from(backyardFishIds) : (Array.isArray(b.backyardFishIds) ? b.backyardFishIds : []);
+    var bCountA = bArrA.filter(isBackyardBreedable).length;
+    var bCountB = bArrB.filter(isBackyardBreedable).length;
+
+    if (sortPlayersBy === "caught") {
+      if (cCountB !== cCountA) return cCountB - cCountA;
+      var clubA = typeof a.caughtClubCount === "number" ? a.caughtClubCount : 0;
+      var clubB = typeof b.caughtClubCount === "number" ? b.caughtClubCount : 0;
+      if (clubB !== clubA) return clubB - clubA;
+      var caA = a.createdAt || "9999";
+      var caB = b.createdAt || "9999";
+      return caA < caB ? -1 : (caA > caB ? 1 : 0);
+    }
+
+    if (sortPlayersBy === "backyard") {
+      if (bCountB !== bCountA) return bCountB - bCountA;
+      if (cCountB !== cCountA) return cCountB - cCountA;
+      var baA = a.createdAt || "9999";
+      var baB = b.createdAt || "9999";
+      return baA < baB ? -1 : (baA > baB ? 1 : 0);
+    }
+
     if (a.uid === myUid) return -1;
     if (b.uid === myUid) return 1;
 
@@ -670,12 +787,7 @@ function renderPlayersList() {
     var isFriendB = friendUids.has(b.uid) ? 1 : 0;
     if (isFriendB !== isFriendA) return isFriendB - isFriendA;
 
-    var bCountA = (a.backyardFishIds && a.backyardFishIds.length) || 0;
-    var bCountB = (b.backyardFishIds && b.backyardFishIds.length) || 0;
     if (bCountB !== bCountA) return bCountB - bCountA;
-
-    var cCountA = typeof a.caughtCount === "number" ? a.caughtCount : ((a.caughtFishIds && a.caughtFishIds.length) || 0);
-    var cCountB = typeof b.caughtCount === "number" ? b.caughtCount : ((b.caughtFishIds && b.caughtFishIds.length) || 0);
     return cCountB - cCountA;
   });
 
@@ -706,13 +818,14 @@ function renderPlayersList() {
 
   var html = "";
   var totalClub = clubFishes.length || 80;
+  var lbBadgesMap = computeLeaderboardBadgesMap();
   pageItems.forEach(function (p) {
     var isMe = !!(currentUser && p.uid === currentUser.uid);
     var isFriend = friendUids.has(p.uid);
     var av = p.avatarUrl || "🎣";
     var avatarHtml = '<div class="player-card-avatar-wrap">' + renderAvatarHtml(av, "🎣") + '</div>';
 
-    var roleBadge = renderPlayerBadgesHtml(p.role, p.badges, true).join(' ');
+    var roleBadge = renderPlayerBadgesHtml(p.role, p.badges, true, lbBadgesMap[p.uid]).join(' ');
 
     var clubInfo = p.clubName
       ? '<span class="player-card-club-badge">🏆 ' + escapeHtml(p.clubName) + '</span>'
@@ -1381,9 +1494,10 @@ async function openPlayerModal(uid) {
     ? (userProfile && Array.isArray(userProfile.badges) ? userProfile.badges : [])
     : (player && Array.isArray(player.badges) ? player.badges : []);
 
+  var lbBadges = computeLeaderboardBadgesMap()[uid];
   var roleEl = document.getElementById("playerModalRole");
   if (roleEl) {
-    var badges = renderPlayerBadgesHtml(role, modalBadges, false);
+    var badges = renderPlayerBadgesHtml(role, modalBadges, false, lbBadges);
     if (clubName) {
       badges.push('<span class="pill-btn gold active" style="font-size: 11px; padding: 2px 10px;">🏆 ' + escapeHtml(clubName) + '</span>');
     } else {
@@ -1538,7 +1652,7 @@ async function togglePlayerBadge(uid, badgeKey) {
       var clubName = (pObj && pObj.clubName) || data.clubName || "";
       var roleEl = document.getElementById("playerModalRole");
       if (roleEl) {
-        var badges = renderPlayerBadgesHtml(role, cur, false);
+        var badges = renderPlayerBadgesHtml(role, cur, false, computeLeaderboardBadgesMap()[uid]);
         if (clubName) {
           badges.push('<span class="pill-btn gold active" style="font-size: 11px; padding: 2px 10px;">🏆 ' + escapeHtml(clubName) + '</span>');
         } else {

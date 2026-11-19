@@ -189,6 +189,7 @@ var filterPlayerFishId = null;
 var filterPlayerBait = "";
 var filterPlayerRating = null;
 var filterPlayerSearchText = "";
+var sortPlayersBy = "default";
 var isProfileBackyardCatalogOpen = false;
 var isAdmin = false;
 

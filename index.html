@@ -660,7 +660,14 @@
             <span id="playersCountBadge" class="status-counter-item"
               style="color: var(--text-muted); font-size: 13px;">0 hráčů</span>
           </div>
-          <div style="display: flex; gap: 8px; align-items: center;">
+          <div class="players-community-actions" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <select id="playerSortSelect" class="players-sort-select"
+              onchange="window.fishaoApp.onPlayerSortChange(this.value)"
+              title="Seřadit hráče" data-i18n-title="players_sort_title">
+              <option value="default" data-i18n="players_sort_default">Řazení: Výchozí</option>
+              <option value="caught" data-i18n="players_sort_caught">🥇 Nejvíc chycených ryb</option>
+              <option value="backyard" data-i18n="players_sort_backyard">🏡 Nejvíc za domem</option>
+            </select>
             <button type="button" class="pill-btn" onclick="window.fishaoApp.refreshPlayersList()"
               title="Obnovit seznam hráčů z databáze" data-i18n-title="players_btn_refresh_title" style="height: 36px; padding: 0 12px; font-size: 13px;">
               🔄 <span data-i18n="players_btn_refresh">Aktualizovat</span>
