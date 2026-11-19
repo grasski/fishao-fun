@@ -24,7 +24,7 @@ service cloud.firestore {
       return docId.matches('^prices_summary_[0-3]$');
     }
 
-    // Sharded market summaries (0..3), estimated_prices & market config
+    // Sharded market summaries (0..3) & market config
     match /fishao_market/{docId} {
       allow read: if true;
 
@@ -34,10 +34,6 @@ service cloud.firestore {
         && request.resource.data.prices is map
         && request.resource.data.lastUpdated is string
         && (isAdmin() || isManualImportEnabled()))
-        || (isAdmin()
-        && docId == 'estimated_prices'
-        && request.resource.data.keys().hasOnly(['prices', 'lastUpdated', 'note'])
-        && request.resource.data.prices is map)
         || (isAdmin()
         && docId == 'config'
         && request.resource.data.keys().hasOnly(['manualImportEnabled', 'lastUpdated'])
@@ -50,10 +46,6 @@ service cloud.firestore {
         && request.resource.data.lastUpdated is string
         && (isAdmin()
           || (isManualImportEnabled() && request.resource.data.prices.size() >= resource.data.prices.size())))
-        || (isAdmin()
-        && docId == 'estimated_prices'
-        && request.resource.data.keys().hasOnly(['prices', 'lastUpdated', 'note'])
-        && request.resource.data.prices is map)
         || (isAdmin()
         && docId == 'config'
         && request.resource.data.keys().hasOnly(['manualImportEnabled', 'lastUpdated'])

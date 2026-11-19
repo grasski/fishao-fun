@@ -196,7 +196,6 @@ var isAdmin = false;
 var db = null;
 var auth = null;
 var firebaseSummaryShardRefs = []; // Sharded /fishao_market/prices_summary_0..3
-var estimatedPricesDocRef = null;
 var marketConfigDocRef = null;
 var firebaseApp = null;
 
@@ -368,19 +367,10 @@ try {
   priceHistory = {};
 }
 
-// Estimated min/max fish prices (loaded from Firestore /fishao_market/estimated_prices with static fallback)
+// Estimated min/max fish prices (static data/estimated_prices.js)
 var estimatedPrices = (window.FISHAO_ESTIMATED_PRICES && typeof window.FISHAO_ESTIMATED_PRICES === "object")
   ? window.FISHAO_ESTIMATED_PRICES
   : {};
-try {
-  var savedEst = safeStorageGet('fishao_estimated_prices_v1');
-  if (savedEst) {
-    var parsedEst = JSON.parse(savedEst);
-    if (parsedEst && typeof parsedEst === "object" && Object.keys(parsedEst).length > 0) {
-      estimatedPrices = parsedEst;
-    }
-  }
-} catch (e) {}
 
 function getEstimatedPrice(fid) {
   if (!estimatedPrices || fid === undefined || fid === null) return null;

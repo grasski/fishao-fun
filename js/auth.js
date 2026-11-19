@@ -166,7 +166,6 @@ async function _runInitFirebaseSync() {
     firebaseSummaryShardRefs = [0, 1, 2, 3].map(function (idx) {
       return firestoreModule.doc(db, "fishao_market", "prices_summary_" + idx);
     });
-    estimatedPricesDocRef = firestoreModule.doc(db, "fishao_market", "estimated_prices");
     marketConfigDocRef = firestoreModule.doc(db, "fishao_market", "config");
     var syncStatusDocRef = firestoreModule.doc(db, "fishao_market", "sync_status");
 
@@ -402,62 +401,6 @@ async function _runInitFirebaseSync() {
       }
       scheduleViewRefresh({ auth: true, stats: true, filters: true });
     });
-
-    // Estimated prices rarely change: use 6-hour localStorage TTL cache + one-time getDoc instead of onSnapshot
-    (async function syncEstimatedPricesWithCache() {
-      var EST_TTL_MS = 6 * 60 * 60 * 1000;
-      var cachedTs = parseInt(safeStorageGet('fishao_estimated_prices_ts_v1') || '0', 10);
-      if (cachedTs && (Date.now() - cachedTs) < EST_TTL_MS) {
-        return;
-      }
-
-      try {
-        var docSnap = await firestoreModule.getDoc(estimatedPricesDocRef);
-        if (docSnap.exists()) {
-          var estData = docSnap.data();
-          if (estData && estData.prices && typeof estData.prices === "object" && Object.keys(estData.prices).length > 0) {
-            var baseEst = window.FISHAO_ESTIMATED_PRICES || {};
-            var nextEstimated = Object.assign({}, baseEst, estData.prices);
-            var hasDiff = Object.keys(nextEstimated).length !== Object.keys(estimatedPrices || {}).length;
-            if (!hasDiff) {
-              var kList = Object.keys(nextEstimated);
-              for (var ei = 0; ei < kList.length; ei++) {
-                var ek = kList[ei];
-                var a = nextEstimated[ek];
-                var b = estimatedPrices ? estimatedPrices[ek] : null;
-                if (!b || a.min !== b.min || a.max !== b.max) {
-                  hasDiff = true;
-                  break;
-                }
-              }
-            }
-
-            estimatedPrices = nextEstimated;
-            var matchesStatic = Object.keys(nextEstimated).length === Object.keys(baseEst).length &&
-              Object.keys(nextEstimated).every(function (ek) {
-                var a = nextEstimated[ek];
-                var b = baseEst[ek];
-                return b && a && a.min === b.min && a.max === b.max;
-              });
-
-            if (matchesStatic) {
-              safeStorageRemove('fishao_estimated_prices_v1');
-            } else {
-              try {
-                safeStorageSet('fishao_estimated_prices_v1', JSON.stringify(estimatedPrices));
-              } catch (e) { }
-            }
-            safeStorageSet('fishao_estimated_prices_ts_v1', String(Date.now()));
-
-            if (hasDiff) {
-              scheduleViewRefresh({ filters: true, modal: true });
-            }
-          }
-        }
-      } catch (error) {
-        console.warn("Firestore estimated prices warning:", error);
-      }
-    })();
 
     // Resolve market config without blocking initial sync_status / prices_summary fetch (cached TTL + parallel check)
     (async function syncMarketConfigAndPrices() {
@@ -1395,7 +1338,7 @@ async function exportFirestoreBackup() {
   try {
     var firestoreModule = await getFirestoreModule();
 
-    // 1. Fetch Market docs (4 summary shards, estimated_prices, config, sync_status)
+    // 1. Fetch Market docs (4 summary shards, config, sync_status)
     var readOptDoc = async function (docId) {
       try {
         var s = await firestoreModule.getDoc(firestoreModule.doc(db, "fishao_market", docId));
@@ -1409,14 +1352,12 @@ async function exportFirestoreBackup() {
       readOptDoc("prices_summary_1"),
       readOptDoc("prices_summary_2"),
       readOptDoc("prices_summary_3"),
-      readOptDoc("estimated_prices"),
       readOptDoc("config"),
       readOptDoc("sync_status")
     ]);
     var shardDocs = marketDocs.slice(0, 4);
-    var estData = marketDocs[4];
-    var configData = marketDocs[5];
-    var syncStatusData = marketDocs[6];
+    var configData = marketDocs[4];
+    var syncStatusData = marketDocs[5];
 
     // Fetch monthly daily archives (/fishao_market_daily)
     var dailySnap = await firestoreModule.getDocs(firestoreModule.collection(db, "fishao_market_daily"));
@@ -1460,7 +1401,6 @@ async function exportFirestoreBackup() {
           prices_summary_1: shardDocs[1],
           prices_summary_2: shardDocs[2],
           prices_summary_3: shardDocs[3],
-          estimated_prices: estData,
           config: configData,
           sync_status: syncStatusData
         },
