@@ -6,6 +6,11 @@
 
   var dict = {
       "admin_badge": "Admin",
+      "admin_badge_error_toast": "Nepodařilo se uložit odznaky hráče.",
+      "admin_badge_updated_toast": "Odznaky hráče byly aktualizovány.",
+      "admin_badges_title": "🛡️ Admin – Odznaky:",
+      "badge_market_analyst": "Market Analyst",
+      "badge_market_analyst_title": "Autor matematického modelu odhadu cen na Rybím trhu",
       "admin_backup_btn": "Zálohovat databázi (JSON)",
       "admin_backup_desc": "Stáhne kompletní data Firestore databáze (hráči, kluby, ceník) jako JSON soubor do tvého zařízení.",
       "admin_backup_error": "Chyba při zálohování: {msg}",

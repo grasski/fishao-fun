@@ -6,6 +6,11 @@
 
   var dict = {
       "admin_badge": "Admin",
+      "admin_badge_error_toast": "Nie udało się zapisać odznak gracza.",
+      "admin_badge_updated_toast": "Zaktualizowano odznaki gracza.",
+      "admin_badges_title": "🛡️ Admin – Odznaki:",
+      "badge_market_analyst": "Market Analyst",
+      "badge_market_analyst_title": "Autor modelu matematycznego szacunków cen na Targu Rybnym",
       "admin_backup_btn": "Kopia zapasowa bazy danych (JSON)",
       "admin_backup_desc": "Pobiera pełne dane z bazy Firestore (gracze, kluby, cennik) jako plik JSON na Twoje urządzenie.",
       "admin_backup_error": "Błąd tworzenia kopii zapasowej: {msg}",

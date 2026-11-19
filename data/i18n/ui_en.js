@@ -6,6 +6,11 @@
 
   var dict = {
       "admin_badge": "Admin",
+      "admin_badge_error_toast": "Failed to update player badges.",
+      "admin_badge_updated_toast": "Player badges updated.",
+      "admin_badges_title": "🛡️ Admin – Badges:",
+      "badge_market_analyst": "Market Analyst",
+      "badge_market_analyst_title": "Author of the mathematical model for Fish Market price estimates",
       "admin_backup_btn": "Backup Database (JSON)",
       "admin_backup_desc": "Download complete Firestore database data (players, clubs, market) as a JSON file to your device.",
       "admin_backup_error": "Backup failed: {msg}",

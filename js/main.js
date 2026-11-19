@@ -819,6 +819,7 @@ window.fishaoApp = {
   openProfileModal: openProfileModal,
   closeProfileModal: closeProfileModal,
   openPlayerModal: openPlayerModal,
+  togglePlayerBadge: typeof togglePlayerBadge === 'function' ? togglePlayerBadge : function () {},
   closePlayerModal: closePlayerModal,
   openPrivacyModal: openPrivacyModal,
   closePrivacyModal: closePrivacyModal,

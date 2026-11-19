@@ -190,7 +190,9 @@ service cloud.firestore {
           && request.resource.data.caughtFishIds is list
           && request.resource.data.caughtFishIds.size() <= 1000
           && (!('backyardFishIds' in request.resource.data)
-              || (request.resource.data.backyardFishIds is list && request.resource.data.backyardFishIds.size() <= 300));
+              || (request.resource.data.backyardFishIds is list && request.resource.data.backyardFishIds.size() <= 300))
+          && (!('badges' in request.resource.data)
+              || (request.resource.data.badges is list && request.resource.data.badges.size() <= 20));
       }
 
       // Authenticated users can read public player profiles (nickname, avatar, club, caught & backyard fish)

@@ -38,6 +38,44 @@ function computePlayerCatchCounts(caughtIdsArr) {
   return { caughtCount: arr.length, caughtClubCount: clubC };
 }
 
+/**
+ * Registry of custom profile badges assigned by admins in /users/{uid}.badges.
+ */
+var PLAYER_BADGE_DEFS = {
+  market_analyst: {
+    icon: "📊",
+    labelKey: "badge_market_analyst",
+    titleKey: "badge_market_analyst_title",
+    cssClass: "player-badge-analyst"
+  }
+};
+
+/**
+ * Render role & custom achievement badges for player cards and profile modals.
+ */
+function renderPlayerBadgesHtml(role, badgesList, compact) {
+  var parts = [];
+  if (role === "admin") {
+    var adminStyle = compact
+      ? 'font-size: 10px; padding: 1px 7px; height: auto;'
+      : 'font-size: 11px; padding: 2px 10px;';
+    parts.push('<span class="pill-btn danger active" style="' + adminStyle + '">🛡️ ' + escapeHtml(t('admin_badge')) + '</span>');
+  }
+  if (Array.isArray(badgesList)) {
+    for (var i = 0; i < badgesList.length; i++) {
+      var def = PLAYER_BADGE_DEFS[badgesList[i]];
+      if (!def) continue;
+      var cls = 'player-badge-pill ' + def.cssClass + (compact ? ' is-compact' : '');
+      parts.push(
+        '<span class="' + cls + '" title="' + escapeHtml(t(def.titleKey)) + '">' +
+          def.icon + ' ' + escapeHtml(t(def.labelKey)) +
+        '</span>'
+      );
+    }
+  }
+  return parts;
+}
+
 function savePlayersSessionCache(ts) {
   try {
     var compact = allPlayersList.map(function (p) {
@@ -46,6 +84,7 @@ function savePlayersSessionCache(ts) {
         displayName: p.displayName,
         avatarUrl: p.avatarUrl,
         role: p.role,
+        badges: Array.isArray(p.badges) ? p.badges : [],
         clubId: p.clubId,
         clubName: p.clubName,
         caughtCount: typeof p.caughtCount === "number" ? p.caughtCount : ((p.caughtFishIds && p.caughtFishIds.length) || 0),
@@ -109,6 +148,7 @@ async function loadAllPlayers(force) {
         displayName: userProfile.displayName || t('user_default_player'),
         avatarUrl: userProfile.avatarUrl || "🎣",
         role: userProfile.role || "member",
+        badges: Array.isArray(userProfile.badges) ? userProfile.badges : [],
         clubId: userProfile.clubId || "",
         clubName: userProfile.clubName || "",
         caughtCount: localCounts.caughtCount,
@@ -168,6 +208,7 @@ async function loadAllPlayers(force) {
           displayName: d.displayName || t('user_default_player'),
           avatarUrl: d.avatarUrl || "🎣",
           role: d.role || "member",
+          badges: Array.isArray(d.badges) ? d.badges : [],
           clubId: cId,
           clubName: cName,
           caughtCount: rawCaught.length,
@@ -671,10 +712,7 @@ function renderPlayersList() {
     var av = p.avatarUrl || "🎣";
     var avatarHtml = '<div class="player-card-avatar-wrap">' + renderAvatarHtml(av, "🎣") + '</div>';
 
-    var roleBadge = "";
-    if (p.role === "admin") {
-      roleBadge = '<span class="pill-btn danger active" style="font-size: 10px; padding: 1px 7px; height: auto;">🛡️ ' + t('admin_badge') + '</span>';
-    }
+    var roleBadge = renderPlayerBadgesHtml(p.role, p.badges, true).join(' ');
 
     var clubInfo = p.clubName
       ? '<span class="player-card-club-badge">🏆 ' + escapeHtml(p.clubName) + '</span>'
@@ -1273,6 +1311,7 @@ async function openPlayerModal(uid) {
           displayName: d.displayName || t('user_default_player'),
           avatarUrl: d.avatarUrl || "🎣",
           role: d.role || "member",
+          badges: Array.isArray(d.badges) ? d.badges : [],
           clubId: d.clubId || "",
           clubName: d.clubName || "",
           caughtCount: counts.caughtCount,
@@ -1338,12 +1377,13 @@ async function openPlayerModal(uid) {
     nameEl.dataset.currentUid = uid;
   }
 
+  var modalBadges = isMe
+    ? (userProfile && Array.isArray(userProfile.badges) ? userProfile.badges : [])
+    : (player && Array.isArray(player.badges) ? player.badges : []);
+
   var roleEl = document.getElementById("playerModalRole");
   if (roleEl) {
-    var badges = [];
-    if (role === "admin") {
-      badges.push('<span class="pill-btn danger active" style="font-size: 11px; padding: 2px 10px;">🛡️ ' + t('admin_badge') + '</span>');
-    }
+    var badges = renderPlayerBadgesHtml(role, modalBadges, false);
     if (clubName) {
       badges.push('<span class="pill-btn gold active" style="font-size: 11px; padding: 2px 10px;">🏆 ' + escapeHtml(clubName) + '</span>');
     } else {
@@ -1351,6 +1391,8 @@ async function openPlayerModal(uid) {
     }
     roleEl.innerHTML = badges.join(' ');
   }
+
+  renderPlayerModalAdminBadges(uid, modalBadges);
 
   updateModalFriendBtn(uid);
   if (typeof updatePlayerModalChatBtn === 'function') {
@@ -1428,4 +1470,87 @@ async function openPlayerModal(uid) {
 
   var modal = document.getElementById("playerModalOverlay");
   if (modal) modal.classList.add("active");
+}
+
+/**
+ * Render admin-only badge toggle bar inside the player profile modal.
+ */
+function renderPlayerModalAdminBadges(uid, badgesList) {
+  var box = document.getElementById("playerModalAdminBadges");
+  if (!box) return;
+  if (!isAdmin || !currentUser || !db || !uid) {
+    box.style.display = "none";
+    box.innerHTML = "";
+    return;
+  }
+  var activeSet = new Set(Array.isArray(badgesList) ? badgesList : []);
+  var keys = Object.keys(PLAYER_BADGE_DEFS);
+  var html = '<span class="player-modal-admin-badges-label">' + escapeHtml(t('admin_badges_title')) + '</span>';
+  for (var i = 0; i < keys.length; i++) {
+    var k = keys[i];
+    var def = PLAYER_BADGE_DEFS[k];
+    var isOn = activeSet.has(k);
+    html += '<button type="button" class="player-admin-badge-toggle' + (isOn ? ' active' : '') + '" ' +
+      'onclick="window.fishaoApp.togglePlayerBadge(\'' + escapeHtml(uid) + '\', \'' + escapeHtml(k) + '\')" ' +
+      'title="' + escapeHtml(t(def.titleKey)) + '">' +
+      (isOn ? '✓ ' : '+ ') + def.icon + ' ' + escapeHtml(t(def.labelKey)) +
+      '</button>';
+  }
+  box.innerHTML = html;
+  box.style.display = "flex";
+}
+
+/**
+ * Toggle a custom badge on /users/{uid} (admin only).
+ */
+async function togglePlayerBadge(uid, badgeKey) {
+  if (!isAdmin || !currentUser || !db || !uid || !PLAYER_BADGE_DEFS[badgeKey]) return;
+  try {
+    var fsModule = await getFirestoreModule();
+    var targetRef = fsModule.doc(db, "users", uid);
+    var snap = await fsModule.getDoc(targetRef);
+    if (!snap.exists()) return;
+    var data = snap.data() || {};
+    var cur = Array.isArray(data.badges) ? data.badges.slice() : [];
+    var idx = cur.indexOf(badgeKey);
+    if (idx !== -1) {
+      cur.splice(idx, 1);
+    } else {
+      cur.push(badgeKey);
+    }
+    await fsModule.updateDoc(targetRef, { badges: cur });
+
+    // Update in-memory caches and UI
+    var pObj = allPlayersList.find(function (p) { return p.uid === uid; });
+    if (pObj) pObj.badges = cur;
+    var cachedEntry = _playerProfileCache.get(uid);
+    if (cachedEntry && cachedEntry.player) cachedEntry.player.badges = cur;
+    if (currentUser && uid === currentUser.uid && userProfile) {
+      userProfile.badges = cur;
+      if (typeof saveProfileToCache === 'function') saveProfileToCache(uid, userProfile);
+    }
+    if (allPlayersList.length > 0) savePlayersSessionCache(Date.now());
+
+    renderPlayersList();
+    var nameEl = document.getElementById("playerModalName");
+    if (nameEl && nameEl.dataset.currentUid === uid) {
+      var role = (pObj && pObj.role) || data.role || "member";
+      var clubName = (pObj && pObj.clubName) || data.clubName || "";
+      var roleEl = document.getElementById("playerModalRole");
+      if (roleEl) {
+        var badges = renderPlayerBadgesHtml(role, cur, false);
+        if (clubName) {
+          badges.push('<span class="pill-btn gold active" style="font-size: 11px; padding: 2px 10px;">🏆 ' + escapeHtml(clubName) + '</span>');
+        } else {
+          badges.push('<span class="pill-btn" style="font-size: 11px; padding: 2px 10px; cursor: default;">' + t('player_card_no_club') + '</span>');
+        }
+        roleEl.innerHTML = badges.join(' ');
+      }
+      renderPlayerModalAdminBadges(uid, cur);
+    }
+    showToast(t('admin_badge_updated_toast'), 'success');
+  } catch (e) {
+    console.warn("Failed to toggle player badge:", e);
+    showToast(t('admin_badge_error_toast'), 'error');
+  }
 }
