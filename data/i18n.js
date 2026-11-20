@@ -94,6 +94,15 @@
         }
       }
     } catch (e) { }
+    // Crawlers & headless renderers (Googlebot renders with navigator.language = en-US) must always
+    // see the language declared by the URL, otherwise "/" renders as an English duplicate of "/en/".
+    try {
+      if (typeof navigator !== 'undefined' &&
+          (navigator.webdriver ||
+            /bot|crawl|spider|slurp|mediapartners|inspectiontool|lighthouse|headlesschrome|bingpreview|facebookexternalhit|embedly|discord/i.test(navigator.userAgent || ''))) {
+        return DEFAULT_LANG;
+      }
+    } catch (e) { }
     try {
       var saved = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
       if (saved && isSupported(saved)) return saved;
