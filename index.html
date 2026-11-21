@@ -127,15 +127,15 @@
   <!-- Modern Modular Stylesheets -->
   <link rel="stylesheet" href="css/base.css?v=3.2">
   <link rel="stylesheet" href="css/header.css?v=3.2">
-  <link rel="stylesheet" href="css/nav.css?v=3.3">
-  <link rel="stylesheet" href="css/filters.css?v=3.5">
-  <link rel="stylesheet" href="css/table.css?v=3.9">
+  <link rel="stylesheet" href="css/nav.css?v=3.4">
+  <link rel="stylesheet" href="css/filters.css?v=3.6">
+  <link rel="stylesheet" href="css/table.css?v=4.1">
   <link rel="stylesheet" href="css/clubs.css?v=3.3">
   <link rel="stylesheet" href="css/players.css?v=3.3">
   <link rel="stylesheet" href="css/modals.css?v=4.0">
   <link rel="stylesheet" href="css/chat.css?v=1.4">
   <link rel="stylesheet" href="css/locations-calendar.css?v=1.2">
-  <link rel="stylesheet" href="css/responsive.css?v=3.8">
+  <link rel="stylesheet" href="css/responsive.css?v=3.11">
 </head>
 
 <body>
@@ -399,7 +399,21 @@
         <span class="action-bar-hint" id="marketStatsSummary" data-i18n="market_bar_subtitle">Komunitní katalog známých výkupních cen (FB)</span>
       </div>
       <div class="action-bar-right">
-        <span id="marketAutoSyncNote" class="action-bar-hint market-auto-sync-note" data-i18n="market_auto_sync_note">🔄 Ceny se nově automaticky synchronizují z oficiálních zdrojů</span>
+        <!-- Market Schedule & Closing Timers (shown Mon-Sat) -->
+        <div class="market-timers-inline" id="bannerMarketTimers" style="display: none;">
+          <div class="market-timer-pill daily-reset" id="marketDailyResetPill">
+            <span class="pill-icon" aria-hidden="true">🔄</span>
+            <span class="timer-label" data-i18n="market_daily_reset_in">Automatická změna cen za:</span>
+            <strong id="marketDailyResetCountdown" class="countdown-val">--:--:--</strong>
+            <span id="marketDailyResetAt" class="timer-at"></span>
+          </div>
+          <div class="market-timer-pill sunday-close" id="marketCloseTimerPill">
+            <span class="pill-icon" aria-hidden="true">🔒</span>
+            <span class="timer-label" data-i18n="market_closes_in">Zavírá na neděli za:</span>
+            <strong id="marketCloseCountdown" class="countdown-val">--:--:--</strong>
+            <span id="marketCloseAt" class="timer-at"></span>
+          </div>
+        </div>
         <!-- Temporarily hidden while prices are uploaded automatically; kept for manual fallback -->
         <div id="marketImportActionBarRight" style="display: none;">
           <button type="button" class="btn-action sm" onclick="window.fishaoApp.openBulkModal()"
@@ -2033,7 +2047,7 @@
   <!-- End Cloudflare Web Analytics -->
 
   <!-- Data scripts and localization (only base CS loaded upfront; EN/PL load on demand) -->
-  <script defer src="data/i18n/ui_cs.js?v=7.0"></script>
+  <script defer src="data/i18n/ui_cs.js?v=7.3"></script>
   <script defer src="data/i18n/taxonomies.js?v=3.4"></script>
   <script defer src="data/i18n/fish_names.js?v=3.3"></script>
   <script defer src="data/i18n.js?v=4.5"></script>
@@ -2043,9 +2057,9 @@
   <!-- Modular FISHAO Application Logic -->
   <script defer src="js/state.js?v=5.0"></script>
   <script defer src="js/firestore-tx.js?v=3.2"></script>
-  <script defer src="js/table.js?v=4.4"></script>
+  <script defer src="js/table.js?v=4.5"></script>
   <script defer src="js/clubs.js?v=4.0"></script>
-  <script defer src="js/market.js?v=4.17"></script>
+  <script defer src="js/market.js?v=4.20"></script>
   <script defer src="js/filters.js?v=4.6"></script>
   <script defer src="js/auth.js?v=4.9"></script>
   <script defer src="js/players.js?v=4.2"></script>

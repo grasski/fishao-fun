@@ -229,42 +229,116 @@ function getMarketClosedWindowText() {
   return localRange + ' (' + t('market_window_game_ref') + ')';
 }
 
+var _lastMarketClosedState = null;
+
+function formatMarketCountdown(diffMs) {
+  var totalSec = Math.floor(Math.max(0, diffMs) / 1000);
+  var d = Math.floor(totalSec / 86400);
+  var h = Math.floor((totalSec % 86400) / 3600);
+  var m = Math.floor((totalSec % 3600) / 60);
+  var s = totalSec % 60;
+  var hms = String(h).padStart(2, '0') + "h " + String(m).padStart(2, '0') + "m " + String(s).padStart(2, '0') + "s";
+  return d > 0 ? (d + "d " + hms) : hms;
+}
+
+function formatUtcOffsetLabel(dateObj) {
+  var tzOffset = -(dateObj || new Date()).getTimezoneOffset();
+  var tzSign = tzOffset >= 0 ? "+" : "-";
+  var absMin = Math.abs(tzOffset);
+  var tzHours = Math.floor(absMin / 60);
+  var tzMins = absMin % 60;
+  return "UTC" + tzSign + tzHours + (tzMins ? (":" + String(tzMins).padStart(2, '0')) : "");
+}
+
+function formatMarketTargetAtText(targetUtc) {
+  var days = t('day_names').split(',');
+  if (typeof userTimezone !== "undefined" && userTimezone === "utc") {
+    var utcDay = days[targetUtc.getUTCDay()] || '';
+    var utcH = String(targetUtc.getUTCHours()).padStart(2, '0');
+    var utcM = String(targetUtc.getUTCMinutes()).padStart(2, '0');
+    return t('market_timer_at_utc', { day: utcDay, time: utcH + ":" + utcM });
+  }
+  var localDay = days[targetUtc.getDay()] || '';
+  var localH = String(targetUtc.getHours()).padStart(2, '0');
+  var localM = String(targetUtc.getMinutes()).padStart(2, '0');
+  return t('market_timer_at_local', { day: localDay, time: localH + ":" + localM });
+}
+
 function updateMarketSundayCountdown() {
-  if (typeof currentView !== "undefined" && currentView !== "market") return;
   var isSunday = isMarketClosedToday();
+  if (_lastMarketClosedState !== null && _lastMarketClosedState !== isSunday) {
+    _lastMarketClosedState = isSunday;
+    if (typeof updateMarketTabStatus === 'function') {
+      updateMarketTabStatus();
+    }
+    return;
+  }
+  _lastMarketClosedState = isSunday;
+
+  if (typeof currentView !== "undefined" && currentView !== "market") return;
+
+  var now = new Date();
+  var curUtcDay = now.getUTCDay();
+  var city = (typeof getLocalizedTzCity === 'function') ? getLocalizedTzCity() : t('tz_local_city_default');
+  var days = t('day_names').split(',');
+
+  if (!isSunday) {
+    var dailyPillEl = document.getElementById("marketDailyResetPill");
+    var dailyCountdownEl = document.getElementById("marketDailyResetCountdown");
+    var dailyAtEl = document.getElementById("marketDailyResetAt");
+    var closePillEl = document.getElementById("marketCloseTimerPill");
+    var closeCountdownEl = document.getElementById("marketCloseCountdown");
+    var closeAtEl = document.getElementById("marketCloseAt");
+
+    var isSaturday = (curUtcDay === 6);
+    var todayResetUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 3, 0, 0));
+    var nextResetUtc = (now.getTime() < todayResetUtc.getTime())
+      ? todayResetUtc
+      : new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 3, 0, 0));
+    var hideDailyReset = (nextResetUtc.getUTCDay() === 0);
+    var daysUntilSunday = (7 - curUtcDay) % 7;
+    var nextSundayUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilSunday, 0, 0, 0, 0));
+
+    if (dailyPillEl) {
+      dailyPillEl.style.display = hideDailyReset ? "none" : "inline-flex";
+    }
+    if (!hideDailyReset && dailyCountdownEl) {
+      dailyCountdownEl.innerText = formatMarketCountdown(nextResetUtc.getTime() - now.getTime());
+    }
+    if (!hideDailyReset && dailyAtEl) {
+      dailyAtEl.innerText = formatMarketTargetAtText(nextResetUtc);
+    }
+
+    if (closePillEl) {
+      closePillEl.classList.toggle("closing-soon", isSaturday);
+    }
+    if (closeCountdownEl) {
+      closeCountdownEl.innerText = formatMarketCountdown(nextSundayUtc.getTime() - now.getTime());
+    }
+    if (closeAtEl) {
+      closeAtEl.innerText = formatMarketTargetAtText(nextSundayUtc);
+    }
+    return;
+  }
+
   var countdownEl = document.getElementById("marketSundayCountdown");
   var openTimeEl = document.getElementById("marketSundayOpenTimeText");
   var utcWarningEl = document.getElementById("marketSundayUtcWarning");
   var utcWarningTextEl = document.getElementById("marketSundayUtcWarningText");
 
-  if (!isSunday) return;
-
-  var now = new Date();
-  var curUtcDay = now.getUTCDay();
   var daysUntilMonday = (7 - curUtcDay) % 7 || 1;
   var monUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilMonday, 0, 0, 0, 0));
   var diffMs = Math.max(0, monUtc.getTime() - now.getTime());
 
   if (countdownEl) {
-    var totalSec = Math.floor(diffMs / 1000);
-    var h = Math.floor(totalSec / 3600);
-    var m = Math.floor((totalSec % 3600) / 60);
-    var s = totalSec % 60;
-    countdownEl.innerText = String(h).padStart(2, '0') + "h " + String(m).padStart(2, '0') + "m " + String(s).padStart(2, '0') + "s";
+    countdownEl.innerText = formatMarketCountdown(diffMs);
   }
 
-  var city = (typeof getLocalizedTzCity === 'function') ? getLocalizedTzCity() : t('tz_local_city_default');
-  var days = t('day_names').split(',');
   var openLocalDay = days[monUtc.getDay()] || '';
-
   var localH = String(monUtc.getHours()).padStart(2, '0');
   var localM = String(monUtc.getMinutes()).padStart(2, '0');
   var localTimeStr = localH + ":" + localM;
-
-  var tzOffset = -now.getTimezoneOffset();
-  var tzSign = tzOffset >= 0 ? "+" : "-";
-  var tzHours = Math.floor(Math.abs(tzOffset) / 60);
-  var tzOffsetStr = "UTC" + tzSign + tzHours;
+  var tzOffsetStr = formatUtcOffsetLabel(monUtc);
 
   if (openTimeEl) {
     if (userTimezone === "utc") {
@@ -2078,11 +2152,6 @@ function syncManualImportVisibility() {
   var actionBarRight = document.getElementById("marketImportActionBarRight");
   if (actionBarRight) {
     actionBarRight.style.display = enabled ? "" : "none";
-  }
-
-  var autoSyncNote = document.getElementById("marketAutoSyncNote");
-  if (autoSyncNote) {
-    autoSyncNote.style.display = enabled ? "none" : "";
   }
 
   updateMarketFloatingImportBtn();

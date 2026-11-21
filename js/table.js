@@ -490,6 +490,11 @@ function updateMarketTabStatus() {
     bannerSunday.style.display = (currentView === "market" && isSunday) ? "flex" : "none";
   }
 
+  var bannerTimers = document.getElementById("bannerMarketTimers");
+  if (bannerTimers) {
+    bannerTimers.style.display = (currentView === "market" && !isSunday) ? "flex" : "none";
+  }
+
   if (typeof updateMarketResetAlertVisibility === 'function') {
     updateMarketResetAlertVisibility();
   }

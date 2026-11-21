@@ -163,10 +163,6 @@
     font-size: 11px;
     width: 100%;
   }
-  .market-auto-sync-note {
-    font-size: 11px;
-    padding: 5px 10px;
-  }
 
   /* Collection filter pills side-by-side on mobile */
   #bannerCollection .btn-group-pills {
@@ -196,6 +192,15 @@
   #bannerMarket .action-bar-right .btn-action {
     flex: 1 1 auto;
     justify-content: center;
+  }
+  .market-timers-inline {
+    width: 100%;
+    gap: 6px;
+  }
+  .market-timer-pill {
+    width: 100%;
+    font-size: 11.5px;
+    padding: 5px 10px;
   }
 
   /* Filter Card Mobile Layout */
@@ -265,6 +270,41 @@
     justify-content: center;
     padding: 6px 10px;
     font-size: 12px;
+  }
+  .quick-status-toggles .today-high-price-group {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 34px;
+    display: flex;
+    align-items: stretch;
+    box-sizing: border-box;
+  }
+  .quick-status-toggles .today-high-price-group .pill-btn {
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+    height: auto;
+    padding: 6px 8px 6px 10px;
+    border: none;
+    border-radius: 0;
+  }
+  .quick-status-toggles .today-high-price-group .pct-input-wrap {
+    flex: 0 0 auto;
+    height: auto;
+    padding: 0 9px 0 7px;
+    gap: 3px;
+  }
+  .quick-status-toggles .today-high-price-group .pct-input-prefix,
+  .quick-status-toggles .today-high-price-group .pct-input-unit {
+    font-size: 12px;
+    color: #cbd5e1;
+  }
+  .quick-status-toggles .today-high-price-group .pct-input {
+    width: 36px;
+    font-size: 12.5px;
+    color: #f8fafc;
+    padding: 1px 2px;
   }
 
   /* Table and Counter on Mobile */
@@ -412,6 +452,22 @@
   }
   .scroll-top-fab.above-cookie.above-import-fab {
     bottom: 162px;
+  }
+}
+
+/* Narrow Phones (<= 460px) */
+@media (max-width: 460px) {
+  .quick-status-toggles .today-high-price-group {
+    grid-column: 1 / -1;
+    min-height: 36px;
+  }
+  .quick-status-toggles .today-high-price-group .pct-input-wrap {
+    padding: 0 12px 0 10px;
+    gap: 4px;
+  }
+  .quick-status-toggles .today-high-price-group .pct-input {
+    width: 42px;
+    font-size: 13px;
   }
 }
 
