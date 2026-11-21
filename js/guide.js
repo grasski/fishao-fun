@@ -988,9 +988,11 @@ function renderGuideShopToolbar() {
 
     var bestBtnCls = 'pill-btn' + (guideShopBestValueOnly ? ' amber active' : '');
     baitExtrasHtml =
-      '<select id="guideShopBaitCatSelect" class="filter-control shop-bait-cat-select" aria-label="' + escapeHtml(t('guide_shop_col_cat')) + '" onchange="window.fishaoApp.onGuideShopBaitCatChange(this.value)">' +
-        baitCatOpts +
-      '</select>' +
+      '<div class="bait-select-wrapper shop-bait-select-wrapper">' +
+        '<select id="guideShopBaitCatSelect" class="filter-control shop-bait-cat-select" aria-label="' + escapeHtml(t('guide_shop_col_cat')) + '" onchange="window.fishaoApp.onGuideShopBaitCatChange(this.value)">' +
+          baitCatOpts +
+        '</select>' +
+      '</div>' +
       '<button type="button" id="guideShopBestValueBtn" class="' + bestBtnCls + '" onclick="window.fishaoApp.toggleGuideShopBestValue()">' +
         escapeHtml(t('guide_shop_best_value_btn')) +
       '</button>';
@@ -1014,6 +1016,10 @@ function renderGuideShopToolbar() {
         '</button>' +
       '</div>' +
     '</div>';
+
+  if (guideShopCategory === 'baits' && typeof syncBaitSelectIcon === 'function') {
+    syncBaitSelectIcon('guideShopBaitCatSelect');
+  }
 }
 
 function renderGuideShopTable() {
@@ -1097,7 +1103,7 @@ function renderGuideShopTable() {
       var bestBadge = (bestBaitIds && bestBaitIds.has(item.id))
         ? ' <span class="shop-best-value-badge">' + escapeHtml(t('guide_shop_best_value_badge')) + '</span>'
         : '';
-      return '<tr>' +
+      return '<tr onclick="window.fishaoApp.openGuideShopItemModal(\'' + kind + '\', ' + item.id + ')">' +
         '<td>' + imgHtml + '</td>' +
         '<td><div class="shop-item-name-row"><span class="shop-item-title">' + escapeHtml(name) + '</span>' + bestBadge + '</div>' +
           (desc ? '<div class="shop-item-desc">' + escapeHtml(desc) + '</div>' : '') + '</td>' +
@@ -1114,7 +1120,7 @@ function renderGuideShopTable() {
         ? ' <span class="shop-not-in-shop-badge">' + escapeHtml(t('guide_shop_not_in_shop')) + '</span>'
         : '';
       var rodRowCls = (item.id === 10) ? 'shop-row-golden' : '';
-      return '<tr class="' + rodRowCls + '">' +
+      return '<tr class="' + rodRowCls + '" onclick="window.fishaoApp.openGuideShopItemModal(\'' + kind + '\', ' + item.id + ')">' +
         '<td>' + imgHtml + '</td>' +
         '<td><div class="shop-item-name-row"><span class="shop-item-title">' + escapeHtml(name) + '</span>' + shopBadge + '</div>' +
           (desc ? '<div class="shop-item-desc">' + escapeHtml(desc) + '</div>' : '') + '</td>' +
@@ -1128,7 +1134,7 @@ function renderGuideShopTable() {
     }
 
     if (cat === 'bobbers') {
-      return '<tr>' +
+      return '<tr onclick="window.fishaoApp.openGuideShopItemModal(\'' + kind + '\', ' + item.id + ')">' +
         '<td>' + imgHtml + '</td>' +
         '<td><div class="shop-item-name-row"><span class="shop-item-title">' + escapeHtml(name) + '</span></div>' +
           (desc ? '<div class="shop-item-desc">' + escapeHtml(desc) + '</div>' : '') + '</td>' +
@@ -1138,7 +1144,7 @@ function renderGuideShopTable() {
     }
 
     var durMin = item.param && item.param.duration_min ? (item.param.duration_min + ' ' + t('guide_unit_min_short')) : '—';
-    return '<tr>' +
+    return '<tr onclick="window.fishaoApp.openGuideShopItemModal(\'' + kind + '\', ' + item.id + ')">' +
       '<td>' + imgHtml + '</td>' +
       '<td><div class="shop-item-name-row"><span class="shop-item-title">' + escapeHtml(name) + '</span></div>' +
         (desc ? '<div class="shop-item-desc">' + escapeHtml(desc) + '</div>' : '') + '</td>' +
@@ -1149,6 +1155,132 @@ function renderGuideShopTable() {
       '<td>' + formatShopPriceFbHtml(item.fb) + '</td>' +
     '</tr>';
   }).join('');
+}
+
+function findShopEntryByKindAndId(kind, id) {
+  var catMap = { bait: 'baits', rod: 'rods', float: 'bobbers', resource: 'resources' };
+  var cat = catMap[kind];
+  if (!cat || !GUIDE_SHOP_DATA[cat]) return null;
+  var numId = parseInt(id, 10);
+  var arr = GUIDE_SHOP_DATA[cat];
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i].id === numId) {
+      return { kind: kind, cat: cat, item: arr[i] };
+    }
+  }
+  return null;
+}
+
+function renderShopDetailCard(label, valHtml, fullWidth) {
+  return '<div class="modal-detail-item"' + (fullWidth ? ' style="grid-column: 1 / -1;"' : '') + '>' +
+    '<span class="detail-label">' + escapeHtml(label) + '</span>' +
+    '<div class="detail-val">' + valHtml + '</div>' +
+  '</div>';
+}
+
+function ensureShopItemModalOverlay() {
+  var overlay = document.getElementById('shopItemModalOverlay');
+  if (overlay) return overlay;
+  overlay = document.createElement('div');
+  overlay.id = 'shopItemModalOverlay';
+  overlay.className = 'modal-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-labelledby', 'shopItemModalTitle');
+  overlay.onclick = function (e) {
+    if (e.target === overlay) closeGuideShopItemModal();
+  };
+  overlay.innerHTML =
+    '<div class="modal-box shop-detail-modal-box">' +
+      '<div class="modal-header">' +
+        '<span class="modal-title" id="shopItemModalTitle"></span>' +
+        '<button type="button" class="modal-close" aria-label="Close" onclick="window.fishaoApp.closeGuideShopItemModal()">×</button>' +
+      '</div>' +
+      '<div class="modal-body" id="shopItemModalBody"></div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  return overlay;
+}
+
+function openGuideShopItemModal(kind, id) {
+  var entry = findShopEntryByKindAndId(kind, id);
+  if (!entry || typeof document === 'undefined') return;
+
+  var item = entry.item;
+  var cat = entry.cat;
+  var name = getShopItemTextSafe(kind + '_' + item.id, '#' + item.id);
+  var desc = getShopItemTextSafe(kind + '_desc_' + item.id, '');
+  var imgHtml = renderShopItemImage(kind, item.id, name);
+
+  var badgesHtml = '';
+  if (cat === 'baits') {
+    var bestIds = getBestValueBaitIds(guideShopFbOnly);
+    if (bestIds && bestIds.has(item.id)) {
+      badgesHtml += '<span class="shop-best-value-badge">' + escapeHtml(t('guide_shop_best_value_badge')) + '</span>';
+    }
+  } else if (cat === 'rods' && !item.inShop && item.id !== 1) {
+    badgesHtml += '<span class="shop-not-in-shop-badge">' + escapeHtml(t('guide_shop_not_in_shop')) + '</span>';
+  }
+
+  var catBadgeText = '';
+  if (cat === 'rods') catBadgeText = t('guide_shop_cat_label_rods');
+  else if (cat === 'bobbers') catBadgeText = t('guide_shop_cat_label_bobbers');
+  else if (cat === 'resources') catBadgeText = t('guide_shop_cat_label_resources');
+
+  var detailsCards = [];
+  if (cat === 'baits') {
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_cat'), renderBaitTag(item.category)));
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_uses'), formatShopUsesHtml(item.uses, item)));
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_req_lvl'), formatShopReqLvlHtml(item.reqLvl, item)));
+  } else if (cat === 'rods') {
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_cat'), '<span class="shop-cat-badge">' + escapeHtml(catBadgeText) + '</span>'));
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_rod_len'), '<span class="shop-param-chip">' + formatGuideInt(item.length) + ' cm</span>'));
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_rod_power'), '<strong class="guide-line-len">' + escapeHtml(t('guide_shop_up_to_cm', { cm: formatGuideInt(item.power) })) + '</strong>'));
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_uses'), formatShopUsesHtml(item.uses)));
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_req_lvl'), formatShopReqLvlHtml(item.reqLvl)));
+  } else if (cat === 'bobbers') {
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_cat'), '<span class="shop-cat-badge">' + escapeHtml(catBadgeText) + '</span>', true));
+  } else {
+    var durMin = item.param && item.param.duration_min ? (item.param.duration_min + ' ' + t('guide_unit_min_short')) : '—';
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_cat'), '<span class="shop-cat-badge">' + escapeHtml(catBadgeText) + '</span>'));
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_duration'), '<span class="shop-param-chip">' + escapeHtml(durMin) + '</span>'));
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_effect'), '<span class="shop-cat-badge">' + escapeHtml(formatResourceEffectText(item)) + '</span>', true));
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_req_lvl'), formatShopReqLvlHtml(item.reqLvl)));
+  }
+
+  detailsCards.push(renderShopDetailCard(t('guide_shop_col_price_fc'), formatShopPriceFcHtml(item.fc)));
+  detailsCards.push(renderShopDetailCard(t('guide_shop_col_price_fb'), formatShopPriceFbHtml(item.fb)));
+
+  var overlay = ensureShopItemModalOverlay();
+  var titleEl = document.getElementById('shopItemModalTitle');
+  var bodyEl = document.getElementById('shopItemModalBody');
+  if (titleEl) titleEl.textContent = name;
+  if (bodyEl) {
+    var heroCls = 'shop-detail-hero' + (cat === 'rods' && item.id === 10 ? ' is-golden' : '');
+    bodyEl.innerHTML =
+      '<div class="' + heroCls + '">' +
+        imgHtml +
+        '<div class="shop-detail-hero-info">' +
+          '<div class="shop-item-name-row"><span class="shop-item-title">' + escapeHtml(name) + '</span>' + badgesHtml + '</div>' +
+          (cat === 'baits' ? '<div style="margin-top:6px;">' + renderBaitTag(item.category) + '</div>' : '<div style="margin-top:6px;"><span class="shop-cat-badge">' + escapeHtml(catBadgeText) + '</span></div>') +
+        '</div>' +
+      '</div>' +
+      (desc ? '<div class="shop-detail-desc-box">' + escapeHtml(desc) + '</div>' : '') +
+      '<div class="modal-details-grid">' + detailsCards.join('') + '</div>';
+  }
+
+  overlay.classList.add('active');
+  if (document.documentElement) document.documentElement.classList.add('modal-open');
+  if (document.body) document.body.classList.add('modal-open');
+}
+
+function closeGuideShopItemModal() {
+  var overlay = document.getElementById('shopItemModalOverlay');
+  if (overlay) overlay.classList.remove('active');
+  if (typeof document !== 'undefined' && !document.querySelector('.modal-overlay.active')) {
+    if (document.documentElement) document.documentElement.classList.remove('modal-open');
+    if (document.body) document.body.classList.remove('modal-open');
+  }
 }
 
 function renderGuideView(subType) {

@@ -363,6 +363,7 @@ def build_taxonomies(langs):
                     val = (data.get(tk) or "").strip()
                     if val:
                         val = re.sub(r"##cm(\d+)#{1,2}", r"\1 cm", val)
+                        val = val.replace("#amount#", "1")
                         entry[lang_code] = val
                 if entry:
                     shop_items[tk] = entry
