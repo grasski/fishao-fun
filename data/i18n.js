@@ -27,9 +27,12 @@
   var LANGUAGES = {
     cs: { code: 'cs', label: 'Čeština', short: 'CZ', flag: '🇨🇿', locale: 'cs-CZ', ogLocale: 'cs_CZ', fallback: [], altNameLang: 'en', dateStyle: 'cs' },
     en: { code: 'en', label: 'English', short: 'EN', flag: '🇬🇧', locale: 'en-US', ogLocale: 'en_US', fallback: ['cs'], altNameLang: 'cs', dateStyle: 'iso' },
-    pl: { code: 'pl', label: 'Polski', short: 'PL', flag: '🇵🇱', locale: 'pl-PL', ogLocale: 'pl_PL', fallback: ['en', 'cs'], altNameLang: 'en', dateStyle: 'intl' }
+    pl: { code: 'pl', label: 'Polski', short: 'PL', flag: '🇵🇱', locale: 'pl-PL', ogLocale: 'pl_PL', fallback: ['en', 'cs'], altNameLang: 'en', dateStyle: 'intl' },
+    nl: { code: 'nl', label: 'Nederlands', short: 'NL', flag: '🇳🇱', locale: 'nl-NL', ogLocale: 'nl_NL', fallback: ['en', 'cs'], altNameLang: 'en', dateStyle: 'intl' },
+    ro: { code: 'ro', label: 'Română', short: 'RO', flag: '🇷🇴', locale: 'ro-RO', ogLocale: 'ro_RO', fallback: ['en', 'cs'], altNameLang: 'en', dateStyle: 'intl' },
+    tr: { code: 'tr', label: 'Türkçe', short: 'TR', flag: '🇹🇷', locale: 'tr-TR', ogLocale: 'tr_TR', fallback: ['en', 'cs'], altNameLang: 'en', dateStyle: 'intl' }
   };
-  var LANGUAGE_ORDER = ['cs', 'en', 'pl'];
+  var LANGUAGE_ORDER = ['cs', 'en', 'pl', 'nl', 'ro', 'tr'];
 
   var hasWindow = typeof window !== 'undefined';
 
@@ -80,15 +83,15 @@
     } catch (e) { }
     try {
       if (hasWindow && window.location && typeof window.location.pathname === 'string') {
-        var pathMatch = /^\/(en|pl)(\/|$)/i.exec(window.location.pathname);
+        var pathMatch = /^\/(en|pl|nl|ro|tr)(\/|$)/i.exec(window.location.pathname);
         if (pathMatch && isSupported(pathMatch[1].toLowerCase())) {
           return pathMatch[1].toLowerCase();
         }
-        // Only treat root "/" as explicit Czech if the user came from /en/ or /pl/ on the same origin
+        // Only treat root "/" as explicit Czech if the user came from a localized subpath on the same origin
         if ((window.location.pathname === '/' || window.location.pathname === '/index.html') &&
             typeof document !== 'undefined' && document.referrer) {
           var refUrl = new URL(document.referrer);
-          if (refUrl.origin === window.location.origin && /^\/(en|pl)(\/|$)/i.test(refUrl.pathname)) {
+          if (refUrl.origin === window.location.origin && /^\/(en|pl|nl|ro|tr)(\/|$)/i.test(refUrl.pathname)) {
             return 'cs';
           }
         }
@@ -151,12 +154,12 @@
 
   /**
    * Diacritics-insensitive normalization used by fish search.
-   * Polish "ł" does not decompose under NFD, so it is folded explicitly.
+   * Polish "ł" and Turkish dotless "ı" do not decompose under NFD, so they are folded explicitly.
    */
   function norm(s) {
     var str = String(s || '');
     if (str.normalize) str = str.normalize('NFD');
-    return str.replace(/[\u0300-\u036f]/g, '').replace(/ł/g, 'l').replace(/Ł/g, 'L').toLowerCase().trim();
+    return str.replace(/[\u0300-\u036f]/g, '').replace(/ł/g, 'l').replace(/Ł/g, 'L').replace(/ı/g, 'i').replace(/İ/g, 'i').toLowerCase().trim();
   }
 
   function lookupKey(dict, key) {

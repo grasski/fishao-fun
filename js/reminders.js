@@ -185,7 +185,9 @@ function formatReminderDateTime(isoString) {
   if (isNaN(d.getTime())) return '—';
   var useUtc = (typeof userTimezone !== 'undefined' && userTimezone === 'utc');
   var lang = (typeof getLang === 'function') ? getLang() : 'cs';
-  var locale = lang === 'en' ? 'en-GB' : (lang === 'pl' ? 'pl-PL' : 'cs-CZ');
+  var locale = lang === 'en'
+    ? 'en-GB'
+    : ((window.FISHAO_I18N && typeof window.FISHAO_I18N.getLocale === 'function') ? window.FISHAO_I18N.getLocale(lang) : 'cs-CZ');
   try {
     var formatted = new Intl.DateTimeFormat(locale, {
       day: '2-digit',

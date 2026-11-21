@@ -375,7 +375,8 @@ function updateStaticTranslations() {
 
   var wikiLink = document.getElementById("footerWikiLink");
   if (wikiLink) {
-    wikiLink.setAttribute("href", lang === "en" ? "/en/fish/" : (lang === "pl" ? "/pl/ryby/" : "/ryby/"));
+    var wikiPaths = { cs: "/ryby/", en: "/en/fish/", pl: "/pl/ryby/", nl: "/nl/vissen/", ro: "/ro/pesti/", tr: "/tr/baliklar/" };
+    wikiLink.setAttribute("href", wikiPaths[lang] || "/ryby/");
   }
 
   // Dynamic SEO title & meta description update on language change
@@ -450,12 +451,12 @@ function setLanguage(lang, opts) {
 
   if (!opts.skipRender && typeof window !== 'undefined' && window.history && window.history.replaceState) {
     try {
-      // Only rewrite the URL path to /en/ or /pl/ when running on the built site (or already on /en/ or /pl/),
+      // Only rewrite the URL path to /<lang>/ when running on the built site (or already on a localized subpath),
       // so raw local dev servers without /en/index.html don't 404 on F5 reload.
       var curPath = window.location.pathname || '/';
-      var isBuiltOrSubpath = !!(window.FISHAO_APP_VERSION || /^\/(en|pl)(\/|$)/i.test(curPath));
-      if (isBuiltOrSubpath && /^\/(en|pl)?\/?(index\.html)?$/i.test(curPath)) {
-        var nextPath = (lang === 'en') ? '/en/' : ((lang === 'pl') ? '/pl/' : '/');
+      var isBuiltOrSubpath = !!(window.FISHAO_APP_VERSION || /^\/(en|pl|nl|ro|tr)(\/|$)/i.test(curPath));
+      if (isBuiltOrSubpath && /^\/(en|pl|nl|ro|tr)?\/?(index\.html)?$/i.test(curPath)) {
+        var nextPath = (lang === 'cs') ? '/' : ('/' + lang + '/');
         if (curPath !== nextPath && !(curPath === '/index.html' && nextPath === '/')) {
           var urlObj = new URL(window.location.href);
           urlObj.searchParams.delete('lang');

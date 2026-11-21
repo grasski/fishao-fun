@@ -84,9 +84,13 @@ STATIC_COPY_FILES = [
     "apple-touch-icon.png",
 ]
 
+ALL_LANGS = ("cs", "en", "pl", "nl", "ro", "tr")
+
 LANG_CONFIG = {
     "cs": {
         "code": "cs",
+        "short": "CZ",
+        "flag": "🇨🇿",
         "locale": "cs-CZ",
         "og_locale": "cs_CZ",
         "fallback": [],
@@ -98,6 +102,8 @@ LANG_CONFIG = {
     },
     "en": {
         "code": "en",
+        "short": "EN",
+        "flag": "🇬🇧",
         "locale": "en-US",
         "og_locale": "en_US",
         "fallback": ["cs"],
@@ -109,6 +115,8 @@ LANG_CONFIG = {
     },
     "pl": {
         "code": "pl",
+        "short": "PL",
+        "flag": "🇵🇱",
         "locale": "pl-PL",
         "og_locale": "pl_PL",
         "fallback": ["en", "cs"],
@@ -117,6 +125,45 @@ LANG_CONFIG = {
         "catalog_path": "/pl/ryby/",
         "fish_prefix": "/pl/ryba/",
         "keywords": "fishao wiki, fishao tracker, fishao encyklopedia, fishao ryby, fishao poradnik, fishao baza ryb, fishao ryby klubowe, fishao targ rybny, fishao ceny ryb, fishao fish market, fishao przynęty, fishao łowiska, fishao domowe podwórko, fishdex",
+    },
+    "nl": {
+        "code": "nl",
+        "short": "NL",
+        "flag": "🇳🇱",
+        "locale": "nl-NL",
+        "og_locale": "nl_NL",
+        "fallback": ["en", "cs"],
+        "alt_lang": "en",
+        "home_path": "/nl/",
+        "catalog_path": "/nl/vissen/",
+        "fish_prefix": "/nl/vis/",
+        "keywords": "fishao wiki, fishao tracker, fishao encyclopedie, fishao vissen, fishao gids, fishao clubvissen, fishao vismarkt, fishao prijzen, fishao aas, fishao locaties, fishao achtertuin, fishdex",
+    },
+    "ro": {
+        "code": "ro",
+        "short": "RO",
+        "flag": "🇷🇴",
+        "locale": "ro-RO",
+        "og_locale": "ro_RO",
+        "fallback": ["en", "cs"],
+        "alt_lang": "en",
+        "home_path": "/ro/",
+        "catalog_path": "/ro/pesti/",
+        "fish_prefix": "/ro/peste/",
+        "keywords": "fishao wiki, fishao tracker, fishao enciclopedie, fishao pesti, fishao ghid, fishao pesti de club, fishao piata de peste, fishao preturi, fishao momeli, fishao locatii, fishao curte, fishdex",
+    },
+    "tr": {
+        "code": "tr",
+        "short": "TR",
+        "flag": "🇹🇷",
+        "locale": "tr-TR",
+        "og_locale": "tr_TR",
+        "fallback": ["en", "cs"],
+        "alt_lang": "en",
+        "home_path": "/tr/",
+        "catalog_path": "/tr/baliklar/",
+        "fish_prefix": "/tr/balik/",
+        "keywords": "fishao wiki, fishao tracker, fishao ansiklopedi, fishao balıklar, fishao rehber, fishao kulüp balıkları, fishao balık pazarı, fishao fiyatlar, fishao yemler, fishao bölgeler, fishao arka bahçe, fishdex",
     },
 }
 
@@ -167,7 +214,7 @@ def short_hash(text: str) -> str:
 
 
 def slugify(text: str) -> str:
-    s = str(text or "").replace("ł", "l").replace("Ł", "l")
+    s = str(text or "").replace("ł", "l").replace("Ł", "l").replace("ı", "i").replace("İ", "i")
     s = unicodedata.normalize("NFD", s)
     s = "".join(ch for ch in s if unicodedata.category(ch) != "Mn")
     s = s.lower()
@@ -177,7 +224,7 @@ def slugify(text: str) -> str:
 
 def load_i18n_and_data():
     ui_dicts = {}
-    for lang in ("cs", "en", "pl"):
+    for lang in ALL_LANGS:
         src = (ROOT / "data" / "i18n" / f"ui_{lang}.js").read_text(encoding="utf-8")
         m = re.search(r"var dict = (\{[\s\S]*?\n\s*\});", src)
         if not m:
@@ -262,17 +309,24 @@ def get_bait_name(bait_key: str, taxonomies: dict, lang: str) -> str:
 def format_num(n: int, lang: str) -> str:
     if lang in ("cs", "pl"):
         return f"{int(n):,}".replace(",", "\u00a0")
+    if lang in ("nl", "ro", "tr"):
+        return f"{int(n):,}".replace(",", ".")
     return f"{int(n):,}"
 
 
 def format_day_month(month: int, day: int, lang: str) -> str:
     if lang == "cs":
         return f"{day}. {month}."
-    months_en = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    months_pl = ["", "sty", "lut", "mar", "kwi", "maj", "cze", "lip", "sie", "wrz", "paź", "lis", "gru"]
-    if lang == "pl":
-        return f"{day} {months_pl[month]}"
-    return f"{months_en[month]} {day}"
+    months_by_lang = {
+        "en": ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        "pl": ["", "sty", "lut", "mar", "kwi", "maj", "cze", "lip", "sie", "wrz", "paź", "lis", "gru"],
+        "nl": ["", "jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"],
+        "ro": ["", "ian", "feb", "mar", "apr", "mai", "iun", "iul", "aug", "sep", "oct", "nov", "dec"],
+        "tr": ["", "Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara"],
+    }
+    if lang in ("pl", "nl", "ro", "tr"):
+        return f"{day} {months_by_lang[lang][month]}"
+    return f"{months_by_lang['en'][month]} {day}"
 
 
 def format_catch_date_text(raw_dates: list, ui_dicts: dict, lang: str) -> tuple:
@@ -476,14 +530,13 @@ def localize_index_html(
     html = re.sub(r'<meta property="og:title" content="[^"]*">', f'<meta property="og:title" content="{esc(page_title)}">', html, count=1)
     html = re.sub(r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{esc(page_desc)}">', html, count=1)
 
-    other_og = [LANG_CONFIG[c]["og_locale"] for c in ("cs", "en", "pl") if c != lang]
-    og_locale_block = (
-        f'<meta property="og:locale" content="{cfg["og_locale"]}">\n'
-        f'  <meta property="og:locale:alternate" content="{other_og[0]}">\n'
-        f'  <meta property="og:locale:alternate" content="{other_og[1]}">'
+    other_og = [LANG_CONFIG[c]["og_locale"] for c in ALL_LANGS if c != lang]
+    og_locale_block = "\n".join(
+        [f'<meta property="og:locale" content="{cfg["og_locale"]}">']
+        + [f'  <meta property="og:locale:alternate" content="{loc}">' for loc in other_og]
     )
     html = re.sub(
-        r'<meta property="og:locale"[\s\S]*?<meta property="og:locale:alternate" content="[^"]*">',
+        r'<meta property="og:locale"[^>]*>(?:\s*<meta property="og:locale:alternate"[^>]*>)+',
         og_locale_block,
         html,
         count=1,
@@ -524,7 +577,7 @@ def localize_index_html(
                 "url": canonical_url,
                 "applicationCategory": "GameApplication, ReferenceApplication",
                 "operatingSystem": "All",
-                "inLanguage": ["cs", "en", "pl"],
+                "inLanguage": list(ALL_LANGS),
                 "image": {"@id": f"{SITE_ORIGIN}/#primaryimage"},
                 "thumbnailUrl": f"{SITE_ORIGIN}/images/og-preview.png",
                 "description": page_desc,
@@ -539,7 +592,7 @@ def localize_index_html(
                 "image": {"@id": f"{SITE_ORIGIN}/#primaryimage"},
                 "thumbnailUrl": f"{SITE_ORIGIN}/images/og-preview.png",
                 "description": page_desc,
-                "inLanguage": ["cs", "en", "pl"],
+                "inLanguage": list(ALL_LANGS),
             },
             {
                 "@type": "WebPage",
@@ -763,6 +816,96 @@ WIKI_PAGE_Labels = {
         "summary_price": ", a szacowana cena w Fish Markecie to {min_p}–{max_p} FB",
         "title_tpl": "{name}{alt_part} – FISHAO Wiki: łowisko, przynęta, czas połowu i cena",
     },
+    "nl": {
+        "wiki_badge": "FISHAO Wiki & Encyclopedie",
+        "back_tracker": "← Open interactieve FISHAO Tracker",
+        "open_fish_btn": "🎯 Open details & live prijsgrafiek in Tracker",
+        "all_fishes_link": "📖 Catalogus van alle 615 vissen",
+        "catalog_title": "FISHAO Wiki – Volledige encyclopedie & gids van alle 615 vissen",
+        "catalog_desc": "Complete FISHAO wiki en vislijst van alle 615 vissen: locaties, visplekken, aas, vangsttijden, afmetingen en geschatte Fish Market-prijzen.",
+        "catalog_h1": "FISHAO Wiki – Encyclopedie van alle 615 vissen",
+        "catalog_lead": "Volledige encyclopedie van alle vissen in FISHAO. Klik op een vis voor locaties, beste aas, actieve vangsttijden, afmetingen en Fish Market-prijzen.",
+        "sec_overview": "Visoverzicht & Vanggids",
+        "lbl_id": "Vis-ID in het spel",
+        "lbl_rating": "Moeilijkheidsgraad (Rating)",
+        "lbl_rarity": "Zeldzaamheid (aanbeetkans)",
+        "lbl_locations": "Locaties",
+        "lbl_areas": "Specifieke visplek",
+        "lbl_baits": "Aas",
+        "lbl_time": "Vangsttijd (speltijd UTC)",
+        "lbl_season": "Seizoen / Periode",
+        "lbl_size": "Lengte (Min / Gemiddeld / Max)",
+        "lbl_est_price": "Geschatte prijs (Fish Market)",
+        "lbl_club": "Clubvis",
+        "club_points": "Clubvis op punten ({pts} ptn, nr. #{order})",
+        "club_fc": "Speciale clubvis voor Fishcoins ({fc} FC, nr. #{order})",
+        "club_monster": "Clubmonster (nr. #{order})",
+        "names_in_langs": "Visnamen in andere talen",
+        "related_in_loc": "Andere vissen op dezelfde locatie",
+        "summary_tpl": "{name} (#{id}) is een {stars}★ vis in FISHAO. Je vangt deze op {locs} met {baits}. Vangsttijd: {time} ({season}). Gemiddelde lengte is {avg} cm ({min}–{max} cm){price_part}.",
+        "summary_price": " met een geschatte Fish Market-prijs van {min_p}–{max_p} FB",
+        "title_tpl": "{name}{alt_part} – FISHAO Wiki: locatie, aas, vangsttijd & prijs",
+    },
+    "ro": {
+        "wiki_badge": "FISHAO Wiki & Enciclopedie",
+        "back_tracker": "← Deschide FISHAO Tracker interactiv",
+        "open_fish_btn": "🎯 Deschide detaliile și graficul de prețuri în Tracker",
+        "all_fishes_link": "📖 Catalogul tuturor celor 615 pești",
+        "catalog_title": "FISHAO Wiki – Enciclopedie completă și ghid al tuturor celor 615 pești",
+        "catalog_desc": "Wiki și listă completă FISHAO cu toți cei 615 pești: locații, zone de pescuit, momeli, ore de prindere, dimensiuni și prețuri estimate în Fish Market.",
+        "catalog_h1": "FISHAO Wiki – Enciclopedia tuturor celor 615 pești",
+        "catalog_lead": "Enciclopedie completă a tuturor peștilor din FISHAO. Apasă pe un pește pentru locații, cele mai bune momeli, ore active, dimensiuni și prețuri în Fish Market.",
+        "sec_overview": "Prezentare generală & Ghid de pescuit",
+        "lbl_id": "ID pește în joc",
+        "lbl_rating": "Dificultate (Rating)",
+        "lbl_rarity": "Raritate (șansă de mușcătură)",
+        "lbl_locations": "Locații",
+        "lbl_areas": "Zonă specifică de pescuit",
+        "lbl_baits": "Momeli",
+        "lbl_time": "Ore de pescuit (ora jocului UTC)",
+        "lbl_season": "Sezon / Perioadă",
+        "lbl_size": "Dimensiuni (Min / Medie / Max)",
+        "lbl_est_price": "Preț estimat (Fish Market)",
+        "lbl_club": "Pește de club",
+        "club_points": "Pește de club pe puncte ({pts} pct, nr. #{order})",
+        "club_fc": "Pește special de club cu Fishcoins ({fc} FC, nr. #{order})",
+        "club_monster": "Monstru de club (nr. #{order})",
+        "names_in_langs": "Numele peștelui în alte limbi",
+        "related_in_loc": "Alți pești din aceeași locație",
+        "summary_tpl": "{name} (#{id}) este un pește de {stars}★ în FISHAO. Poate fi prins în {locs} folosind {baits}. Ore de pescuit: {time} ({season}). Lungimea medie este {avg} cm ({min}–{max} cm){price_part}.",
+        "summary_price": ", cu un preț estimat în Fish Market de {min_p}–{max_p} FB",
+        "title_tpl": "{name}{alt_part} – FISHAO Wiki: locație, momeală, oră și preț",
+    },
+    "tr": {
+        "wiki_badge": "FISHAO Wiki & Ansiklopedi",
+        "back_tracker": "← Etkileşimli FISHAO Tracker'ı aç",
+        "open_fish_btn": "🎯 Tracker'da detayları ve canlı fiyat grafiğini aç",
+        "all_fishes_link": "📖 Tüm 615 Balık Kataloğu",
+        "catalog_title": "FISHAO Wiki – Tüm 615 Balık Ansiklopedisi ve Rehberi",
+        "catalog_desc": "Tüm 615 balık için eksiksiz FISHAO wiki ve balık listesi: bölgeler, av noktaları, yemler, av saatleri, boyutlar ve tahmini Fish Market fiyatları.",
+        "catalog_h1": "FISHAO Wiki – Tüm 615 Balık Ansiklopedisi",
+        "catalog_lead": "FISHAO oyunundaki tüm balıkların eksiksiz ansiklopedisi. Bölge, en iyi yem, aktif av saatleri, boyutlar ve Fish Market fiyat aralığını görmek için bir balığa tıklayın.",
+        "sec_overview": "Balık Özeti & Av Rehberi",
+        "lbl_id": "Oyun içi Balık ID",
+        "lbl_rating": "Zorluk Derecesi (Rating)",
+        "lbl_rarity": "Nadirlik (vuruş ağırlığı)",
+        "lbl_locations": "Bölgeler",
+        "lbl_areas": "Özel Av Noktası",
+        "lbl_baits": "Yemler",
+        "lbl_time": "Av Saati (Oyun Saati UTC)",
+        "lbl_season": "Sezon / Tarihler",
+        "lbl_size": "Boyut (Min / Ortalama / Max)",
+        "lbl_est_price": "Tahmini Fiyat (Fish Market)",
+        "lbl_club": "Kulüp Balığı",
+        "club_points": "Kulüp puanı balığı ({pts} puan, sıra #{order})",
+        "club_fc": "Özel Fishcoin kulüp balığı ({fc} FC, sıra #{order})",
+        "club_monster": "Kulüp Canavarı (sıra #{order})",
+        "names_in_langs": "Diğer Dillerdeki Balık Adları",
+        "related_in_loc": "Aynı Bölgedeki Diğer Balıklar",
+        "summary_tpl": "{name} (#{id}), FISHAO oyununda {stars}★ bir balıktır. {locs} bölgesinde {baits} ile yakalanır. Av saati: {time} ({season}). Ortalama boyu {avg} cm'dir ({min}–{max} cm){price_part}.",
+        "summary_price": " ve tahmini Fish Market fiyatı {min_p}–{max_p} FB aralığındadır",
+        "title_tpl": "{name}{alt_part} – FISHAO Wiki: Bölge, Yem, Saat ve Pazar Fiyatı",
+    },
 }
 
 
@@ -785,11 +928,11 @@ def generate_wiki_pages(
     esc = html_lib.escape
     sitemap_entries = []
 
-    # Precompute URLs for all fishes across all 3 languages
-    fish_paths = {lang: {} for lang in ("cs", "en", "pl")}
+    # Precompute URLs for all fishes across all supported languages
+    fish_paths = {lang: {} for lang in ALL_LANGS}
     for f in fishes:
         fid = f["id"]
-        for lang in ("cs", "en", "pl"):
+        for lang in ALL_LANGS:
             fish_paths[lang][fid] = build_fish_url_path(f, fish_names, lang)
 
     # Index fishes by primary location for related links
@@ -801,7 +944,7 @@ def generate_wiki_pages(
     # Generate individual fish pages
     for f in fishes:
         fid = f["id"]
-        alternates = {lang: f"{SITE_ORIGIN}{fish_paths[lang][fid]}" for lang in ("cs", "en", "pl")}
+        alternates = {lang: f"{SITE_ORIGIN}{fish_paths[lang][fid]}" for lang in ALL_LANGS}
         sitemap_entries.append({
             "locs": alternates,
             "priority": "0.7",
@@ -810,24 +953,17 @@ def generate_wiki_pages(
             "image_title": get_fish_name(f, fish_names, "cs"),
         })
 
-        for lang in ("cs", "en", "pl"):
+        for lang in ALL_LANGS:
             cfg = LANG_CONFIG[lang]
             lbl = WIKI_PAGE_Labels[lang]
             t = lambda k, p=None: tr_ui(ui_dicts, lang, k, p)
 
             fname = get_fish_name(f, fish_names, lang)
             fn_entry = fish_names.get(str(fid)) or {}
-            name_cs = fn_entry.get("cs") or f.get("name") or fname
-            name_en = fn_entry.get("en") or fname
-            name_pl = fn_entry.get("pl") or name_en
-
-            alt_for_title = ""
-            if lang == "pl" and name_en and name_en != fname:
-                alt_for_title = f" ({name_en})"
-            elif lang == "cs" and name_en and name_en != fname:
-                alt_for_title = f" ({name_en})"
-            elif lang == "en" and name_cs and name_cs != fname:
-                alt_for_title = f" ({name_cs})"
+            names_by_lang = {lc: get_fish_name(f, fish_names, lc) for lc in ALL_LANGS}
+            alt_lang_code = cfg["alt_lang"]
+            alt_candidate = (fn_entry.get(alt_lang_code) or "").strip()
+            alt_for_title = f" ({alt_candidate})" if (alt_candidate and alt_candidate != fname) else ""
 
             page_title = lbl["title_tpl"].format(name=fname, alt_part=alt_for_title)
 
@@ -934,7 +1070,7 @@ def generate_wiki_pages(
                         "@type": "Article",
                         "headline": page_title,
                         "name": fname,
-                        "alternateName": [n for n in {name_cs, name_en, name_pl} if n and n != fname],
+                        "alternateName": sorted({n for n in names_by_lang.values() if n and n != fname}),
                         "description": summary_text,
                         "image": f"{SITE_ORIGIN}/images/fish_{fid}.webp",
                         "inLanguage": lang,
@@ -946,6 +1082,19 @@ def generate_wiki_pages(
             }
             schema_json = json.dumps(schema_obj, ensure_ascii=False)
 
+            hreflang_links_html = "\n  ".join(
+                [f'<link rel="alternate" hreflang="{lc}" href="{alternates[lc]}">' for lc in ALL_LANGS]
+                + [f'<link rel="alternate" hreflang="x-default" href="{alternates["cs"]}">']
+            )
+            topbar_lang_chips_html = "\n        ".join(
+                f'<a href="{fish_paths[lc][fid]}" class="wiki-lang-chip{" current" if lang == lc else ""}" hreflang="{lc}">{LANG_CONFIG[lc]["flag"]} {LANG_CONFIG[lc]["short"]}</a>'
+                for lc in ALL_LANGS
+            )
+            bottom_lang_chips_html = "\n          ".join(
+                f'<a href="{fish_paths[lc][fid]}" class="wiki-lang-chip" hreflang="{lc}">{LANG_CONFIG[lc]["flag"]} {esc(names_by_lang[lc])}</a>'
+                for lc in ALL_LANGS
+            )
+
             page_html = f"""<!DOCTYPE html>
 <html lang="{lang}">
 <head>
@@ -956,10 +1105,7 @@ def generate_wiki_pages(
   <meta name="robots" content="index, follow, max-image-preview:large">
   <meta name="theme-color" content="#1a2736">
   <link rel="canonical" href="{canonical_url}">
-  <link rel="alternate" hreflang="cs" href="{alternates['cs']}">
-  <link rel="alternate" hreflang="en" href="{alternates['en']}">
-  <link rel="alternate" hreflang="pl" href="{alternates['pl']}">
-  <link rel="alternate" hreflang="x-default" href="{alternates['cs']}">
+  {hreflang_links_html}
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -1012,9 +1158,7 @@ def generate_wiki_pages(
         <a href="{cfg['catalog_path']}" class="wiki-link-pill">{esc(lbl["all_fishes_link"])}</a>
       </div>
       <div class="wiki-nav-links">
-        <a href="{fish_paths['cs'][fid]}" class="wiki-lang-chip{' current' if lang=='cs' else ''}" hreflang="cs">🇨🇿 CZ</a>
-        <a href="{fish_paths['en'][fid]}" class="wiki-lang-chip{' current' if lang=='en' else ''}" hreflang="en">🇬🇧 EN</a>
-        <a href="{fish_paths['pl'][fid]}" class="wiki-lang-chip{' current' if lang=='pl' else ''}" hreflang="pl">🇵🇱 PL</a>
+        {topbar_lang_chips_html}
       </div>
     </header>
 
@@ -1076,9 +1220,7 @@ def generate_wiki_pages(
 
         <div class="wiki-langs-row">
           <span style="font-size:12px;color:var(--text-muted);font-weight:600;align-self:center;">{esc(lbl["names_in_langs"])}:</span>
-          <a href="{fish_paths['cs'][fid]}" class="wiki-lang-chip" hreflang="cs">🇨🇿 {esc(name_cs)}</a>
-          <a href="{fish_paths['en'][fid]}" class="wiki-lang-chip" hreflang="en">🇬🇧 {esc(name_en)}</a>
-          <a href="{fish_paths['pl'][fid]}" class="wiki-lang-chip" hreflang="pl">🇵🇱 {esc(name_pl)}</a>
+          {bottom_lang_chips_html}
         </div>
       </article>
 
@@ -1094,18 +1236,27 @@ def generate_wiki_pages(
             dest_file.parent.mkdir(parents=True, exist_ok=True)
             dest_file.write_text(page_html, encoding="utf-8")
 
-    # Generate the 3 catalog index pages (/ryby/, /en/fish/, /pl/ryby/)
-    catalog_alternates = {l: f"{SITE_ORIGIN}{LANG_CONFIG[l]['catalog_path']}" for l in ("cs", "en", "pl")}
+    # Generate catalog index pages for all supported languages
+    catalog_alternates = {l: f"{SITE_ORIGIN}{LANG_CONFIG[l]['catalog_path']}" for l in ALL_LANGS}
     sitemap_entries.insert(0, {
         "locs": catalog_alternates,
         "priority": "0.9",
         "changefreq": "weekly",
     })
 
-    for lang in ("cs", "en", "pl"):
+    cat_hreflang_html = "\n  ".join(
+        [f'<link rel="alternate" hreflang="{lc}" href="{catalog_alternates[lc]}">' for lc in ALL_LANGS]
+        + [f'<link rel="alternate" hreflang="x-default" href="{catalog_alternates["cs"]}">']
+    )
+
+    for lang in ALL_LANGS:
         cfg = LANG_CONFIG[lang]
         lbl = WIKI_PAGE_Labels[lang]
         canonical_url = catalog_alternates[lang]
+        cat_lang_chips_html = "\n        ".join(
+            f'<a href="{LANG_CONFIG[lc]["catalog_path"]}" class="wiki-lang-chip{" current" if lang == lc else ""}" hreflang="{lc}">{LANG_CONFIG[lc]["flag"]} {LANG_CONFIG[lc]["short"]}</a>'
+            for lc in ALL_LANGS
+        )
 
         sorted_f = sorted(fishes, key=lambda x: slugify(get_fish_name(x, fish_names, lang)))
         cards_html = []
@@ -1135,10 +1286,7 @@ def generate_wiki_pages(
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#1a2736">
   <link rel="canonical" href="{canonical_url}">
-  <link rel="alternate" hreflang="cs" href="{catalog_alternates['cs']}">
-  <link rel="alternate" hreflang="en" href="{catalog_alternates['en']}">
-  <link rel="alternate" hreflang="pl" href="{catalog_alternates['pl']}">
-  <link rel="alternate" hreflang="x-default" href="{catalog_alternates['cs']}">
+  {cat_hreflang_html}
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any">
   <link rel="stylesheet" href="/{css_name}">
@@ -1160,10 +1308,8 @@ def generate_wiki_pages(
   <div class="wiki-wrap">
     <header class="wiki-topbar">
       <a href="{cfg['home_path']}" class="wiki-link-pill">{esc(lbl["back_tracker"])}</a>
-      <div style="display:flex;gap:8px;">
-        <a href="{LANG_CONFIG['cs']['catalog_path']}" class="wiki-lang-chip{' current' if lang=='cs' else ''}" hreflang="cs">🇨🇿 CZ</a>
-        <a href="{LANG_CONFIG['en']['catalog_path']}" class="wiki-lang-chip{' current' if lang=='en' else ''}" hreflang="en">🇬🇧 EN</a>
-        <a href="{LANG_CONFIG['pl']['catalog_path']}" class="wiki-lang-chip{' current' if lang=='pl' else ''}" hreflang="pl">🇵🇱 PL</a>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        {cat_lang_chips_html}
       </div>
     </header>
     <main>
@@ -1190,11 +1336,7 @@ def generate_sitemap(out_dir: pathlib.Path, wiki_entries: list) -> None:
     today = datetime.date.today().isoformat()
     esc = html_lib.escape
 
-    home_alternates = {
-        "cs": f"{SITE_ORIGIN}/",
-        "en": f"{SITE_ORIGIN}/en/",
-        "pl": f"{SITE_ORIGIN}/pl/",
-    }
+    home_alternates = {lc: f"{SITE_ORIGIN}{LANG_CONFIG[lc]['home_path']}" for lc in ALL_LANGS}
 
     all_groups = [
         {
@@ -1210,12 +1352,8 @@ def generate_sitemap(out_dir: pathlib.Path, wiki_entries: list) -> None:
     for grp in all_groups:
         locs = grp["locs"]
         xhtml_links = "\n".join(
-            [
-                f'    <xhtml:link rel="alternate" hreflang="cs" href="{locs["cs"]}"/>',
-                f'    <xhtml:link rel="alternate" hreflang="en" href="{locs["en"]}"/>',
-                f'    <xhtml:link rel="alternate" hreflang="pl" href="{locs["pl"]}"/>',
-                f'    <xhtml:link rel="alternate" hreflang="x-default" href="{locs["cs"]}"/>',
-            ]
+            [f'    <xhtml:link rel="alternate" hreflang="{lc}" href="{locs[lc]}"/>' for lc in ALL_LANGS]
+            + [f'    <xhtml:link rel="alternate" hreflang="x-default" href="{locs["cs"]}"/>']
         )
         img_block = ""
         if grp.get("image"):
@@ -1226,7 +1364,7 @@ def generate_sitemap(out_dir: pathlib.Path, wiki_entries: list) -> None:
                 f"    </image:image>"
             )
 
-        for lang in ("cs", "en", "pl"):
+        for lang in ALL_LANGS:
             url_blocks.append(
                 f"  <url>\n"
                 f"    <loc>{locs[lang]}</loc>\n"
@@ -1286,7 +1424,7 @@ def build(out_dir: pathlib.Path) -> None:
 
     # 2b. Hash lazy i18n bundles into dist/ so they can be cached immutably
     i18n_bundles = {}
-    for lang_code in ("en", "pl"):
+    for lang_code in [c for c in ALL_LANGS if c != "cs"]:
         rel_lang = ROOT / "data" / "i18n" / f"ui_{lang_code}.js"
         if rel_lang.exists():
             lang_src = minify_js(rel_lang.read_text(encoding="utf-8"), esbuild_bin)
@@ -1307,8 +1445,9 @@ def build(out_dir: pathlib.Path) -> None:
     ui_dicts, taxonomies, fish_names, fishes, est_prices = load_i18n_and_data()
     base_html = (ROOT / "index.html").read_text(encoding="utf-8")
 
-    # 4a. Generate localized SPA landing pages: /index.html, /en/index.html, /pl/index.html
-    for lang_code, out_rel in (("cs", "index.html"), ("en", "en/index.html"), ("pl", "pl/index.html")):
+    # 4a. Generate localized SPA landing pages for all supported languages
+    for lang_code in ALL_LANGS:
+        out_rel = "index.html" if lang_code == "cs" else f"{lang_code}/index.html"
         extra_js = i18n_bundles.get(lang_code, "") if lang_code != "cs" else ""
         localized_html = localize_index_html(
             base_html=base_html,
@@ -1328,7 +1467,7 @@ def build(out_dir: pathlib.Path) -> None:
         target_path.parent.mkdir(parents=True, exist_ok=True)
         target_path.write_text(localized_html, encoding="utf-8")
 
-    # 4b. Generate static fish wiki pages & catalogs across CS, EN, PL
+    # 4b. Generate static fish wiki pages & catalogs across all supported languages
     wiki_entries = generate_wiki_pages(
         out_dir=out_dir,
         fishes=fishes,
@@ -1358,7 +1497,7 @@ def build(out_dir: pathlib.Path) -> None:
     print(
         f"Built {out_dir}: {css_name} ({len(css_bundle)/1024:.1f} KB), "
         f"{js_name} ({len(js_bundle)/1024:.1f} KB), "
-        f"3 localized landing pages + {len(fishes)*3} fish wiki pages, version={build_version}"
+        f"{len(ALL_LANGS)} localized landing pages + {len(fishes)*len(ALL_LANGS)} fish wiki pages, version={build_version}"
     )
 
 

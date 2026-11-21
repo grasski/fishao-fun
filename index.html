@@ -20,6 +20,9 @@
   <link rel="alternate" hreflang="cs" href="https://fishao-tracker.cz/">
   <link rel="alternate" hreflang="en" href="https://fishao-tracker.cz/en/">
   <link rel="alternate" hreflang="pl" href="https://fishao-tracker.cz/pl/">
+  <link rel="alternate" hreflang="nl" href="https://fishao-tracker.cz/nl/">
+  <link rel="alternate" hreflang="ro" href="https://fishao-tracker.cz/ro/">
+  <link rel="alternate" hreflang="tr" href="https://fishao-tracker.cz/tr/">
   <link rel="alternate" hreflang="x-default" href="https://fishao-tracker.cz/">
 
   <!-- Favicon & App Icons -->
@@ -44,6 +47,9 @@
   <meta property="og:locale" content="cs_CZ">
   <meta property="og:locale:alternate" content="en_US">
   <meta property="og:locale:alternate" content="pl_PL">
+  <meta property="og:locale:alternate" content="nl_NL">
+  <meta property="og:locale:alternate" content="ro_RO">
+  <meta property="og:locale:alternate" content="tr_TR">
 
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
@@ -74,7 +80,7 @@
         "url": "https://fishao-tracker.cz/",
         "applicationCategory": "GameApplication, ReferenceApplication",
         "operatingSystem": "All",
-        "inLanguage": ["cs", "en", "pl"],
+        "inLanguage": ["cs", "en", "pl", "nl", "ro", "tr"],
         "image": {
           "@id": "https://fishao-tracker.cz/#primaryimage"
         },
@@ -97,7 +103,7 @@
         },
         "thumbnailUrl": "https://fishao-tracker.cz/images/og-preview.png",
         "description": "FISHAO Tracker – kompletní FISHAO wiki, přehled všech 615 ryb a komunitní Fish Market ceny",
-        "inLanguage": ["cs", "en", "pl"]
+        "inLanguage": ["cs", "en", "pl", "nl", "ro", "tr"]
       },
       {
         "@type": "WebPage",
@@ -179,6 +185,9 @@
             <option value="cs">🇨🇿 CZ</option>
             <option value="en">🇬🇧 EN</option>
             <option value="pl">🇵🇱 PL</option>
+            <option value="nl">🇳🇱 NL</option>
+            <option value="ro">🇷🇴 RO</option>
+            <option value="tr">🇹🇷 TR</option>
           </select>
         </div>
 
@@ -1132,6 +1141,9 @@
             <a href="/" class="footer-link-btn" hreflang="cs" onclick="if(window.fishaoApp&&window.fishaoApp.setLanguage){event.preventDefault();window.fishaoApp.setLanguage('cs');}">🇨🇿 Čeština</a>
             <a href="/en/" class="footer-link-btn" hreflang="en" onclick="if(window.fishaoApp&&window.fishaoApp.setLanguage){event.preventDefault();window.fishaoApp.setLanguage('en');}">🇬🇧 English</a>
             <a href="/pl/" class="footer-link-btn" hreflang="pl" onclick="if(window.fishaoApp&&window.fishaoApp.setLanguage){event.preventDefault();window.fishaoApp.setLanguage('pl');}">🇵🇱 Polski</a>
+            <a href="/nl/" class="footer-link-btn" hreflang="nl" onclick="if(window.fishaoApp&&window.fishaoApp.setLanguage){event.preventDefault();window.fishaoApp.setLanguage('nl');}">🇳🇱 Nederlands</a>
+            <a href="/ro/" class="footer-link-btn" hreflang="ro" onclick="if(window.fishaoApp&&window.fishaoApp.setLanguage){event.preventDefault();window.fishaoApp.setLanguage('ro');}">🇷🇴 Română</a>
+            <a href="/tr/" class="footer-link-btn" hreflang="tr" onclick="if(window.fishaoApp&&window.fishaoApp.setLanguage){event.preventDefault();window.fishaoApp.setLanguage('tr');}">🇹🇷 Türkçe</a>
           </div>
           <div class="footer-meta">
             <span data-i18n="footer_version">Vyrobeno s ❤️ pro komunitu rybářů</span>
@@ -2046,11 +2058,11 @@
   <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "5e576a227071416ea49fa8729d8ee907"}'></script>
   <!-- End Cloudflare Web Analytics -->
 
-  <!-- Data scripts and localization (only base CS loaded upfront; EN/PL load on demand) -->
+  <!-- Data scripts and localization (only base CS loaded upfront; other languages load on demand) -->
   <script defer src="data/i18n/ui_cs.js?v=7.4"></script>
-  <script defer src="data/i18n/taxonomies.js?v=3.5"></script>
-  <script defer src="data/i18n/fish_names.js?v=3.4"></script>
-  <script defer src="data/i18n.js?v=4.5"></script>
+  <script defer src="data/i18n/taxonomies.js?v=3.6"></script>
+  <script defer src="data/i18n/fish_names.js?v=3.5"></script>
+  <script defer src="data/i18n.js?v=4.6"></script>
   <script defer src="data/fishes.js?v=3.2"></script>
   <script defer src="data/estimated_prices.js?v=1.0"></script>
   <script defer src="firebase-config.js?v=3.2"></script>
@@ -2066,8 +2078,8 @@
   <script defer src="js/chat.js?v=2.6"></script>
   <script defer src="js/locations.js?v=1.2"></script>
   <script defer src="js/calendar.js?v=1.1"></script>
-  <script defer src="js/reminders.js?v=1.2"></script>
-  <script defer src="js/main.js?v=5.8"></script>
+  <script defer src="js/reminders.js?v=1.3"></script>
+  <script defer src="js/main.js?v=5.9"></script>
 
 </body>
 

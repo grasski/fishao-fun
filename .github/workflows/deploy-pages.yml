@@ -39,15 +39,23 @@ jobs:
           done
           node -e "
             const cs = Object.keys(require('./data/i18n/ui_cs.js'));
-            const en = Object.keys(require('./data/i18n/ui_en.js'));
-            const pl = Object.keys(require('./data/i18n/ui_pl.js'));
-            const missEn = cs.filter(k => !k.endsWith('_few') && !k.endsWith('_many') && !en.includes(k));
-            const missPl = cs.filter(k => !pl.includes(k));
-            if (missEn.length || missPl.length) {
-              console.error('Missing i18n keys:', { missEn, missPl });
+            const langs = {
+              en: { keys: Object.keys(require('./data/i18n/ui_en.js')), allowMissingFewMany: true },
+              pl: { keys: Object.keys(require('./data/i18n/ui_pl.js')), allowMissingFewMany: false },
+              nl: { keys: Object.keys(require('./data/i18n/ui_nl.js')), allowMissingFewMany: true },
+              ro: { keys: Object.keys(require('./data/i18n/ui_ro.js')), allowMissingFewMany: false },
+              tr: { keys: Object.keys(require('./data/i18n/ui_tr.js')), allowMissingFewMany: true }
+            };
+            const missing = {};
+            for (const [code, info] of Object.entries(langs)) {
+              const miss = cs.filter(k => (!info.allowMissingFewMany || (!k.endsWith('_few') && !k.endsWith('_many'))) && !info.keys.includes(k));
+              if (miss.length) missing[code] = miss;
+            }
+            if (Object.keys(missing).length) {
+              console.error('Missing i18n keys:', missing);
               process.exit(1);
             }
-            console.log('i18n parity OK: cs=' + cs.length + ', en=' + en.length + ', pl=' + pl.length);
+            console.log('i18n parity OK: cs=' + cs.length + ', ' + Object.entries(langs).map(([c, i]) => c + '=' + i.keys.length).join(', '));
           "
 
       - name: Validate CSS braces & custom properties
