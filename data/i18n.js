@@ -198,6 +198,7 @@
     waters: taxonomies.waters || {},
     locations: taxonomies.locations || {},
     cities: taxonomies.cities || {},
+    shop: taxonomies.shop || {},
     fishes: fishNames,
 
     isSupported: isSupported,
@@ -294,6 +295,11 @@
     getWaterName: function (water, lang) {
       if (!water) return '';
       return resolveEntry(FISHAO_I18N.waters[water], lang) || water;
+    },
+
+    getShopItemText: function (key, lang) {
+      if (!key) return '';
+      return resolveEntry(FISHAO_I18N.shop[key], lang) || '';
     },
 
     /** Localized city name for a timezone city (exact language only, else raw name). */
@@ -422,7 +428,7 @@
         var script = document.createElement('script');
         script.src = bundledUrl
           ? ((bundledUrl.charAt(0) === '/' || /^https?:\/\//i.test(bundledUrl)) ? bundledUrl : ('/' + bundledUrl))
-          : ('/data/i18n/ui_' + code + '.js?v=7.0');
+          : ('/data/i18n/ui_' + code + '.js?v=7.6');
         script.async = true;
         script.onload = function () {
           ui[code] = window[globalName] || {};

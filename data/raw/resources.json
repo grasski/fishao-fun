@@ -1,0 +1,100 @@
+{
+  "data": [
+    {
+      "id": "7",
+      "type_id": "8",
+      "param": "{\"duration_min\":7, \"desc_type\":1}",
+      "price_fishcoins": "2",
+      "price_fishbucks": "-1",
+      "req": ""
+    },
+    {
+      "id": "8",
+      "type_id": "8",
+      "param": "{\"duration_min\":15, \"desc_type\":2}",
+      "price_fishcoins": "5",
+      "price_fishbucks": "-1",
+      "req": ""
+    },
+    {
+      "id": "9",
+      "type_id": "9",
+      "param": "{\"duration_min\":15, \"percent\":50}",
+      "price_fishcoins": "4",
+      "price_fishbucks": "-1",
+      "req": ""
+    },
+    {
+      "id": "10",
+      "type_id": "10",
+      "param": "{\"accuracy\":1,\"duration_min\":5}",
+      "price_fishcoins": "1",
+      "price_fishbucks": "100",
+      "req": "{\"player_level_req\":2,\"refferals\":0}"
+    },
+    {
+      "id": "11",
+      "type_id": "10",
+      "param": "{\"accuracy\":2,\"duration_min\":10}",
+      "price_fishcoins": "4",
+      "price_fishbucks": "-1",
+      "req": "{\"player_level_req\":8,\"refferals\":0}"
+    },
+    {
+      "id": "12",
+      "type_id": "10",
+      "param": "{\"accuracy\":3,\"duration_min\":15}",
+      "price_fishcoins": "5",
+      "price_fishbucks": "-1",
+      "req": "{\"player_level_req\":13,\"refferals\":0}"
+    },
+    {
+      "id": "13",
+      "type_id": "15",
+      "param": "{\"duration_min\":10, \"exp_multiple\":2}",
+      "price_fishcoins": "5",
+      "price_fishbucks": "-1",
+      "req": ""
+    },
+    {
+      "id": "14",
+      "type_id": "15",
+      "param": "{\"duration_min\":15, \"exp_multiple\":4}",
+      "price_fishcoins": "12",
+      "price_fishbucks": "-1",
+      "req": ""
+    },
+    {
+      "id": "15",
+      "type_id": "18",
+      "param": "{\"duration_min\":15, \"chance_multiply\":2}",
+      "price_fishcoins": "3",
+      "price_fishbucks": "-1",
+      "req": ""
+    },
+    {
+      "id": "16",
+      "type_id": "18",
+      "param": "{\"duration_min\":15, \"chance_multiply\":4}",
+      "price_fishcoins": "5",
+      "price_fishbucks": "-1",
+      "req": ""
+    },
+    {
+      "id": "17",
+      "type_id": "23",
+      "param": "{\"duration_min\":10, \"power_multiply\":1.25}",
+      "price_fishcoins": "7",
+      "price_fishbucks": "-1",
+      "req": ""
+    },
+    {
+      "id": "18",
+      "type_id": "23",
+      "param": "{\"duration_min\":15, \"power_multiply\":1.5}",
+      "price_fishcoins": "12",
+      "price_fishbucks": "-1",
+      "req": ""
+    }
+  ]
+}

@@ -67,7 +67,13 @@ function saveProfileToCache(uid, profile, privData) {
     var existingFriends = (privData && Array.isArray(privData.friendUids))
       ? privData.friendUids
       : Array.from(friendUids || []);
-    localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify({
+    var cachedTreeLevel = (privData && typeof privData.treeLevel === "number")
+      ? privData.treeLevel
+      : ((typeof guideTreeFromLevel === "number" && safeStorageGet('fishao_guide_tree_saved') === '1') ? guideTreeFromLevel : null);
+    var cachedLineLevel = (privData && typeof privData.lineLevel === "number")
+      ? privData.lineLevel
+      : ((typeof guideLineFromLevel === "number" && safeStorageGet('fishao_guide_line_saved') === '1') ? guideLineFromLevel : null);
+    var cachePayload = {
       uid: uid,
       displayName: profile.displayName || "",
       avatarUrl: profile.avatarUrl || "",
@@ -77,7 +83,10 @@ function saveProfileToCache(uid, profile, privData) {
       caughtFishIds: Array.isArray(profile.caughtFishIds) ? profile.caughtFishIds : [],
       backyardFishIds: Array.isArray(profile.backyardFishIds) ? profile.backyardFishIds : [],
       friendUids: existingFriends
-    }));
+    };
+    if (cachedTreeLevel !== null) cachePayload.treeLevel = cachedTreeLevel;
+    if (cachedLineLevel !== null) cachePayload.lineLevel = cachedLineLevel;
+    localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(cachePayload));
   } catch (e) { }
 }
 
@@ -99,6 +108,9 @@ function hydrateProfileFromCache(uid) {
     caughtFishIds = new Set(Array.isArray(cached.caughtFishIds) ? cached.caughtFishIds : []);
     backyardFishIds = new Set(Array.isArray(cached.backyardFishIds) ? cached.backyardFishIds : []);
     friendUids = new Set(Array.isArray(cached.friendUids) ? cached.friendUids : []);
+    if (typeof syncGuideLevelsFromProfile === "function") {
+      syncGuideLevelsFromProfile(cached, true);
+    }
     return true;
   } catch (e) {
     return false;
@@ -355,6 +367,9 @@ async function _runInitFirebaseSync() {
         return;
       } else {
         wasSignedIn = false;
+        if (typeof _guideCloudSyncAttempted !== "undefined") {
+          _guideCloudSyncAttempted = false;
+        }
         if (typeof unbindChatListeners === 'function') {
           unbindChatListeners();
         }
@@ -708,6 +723,9 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
       if (Array.isArray(privData.reminders) && typeof syncRemindersFromProfile === "function") {
         syncRemindersFromProfile({ reminders: privData.reminders });
       }
+      if (typeof syncGuideLevelsFromProfile === "function") {
+        syncGuideLevelsFromProfile(privData);
+      }
 
       if (!privSnap.exists() && !isBootstrappingNewUser && handledFirstSnapshot && userDocExists && userProfile) {
         try {
@@ -1006,6 +1024,10 @@ function updateAuthUI() {
       if (gatePlayersOff) gatePlayersOff.style.display = "block";
       if (playersContentOff) playersContentOff.style.display = "none";
     }
+  }
+
+  if ((currentView === "guide_tree" || currentView === "guide_line" || currentView === "guide_shop") && typeof renderGuideView === "function") {
+    renderGuideView(currentView === "guide_line" ? "line" : (currentView === "guide_shop" ? "shop" : "tree"));
   }
 }
 

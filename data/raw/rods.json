@@ -1,0 +1,180 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "length": "65",
+      "quality_power": "40",
+      "quality_duration": "-1",
+      "price_fishcoins": "0",
+      "price_fishbucks": "-1",
+      "player_level_req": "1",
+      "colors": null,
+      "appear_in_shop": "0"
+    },
+    {
+      "id": "2",
+      "length": "65",
+      "quality_power": "60",
+      "quality_duration": "100",
+      "price_fishcoins": "1",
+      "price_fishbucks": "99",
+      "player_level_req": "1",
+      "colors": "brown,black,gray,beige,darkgreen,darkblue,red",
+      "appear_in_shop": "1"
+    },
+    {
+      "id": "3",
+      "length": "105",
+      "quality_power": "100",
+      "quality_duration": "100",
+      "price_fishcoins": "5",
+      "price_fishbucks": "500",
+      "player_level_req": "2",
+      "colors": "brown,black,gray,beige,darkgreen,darkblue,red",
+      "appear_in_shop": "1"
+    },
+    {
+      "id": "4",
+      "length": "85",
+      "quality_power": "200",
+      "quality_duration": "150",
+      "price_fishcoins": "12",
+      "price_fishbucks": "-1",
+      "player_level_req": "10",
+      "colors": "brown,black,gray,beige,darkgreen,darkblue,red",
+      "appear_in_shop": "1"
+    },
+    {
+      "id": "5",
+      "length": "85",
+      "quality_power": "150",
+      "quality_duration": "200",
+      "price_fishcoins": "12",
+      "price_fishbucks": "-1",
+      "player_level_req": "8",
+      "colors": "brown,black,gray,beige,darkgreen,darkblue,red",
+      "appear_in_shop": "1"
+    },
+    {
+      "id": "6",
+      "length": "65",
+      "quality_power": "250",
+      "quality_duration": "125",
+      "price_fishcoins": "15",
+      "price_fishbucks": "-1",
+      "player_level_req": "25",
+      "colors": null,
+      "appear_in_shop": "1"
+    },
+    {
+      "id": "7",
+      "length": "85",
+      "quality_power": "350",
+      "quality_duration": "250",
+      "price_fishcoins": "30",
+      "price_fishbucks": "-1",
+      "player_level_req": "50",
+      "colors": null,
+      "appear_in_shop": "1"
+    },
+    {
+      "id": "8",
+      "length": "105",
+      "quality_power": "450",
+      "quality_duration": "375",
+      "price_fishcoins": "45",
+      "price_fishbucks": "-1",
+      "player_level_req": "75",
+      "colors": null,
+      "appear_in_shop": "1"
+    },
+    {
+      "id": "9",
+      "length": "105",
+      "quality_power": "650",
+      "quality_duration": "1000",
+      "price_fishcoins": "199",
+      "price_fishbucks": "-1",
+      "player_level_req": "7",
+      "colors": null,
+      "appear_in_shop": "1"
+    },
+    {
+      "id": "10",
+      "length": "105",
+      "quality_power": "1000",
+      "quality_duration": "-1",
+      "price_fishcoins": "1500",
+      "price_fishbucks": "-1",
+      "player_level_req": "15",
+      "colors": null,
+      "appear_in_shop": "1"
+    },
+    {
+      "id": "11",
+      "length": "65",
+      "quality_power": "300",
+      "quality_duration": "150",
+      "price_fishcoins": "18",
+      "price_fishbucks": "-1",
+      "player_level_req": "4",
+      "colors": null,
+      "appear_in_shop": "1"
+    },
+    {
+      "id": "12",
+      "length": "105",
+      "quality_power": "450",
+      "quality_duration": "500",
+      "price_fishcoins": "75",
+      "price_fishbucks": "-1",
+      "player_level_req": "1",
+      "colors": null,
+      "appear_in_shop": "1"
+    },
+    {
+      "id": "13",
+      "length": "85",
+      "quality_power": "400",
+      "quality_duration": "50",
+      "price_fishcoins": "10",
+      "price_fishbucks": "-1",
+      "player_level_req": "1",
+      "colors": null,
+      "appear_in_shop": "0"
+    },
+    {
+      "id": "14",
+      "length": "105",
+      "quality_power": "1200",
+      "quality_duration": "10000",
+      "price_fishcoins": "999",
+      "price_fishbucks": "-1",
+      "player_level_req": "22",
+      "colors": null,
+      "appear_in_shop": "1"
+    },
+    {
+      "id": "15",
+      "length": "85",
+      "quality_power": "175",
+      "quality_duration": "1000",
+      "price_fishcoins": "79",
+      "price_fishbucks": "-1",
+      "player_level_req": "13",
+      "colors": null,
+      "appear_in_shop": "1"
+    },
+    {
+      "id": "16",
+      "length": "105",
+      "quality_power": "1250",
+      "quality_duration": "20000",
+      "price_fishcoins": "1400",
+      "price_fishbucks": "-1",
+      "player_level_req": "200",
+      "colors": null,
+      "appear_in_shop": "1"
+    }
+  ]
+}

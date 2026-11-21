@@ -46,6 +46,7 @@ CSS_FILES = [
     "css/modals.css",
     "css/chat.css",
     "css/locations-calendar.css",
+    "css/guide.css",
     "css/responsive.css",
 ]
 
@@ -68,6 +69,7 @@ JS_FILES = [
     "js/chat.js",
     "js/locations.js",
     "js/calendar.js",
+    "js/guide.js",
     "js/reminders.js",
     "js/main.js",
 ]

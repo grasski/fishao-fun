@@ -21,6 +21,7 @@ Usage:  python scripts/build_i18n.py
 
 import json
 import os
+import re
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW_DIR = os.path.join(BASE_DIR, "data", "raw")
@@ -338,11 +339,40 @@ def build_taxonomies(langs):
     for efpt_key, efpt_vals in EFPT_LOCATIONS.items():
         locations[efpt_key] = dict(efpt_vals)
 
+    shop_items = {}
+    shop_sources = [
+        ("baits.json", "bait_", True),
+        ("rods.json", "rod_", True),
+        ("bobbers.json", "float_", True),
+        ("resources.json", "resource_", True),
+    ]
+    for json_file, prefix, include_desc in shop_sources:
+        raw_path = os.path.join(RAW_DIR, json_file)
+        if not os.path.exists(raw_path):
+            continue
+        raw_obj = load_json(json_file)
+        items = raw_obj.get("data", raw_obj)
+        for item in items:
+            iid = str(item["id"])
+            keys_to_extract = [f"{prefix}{iid}"]
+            if include_desc:
+                keys_to_extract.append(f"{prefix}desc_{iid}")
+            for tk in keys_to_extract:
+                entry = {}
+                for lang_code, data in langs:
+                    val = (data.get(tk) or "").strip()
+                    if val:
+                        val = re.sub(r"##cm(\d+)#{1,2}", r"\1 cm", val)
+                        entry[lang_code] = val
+                if entry:
+                    shop_items[tk] = entry
+
     taxonomies = {
         "baits": baits,
         "waters": WATERS,
         "locations": locations,
         "cities": CITIES,
+        "shop": shop_items,
     }
 
     body = json.dumps(taxonomies, ensure_ascii=False, separators=(",", ":"))

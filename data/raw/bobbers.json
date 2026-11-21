@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "id": "6",
+      "name_dev": null,
+      "price_fishcoins": "99",
+      "price_fishbucks": "-1"
+    },
+    {
+      "id": "7",
+      "name_dev": null,
+      "price_fishcoins": "25",
+      "price_fishbucks": "-1"
+    },
+    {
+      "id": "8",
+      "name_dev": null,
+      "price_fishcoins": "495",
+      "price_fishbucks": "-1"
+    },
+    {
+      "id": "9",
+      "name_dev": null,
+      "price_fishcoins": "12",
+      "price_fishbucks": "990"
+    }
+  ]
+}

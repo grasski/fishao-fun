@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "level": 1,
+    "price": 0,
+    "length_cm": 40,
+    "time_hours": "0 h",
+    "time_days": "-",
+    "colors": "White"
+  },
+  {
+    "id": 2,
+    "level": 2,
+    "price": 3,
+    "length_cm": 50,
+    "time_hours": "5 min",
+    "time_days": "-",
+    "colors": "White"
+  },
+  {
+    "id": 3,
+    "level": 3,
+    "price": 8,
+    "length_cm": 60,
+    "time_hours": "15 min",
+    "time_days": "-",
+    "colors": "White"
+  },
+  {
+    "id": 4,
+    "level": 4,
+    "price": 15,
+    "length_cm": 70,
+    "time_hours": "30 min",
+    "time_days": "-",
+    "colors": "White"
+  },
+  {
+    "id": 5,
+    "level": 5,
+    "price": 24,
+    "length_cm": 80,
+    "time_hours": "1 h",
+    "time_days": "-",
+    "colors": "White, blue"
+  },
+  {
+    "id": 6,
+    "level": 6,
+    "price": 35,
+    "length_cm": 90,
+    "time_hours": "2 h",
+    "time_days": "-",
+    "colors": "White, blue"
+  },
+  {
+    "id": 7,
+    "level": 7,
+    "price": 48,
+    "length_cm": 100,
+    "time_hours": "4 h",
+    "time_days": "-",
+    "colors": "White, blue"
+  },
+  {
+    "id": 8,
+    "level": 8,
+    "price": 63,
+    "length_cm": 125,
+    "time_hours": "6 h",
+    "time_days": "-",
+    "colors": "White, blue"
+  },
+  {
+    "id": 9,
+    "level": 9,
+    "price": 80,
+    "length_cm": 150,
+    "time_hours": "8 h",
+    "time_days": "-",
+    "colors": "White, blue, green"
+  },
+  {
+    "id": 10,
+    "level": 10,
+    "price": 99,
+    "length_cm": 175,
+    "time_hours": "12 h",
+    "time_days": "-",
+    "colors": "White, blue, green"
+  },
+  {
+    "id": 11,
+    "level": 11,
+    "price": 120,
+    "length_cm": 200,
+    "time_hours": "16 h",
+    "time_days": "-",
+    "colors": "White, blue, green"
+  },
+  {
+    "id": 12,
+    "level": 12,
+    "price": 143,
+    "length_cm": 250,
+    "time_hours": "24 h",
+    "time_days": "1 day",
+    "colors": "White, blue, green"
+  },
+  {
+    "id": 13,
+    "level": 13,
+    "price": 168,
+    "length_cm": 300,
+    "time_hours": "48 h",
+    "time_days": "2 days",
+    "colors": "White, blue, green, grey"
+  },
+  {
+    "id": 14,
+    "level": 14,
+    "price": 195,
+    "length_cm": 400,
+    "time_hours": "72 h",
+    "time_days": "3 days",
+    "colors": "White, blue, green, grey"
+  },
+  {
+    "id": 15,
+    "level": 15,
+    "price": 224,
+    "length_cm": 500,
+    "time_hours": "96 h",
+    "time_days": "4 days",
+    "colors": "White, blue, green, grey"
+  },
+  {
+    "id": 16,
+    "level": 16,
+    "price": 255,
+    "length_cm": 750,
+    "time_hours": "120 h",
+    "time_days": "5 days",
+    "colors": "White, blue, green, grey"
+  },
+  {
+    "id": 17,
+    "level": 17,
+    "price": 288,
+    "length_cm": 1000,
+    "time_hours": "144 h",
+    "time_days": "6 days",
+    "colors": "White, blue, green, grey, golden"
+  },
+  {
+    "id": 18,
+    "level": 18,
+    "price": 323,
+    "length_cm": 1250,
+    "time_hours": "168 h",
+    "time_days": "7 days",
+    "colors": "White, blue, green, grey, golden"
+  },
+  {
+    "id": 19,
+    "level": 19,
+    "price": 360,
+    "length_cm": 1500,
+    "time_hours": "192 h",
+    "time_days": "8 days",
+    "colors": "White, blue, green, grey, golden"
+  },
+  {
+    "id": 20,
+    "level": 20,
+    "price": 399,
+    "length_cm": 1750,
+    "time_hours": "216 h",
+    "time_days": "9 days",
+    "colors": "White, blue, green, grey, golden"
+  }
+]

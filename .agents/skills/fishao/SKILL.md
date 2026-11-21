@@ -174,6 +174,8 @@ In memory (`js/state.js` / `js/market.js`), `summaryMapToPriceHistory(priceSumma
 * `/users/{userId}/private/settings` (owner & admin only):
   * `friendUids`: Array<String> (Favorited player UIDs, max 300).
   * `reminders`: Array<Object> (Custom event reminders, max 100).
+  * `treeLevel`: Number (Optional saved Money Tree current level, integer `1..20`).
+  * `lineLevel`: Number (Optional saved Fishing Line current level, integer `1..20`).
   * `lastLogin`, `updatedAt`.
 * `/chats/{pairId}` (private to the 2 participants; deterministic `minUid_maxUid`):
   * `participants`: `[uid0, uid1]` (`uid0 < uid1`).
@@ -226,7 +228,8 @@ The monolithic `app.js` was refactored into modular, cohesive files loaded direc
 6. `js/auth.js`: Firebase authentication (`signIn`, `signOut`), GDPR-compliant profile synchronization (`loadUserProfile`, `saveProfile`), account deletion cleanup (`deleteAccount` -> `cleanupUserChatsOnAccountDelete`), and UI state synchronization (`updateAuthUI`).
 7. `js/players.js`: Community player list, backyard fish breeding (`backyardFishIds`), universal player modal, reverse fish-to-player lookups.
 8. `js/chat.js`: Private 1-on-1 player chat (`initChatSync`, `openChatModal`, `openChatWithPlayer`, `submitChatRequest`, `sendChatMessage`), sidebar player search (`onChatPlayerSearchInput`), block/unblock with `preBlockStatus` restoration (`blockChatUser`, `unblockChatUser`), deleted-peer detection & thread dismissal (`verifyChatPeerExists`, `dismissDeletedChatThread`), abuse reporting (`openChatReportModal`, `submitChatReport`), real-time admin open-report watcher (`syncAdminReportsWatcher`), and admin moderation views (`Nevyřízená`, `Vše (archiv)`, `🚫 Zabanovaní`).
-9. `js/main.js`: Live clock and timezone switching (`setTimezone`, `updateClock`), view routing (`switchView`), static DOM translations (`setLanguage`, `updateStaticTranslations`), `z-index`-aware modal focus trap (`getTopActiveModal`), `window.fishaoApp` exports, and application boot.
+9. `js/guide.js`: Guide section rendering (`renderGuideView`), Money Tree & Fishing Line upgrade tables (20 levels from `data/raw/tree.json` & `data/raw/line.json`), interactive From->To calculator (`onGuideCalcChange`, `onGuideRowClick`), local + Firestore private settings level persistence (`persistGuideCurrentLevel`, `syncGuideLevelsFromProfile`), and FC payback/ROI calculations (`formatPaybackDays`).
+10. `js/main.js`: Live clock and timezone switching (`setTimezone`, `updateClock`), view routing (`switchView`), static DOM translations (`setLanguage`, `updateStaticTranslations`), `z-index`-aware modal focus trap (`getTopActiveModal`), `window.fishaoApp` exports, and application boot.
 10. `js/firestore-tx.js`: Generic, app-agnostic Firestore transaction helpers exposed as `window.FISHAO_FS_TX` (`readModifyWrite(db, docRef, modifier)`, `setDocument(db, docRef, data)`, `runTx`, `commitBatch`).
 
 ### 2.6 Modular Stylesheets (`css/`)
@@ -241,7 +244,9 @@ The 3,200+ line monolithic `style.css` was refactored into targeted CSS modules:
 7. `css/players.css`: Community player cards, grid, backyard chips, and detail modal extensions.
 8. `css/modals.css`: Fish detail modal hero, fish market single & bulk modals, auth gate cards, player profile modal, emoji picker, toast messages.
 9. `css/chat.css`: Header chat badge, 2-pane chat dialog, sidebar player search, message bubbles, safety banner, admin report/ban cards, and modal `z-index` layering (`#chatModalOverlay` 1000 < `#priceModalOverlay` 1050 < `#playerModalOverlay` 1100 < `#chatRequestModalOverlay`/`#chatReportModalOverlay` 1200 < `#confirmModalOverlay` 10000).
-10. `css/responsive.css`: Mobile and tablet media queries (`<=900px`, `<=768px`, `<=640px`, `<=420px`).
+10. `css/locations-calendar.css`: Sub-navigation bar, Locations Overview cards, and Seasonal Fish Calendar timeline/grid.
+11. `css/guide.css`: Guide upgrade calculator cards, metric summary grid, Money Tree ROI badges, and Fishing Line color chips.
+12. `css/responsive.css`: Mobile and tablet media queries (`<=900px`, `<=768px`, `<=640px`, `<=420px`).
 
 `style.css` acts as the master `@import` orchestrator for backward compatibility.
 
@@ -312,6 +317,9 @@ View Key        | Tab Button       | Main Header Sub-Toolbar
 `"club_manage"` | `#tabClubManage` | Full management dashboard (member roster, milestone roadmap, special fish)
 `"market"`      | `#tabMarket`     | `#bannerMarket` (Market stats, Sunday notice, bulk import trigger)
 `"players"`     | `#tabPlayers`    | `#bannerPlayers` (Teal theme – player search, backyard filter, bred fish dropdown)
+`"guide_tree"`  | `#tabGuide`      | `#bannerGuide` (Green theme – Money Tree 20 levels, calculator & FC payback ROI)
+`"guide_line"`  | `#tabGuide`      | `#bannerGuide` (Gold theme – Fishing Line 20 levels, calculator, max length & colors)
+`"guide_shop"`  | `#tabGuide`      | `#bannerGuide` (Cyan theme – In-game Shop catalog for baits, rods, bobbers & resources with icons)
 
 ---
 

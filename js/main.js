@@ -115,6 +115,12 @@ function getHashOrQueryRoute() {
         tab = 'locations';
       } else if (rawTab === 'calendar' || rawTab === 'kalendar' || rawTab === 'sezona' || rawTab === 'seasonal' || rawTab === 'sezon' || rawTab === 'kalendarz') {
         tab = 'calendar';
+      } else if (rawTab === 'guide' || rawTab === 'pruvodce' || rawTab === 'poradnik' || rawTab === 'tree' || rawTab === 'stromecek' || rawTab === 'guide_tree' || rawTab === 'guide-tree') {
+        tab = 'guide_tree';
+      } else if (rawTab === 'line' || rawTab === 'vlasec' || rawTab === 'zyka' || rawTab === 'zylka' || rawTab === 'guide_line' || rawTab === 'guide-line') {
+        tab = 'guide_line';
+      } else if (rawTab === 'shop' || rawTab === 'obchod' || rawTab === 'sklep' || rawTab === 'guide_shop' || rawTab === 'guide-shop') {
+        tab = 'guide_shop';
       } else if (rawTab === 'all' || rawTab === 'encyklopedie' || rawTab === 'ryby') {
         tab = 'all';
       }
@@ -204,6 +210,11 @@ function switchView(view, skipSync) {
   if (view === "club" && !isInClub) {
     view = "all";
   }
+  if (view === "guide") {
+    if (typeof currentGuideSubTab === "string" && currentGuideSubTab === "line") view = "guide_line";
+    else if (typeof currentGuideSubTab === "string" && currentGuideSubTab === "shop") view = "guide_shop";
+    else view = "guide_tree";
+  }
   currentView = view;
 
   if (!skipSync) {
@@ -216,32 +227,40 @@ function switchView(view, skipSync) {
 
   var isEncyclopediaView = (view === "all" || view === "locations" || view === "calendar");
   var isClubView = (view === "club_manage" || view === "club");
+  var isGuideView = (view === "guide_tree" || view === "guide_line" || view === "guide_shop");
 
   var tabAllEl = document.getElementById("tabAll");
   var tabMarketEl = document.getElementById("tabMarket");
   var tabClubManageEl = document.getElementById("tabClubManage");
   var tabPlayersEl = document.getElementById("tabPlayers");
+  var tabGuideEl = document.getElementById("tabGuide");
   if (tabAllEl) tabAllEl.classList.toggle("active", isEncyclopediaView);
   if (tabMarketEl) tabMarketEl.classList.toggle("active", view === "market");
   if (tabClubManageEl) tabClubManageEl.classList.toggle("active", isClubView);
   if (tabPlayersEl) tabPlayersEl.classList.toggle("active", view === "players");
+  if (tabGuideEl) tabGuideEl.classList.toggle("active", isGuideView);
 
   var subTabMap = {
     "all": "subTabAll",
     "locations": "tabLocations",
     "calendar": "tabCalendar",
     "club_manage": "subTabClubManage",
-    "club": "tabClub"
+    "club": "tabClub",
+    "guide_tree": "subTabGuideTree",
+    "guide_line": "subTabGuideLine",
+    "guide_shop": "subTabGuideShop"
   };
-  ["subTabAll", "tabLocations", "tabCalendar", "subTabClubManage", "tabClub"].forEach(function (tId) {
+  ["subTabAll", "tabLocations", "tabCalendar", "subTabClubManage", "tabClub", "subTabGuideTree", "subTabGuideLine", "subTabGuideShop"].forEach(function (tId) {
     var el = document.getElementById(tId);
     if (el) el.classList.toggle("active", subTabMap[view] === tId);
   });
 
   var subNavEncyclopedia = document.getElementById("subNavEncyclopedia");
   var subNavClub = document.getElementById("subNavClub");
+  var subNavGuide = document.getElementById("subNavGuide");
   if (subNavEncyclopedia) subNavEncyclopedia.style.display = isEncyclopediaView ? "flex" : "none";
   if (subNavClub) subNavClub.style.display = (isClubView && isInClub) ? "flex" : "none";
+  if (subNavGuide) subNavGuide.style.display = isGuideView ? "flex" : "none";
 
   var bClub = document.getElementById("bannerClub");
   var bCollection = document.getElementById("bannerCollection");
@@ -252,6 +271,7 @@ function switchView(view, skipSync) {
   var secPlayers = document.getElementById("sectionPlayers");
   var secLocations = document.getElementById("sectionLocations");
   var secCalendar = document.getElementById("sectionCalendar");
+  var secGuide = document.getElementById("sectionGuide");
   var filterCard = document.getElementById("filterCard");
   var gateClub = document.getElementById("gateClubManage");
   var manageContent = document.getElementById("manageClubContent");
@@ -262,6 +282,7 @@ function switchView(view, skipSync) {
   if (bCollection) bCollection.style.display = (view === "all") ? "flex" : "none";
   if (bMarket) bMarket.style.display = (view === "market") ? "flex" : "none";
   if (bPlayers) bPlayers.style.display = (view === "players" && currentUser) ? "flex" : "none";
+  if (secGuide) secGuide.style.display = isGuideView ? "block" : "none";
 
   var subNoticePlayers = document.getElementById("subNoticePlayers");
   var subNoticeClubs = document.getElementById("subNoticeClubs");
@@ -270,6 +291,21 @@ function switchView(view, skipSync) {
 
   updateMarketTabStatus();
   if (typeof updateCalendarTabPill === 'function') updateCalendarTabPill();
+
+  if (isGuideView) {
+    if (secPlayers) secPlayers.style.display = "none";
+    if (secManage) secManage.style.display = "none";
+    if (secLocations) secLocations.style.display = "none";
+    if (secCalendar) secCalendar.style.display = "none";
+    if (secTable) secTable.style.display = "none";
+    if (filterCard) filterCard.style.display = "none";
+    if (typeof renderGuideView === 'function') {
+      renderGuideView(view === "guide_line" ? "line" : (view === "guide_shop" ? "shop" : "tree"));
+    }
+    updateCaughtStats();
+    updateScrollTopButton();
+    return;
+  }
 
   if (view === "players") {
     if (secPlayers) secPlayers.style.display = "block";
@@ -496,6 +532,9 @@ function setLanguage(lang, opts) {
   if (typeof renderPlayersList === 'function' && currentView === 'players') renderPlayersList();
   if (typeof renderBackyardProfilePicker === 'function') renderBackyardProfilePicker();
   if (typeof updateCalendarTabPill === 'function') updateCalendarTabPill();
+  if ((currentView === 'guide_tree' || currentView === 'guide_line' || currentView === 'guide_shop') && typeof renderGuideView === 'function') {
+    renderGuideView(currentView === 'guide_line' ? 'line' : (currentView === 'guide_shop' ? 'shop' : 'tree'));
+  }
 
   var pModal = document.getElementById("playerModalOverlay");
   if (pModal && pModal.classList.contains("active")) {
@@ -910,6 +949,14 @@ window.fishaoApp = {
   resetCalendarFilters: resetCalendarFilters,
   renderCalendarView: renderCalendarView,
   updateCalendarTabPill: updateCalendarTabPill,
+  onGuideCalcChange: typeof onGuideCalcChange === 'function' ? onGuideCalcChange : function () {},
+  onGuideRowClick: typeof onGuideRowClick === 'function' ? onGuideRowClick : function () {},
+  renderGuideView: typeof renderGuideView === 'function' ? renderGuideView : function () {},
+  setGuideShopCategory: typeof setGuideShopCategory === 'function' ? setGuideShopCategory : function () {},
+  onGuideShopSearchInput: typeof onGuideShopSearchInput === 'function' ? onGuideShopSearchInput : function () {},
+  toggleGuideShopFbOnly: typeof toggleGuideShopFbOnly === 'function' ? toggleGuideShopFbOnly : function () {},
+  onGuideShopBaitCatChange: typeof onGuideShopBaitCatChange === 'function' ? onGuideShopBaitCatChange : function () {},
+  toggleGuideShopBestValue: typeof toggleGuideShopBestValue === 'function' ? toggleGuideShopBestValue : function () {},
   setModalBaitAdvisorTimeMode: setModalBaitAdvisorTimeMode,
   toggleOtherBaitsVisibility: toggleOtherBaitsVisibility,
   toggleModalBaitAdvisorInfo: toggleModalBaitAdvisorInfo,

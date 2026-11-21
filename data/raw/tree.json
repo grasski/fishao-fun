@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "level": 1,
+    "price": 0,
+    "fc": 0,
+    "fb": 100,
+    "time_hours": "0 h",
+    "time_days": "-"
+  },
+  {
+    "id": 2,
+    "level": 2,
+    "price": 7,
+    "fc": 1,
+    "fb": 200,
+    "time_hours": "30 min",
+    "time_days": "-"
+  },
+  {
+    "id": 3,
+    "level": 3,
+    "price": 18,
+    "fc": 1,
+    "fb": 300,
+    "time_hours": "2 h",
+    "time_days": "-"
+  },
+  {
+    "id": 4,
+    "level": 4,
+    "price": 29,
+    "fc": 2,
+    "fb": 400,
+    "time_hours": "4 h",
+    "time_days": "-"
+  },
+  {
+    "id": 5,
+    "level": 5,
+    "price": 40,
+    "fc": 2,
+    "fb": 500,
+    "time_hours": "6 h",
+    "time_days": "-"
+  },
+  {
+    "id": 6,
+    "level": 6,
+    "price": 51,
+    "fc": 3,
+    "fb": 600,
+    "time_hours": "8 h",
+    "time_days": "-"
+  },
+  {
+    "id": 7,
+    "level": 7,
+    "price": 62,
+    "fc": 3,
+    "fb": 700,
+    "time_hours": "12 h",
+    "time_days": "-"
+  },
+  {
+    "id": 8,
+    "level": 8,
+    "price": 73,
+    "fc": 4,
+    "fb": 800,
+    "time_hours": "16 h",
+    "time_days": "-"
+  },
+  {
+    "id": 9,
+    "level": 9,
+    "price": 84,
+    "fc": 4,
+    "fb": 900,
+    "time_hours": "24 h",
+    "time_days": "1 day"
+  },
+  {
+    "id": 10,
+    "level": 10,
+    "price": 95,
+    "fc": 5,
+    "fb": 1000,
+    "time_hours": "48 h",
+    "time_days": "2 days"
+  },
+  {
+    "id": 11,
+    "level": 11,
+    "price": 106,
+    "fc": 5,
+    "fb": 1100,
+    "time_hours": "72 h",
+    "time_days": "3 days"
+  },
+  {
+    "id": 12,
+    "level": 12,
+    "price": 117,
+    "fc": 6,
+    "fb": 1200,
+    "time_hours": "96 h",
+    "time_days": "4 days"
+  },
+  {
+    "id": 13,
+    "level": 13,
+    "price": 128,
+    "fc": 6,
+    "fb": 1300,
+    "time_hours": "120 h",
+    "time_days": "5 days"
+  },
+  {
+    "id": 14,
+    "level": 14,
+    "price": 139,
+    "fc": 7,
+    "fb": 1400,
+    "time_hours": "144 h",
+    "time_days": "6 days"
+  },
+  {
+    "id": 15,
+    "level": 15,
+    "price": 150,
+    "fc": 7,
+    "fb": 1500,
+    "time_hours": "168 h",
+    "time_days": "7 days"
+  },
+  {
+    "id": 16,
+    "level": 16,
+    "price": 161,
+    "fc": 8,
+    "fb": 1600,
+    "time_hours": "192 h",
+    "time_days": "8 days"
+  },
+  {
+    "id": 17,
+    "level": 17,
+    "price": 172,
+    "fc": 8,
+    "fb": 1700,
+    "time_hours": "216 h",
+    "time_days": "9 days"
+  },
+  {
+    "id": 18,
+    "level": 18,
+    "price": 183,
+    "fc": 9,
+    "fb": 1800,
+    "time_hours": "264 h",
+    "time_days": "11 days"
+  },
+  {
+    "id": 19,
+    "level": 19,
+    "price": 194,
+    "fc": 9,
+    "fb": 1900,
+    "time_hours": "312 h",
+    "time_days": "13 days"
+  },
+  {
+    "id": 20,
+    "level": 20,
+    "price": 205,
+    "fc": 10,
+    "fb": 2000,
+    "time_hours": "360 h",
+    "time_days": "15 days"
+  }
+]
