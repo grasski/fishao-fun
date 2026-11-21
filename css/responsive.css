@@ -10,10 +10,13 @@
   .app-header {
     flex-direction: column;
     align-items: stretch;
-    gap: 14px;
+    gap: 12px;
   }
   .header-right {
-    justify-content: flex-start;
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   /* Main navigation wraps onto multiple lines when needed; tabs keep the desktop layout */
@@ -75,21 +78,22 @@
     padding: 0;
   }
   .app-header {
-    padding: 14px 16px;
+    padding: 12px 14px;
     border-radius: 14px;
     margin-bottom: 12px;
+    gap: 10px;
   }
   .header-left .logo-row {
     flex-wrap: wrap;
     gap: 8px;
   }
   .header-left h1 {
-    font-size: 21px;
+    font-size: 20px;
   }
   .header-desc {
-    font-size: 12px;
-    line-height: 1.4;
-    margin: 6px 0 8px 0;
+    font-size: 11.5px;
+    line-height: 1.35;
+    margin: 4px 0 0 0;
   }
   .header-right {
     width: 100%;
@@ -99,18 +103,81 @@
     align-items: center;
     gap: 8px;
   }
-  .auth-panel {
-    order: 1;
-    flex: 1 1 auto;
-  }
-  .lang-widget {
-    order: 2;
-  }
   .time-widget {
-    order: 3;
+    order: 1;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    gap: 8px;
+    box-sizing: border-box;
+  }
+  .time-clock-box {
+    justify-content: flex-end;
+    gap: 6px;
+  }
+  .auth-panel {
+    order: 2;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .auth-panel .sign-in-btn {
+    width: 100%;
+    justify-content: center;
+    height: 40px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+  .auth-panel .user-info-bar {
     width: 100%;
     justify-content: space-between;
-    padding: 6px 12px;
+    height: 40px;
+    padding: 4px 10px 4px 6px;
+    gap: 8px;
+    box-sizing: border-box;
+  }
+  .auth-panel .user-avatar-badge,
+  .auth-panel .user-avatar-img {
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
+  }
+  .auth-panel .user-details {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .auth-panel .user-name {
+    max-width: none;
+    font-size: 13px;
+  }
+  .auth-panel .sign-out-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+  .lang-widget {
+    order: 3;
+    flex-shrink: 0;
+  }
+  .lang-select {
+    height: 40px;
+    padding: 0 24px 0 8px;
+    font-size: 12.5px;
+  }
+  .reminders-bell-btn {
+    order: 4;
+    flex-shrink: 0;
+    height: 40px;
+    min-width: 40px;
+    padding: 0 9px;
+  }
+  .chat-header-btn {
+    order: 5;
+    flex-shrink: 0;
+    height: 40px;
+    min-width: 40px;
+    padding: 0 9px;
   }
   .club-finder-grid {
     grid-template-columns: 1fr;
@@ -452,6 +519,20 @@
   }
   .scroll-top-fab.above-cookie.above-import-fab {
     bottom: 162px;
+  }
+}
+
+/* Narrow Phones (<= 520px) */
+@media (max-width: 520px) {
+  .auth-panel {
+    flex: 1 0 100%;
+    width: 100%;
+  }
+  .lang-widget {
+    margin-right: auto;
+  }
+  .time-clock-box .clock-label {
+    display: none;
   }
 }
 
