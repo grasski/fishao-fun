@@ -970,6 +970,7 @@ window.fishaoApp = {
   closeGuideShopItemModal: typeof closeGuideShopItemModal === 'function' ? closeGuideShopItemModal : function () {},
   setGuideDecType: typeof setGuideDecType === 'function' ? setGuideDecType : function () {},
   onGuideDecSearchInput: typeof onGuideDecSearchInput === 'function' ? onGuideDecSearchInput : function () {},
+  onGuideDecCollectionChange: typeof onGuideDecCollectionChange === 'function' ? onGuideDecCollectionChange : function () {},
   onGuideDecRarityChange: typeof onGuideDecRarityChange === 'function' ? onGuideDecRarityChange : function () {},
   onGuideDecSourceChange: typeof onGuideDecSourceChange === 'function' ? onGuideDecSourceChange : function () {},
   onGuideDecSortChange: typeof onGuideDecSortChange === 'function' ? onGuideDecSortChange : function () {},

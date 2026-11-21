@@ -991,7 +991,13 @@
       "guide_dec_empty": "❌ Żadna dekoracja nie pasuje do filtra.",
       "guide_dec_col_name": "Dekoracja",
       "guide_dec_col_rarity": "Rzadkość",
-      "guide_dec_col_source": "Źródło"
+      "guide_dec_col_source": "Źródło",
+      "guide_dec_all_collections": "Wszystkie zestawy / kolekcje",
+      "guide_dec_unassigned_option": "❓ Bez zestawu / Osobne ({count})",
+      "guide_dec_no_collection": "Bez zestawu",
+      "guide_dec_col_collection": "Zestaw / Kolekcja",
+      "guide_dec_col_reward": "Nagroda za zestaw",
+      "guide_dec_sort_collection": "Według zestawu / kolekcji"
   };
 
   if (typeof window !== 'undefined') {

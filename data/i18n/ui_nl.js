@@ -979,7 +979,13 @@
       "guide_dec_empty": "❌ Geen decoraties komen overeen met het filter.",
       "guide_dec_col_name": "Decoratie",
       "guide_dec_col_rarity": "Zeldzaamheid",
-      "guide_dec_col_source": "Bron"
+      "guide_dec_col_source": "Bron",
+      "guide_dec_all_collections": "Alle sets / collecties",
+      "guide_dec_unassigned_option": "❓ Geen set / Los ({count})",
+      "guide_dec_no_collection": "Geen set",
+      "guide_dec_col_collection": "Set / Collectie",
+      "guide_dec_col_reward": "Setbeloning",
+      "guide_dec_sort_collection": "Op set / collectie"
   };
 
   if (typeof window !== 'undefined') {

@@ -979,7 +979,13 @@
       "guide_dec_empty": "❌ No decorations match the current filter.",
       "guide_dec_col_name": "Decoration",
       "guide_dec_col_rarity": "Rarity",
-      "guide_dec_col_source": "Source"
+      "guide_dec_col_source": "Source",
+      "guide_dec_all_collections": "All sets / collections",
+      "guide_dec_unassigned_option": "❓ No set / Standalone ({count})",
+      "guide_dec_no_collection": "No set",
+      "guide_dec_col_collection": "Set / Collection",
+      "guide_dec_col_reward": "Set Reward",
+      "guide_dec_sort_collection": "Set / Collection"
   };
 
   if (typeof window !== 'undefined') {

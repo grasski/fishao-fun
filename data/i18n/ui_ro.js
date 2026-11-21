@@ -991,7 +991,13 @@
       "guide_dec_empty": "❌ Nicio decorațiune nu corespunde filtrului.",
       "guide_dec_col_name": "Decorațiune",
       "guide_dec_col_rarity": "Raritate",
-      "guide_dec_col_source": "Sursă"
+      "guide_dec_col_source": "Sursă",
+      "guide_dec_all_collections": "Toate seturile / colecțiile",
+      "guide_dec_unassigned_option": "❓ Fără set / Individuale ({count})",
+      "guide_dec_no_collection": "Fără set",
+      "guide_dec_col_collection": "Set / Colecție",
+      "guide_dec_col_reward": "Recompensă set",
+      "guide_dec_sort_collection": "După set / colecție"
   };
 
   if (typeof window !== 'undefined') {

@@ -369,6 +369,18 @@ def build_taxonomies(langs):
                 if entry:
                     shop_items[tk] = entry
 
+    collections_path = os.path.join(RAW_DIR, "decoration_collections.json")
+    if os.path.exists(collections_path):
+        col_raw = load_json("decoration_collections.json")
+        for col in col_raw.get("data", col_raw):
+            cid = str(col["id"])
+            names = col.get("names")
+            if isinstance(names, dict) and names:
+                shop_items[f"collection_title_{cid}"] = dict(names)
+            badges = col.get("badges")
+            if isinstance(badges, dict) and badges:
+                shop_items[f"collection_badge_{cid}"] = dict(badges)
+
     taxonomies = {
         "baits": baits,
         "waters": WATERS,

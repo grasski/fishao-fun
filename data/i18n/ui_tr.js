@@ -979,7 +979,13 @@
       "guide_dec_empty": "❌ Geçerli filtreyle eşleşen dekorasyon yok.",
       "guide_dec_col_name": "Dekorasyon",
       "guide_dec_col_rarity": "Nadirlik",
-      "guide_dec_col_source": "Kaynak"
+      "guide_dec_col_source": "Kaynak",
+      "guide_dec_all_collections": "Tüm setler / koleksiyonlar",
+      "guide_dec_unassigned_option": "❓ Setsiz / Bağımsız ({count})",
+      "guide_dec_no_collection": "Setsiz",
+      "guide_dec_col_collection": "Set / Koleksiyon",
+      "guide_dec_col_reward": "Set Ödülü",
+      "guide_dec_sort_collection": "Sete / koleksiyona göre"
   };
 
   if (typeof window !== 'undefined') {

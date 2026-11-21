@@ -991,7 +991,13 @@
       "guide_dec_empty": "❌ Žádná dekorace neodpovídá zadanému filtru.",
       "guide_dec_col_name": "Dekorace",
       "guide_dec_col_rarity": "Vzácnost",
-      "guide_dec_col_source": "Zdroj / Získání"
+      "guide_dec_col_source": "Zdroj / Získání",
+      "guide_dec_all_collections": "Všechny sety / kolekce",
+      "guide_dec_unassigned_option": "❓ Bez setu / Samostatné ({count})",
+      "guide_dec_no_collection": "Bez setu",
+      "guide_dec_col_collection": "Set / Kolekce",
+      "guide_dec_col_reward": "Odměna za set",
+      "guide_dec_sort_collection": "Podle setu / kolekce"
   };
 
   if (typeof window !== 'undefined') {

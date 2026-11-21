@@ -1,0 +1,305 @@
+{
+  "data": [
+    {
+      "id": "17",
+      "key": "simple",
+      "names": {
+        "cs": "Jednoduchý set",
+        "en": "Simple set",
+        "pl": "Prosty zestaw",
+        "nl": "Simpele set",
+        "ro": "Simple set",
+        "tr": "Basit set"
+      },
+      "badges": {
+        "cs": "Jednoduchý odznak",
+        "en": "Simple Badge",
+        "pl": "Odznaka Prostoty",
+        "nl": "Simpele Badge",
+        "ro": "Simple Badge",
+        "tr": "Basit Rozet"
+      },
+      "reward_fish_id": null
+    },
+    {
+      "id": "18",
+      "key": "ice",
+      "names": {
+        "cs": "Ledový set",
+        "en": "Ice set",
+        "pl": "Zestaw lodowy",
+        "nl": "IJs set",
+        "ro": "Ice set",
+        "tr": "Buz seti"
+      },
+      "badges": {
+        "cs": "Ledový odznak",
+        "en": "Ice Badge",
+        "pl": "Odznaka Lodu",
+        "nl": "IJs Badge",
+        "ro": "Ice Badge",
+        "tr": "Buz Rozeti"
+      },
+      "reward_fish_id": null
+    },
+    {
+      "id": "19",
+      "key": "princess",
+      "names": {
+        "cs": "Princeznovský set",
+        "en": "Princess set",
+        "pl": "Zestaw księżniczki",
+        "nl": "Prinsessen set",
+        "ro": "Princess set",
+        "tr": "Prenses seti"
+      },
+      "badges": {
+        "cs": "Princeznovský odznak",
+        "en": "Princess Badge",
+        "pl": "Odznaka Księżniczki",
+        "nl": "Prinsessen Badge",
+        "ro": "Princess Badge",
+        "tr": "Prenses Rozeti"
+      },
+      "reward_fish_id": null
+    },
+    {
+      "id": "20",
+      "key": "classic",
+      "names": {
+        "cs": "Klasický set",
+        "en": "Classic set",
+        "pl": "Zestaw klasyczny",
+        "nl": "Klassieke set",
+        "ro": "Classic set",
+        "tr": "Klasik set"
+      },
+      "badges": {
+        "cs": "Klasický odznak",
+        "en": "Classic Badge",
+        "pl": "Odznaka Klasyczna",
+        "nl": "Klassieke Badge",
+        "ro": "Classic Badge",
+        "tr": "Klasik Rozet"
+      },
+      "reward_fish_id": null
+    },
+    {
+      "id": "21",
+      "key": "designer",
+      "names": {
+        "cs": "Designový set",
+        "en": "Designer set",
+        "pl": "Zestaw projektanta",
+        "nl": "Designer set",
+        "ro": "Designer set",
+        "tr": "Tasarım set"
+      },
+      "badges": {
+        "cs": "Designový odznak",
+        "en": "Designer Badge",
+        "pl": "Odznaka Projektanta",
+        "nl": "Designer Badge",
+        "ro": "Designer Badge",
+        "tr": "Tasarımcı Rozeti"
+      },
+      "reward_fish_id": null
+    },
+    {
+      "id": "22",
+      "key": "gold",
+      "names": {
+        "cs": "Zlatý set",
+        "en": "Gold set",
+        "pl": "Złoty zestaw",
+        "nl": "Gouden set",
+        "ro": "Gold set",
+        "tr": "Altın set"
+      },
+      "badges": {
+        "cs": "Zlatý odznak",
+        "en": "Gold Badge",
+        "pl": "Złota Odznaka",
+        "nl": "Gouden Badge",
+        "ro": "Gold Badge",
+        "tr": "Altın Rozet"
+      },
+      "reward_fish_id": null
+    },
+    {
+      "id": "23",
+      "key": "christmas",
+      "names": {
+        "cs": "Vánoční set",
+        "en": "Christmas set",
+        "pl": "Zestaw świąteczny",
+        "nl": "Kerst set",
+        "ro": "Christmas set",
+        "tr": "Noel seti"
+      },
+      "badges": {
+        "cs": "Vánoční odznak",
+        "en": "Christmas Badge",
+        "pl": "Odznaka Świąteczna",
+        "nl": "Kerst Badge",
+        "ro": "Christmas Badge",
+        "tr": "Noel Rozeti"
+      },
+      "reward_fish_id": null
+    },
+    {
+      "id": "24",
+      "key": "paintings",
+      "names": {
+        "cs": "Malířství",
+        "en": "Paintings",
+        "pl": "Obrazy",
+        "nl": "Schilderijen",
+        "ro": "Paintings",
+        "tr": "Tablolar"
+      },
+      "badges": {
+        "cs": "Malířský odznak",
+        "en": "Paintings Badge",
+        "pl": "Odznaka Malarza",
+        "nl": "Schilder Badge",
+        "ro": "Paintings Badge",
+        "tr": "Tablo Rozeti"
+      },
+      "reward_fish_id": null
+    },
+    {
+      "id": "25",
+      "key": "plants",
+      "names": {
+        "cs": "Rostliny",
+        "en": "Plants",
+        "pl": "Rośliny",
+        "nl": "Planten",
+        "ro": "Plants",
+        "tr": "Bitkiler"
+      },
+      "badges": {
+        "cs": "Květinový odznak",
+        "en": "Plants Badge",
+        "pl": "Odznaka Roślinna",
+        "nl": "Planten Badge",
+        "ro": "Plants Badge",
+        "tr": "Bitki Rozeti"
+      },
+      "reward_fish_id": null
+    },
+    {
+      "id": "26",
+      "key": "spooky",
+      "names": {
+        "cs": "Strašidelný set",
+        "en": "Spooky set",
+        "pl": "Straszny zestaw",
+        "nl": "Spooky set",
+        "ro": "Spooky set",
+        "tr": "Garip set"
+      },
+      "badges": {
+        "cs": "Děsivý odznak",
+        "en": "Spooky Badge",
+        "pl": "Odznaka Strachu",
+        "nl": "Spooky Badge",
+        "ro": "Spooky Badge",
+        "tr": "Garip Rozet"
+      },
+      "reward_fish_id": null
+    },
+    {
+      "id": "27",
+      "key": "pirate",
+      "names": {
+        "cs": "Pirátský set",
+        "en": "Pirate set",
+        "pl": "Zestaw pirata",
+        "nl": "Piraten set",
+        "ro": "Pirate set",
+        "tr": "Korsan seti"
+      },
+      "badges": {
+        "cs": "Pirátský odznak",
+        "en": "Pirate Badge",
+        "pl": "Odznaka Pirata",
+        "nl": "Piraten Badge",
+        "ro": "Pirate Badge",
+        "tr": "Korsan Rozeti"
+      },
+      "reward_fish_id": null
+    },
+    {
+      "id": "79",
+      "key": "balloon",
+      "names": {
+        "cs": "Balónový set",
+        "en": "Balloon set",
+        "pl": "Balonowy komplet",
+        "nl": "Ballonnen set",
+        "ro": "Balloon set",
+        "tr": "Balon seti"
+      },
+      "badges": {},
+      "reward_fish_id": "1100"
+    },
+    {
+      "id": "80",
+      "key": "candy",
+      "names": {
+        "cs": "Bonbónový set",
+        "en": "Candy set",
+        "pl": "Słodki komplet",
+        "nl": "Snoep set",
+        "ro": "Candy set",
+        "tr": "Şeker seti"
+      },
+      "badges": {},
+      "reward_fish_id": "1101"
+    },
+    {
+      "id": "81",
+      "key": "soccer",
+      "names": {
+        "cs": "Fotbalový set",
+        "en": "Soccer set",
+        "pl": "Piłkarski komplet",
+        "nl": "Voetbal set",
+        "ro": "Soccer set",
+        "tr": "Futbol seti"
+      },
+      "badges": {},
+      "reward_fish_id": "1102"
+    },
+    {
+      "id": "82",
+      "key": "space",
+      "names": {
+        "cs": "Vesmírný set",
+        "en": "Space set",
+        "pl": "Kosmiczny komplet",
+        "nl": "Ruimte set",
+        "ro": "Space set",
+        "tr": "Uzay seti"
+      },
+      "badges": {},
+      "reward_fish_id": "1103"
+    },
+    {
+      "id": "83",
+      "key": "gorgeous",
+      "names": {
+        "cs": "Půvabný set",
+        "en": "Gorgeous set",
+        "pl": "Olśniewający komplet",
+        "nl": "Gorgeous set",
+        "ro": "Gorgeous set",
+        "tr": "Muhteşem set"
+      },
+      "badges": {},
+      "reward_fish_id": "1104"
+    }
+  ]
+}
