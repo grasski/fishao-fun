@@ -943,7 +943,14 @@
       "guide_shop_eff_radar": "Precizie {acc}/3",
       "guide_shop_eff_xp": "{mul}× XP la pești",
       "guide_shop_eff_shiny": "{mul}× șansă pește strălucitor",
-      "guide_shop_eff_power": "+{pct}% putere echipament"
+      "guide_shop_eff_power": "+{pct}% putere echipament",
+      "guide_snapshot_btn": "📸 Creează captură tabel",
+      "guide_snapshot_modal_title_tree": "📸 Captură tabel – Copacul cu bani",
+      "guide_snapshot_modal_title_line": "📸 Captură tabel – Fir de pescuit",
+      "guide_snapshot_download_btn": "💾 Descarcă PNG",
+      "guide_snapshot_copy_btn": "📋 Copiază în clipboard",
+      "guide_snapshot_copied_toast": "📋 Captura tabelului a fost copiată în clipboard.",
+      "guide_snapshot_downloaded_toast": "💾 Captura tabelului a fost descărcată ca PNG."
   };
 
   if (typeof window !== 'undefined') {

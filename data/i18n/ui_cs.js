@@ -943,7 +943,14 @@
       "guide_shop_eff_radar": "Přesnost {acc}/3",
       "guide_shop_eff_xp": "{mul}× XP za ryby",
       "guide_shop_eff_shiny": "{mul}× šance zářivé ryby",
-      "guide_shop_eff_power": "+{pct} % síla vybavení"
+      "guide_shop_eff_power": "+{pct} % síla vybavení",
+      "guide_snapshot_btn": "📸 Vytvořit snímek tabulky",
+      "guide_snapshot_modal_title_tree": "📸 Snímek tabulky – Stromeček peněz",
+      "guide_snapshot_modal_title_line": "📸 Snímek tabulky – Vlasec",
+      "guide_snapshot_download_btn": "💾 Stáhnout PNG",
+      "guide_snapshot_copy_btn": "📋 Kopírovat do schránky",
+      "guide_snapshot_copied_toast": "📋 Snímek tabulky zkopírován do schránky.",
+      "guide_snapshot_downloaded_toast": "💾 Snímek tabulky byl stažen jako PNG."
   };
 
   if (typeof window !== 'undefined') {

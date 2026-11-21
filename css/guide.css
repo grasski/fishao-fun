@@ -793,6 +793,59 @@
   white-space: normal;
 }
 
+/* Guide Table Snapshot Button & Preview Modal */
+.guide-snapshot-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-color: rgba(16, 185, 129, 0.38);
+  color: #a7f3d0;
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.guide-snapshot-btn:hover {
+  border-color: #34d399;
+  background: rgba(16, 185, 129, 0.2);
+  color: #ffffff;
+}
+
+.guide-snapshot-modal-box {
+  max-width: 860px;
+}
+
+.guide-snapshot-preview-wrap {
+  background: #070b14;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 10px;
+  max-height: 64vh;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.guide-snapshot-preview-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.guide-snapshot-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.guide-snapshot-actions .pill-btn {
+  height: 36px;
+  padding: 0 15px;
+  font-size: 13px;
+}
+
 @media (max-width: 640px) {
   .shop-controls-row .search-input-wrapper,
   .shop-bait-select-wrapper,
@@ -811,5 +864,17 @@
   }
   .shop-item-desc {
     max-width: 160px;
+  }
+  .guide-snapshot-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .guide-snapshot-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .guide-snapshot-actions .pill-btn {
+    width: 100%;
+    justify-content: center;
   }
 }

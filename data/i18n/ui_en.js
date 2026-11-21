@@ -931,7 +931,14 @@
       "guide_shop_eff_radar": "Accuracy {acc}/3",
       "guide_shop_eff_xp": "{mul}× Fish XP",
       "guide_shop_eff_shiny": "{mul}× Shiny fish chance",
-      "guide_shop_eff_power": "+{pct}% equipment power"
+      "guide_shop_eff_power": "+{pct}% equipment power",
+      "guide_snapshot_btn": "📸 Create table snapshot",
+      "guide_snapshot_modal_title_tree": "📸 Table Snapshot – Money Tree",
+      "guide_snapshot_modal_title_line": "📸 Table Snapshot – Fishing Line",
+      "guide_snapshot_download_btn": "💾 Download PNG",
+      "guide_snapshot_copy_btn": "📋 Copy to clipboard",
+      "guide_snapshot_copied_toast": "📋 Table snapshot copied to clipboard.",
+      "guide_snapshot_downloaded_toast": "💾 Table snapshot downloaded as PNG."
   };
 
   if (typeof window !== 'undefined') {

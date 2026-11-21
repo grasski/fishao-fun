@@ -943,7 +943,14 @@
       "guide_shop_eff_radar": "Dokładność {acc}/3",
       "guide_shop_eff_xp": "{mul}× XP za ryby",
       "guide_shop_eff_shiny": "{mul}× szansa na lśniącą rybę",
-      "guide_shop_eff_power": "+{pct}% siły sprzętu"
+      "guide_shop_eff_power": "+{pct}% siły sprzętu",
+      "guide_snapshot_btn": "📸 Utwórz zrzut tabeli",
+      "guide_snapshot_modal_title_tree": "📸 Zrzut tabeli – Drzewko pieniędzy",
+      "guide_snapshot_modal_title_line": "📸 Zrzut tabeli – Żyłka",
+      "guide_snapshot_download_btn": "💾 Pobierz PNG",
+      "guide_snapshot_copy_btn": "📋 Kopiuj do schowka",
+      "guide_snapshot_copied_toast": "📋 Zrzut tabeli skopiowany do schowka.",
+      "guide_snapshot_downloaded_toast": "💾 Zrzut tabeli pobrany jako PNG."
   };
 
   if (typeof window !== 'undefined') {

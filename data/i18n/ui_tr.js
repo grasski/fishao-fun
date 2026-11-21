@@ -931,7 +931,14 @@
       "guide_shop_eff_radar": "Doğruluk {acc}/3",
       "guide_shop_eff_xp": "{mul}× Balık XP",
       "guide_shop_eff_shiny": "{mul}× Parlak balık şansı",
-      "guide_shop_eff_power": "+%{pct} ekipman gücü"
+      "guide_shop_eff_power": "+%{pct} ekipman gücü",
+      "guide_snapshot_btn": "📸 Tablo görüntüsü oluştur",
+      "guide_snapshot_modal_title_tree": "📸 Tablo Görüntüsü – Para Ağacı",
+      "guide_snapshot_modal_title_line": "📸 Tablo Görüntüsü – Misina",
+      "guide_snapshot_download_btn": "💾 PNG İndir",
+      "guide_snapshot_copy_btn": "📋 Panoya kopyala",
+      "guide_snapshot_copied_toast": "📋 Tablo görüntüsü panoya kopyalandı.",
+      "guide_snapshot_downloaded_toast": "💾 Tablo görüntüsü PNG olarak indirildi."
   };
 
   if (typeof window !== 'undefined') {

@@ -1274,23 +1274,688 @@ function openGuideShopItemModal(kind, id) {
   if (document.body) document.body.classList.add('modal-open');
 }
 
-function closeGuideShopItemModal() {
-  var overlay = document.getElementById('shopItemModalOverlay');
-  if (overlay) overlay.classList.remove('active');
-  if (typeof document !== 'undefined' && !document.querySelector('.modal-overlay.active')) {
+function setDynamicModalScrollLock(isOpen) {
+  if (typeof document === 'undefined') return;
+  if (isOpen) {
+    if (document.documentElement) document.documentElement.classList.add('modal-open');
+    if (document.body) document.body.classList.add('modal-open');
+  } else if (!document.querySelector('.modal-overlay.active')) {
     if (document.documentElement) document.documentElement.classList.remove('modal-open');
     if (document.body) document.body.classList.remove('modal-open');
   }
 }
 
+function closeGuideShopItemModal() {
+  var overlay = document.getElementById('shopItemModalOverlay');
+  if (overlay) overlay.classList.remove('active');
+  setDynamicModalScrollLock(false);
+}
+
+var _lastGuideSnapshotState = { type: 'tree', dataUrl: '', blob: null, canvas: null };
+
+function drawCanvasRoundRect(ctx, x, y, w, h, r) {
+  var radius = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + w - radius, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+  ctx.lineTo(x + w, y + h - radius);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+  ctx.lineTo(x + radius, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
+function fitCanvasText(ctx, text, maxW) {
+  var s = String(text || '');
+  if (ctx.measureText(s).width <= maxW) return s;
+  var ell = '…';
+  while (s.length > 1 && ctx.measureText(s + ell).width > maxW) {
+    s = s.slice(0, -1);
+  }
+  return s + ell;
+}
+
+function drawCanvasPill(ctx, x, y, text, bgColor, borderColor, textColor, padX, height, fontSpec) {
+  ctx.font = fontSpec || '700 11px Inter, "Segoe UI", system-ui, sans-serif';
+  var tw = ctx.measureText(text).width;
+  var pw = tw + padX * 2;
+  drawCanvasRoundRect(ctx, x, y, pw, height, 6);
+  ctx.fillStyle = bgColor;
+  ctx.fill();
+  if (borderColor) {
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  ctx.fillStyle = textColor;
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x + padX, y + height / 2 + 0.5);
+  return pw;
+}
+
+function drawCanvasCoinText(ctx, x, y, text, textColor, fontSpec) {
+  ctx.font = fontSpec || '700 12.5px Inter, "Segoe UI", system-ui, sans-serif';
+  ctx.beginPath();
+  ctx.arc(x + 5, y, 5, 0, Math.PI * 2);
+  ctx.fillStyle = '#fbbf24';
+  ctx.fill();
+  ctx.strokeStyle = '#b45309';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = textColor;
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x + 15, y + 0.5);
+  return 15 + ctx.measureText(text).width;
+}
+
+function renderGuideTableSnapshotCanvas(type) {
+  var resolvedType = (type === 'line') ? 'line' : 'tree';
+  var totals = computeGuideTotals(resolvedType);
+  var st = getGuideRangeState(resolvedType);
+  var rows = totals.rows;
+  var fromRow = rows[st.from - 1];
+  var toRow = rows[st.to - 1];
+  var isMaxFrom = (st.from === 20);
+
+  var rangeCost = 0;
+  var rangeHours = 0;
+  for (var i = st.from; i < st.to; i++) {
+    rangeCost += rows[i].item.price;
+    rangeHours += rows[i].hours;
+  }
+  var pctOfTotal = totals.totalPrice > 0 ? Math.round((rangeCost / totals.totalPrice) * 100) : 0;
+
+  var W = 1160;
+  var PAD = 28;
+  var TABLE_W = W - PAD * 2;
+  var Y_HDR = 24;
+  var HDR_H = 74;
+  var Y_CARDS = Y_HDR + HDR_H;
+  var CARDS_H = 82;
+  var Y_TABLE = Y_CARDS + CARDS_H + 16;
+  var TH_H = 40;
+  var ROW_H = 44;
+  var TABLE_H = TH_H + rows.length * ROW_H;
+  var FOOT_H = 38;
+  var H = Y_TABLE + TABLE_H + FOOT_H;
+
+  var dpr = 2;
+  var canvas = document.createElement('canvas');
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  var ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  var fontFamily = 'Inter, "Segoe UI", system-ui, -apple-system, sans-serif';
+
+  // Background
+  var bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+  bgGrad.addColorStop(0, '#0b1120');
+  bgGrad.addColorStop(1, '#0f172a');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Top accent stripe
+  ctx.fillStyle = resolvedType === 'tree' ? '#10b981' : '#f59e0b';
+  ctx.fillRect(0, 0, W, 4);
+
+  // Header left: title & subtitle
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = '800 22px ' + fontFamily;
+  var titleStr = t(resolvedType === 'tree' ? 'guide_banner_title_tree' : 'guide_banner_title_line');
+  ctx.fillText(fitCanvasText(ctx, titleStr, 760), PAD, Y_HDR + 24);
+
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '500 12.5px ' + fontFamily;
+  var descStr = t(resolvedType === 'tree' ? 'guide_calc_desc_tree' : 'guide_calc_desc_line');
+  ctx.fillText(fitCanvasText(ctx, descStr, 760), PAD, Y_HDR + 48);
+
+  // Header right: site branding + current date
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#38bdf8';
+  ctx.font = '800 13.5px ' + fontFamily;
+  ctx.fillText('FISHAO Tracker • fishao-tracker.cz', W - PAD, Y_HDR + 22);
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '600 11.5px ' + fontFamily;
+  var dateLabel = '';
+  try { dateLabel = new Date().toLocaleDateString(getLocale()); } catch (e) { }
+  ctx.fillText(dateLabel, W - PAD, Y_HDR + 44);
+  ctx.textAlign = 'left';
+
+  // Build 4 summary cards matching live calculator
+  var cards;
+  if (resolvedType === 'tree') {
+    var deltaFc = toRow.item.fc - fromRow.item.fc;
+    var deltaFb = toRow.item.fb - fromRow.item.fb;
+    var totalYieldPayback = formatPaybackDays(rangeCost, toRow.item.fc);
+    var deltaPayback = deltaFc > 0 ? formatPaybackDays(rangeCost, deltaFc) : null;
+    var roiValText = isMaxFrom ? t('guide_max_level_reached') : totalYieldPayback.exactText;
+    var roiSubText = isMaxFrom
+      ? (toRow.item.fc + ' FC + ' + formatGuideInt(toRow.item.fb) + ' FB / ' + t('guide_per_day_short'))
+      : (totalYieldPayback.harvestsText + (deltaPayback ? (' • +' + deltaFc + ' FC/d: ' + deltaPayback.exactText) : ''));
+
+    cards = [
+      {
+        label: t('guide_calc_cost_label', { from: st.from, to: st.to }),
+        val: formatGuideInt(rangeCost) + ' FC',
+        sub: t('guide_calc_cost_share', { pct: pctOfTotal, total: formatGuideInt(totals.totalPrice) }),
+        border: 'rgba(245, 158, 11, 0.45)',
+        valColor: '#fbbf24',
+        coin: true
+      },
+      {
+        label: t('guide_calc_time_label'),
+        val: formatUpgradeDuration(rangeHours, false),
+        sub: t('guide_calc_steps_count', { count: st.to - st.from }),
+        border: 'rgba(148, 163, 184, 0.3)',
+        valColor: '#f8fafc',
+        coin: false
+      },
+      {
+        label: t('guide_calc_new_yield', { to: st.to }),
+        val: toRow.item.fc + ' FC + ' + formatGuideInt(toRow.item.fb) + ' FB',
+        sub: '+' + deltaFc + ' FC / +' + formatGuideInt(deltaFb) + ' FB ' + t('guide_per_day_short'),
+        border: 'rgba(16, 185, 129, 0.45)',
+        valColor: '#34d399',
+        coin: false
+      },
+      {
+        label: t('guide_calc_roi_label'),
+        val: roiValText,
+        sub: roiSubText,
+        border: 'rgba(56, 189, 248, 0.45)',
+        valColor: '#38bdf8',
+        coin: false
+      }
+    ];
+  } else {
+    var deltaCm = toRow.item.length_cm - fromRow.item.length_cm;
+    var colorNames = String(toRow.item.colors || '').split(',').map(function (c) {
+      var k = c.trim().toLowerCase();
+      return k ? t('guide_color_' + k) : '';
+    }).filter(Boolean).join(', ');
+    cards = [
+      {
+        label: t('guide_calc_cost_label', { from: st.from, to: st.to }),
+        val: formatGuideInt(rangeCost) + ' FC',
+        sub: t('guide_calc_cost_share', { pct: pctOfTotal, total: formatGuideInt(totals.totalPrice) }),
+        border: 'rgba(245, 158, 11, 0.45)',
+        valColor: '#fbbf24',
+        coin: true
+      },
+      {
+        label: t('guide_calc_time_label'),
+        val: formatUpgradeDuration(rangeHours, false),
+        sub: t('guide_calc_steps_count', { count: st.to - st.from }),
+        border: 'rgba(148, 163, 184, 0.3)',
+        valColor: '#f8fafc',
+        coin: false
+      },
+      {
+        label: t('guide_calc_line_len', { to: st.to }),
+        val: formatGuideInt(toRow.item.length_cm) + ' cm',
+        sub: '+' + formatGuideInt(deltaCm) + ' cm ' + t('guide_calc_vs_lvl', { from: st.from }),
+        border: 'rgba(56, 189, 248, 0.45)',
+        valColor: '#38bdf8',
+        coin: false
+      },
+      {
+        label: t('guide_calc_line_colors', { to: st.to }),
+        val: colorNames,
+        sub: 'Lvl ' + st.from + ' → Lvl ' + st.to,
+        border: 'rgba(168, 85, 247, 0.4)',
+        valColor: '#e2e8f0',
+        coin: false
+      }
+    ];
+  }
+
+  var cardGap = 12;
+  var cardW = (TABLE_W - cardGap * 3) / 4;
+  for (var ci = 0; ci < cards.length; ci++) {
+    var card = cards[ci];
+    var cx = PAD + ci * (cardW + cardGap);
+    drawCanvasRoundRect(ctx, cx, Y_CARDS, cardW, CARDS_H, 10);
+    ctx.fillStyle = '#111a2e';
+    ctx.fill();
+    ctx.strokeStyle = card.border;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '700 10.5px ' + fontFamily;
+    ctx.fillText(fitCanvasText(ctx, card.label.toUpperCase(), cardW - 24), cx + 12, Y_CARDS + 21);
+
+    ctx.font = '800 17px ' + fontFamily;
+    if (card.coin) {
+      drawCanvasCoinText(ctx, cx + 12, Y_CARDS + 43, fitCanvasText(ctx, card.val, cardW - 40), card.valColor, ctx.font);
+    } else {
+      ctx.fillStyle = card.valColor;
+      ctx.fillText(fitCanvasText(ctx, card.val, cardW - 24), cx + 12, Y_CARDS + 48);
+    }
+
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = '500 11px ' + fontFamily;
+    ctx.fillText(fitCanvasText(ctx, card.sub, cardW - 24), cx + 12, Y_CARDS + 69);
+  }
+
+  // Table Container
+  drawCanvasRoundRect(ctx, PAD, Y_TABLE, TABLE_W, TABLE_H, 12);
+  ctx.fillStyle = '#101726';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  ctx.save();
+  drawCanvasRoundRect(ctx, PAD, Y_TABLE, TABLE_W, TABLE_H, 12);
+  ctx.clip();
+
+  // Table Columns
+  var cols = resolvedType === 'tree'
+    ? [
+        { x: PAD, w: 135, label: t('guide_col_level') },
+        { x: PAD + 135, w: 135, label: t('guide_col_price_fc') },
+        { x: PAD + 270, w: 140, label: t('guide_col_cum_price') },
+        { x: PAD + 410, w: 125, label: t('guide_col_daily_fc') },
+        { x: PAD + 535, w: 120, label: t('guide_col_daily_fb') },
+        { x: PAD + 655, w: 205, label: t('guide_col_upgrade_time') },
+        { x: PAD + 860, w: 244, label: t('guide_col_payback') }
+      ]
+    : [
+        { x: PAD, w: 140, label: t('guide_col_level') },
+        { x: PAD + 140, w: 140, label: t('guide_col_price_fc') },
+        { x: PAD + 280, w: 145, label: t('guide_col_cum_price') },
+        { x: PAD + 425, w: 175, label: t('guide_col_max_length') },
+        { x: PAD + 600, w: 210, label: t('guide_col_upgrade_time') },
+        { x: PAD + 810, w: 294, label: t('guide_col_colors') }
+      ];
+
+  // Table Header Bar
+  ctx.fillStyle = '#0c121e';
+  ctx.fillRect(PAD, Y_TABLE, TABLE_W, TH_H);
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+  ctx.beginPath();
+  ctx.moveTo(PAD, Y_TABLE + TH_H);
+  ctx.lineTo(PAD + TABLE_W, Y_TABLE + TH_H);
+  ctx.stroke();
+
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '800 11px ' + fontFamily;
+  for (var hci = 0; hci < cols.length; hci++) {
+    ctx.fillText(fitCanvasText(ctx, cols[hci].label.toUpperCase(), cols[hci].w - 16), cols[hci].x + 12, Y_TABLE + TH_H / 2 + 0.5);
+  }
+
+  var colorDotMap = {
+    white: '#f8fafc',
+    blue: '#38bdf8',
+    green: '#10b981',
+    grey: '#94a3b8',
+    golden: '#fbbf24'
+  };
+
+  // Table Rows
+  for (var ri = 0; ri < rows.length; ri++) {
+    var row = rows[ri];
+    var item = row.item;
+    var prev = row.prev;
+    var ry = Y_TABLE + TH_H + ri * ROW_H;
+    var midY = ry + ROW_H / 2;
+
+    var isCurrent = (item.level === st.from);
+    var isInRange = (item.level > st.from && item.level <= st.to);
+    var isTarget = (item.level === st.to);
+
+    if (isCurrent) {
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.14)';
+      ctx.fillRect(PAD, ry, TABLE_W, ROW_H);
+      ctx.fillStyle = '#10b981';
+      ctx.fillRect(PAD, ry, 4, ROW_H);
+    } else if (isTarget) {
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.17)';
+      ctx.fillRect(PAD, ry, TABLE_W, ROW_H);
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(PAD, ry, 4, ROW_H);
+    } else if (isInRange) {
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.09)';
+      ctx.fillRect(PAD, ry, TABLE_W, ROW_H);
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(PAD, ry, 4, ROW_H);
+    } else if (ri % 2 === 1) {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+      ctx.fillRect(PAD, ry, TABLE_W, ROW_H);
+    }
+
+    if (ri < rows.length - 1) {
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+      ctx.beginPath();
+      ctx.moveTo(PAD, ry + ROW_H);
+      ctx.lineTo(PAD + TABLE_W, ry + ROW_H);
+      ctx.stroke();
+    }
+
+    // Col 0: Level + tag
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = '800 13px ' + fontFamily;
+    var lvlLabel = 'Lvl ' + item.level;
+    ctx.fillText(lvlLabel, cols[0].x + 12, midY);
+    if (isCurrent) {
+      drawCanvasPill(
+        ctx,
+        cols[0].x + 18 + ctx.measureText(lvlLabel).width,
+        midY - 9,
+        t('guide_tag_current').toUpperCase(),
+        'rgba(16, 185, 129, 0.22)',
+        'rgba(16, 185, 129, 0.5)',
+        '#34d399',
+        6,
+        18,
+        '800 9.5px ' + fontFamily
+      );
+    } else if (isTarget) {
+      drawCanvasPill(
+        ctx,
+        cols[0].x + 18 + ctx.measureText(lvlLabel).width,
+        midY - 9,
+        t('guide_tag_target').toUpperCase(),
+        'rgba(245, 158, 11, 0.22)',
+        'rgba(245, 158, 11, 0.5)',
+        '#fbbf24',
+        6,
+        18,
+        '800 9.5px ' + fontFamily
+      );
+    }
+
+    // Col 1: Price
+    if (item.price === 0) {
+      drawCanvasPill(
+        ctx,
+        cols[1].x + 12,
+        midY - 10,
+        fitCanvasText(ctx, t('guide_base_free'), cols[1].w - 28),
+        'rgba(255, 255, 255, 0.06)',
+        'rgba(255, 255, 255, 0.12)',
+        '#94a3b8',
+        8,
+        20,
+        '700 11px ' + fontFamily
+      );
+    } else {
+      drawCanvasCoinText(ctx, cols[1].x + 12, midY, formatGuideInt(item.price) + ' FC', '#fbbf24', '800 12.5px ' + fontFamily);
+    }
+
+    // Col 2: Cum price
+    drawCanvasCoinText(ctx, cols[2].x + 12, midY, formatGuideInt(row.cumPrice) + ' FC', '#cbd5e1', '700 12.5px ' + fontFamily);
+
+    if (resolvedType === 'tree') {
+      // Col 3: FC / day + step bump
+      var fcTextW = drawCanvasCoinText(ctx, cols[3].x + 12, midY, item.fc + ' FC', '#fbbf24', '800 12.5px ' + fontFamily);
+      if (prev && item.fc > prev.fc) {
+        drawCanvasPill(
+          ctx,
+          cols[3].x + 18 + fcTextW,
+          midY - 9,
+          '+' + (item.fc - prev.fc),
+          'rgba(16, 185, 129, 0.2)',
+          'rgba(16, 185, 129, 0.35)',
+          '#34d399',
+          5,
+          18,
+          '800 10px ' + fontFamily
+        );
+      }
+
+      // Col 4: FB / day
+      ctx.fillStyle = '#34d399';
+      ctx.font = '800 12.5px ' + fontFamily;
+      ctx.textBaseline = 'middle';
+      ctx.fillText(formatGuideInt(item.fb) + ' FB', cols[4].x + 12, midY);
+
+      // Col 5: Upgrade time
+      if (item.level === 1) {
+        ctx.fillStyle = '#64748b';
+        ctx.font = '600 12.5px ' + fontFamily;
+        ctx.fillText('—', cols[5].x + 12, midY);
+      } else {
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = '700 12px ' + fontFamily;
+        ctx.fillText(fitCanvasText(ctx, formatUpgradeDuration(row.hours, false), cols[5].w - 20), cols[5].x + 12, ry + 15);
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '500 10.5px ' + fontFamily;
+        ctx.fillText(fitCanvasText(ctx, t('guide_cum_short') + ': ' + formatUpgradeDuration(row.cumHours, false), cols[5].w - 20), cols[5].x + 12, ry + 31);
+      }
+
+      // Col 6: Payback (ROI)
+      if (item.level === 1 || item.price === 0 || item.fc <= 0) {
+        ctx.fillStyle = '#64748b';
+        ctx.font = '600 12.5px ' + fontFamily;
+        ctx.fillText('—', cols[6].x + 12, midY);
+      } else {
+        var singleRoi = formatPaybackDays(item.price, item.fc);
+        var cumRoi = formatPaybackDays(row.cumPrice, item.fc);
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '700 12px ' + fontFamily;
+        ctx.fillText(fitCanvasText(ctx, singleRoi.exactText + ' (' + singleRoi.harvestsText + ')', cols[6].w - 20), cols[6].x + 12, ry + 15);
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '500 10.5px ' + fontFamily;
+        ctx.fillText(fitCanvasText(ctx, t('guide_roi_from_lvl1', { days: cumRoi.exactText }), cols[6].w - 20), cols[6].x + 12, ry + 31);
+      }
+    } else {
+      // Col 3: Max length
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = '800 13px ' + fontFamily;
+      ctx.textBaseline = 'middle';
+      var lenTxt = formatGuideInt(item.length_cm) + ' cm';
+      ctx.fillText(lenTxt, cols[3].x + 12, midY);
+      var lenDelta = prev ? (item.length_cm - prev.length_cm) : 0;
+      if (lenDelta > 0) {
+        var lenTw = ctx.measureText(lenTxt).width;
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '700 11px ' + fontFamily;
+        ctx.fillText('+' + formatGuideInt(lenDelta) + ' cm', cols[3].x + 18 + lenTw, midY);
+      }
+
+      // Col 4: Upgrade time
+      if (item.level === 1) {
+        ctx.fillStyle = '#64748b';
+        ctx.font = '600 12.5px ' + fontFamily;
+        ctx.fillText('—', cols[4].x + 12, midY);
+      } else {
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = '700 12px ' + fontFamily;
+        ctx.fillText(fitCanvasText(ctx, formatUpgradeDuration(row.hours, false), cols[4].w - 20), cols[4].x + 12, ry + 15);
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '500 10.5px ' + fontFamily;
+        ctx.fillText(fitCanvasText(ctx, t('guide_cum_short') + ': ' + formatUpgradeDuration(row.cumHours, false), cols[4].w - 20), cols[4].x + 12, ry + 31);
+      }
+
+      // Col 5: Colors (dot + label chips)
+      var colorTokens = String(item.colors || '').split(',').map(function (c) {
+        return c.trim().toLowerCase();
+      }).filter(Boolean);
+      var cxOff = cols[5].x + 12;
+      var maxRight = cols[5].x + cols[5].w - 10;
+      ctx.font = '700 11px ' + fontFamily;
+      for (var cti = 0; cti < colorTokens.length; cti++) {
+        var cCode = colorTokens[cti];
+        var cLabel = t('guide_color_' + cCode);
+        var chipW = 14 + ctx.measureText(cLabel).width + 10;
+        if (cxOff + chipW > maxRight && cti > 0) break;
+        ctx.beginPath();
+        ctx.arc(cxOff + 4.5, midY, 4.5, 0, Math.PI * 2);
+        ctx.fillStyle = colorDotMap[cCode] || '#f8fafc';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.45)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = (cCode === 'golden') ? '#fcd34d' : ((cCode === 'blue') ? '#7dd3fc' : ((cCode === 'green') ? '#6ee7b7' : '#e2e8f0'));
+        ctx.fillText(cLabel, cxOff + 13, midY + 0.5);
+        cxOff += chipW + 4;
+      }
+    }
+  }
+
+  ctx.restore();
+
+  // Footer summary
+  var footY = Y_TABLE + TABLE_H + 21;
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '600 11.5px ' + fontFamily;
+  ctx.fillText(
+    t('guide_stat_total_cost') + ': ' + formatGuideInt(totals.totalPrice) + ' FC  •  ' +
+      t('guide_stat_total_time') + ': ' + formatUpgradeDuration(totals.totalHours, false),
+    PAD,
+    footY
+  );
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#64748b';
+  ctx.fillText('fishao-tracker.cz', W - PAD, footY);
+  ctx.textAlign = 'left';
+
+  return canvas;
+}
+
+function ensureGuideSnapshotModalOverlay() {
+  var overlay = document.getElementById('guideSnapshotModalOverlay');
+  if (overlay) return overlay;
+  overlay = document.createElement('div');
+  overlay.id = 'guideSnapshotModalOverlay';
+  overlay.className = 'modal-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-labelledby', 'guideSnapshotModalTitle');
+  overlay.onclick = function (e) {
+    if (e.target === overlay) closeGuideSnapshotModal();
+  };
+  overlay.innerHTML =
+    '<div class="modal-box guide-snapshot-modal-box">' +
+      '<div class="modal-header">' +
+        '<span class="modal-title" id="guideSnapshotModalTitle"></span>' +
+        '<button type="button" class="modal-close" aria-label="Close" onclick="window.fishaoApp.closeGuideSnapshotModal()">×</button>' +
+      '</div>' +
+      '<div class="modal-body">' +
+        '<div class="guide-snapshot-preview-wrap">' +
+          '<img id="guideSnapshotPreviewImg" class="guide-snapshot-preview-img" alt="">' +
+        '</div>' +
+        '<div class="guide-snapshot-actions">' +
+          '<button type="button" id="guideSnapshotCopyBtn" class="pill-btn" onclick="window.fishaoApp.copyGuideSnapshotToClipboard()">' +
+            escapeHtml(t('guide_snapshot_copy_btn')) +
+          '</button>' +
+          '<button type="button" id="guideSnapshotDownloadBtn" class="pill-btn active" onclick="window.fishaoApp.downloadGuideSnapshotPng()">' +
+            escapeHtml(t('guide_snapshot_download_btn')) +
+          '</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  return overlay;
+}
+
+function openGuideSnapshotModal(optType) {
+  if (typeof document === 'undefined') return;
+  var type = (optType === 'line' || optType === 'tree')
+    ? optType
+    : (currentGuideSubTab === 'line' ? 'line' : 'tree');
+
+  var canvas = renderGuideTableSnapshotCanvas(type);
+  var dataUrl = canvas.toDataURL('image/png');
+  _lastGuideSnapshotState = { type: type, dataUrl: dataUrl, blob: null, canvas: canvas };
+  if (typeof canvas.toBlob === 'function') {
+    canvas.toBlob(function (blob) {
+      if (_lastGuideSnapshotState.canvas === canvas) {
+        _lastGuideSnapshotState.blob = blob;
+      }
+    }, 'image/png');
+  }
+
+  var overlay = ensureGuideSnapshotModalOverlay();
+  var titleText = t(type === 'line' ? 'guide_snapshot_modal_title_line' : 'guide_snapshot_modal_title_tree');
+  var titleEl = document.getElementById('guideSnapshotModalTitle');
+  var imgEl = document.getElementById('guideSnapshotPreviewImg');
+  var copyBtn = document.getElementById('guideSnapshotCopyBtn');
+  var dlBtn = document.getElementById('guideSnapshotDownloadBtn');
+
+  if (titleEl) titleEl.textContent = titleText;
+  if (imgEl) {
+    imgEl.src = dataUrl;
+    imgEl.alt = titleText;
+  }
+  if (copyBtn) {
+    copyBtn.textContent = t('guide_snapshot_copy_btn');
+    copyBtn.style.display = (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.write && typeof ClipboardItem === 'function') ? '' : 'none';
+  }
+  if (dlBtn) dlBtn.textContent = t('guide_snapshot_download_btn');
+
+  overlay.classList.add('active');
+  setDynamicModalScrollLock(true);
+}
+
+function closeGuideSnapshotModal() {
+  var overlay = document.getElementById('guideSnapshotModalOverlay');
+  if (overlay) overlay.classList.remove('active');
+  setDynamicModalScrollLock(false);
+}
+
+function downloadGuideSnapshotPng() {
+  if (!_lastGuideSnapshotState.dataUrl || typeof document === 'undefined') return;
+  var fname = _lastGuideSnapshotState.type === 'line'
+    ? 'fishao-line-upgrades.png'
+    : 'fishao-tree-upgrades.png';
+  var a = document.createElement('a');
+  a.href = _lastGuideSnapshotState.dataUrl;
+  a.download = fname;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  if (typeof showToast === 'function') {
+    showToast(t('guide_snapshot_downloaded_toast'), 'success');
+  }
+}
+
+async function copyGuideSnapshotToClipboard() {
+  if (!_lastGuideSnapshotState.dataUrl) return;
+  try {
+    var blob = _lastGuideSnapshotState.blob;
+    if (!blob && _lastGuideSnapshotState.canvas && typeof _lastGuideSnapshotState.canvas.toBlob === 'function') {
+      blob = await new Promise(function (resolve) {
+        _lastGuideSnapshotState.canvas.toBlob(resolve, 'image/png');
+      });
+    }
+    if (!blob || !navigator.clipboard || !navigator.clipboard.write || typeof ClipboardItem !== 'function') {
+      downloadGuideSnapshotPng();
+      return;
+    }
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+    if (typeof showToast === 'function') {
+      showToast(t('guide_snapshot_copied_toast'), 'success');
+    }
+  } catch (err) {
+    console.warn('Could not copy table snapshot to clipboard:', err);
+    downloadGuideSnapshotPng();
+  }
+}
+
 function renderGuideView(subType) {
+  var snapBtn = document.getElementById('guideSnapshotBtn');
   if (subType === 'shop') {
     currentGuideSubTab = 'shop';
+    if (snapBtn) snapBtn.style.display = 'none';
     renderGuideShopBanner();
     renderGuideShopToolbar();
     renderGuideShopTable();
     return;
   }
+  if (snapBtn) snapBtn.style.display = '';
   var tableCard = document.querySelector('.guide-table-card');
   if (tableCard) tableCard.classList.remove('is-shop');
   var bannerEl = document.getElementById('bannerGuide');

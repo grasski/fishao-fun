@@ -603,6 +603,7 @@ function closeAllModals() {
     closeRemindersAlertModal(false);
   }
   if (typeof closeGuideShopItemModal === 'function') closeGuideShopItemModal();
+  if (typeof closeGuideSnapshotModal === 'function') closeGuideSnapshotModal();
   resolveConfirmModal(false);
 }
 
@@ -619,6 +620,7 @@ function closeModalById(id) {
   else if (id === 'remindersModalOverlay' && typeof closeRemindersModal === 'function') closeRemindersModal();
   else if (id === 'remindersAlertModalOverlay' && typeof closeRemindersAlertModal === 'function') closeRemindersAlertModal(false);
   else if (id === 'shopItemModalOverlay' && typeof closeGuideShopItemModal === 'function') closeGuideShopItemModal();
+  else if (id === 'guideSnapshotModalOverlay' && typeof closeGuideSnapshotModal === 'function') closeGuideSnapshotModal();
   else if (id === 'confirmModalOverlay') resolveConfirmModal(false);
 }
 
@@ -961,6 +963,10 @@ window.fishaoApp = {
   toggleGuideShopBestValue: typeof toggleGuideShopBestValue === 'function' ? toggleGuideShopBestValue : function () {},
   openGuideShopItemModal: typeof openGuideShopItemModal === 'function' ? openGuideShopItemModal : function () {},
   closeGuideShopItemModal: typeof closeGuideShopItemModal === 'function' ? closeGuideShopItemModal : function () {},
+  openGuideSnapshotModal: typeof openGuideSnapshotModal === 'function' ? openGuideSnapshotModal : function () {},
+  closeGuideSnapshotModal: typeof closeGuideSnapshotModal === 'function' ? closeGuideSnapshotModal : function () {},
+  downloadGuideSnapshotPng: typeof downloadGuideSnapshotPng === 'function' ? downloadGuideSnapshotPng : function () {},
+  copyGuideSnapshotToClipboard: typeof copyGuideSnapshotToClipboard === 'function' ? copyGuideSnapshotToClipboard : function () {},
   setModalBaitAdvisorTimeMode: setModalBaitAdvisorTimeMode,
   toggleOtherBaitsVisibility: toggleOtherBaitsVisibility,
   toggleModalBaitAdvisorInfo: toggleModalBaitAdvisorInfo,

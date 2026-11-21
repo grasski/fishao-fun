@@ -428,7 +428,7 @@
         var script = document.createElement('script');
         script.src = bundledUrl
           ? ((bundledUrl.charAt(0) === '/' || /^https?:\/\//i.test(bundledUrl)) ? bundledUrl : ('/' + bundledUrl))
-          : ('/data/i18n/ui_' + code + '.js?v=7.6');
+          : ('/data/i18n/ui_' + code + '.js?v=7.7');
         script.async = true;
         script.onload = function () {
           ui[code] = window[globalName] || {};

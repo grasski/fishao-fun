@@ -931,7 +931,14 @@
       "guide_shop_eff_radar": "Nauwkeurigheid {acc}/3",
       "guide_shop_eff_xp": "{mul}× Vis XP",
       "guide_shop_eff_shiny": "{mul}× kans op glanzende vis",
-      "guide_shop_eff_power": "+{pct}% sterkere uitrusting"
+      "guide_shop_eff_power": "+{pct}% sterkere uitrusting",
+      "guide_snapshot_btn": "📸 Tabelafbeelding maken",
+      "guide_snapshot_modal_title_tree": "📸 Tabelafbeelding – Geldboom",
+      "guide_snapshot_modal_title_line": "📸 Tabelafbeelding – Visdraad",
+      "guide_snapshot_download_btn": "💾 PNG downloaden",
+      "guide_snapshot_copy_btn": "📋 Kopiëren naar klembord",
+      "guide_snapshot_copied_toast": "📋 Tabelafbeelding gekopieerd naar klembord.",
+      "guide_snapshot_downloaded_toast": "💾 Tabelafbeelding gedownload als PNG."
   };
 
   if (typeof window !== 'undefined') {
