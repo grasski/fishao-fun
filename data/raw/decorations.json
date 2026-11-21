@@ -1,0 +1,1860 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "type": "wall",
+      "price_fishbucks": "100",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_START"
+    },
+    {
+      "id": "2",
+      "type": "wall",
+      "price_fishbucks": "65",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_START"
+    },
+    {
+      "id": "3",
+      "type": "furniture",
+      "price_fishbucks": "430",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "4",
+      "type": "furniture",
+      "price_fishbucks": "150",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "5",
+      "type": "floor",
+      "price_fishbucks": "395",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_START"
+    },
+    {
+      "id": "7",
+      "type": "floor",
+      "price_fishbucks": "265",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_START"
+    },
+    {
+      "id": "8",
+      "type": "furniture",
+      "price_fishbucks": "215",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_START"
+    },
+    {
+      "id": "9",
+      "type": "furniture",
+      "price_fishbucks": "2400",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "10",
+      "type": "furniture",
+      "price_fishbucks": "245",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "11",
+      "type": "furniture",
+      "price_fishbucks": "185",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "12",
+      "type": "furniture",
+      "price_fishbucks": "115",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "13",
+      "type": "furniture",
+      "price_fishbucks": "130",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "14",
+      "type": "furniture",
+      "price_fishbucks": "495",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "15",
+      "type": "furniture",
+      "price_fishbucks": "230",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "16",
+      "type": "furniture",
+      "price_fishbucks": "160",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "17",
+      "type": "wall",
+      "price_fishbucks": "540",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "18",
+      "type": "floor",
+      "price_fishbucks": "810",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "19",
+      "type": "furniture",
+      "price_fishbucks": "720",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "20",
+      "type": "furniture",
+      "price_fishbucks": "1440",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "21",
+      "type": "furniture",
+      "price_fishbucks": "450",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "22",
+      "type": "furniture",
+      "price_fishbucks": "1260",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "23",
+      "type": "furniture",
+      "price_fishbucks": "585",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "24",
+      "type": "furniture",
+      "price_fishbucks": "900",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "25",
+      "type": "furniture",
+      "price_fishbucks": "1800",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "26",
+      "type": "furniture",
+      "price_fishbucks": "495",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "27",
+      "type": "furniture",
+      "price_fishbucks": "765",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "28",
+      "type": "furniture",
+      "price_fishbucks": "900",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "29",
+      "type": "wall",
+      "price_fishbucks": "720",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "30",
+      "type": "floor",
+      "price_fishbucks": "1120",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "31",
+      "type": "furniture",
+      "price_fishbucks": "640",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "32",
+      "type": "furniture",
+      "price_fishbucks": "2600",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "33",
+      "type": "furniture",
+      "price_fishbucks": "1440",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "34",
+      "type": "furniture",
+      "price_fishbucks": "1280",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "35",
+      "type": "furniture",
+      "price_fishbucks": "2560",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "36",
+      "type": "furniture",
+      "price_fishbucks": "1600",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "37",
+      "type": "furniture",
+      "price_fishbucks": "3280",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "38",
+      "type": "furniture",
+      "price_fishbucks": "400",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "39",
+      "type": "furniture",
+      "price_fishbucks": "2320",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "40",
+      "type": "furniture",
+      "price_fishbucks": "2800",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "41",
+      "type": "furniture",
+      "price_fishbucks": "2120",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "42",
+      "type": "furniture",
+      "price_fishbucks": "1150",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "43",
+      "type": "furniture",
+      "price_fishbucks": "1800",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "44",
+      "type": "furniture",
+      "price_fishbucks": "2240",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "45",
+      "type": "furniture",
+      "price_fishbucks": "2100",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "46",
+      "type": "furniture",
+      "price_fishbucks": "400",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "47",
+      "type": "furniture",
+      "price_fishbucks": "950",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "48",
+      "type": "furniture",
+      "price_fishbucks": "1240",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "49",
+      "type": "furniture",
+      "price_fishbucks": "1600",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "50",
+      "type": "furniture",
+      "price_fishbucks": "1060",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "51",
+      "type": "furniture",
+      "price_fishbucks": "15000",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "52",
+      "type": "furniture",
+      "price_fishbucks": "6300",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "53",
+      "type": "furniture",
+      "price_fishbucks": "8700",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "54",
+      "type": "furniture",
+      "price_fishbucks": "9600",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "55",
+      "type": "furniture",
+      "price_fishbucks": "13200",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "56",
+      "type": "furniture",
+      "price_fishbucks": "6600",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "57",
+      "type": "furniture",
+      "price_fishbucks": "9000",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "58",
+      "type": "furniture",
+      "price_fishbucks": "15900",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "59",
+      "type": "furniture",
+      "price_fishbucks": "14000",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "60",
+      "type": "furniture",
+      "price_fishbucks": "27000",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "61",
+      "type": "furniture",
+      "price_fishbucks": "7500",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "62",
+      "type": "wall",
+      "price_fishbucks": "5400",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "63",
+      "type": "floor",
+      "price_fishbucks": "16900",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "64",
+      "type": "wall",
+      "price_fishbucks": "560",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "65",
+      "type": "floor",
+      "price_fishbucks": "1400",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "66",
+      "type": "furniture",
+      "price_fishbucks": "670",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "67",
+      "type": "furniture",
+      "price_fishbucks": "1400",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "68",
+      "type": "furniture",
+      "price_fishbucks": "450",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "69",
+      "type": "furniture",
+      "price_fishbucks": "840",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "70",
+      "type": "furniture",
+      "price_fishbucks": "1395",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "71",
+      "type": "furniture",
+      "price_fishbucks": "1650",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "72",
+      "type": "furniture",
+      "price_fishbucks": "300",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "73",
+      "type": "furniture",
+      "price_fishbucks": "800",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "74",
+      "type": "furniture",
+      "price_fishbucks": "375",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "75",
+      "type": "furniture",
+      "price_fishbucks": "1650",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "76",
+      "type": "furniture",
+      "price_fishbucks": "980",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "77",
+      "type": "furniture",
+      "price_fishbucks": "420",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "78",
+      "type": "furniture",
+      "price_fishbucks": "1700",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "79",
+      "type": "furniture",
+      "price_fishbucks": "1100",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "80",
+      "type": "furniture",
+      "price_fishbucks": "1950",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "81",
+      "type": "furniture",
+      "price_fishbucks": "500",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "82",
+      "type": "furniture",
+      "price_fishbucks": "1700",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "83",
+      "type": "floor",
+      "price_fishbucks": "1350",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "84",
+      "type": "wall",
+      "price_fishbucks": "1700",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "85",
+      "type": "wall",
+      "price_fishbucks": "625",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "86",
+      "type": "wall",
+      "price_fishbucks": "300",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "87",
+      "type": "wall",
+      "price_fishbucks": "850",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "88",
+      "type": "wall",
+      "price_fishbucks": "275",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "89",
+      "type": "wall",
+      "price_fishbucks": "350",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "90",
+      "type": "wall",
+      "price_fishbucks": "1575",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "91",
+      "type": "floor",
+      "price_fishbucks": "940",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "92",
+      "type": "furniture",
+      "price_fishbucks": "12000",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "93",
+      "type": "furniture",
+      "price_fishbucks": "1450",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "94",
+      "type": "furniture",
+      "price_fishbucks": "2200",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "95",
+      "type": "furniture",
+      "price_fishbucks": "550",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "96",
+      "type": "furniture",
+      "price_fishbucks": "1725",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "97",
+      "type": "furniture",
+      "price_fishbucks": "2300",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "98",
+      "type": "furniture",
+      "price_fishbucks": "380",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "99",
+      "type": "furniture",
+      "price_fishbucks": "740",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "100",
+      "type": "furniture",
+      "price_fishbucks": "1400",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "101",
+      "type": "furniture",
+      "price_fishbucks": "1150",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "102",
+      "type": "furniture",
+      "price_fishbucks": "25000",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "103",
+      "type": "furniture",
+      "price_fishbucks": "1400",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "104",
+      "type": "furniture",
+      "price_fishbucks": "975",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "105",
+      "type": "furniture",
+      "price_fishbucks": "605",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "106",
+      "type": "furniture",
+      "price_fishbucks": "720",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "107",
+      "type": "furniture",
+      "price_fishbucks": "475",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "108",
+      "type": "furniture",
+      "price_fishbucks": "740",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "109",
+      "type": "furniture",
+      "price_fishbucks": "740",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "110",
+      "type": "furniture",
+      "price_fishbucks": "1000",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "111",
+      "type": "furniture",
+      "price_fishbucks": "550",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "112",
+      "type": "furniture",
+      "price_fishbucks": "625",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "113",
+      "type": "furniture",
+      "price_fishbucks": "780",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "114",
+      "type": "furniture",
+      "price_fishbucks": "695",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "115",
+      "type": "furniture",
+      "price_fishbucks": "990",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "116",
+      "type": "furniture",
+      "price_fishbucks": "735",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "117",
+      "type": "furniture",
+      "price_fishbucks": "3000",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "118",
+      "type": "furniture",
+      "price_fishbucks": "4000",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "119",
+      "type": "furniture",
+      "price_fishbucks": "6000",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "120",
+      "type": "furniture",
+      "price_fishbucks": "8000",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "121",
+      "type": "furniture",
+      "price_fishbucks": "10000",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "122",
+      "type": "furniture",
+      "price_fishbucks": "12000",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "123",
+      "type": "furniture",
+      "price_fishbucks": "14000",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "124",
+      "type": "furniture",
+      "price_fishbucks": "16000",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "125",
+      "type": "furniture",
+      "price_fishbucks": "18000",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "126",
+      "type": "furniture",
+      "price_fishbucks": "500",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "127",
+      "type": "furniture",
+      "price_fishbucks": "1600",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "128",
+      "type": "furniture",
+      "price_fishbucks": "2000",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "129",
+      "type": "furniture",
+      "price_fishbucks": "2400",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "130",
+      "type": "furniture",
+      "price_fishbucks": "0",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "131",
+      "type": "wall",
+      "price_fishbucks": "2100",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "132",
+      "type": "floor",
+      "price_fishbucks": "1200",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "133",
+      "type": "floor",
+      "price_fishbucks": "2400",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "134",
+      "type": "floor",
+      "price_fishbucks": "815",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "135",
+      "type": "floor",
+      "price_fishbucks": "650",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "136",
+      "type": "floor",
+      "price_fishbucks": "1150",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "137",
+      "type": "floor",
+      "price_fishbucks": "2800",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "138",
+      "type": "floor",
+      "price_fishbucks": "2000",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "139",
+      "type": "floor",
+      "price_fishbucks": "1600",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "140",
+      "type": "floor",
+      "price_fishbucks": "1400",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "141",
+      "type": "floor",
+      "price_fishbucks": "800",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "142",
+      "type": "floor",
+      "price_fishbucks": "600",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "143",
+      "type": "furniture",
+      "price_fishbucks": "275",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "144",
+      "type": "furniture",
+      "price_fishbucks": "165",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "145",
+      "type": "furniture",
+      "price_fishbucks": "7000",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "146",
+      "type": "furniture",
+      "price_fishbucks": "350",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "147",
+      "type": "furniture",
+      "price_fishbucks": "1200",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "148",
+      "type": "furniture",
+      "price_fishbucks": "900",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "149",
+      "type": "furniture",
+      "price_fishbucks": "200",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "150",
+      "type": "furniture",
+      "price_fishbucks": "750",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "151",
+      "type": "furniture",
+      "price_fishbucks": "900",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "152",
+      "type": "furniture",
+      "price_fishbucks": "800",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "153",
+      "type": "furniture",
+      "price_fishbucks": "120",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "154",
+      "type": "furniture",
+      "price_fishbucks": "800",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "155",
+      "type": "furniture",
+      "price_fishbucks": "320",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "156",
+      "type": "furniture",
+      "price_fishbucks": "1100",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "157",
+      "type": "furniture",
+      "price_fishbucks": "540",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "158",
+      "type": "furniture",
+      "price_fishbucks": "1330",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "159",
+      "type": "furniture",
+      "price_fishbucks": "230",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "160",
+      "type": "furniture",
+      "price_fishbucks": "520",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "161",
+      "type": "furniture",
+      "price_fishbucks": "770",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "162",
+      "type": "furniture",
+      "price_fishbucks": "180",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "170",
+      "type": "wall",
+      "price_fishbucks": "400",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "171",
+      "type": "floor",
+      "price_fishbucks": "550",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "172",
+      "type": "wall",
+      "price_fishbucks": "350",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "173",
+      "type": "floor",
+      "price_fishbucks": "720",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_DECORATION_SHOP"
+    },
+    {
+      "id": "174",
+      "type": "furniture",
+      "price_fishbucks": "400",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "175",
+      "type": "furniture",
+      "price_fishbucks": "800",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "176",
+      "type": "furniture",
+      "price_fishbucks": "1200",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "177",
+      "type": "furniture",
+      "price_fishbucks": "1600",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "178",
+      "type": "furniture",
+      "price_fishbucks": "2000",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "179",
+      "type": "furniture",
+      "price_fishbucks": "1300",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "180",
+      "type": "furniture",
+      "price_fishbucks": "450",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_MISSION_REWARD"
+    },
+    {
+      "id": "181",
+      "type": "wall",
+      "price_fishbucks": "550",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "182",
+      "type": "floor",
+      "price_fishbucks": "100",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "183",
+      "type": "furniture",
+      "price_fishbucks": "920",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "184",
+      "type": "furniture",
+      "price_fishbucks": "200",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "185",
+      "type": "furniture",
+      "price_fishbucks": "1420",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "186",
+      "type": "furniture",
+      "price_fishbucks": "700",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "187",
+      "type": "furniture",
+      "price_fishbucks": "350",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "188",
+      "type": "furniture",
+      "price_fishbucks": "220",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "189",
+      "type": "furniture",
+      "price_fishbucks": "1100",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "190",
+      "type": "furniture",
+      "price_fishbucks": "400",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "191",
+      "type": "furniture",
+      "price_fishbucks": "1700",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "192",
+      "type": "furniture",
+      "price_fishbucks": "840",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "193",
+      "type": "wall",
+      "price_fishbucks": "980",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "194",
+      "type": "floor",
+      "price_fishbucks": "220",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "195",
+      "type": "furniture",
+      "price_fishbucks": "1250",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "196",
+      "type": "furniture",
+      "price_fishbucks": "440",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "197",
+      "type": "furniture",
+      "price_fishbucks": "1950",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "198",
+      "type": "furniture",
+      "price_fishbucks": "150",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "199",
+      "type": "furniture",
+      "price_fishbucks": "160",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "200",
+      "type": "furniture",
+      "price_fishbucks": "620",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "201",
+      "type": "furniture",
+      "price_fishbucks": "850",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "202",
+      "type": "furniture",
+      "price_fishbucks": "250",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "203",
+      "type": "furniture",
+      "price_fishbucks": "4400",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "204",
+      "type": "furniture",
+      "price_fishbucks": "1290",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "205",
+      "type": "wall",
+      "price_fishbucks": "490",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "206",
+      "type": "floor",
+      "price_fishbucks": "3050",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "207",
+      "type": "furniture",
+      "price_fishbucks": "770",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "208",
+      "type": "furniture",
+      "price_fishbucks": "100",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "209",
+      "type": "furniture",
+      "price_fishbucks": "110",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "210",
+      "type": "furniture",
+      "price_fishbucks": "130",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "211",
+      "type": "furniture",
+      "price_fishbucks": "150",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "212",
+      "type": "furniture",
+      "price_fishbucks": "980",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "213",
+      "type": "furniture",
+      "price_fishbucks": "2900",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "214",
+      "type": "furniture",
+      "price_fishbucks": "300",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "215",
+      "type": "furniture",
+      "price_fishbucks": "750",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "216",
+      "type": "furniture",
+      "price_fishbucks": "1330",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "217",
+      "type": "wall",
+      "price_fishbucks": "3000",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "218",
+      "type": "floor",
+      "price_fishbucks": "900",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "219",
+      "type": "furniture",
+      "price_fishbucks": "12000",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "220",
+      "type": "furniture",
+      "price_fishbucks": "2950",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "221",
+      "type": "furniture",
+      "price_fishbucks": "500",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "222",
+      "type": "furniture",
+      "price_fishbucks": "900",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "223",
+      "type": "furniture",
+      "price_fishbucks": "880",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "224",
+      "type": "furniture",
+      "price_fishbucks": "1400",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "225",
+      "type": "furniture",
+      "price_fishbucks": "20000",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "226",
+      "type": "furniture",
+      "price_fishbucks": "3000",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "227",
+      "type": "furniture",
+      "price_fishbucks": "2970",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "228",
+      "type": "furniture",
+      "price_fishbucks": "2950",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "229",
+      "type": "wall",
+      "price_fishbucks": "1250",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "230",
+      "type": "floor",
+      "price_fishbucks": "1350",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "231",
+      "type": "furniture",
+      "price_fishbucks": "11000",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "232",
+      "type": "furniture",
+      "price_fishbucks": "620",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "233",
+      "type": "furniture",
+      "price_fishbucks": "890",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "234",
+      "type": "furniture",
+      "price_fishbucks": "3100",
+      "price_fishcoins": "-1",
+      "rarity": "4",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "235",
+      "type": "furniture",
+      "price_fishbucks": "720",
+      "price_fishcoins": "-1",
+      "rarity": "1",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "236",
+      "type": "furniture",
+      "price_fishbucks": "2250",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "237",
+      "type": "furniture",
+      "price_fishbucks": "1105",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "238",
+      "type": "furniture",
+      "price_fishbucks": "1440",
+      "price_fishcoins": "-1",
+      "rarity": "2",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "239",
+      "type": "furniture",
+      "price_fishbucks": "2950",
+      "price_fishcoins": "-1",
+      "rarity": "3",
+      "source": "EIIS_FURNITURE_FACTORY"
+    },
+    {
+      "id": "240",
+      "type": "furniture",
+      "price_fishbucks": "18000",
+      "price_fishcoins": "-1",
+      "rarity": "5",
+      "source": "EIIS_FURNITURE_FACTORY"
+    }
+  ]
+}

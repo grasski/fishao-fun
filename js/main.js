@@ -121,6 +121,8 @@ function getHashOrQueryRoute() {
         tab = 'guide_line';
       } else if (rawTab === 'shop' || rawTab === 'obchod' || rawTab === 'sklep' || rawTab === 'guide_shop' || rawTab === 'guide-shop') {
         tab = 'guide_shop';
+      } else if (rawTab === 'decorations' || rawTab === 'dekorace' || rawTab === 'dekoracje' || rawTab === 'decoratie' || rawTab === 'decoratiuni' || rawTab === 'dekorasyon' || rawTab === 'guide_decorations' || rawTab === 'guide-decorations') {
+        tab = 'guide_decorations';
       } else if (rawTab === 'all' || rawTab === 'encyklopedie' || rawTab === 'ryby') {
         tab = 'all';
       }
@@ -213,6 +215,7 @@ function switchView(view, skipSync) {
   if (view === "guide") {
     if (typeof currentGuideSubTab === "string" && currentGuideSubTab === "line") view = "guide_line";
     else if (typeof currentGuideSubTab === "string" && currentGuideSubTab === "shop") view = "guide_shop";
+    else if (typeof currentGuideSubTab === "string" && currentGuideSubTab === "decorations") view = "guide_decorations";
     else view = "guide_tree";
   }
   currentView = view;
@@ -227,7 +230,7 @@ function switchView(view, skipSync) {
 
   var isEncyclopediaView = (view === "all" || view === "locations" || view === "calendar");
   var isClubView = (view === "club_manage" || view === "club");
-  var isGuideView = (view === "guide_tree" || view === "guide_line" || view === "guide_shop");
+  var isGuideView = (view === "guide_tree" || view === "guide_line" || view === "guide_shop" || view === "guide_decorations");
 
   var tabAllEl = document.getElementById("tabAll");
   var tabMarketEl = document.getElementById("tabMarket");
@@ -248,9 +251,10 @@ function switchView(view, skipSync) {
     "club": "tabClub",
     "guide_tree": "subTabGuideTree",
     "guide_line": "subTabGuideLine",
-    "guide_shop": "subTabGuideShop"
+    "guide_shop": "subTabGuideShop",
+    "guide_decorations": "subTabGuideDecorations"
   };
-  ["subTabAll", "tabLocations", "tabCalendar", "subTabClubManage", "tabClub", "subTabGuideTree", "subTabGuideLine", "subTabGuideShop"].forEach(function (tId) {
+  ["subTabAll", "tabLocations", "tabCalendar", "subTabClubManage", "tabClub", "subTabGuideTree", "subTabGuideLine", "subTabGuideShop", "subTabGuideDecorations"].forEach(function (tId) {
     var el = document.getElementById(tId);
     if (el) el.classList.toggle("active", subTabMap[view] === tId);
   });
@@ -300,7 +304,7 @@ function switchView(view, skipSync) {
     if (secTable) secTable.style.display = "none";
     if (filterCard) filterCard.style.display = "none";
     if (typeof renderGuideView === 'function') {
-      renderGuideView(view === "guide_line" ? "line" : (view === "guide_shop" ? "shop" : "tree"));
+      renderGuideView(view === "guide_line" ? "line" : (view === "guide_shop" ? "shop" : (view === "guide_decorations" ? "decorations" : "tree")));
     }
     updateCaughtStats();
     updateScrollTopButton();
@@ -532,8 +536,8 @@ function setLanguage(lang, opts) {
   if (typeof renderPlayersList === 'function' && currentView === 'players') renderPlayersList();
   if (typeof renderBackyardProfilePicker === 'function') renderBackyardProfilePicker();
   if (typeof updateCalendarTabPill === 'function') updateCalendarTabPill();
-  if ((currentView === 'guide_tree' || currentView === 'guide_line' || currentView === 'guide_shop') && typeof renderGuideView === 'function') {
-    renderGuideView(currentView === 'guide_line' ? 'line' : (currentView === 'guide_shop' ? 'shop' : 'tree'));
+  if ((currentView === 'guide_tree' || currentView === 'guide_line' || currentView === 'guide_shop' || currentView === 'guide_decorations') && typeof renderGuideView === 'function') {
+    renderGuideView(currentView === 'guide_line' ? 'line' : (currentView === 'guide_shop' ? 'shop' : (currentView === 'guide_decorations' ? 'decorations' : 'tree')));
   }
 
   var pModal = document.getElementById("playerModalOverlay");
@@ -964,6 +968,12 @@ window.fishaoApp = {
   toggleGuideShopBestValue: typeof toggleGuideShopBestValue === 'function' ? toggleGuideShopBestValue : function () {},
   openGuideShopItemModal: typeof openGuideShopItemModal === 'function' ? openGuideShopItemModal : function () {},
   closeGuideShopItemModal: typeof closeGuideShopItemModal === 'function' ? closeGuideShopItemModal : function () {},
+  setGuideDecType: typeof setGuideDecType === 'function' ? setGuideDecType : function () {},
+  onGuideDecSearchInput: typeof onGuideDecSearchInput === 'function' ? onGuideDecSearchInput : function () {},
+  onGuideDecRarityChange: typeof onGuideDecRarityChange === 'function' ? onGuideDecRarityChange : function () {},
+  onGuideDecSourceChange: typeof onGuideDecSourceChange === 'function' ? onGuideDecSourceChange : function () {},
+  onGuideDecSortChange: typeof onGuideDecSortChange === 'function' ? onGuideDecSortChange : function () {},
+  resetGuideDecFilters: typeof resetGuideDecFilters === 'function' ? resetGuideDecFilters : function () {},
   openGuideSnapshotModal: typeof openGuideSnapshotModal === 'function' ? openGuideSnapshotModal : function () {},
   closeGuideSnapshotModal: typeof closeGuideSnapshotModal === 'function' ? closeGuideSnapshotModal : function () {},
   downloadGuideSnapshotPng: typeof downloadGuideSnapshotPng === 'function' ? downloadGuideSnapshotPng : function () {},

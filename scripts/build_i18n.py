@@ -345,6 +345,7 @@ def build_taxonomies(langs):
         ("rods.json", "rod_", True),
         ("bobbers.json", "float_", True),
         ("resources.json", "resource_", True),
+        ("decorations.json", "decoration_", False),
     ]
     for json_file, prefix, include_desc in shop_sources:
         raw_path = os.path.join(RAW_DIR, json_file)

@@ -155,12 +155,261 @@ if (typeof window !== 'undefined') {
   };
 }
 
-var currentGuideSubTab = 'tree'; // 'tree' | 'line' | 'shop'
+var GUIDE_DECORATIONS_DATA = [
+  { id: 1, type: "wall", fb: 100, fc: -1, rarity: 1, source: "EIIS_START" },
+  { id: 2, type: "wall", fb: 65, fc: -1, rarity: 1, source: "EIIS_START" },
+  { id: 3, type: "furniture", fb: 430, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 4, type: "furniture", fb: 150, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 5, type: "floor", fb: 395, fc: -1, rarity: 1, source: "EIIS_START" },
+  { id: 7, type: "floor", fb: 265, fc: -1, rarity: 1, source: "EIIS_START" },
+  { id: 8, type: "furniture", fb: 215, fc: -1, rarity: 1, source: "EIIS_START" },
+  { id: 9, type: "furniture", fb: 2400, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 10, type: "furniture", fb: 245, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 11, type: "furniture", fb: 185, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 12, type: "furniture", fb: 115, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 13, type: "furniture", fb: 130, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 14, type: "furniture", fb: 495, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 15, type: "furniture", fb: 230, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 16, type: "furniture", fb: 160, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 17, type: "wall", fb: 540, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 18, type: "floor", fb: 810, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 19, type: "furniture", fb: 720, fc: -1, rarity: 4, source: "EIIS_DECORATION_SHOP" },
+  { id: 20, type: "furniture", fb: 1440, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 21, type: "furniture", fb: 450, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 22, type: "furniture", fb: 1260, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 23, type: "furniture", fb: 585, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 24, type: "furniture", fb: 900, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 25, type: "furniture", fb: 1800, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 26, type: "furniture", fb: 495, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 27, type: "furniture", fb: 765, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 28, type: "furniture", fb: 900, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 29, type: "wall", fb: 720, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 30, type: "floor", fb: 1120, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 31, type: "furniture", fb: 640, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 32, type: "furniture", fb: 2600, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 33, type: "furniture", fb: 1440, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 34, type: "furniture", fb: 1280, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 35, type: "furniture", fb: 2560, fc: -1, rarity: 4, source: "EIIS_DECORATION_SHOP" },
+  { id: 36, type: "furniture", fb: 1600, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 37, type: "furniture", fb: 3280, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 38, type: "furniture", fb: 400, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 39, type: "furniture", fb: 2320, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 40, type: "furniture", fb: 2800, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 41, type: "furniture", fb: 2120, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 42, type: "furniture", fb: 1150, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 43, type: "furniture", fb: 1800, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 44, type: "furniture", fb: 2240, fc: -1, rarity: 4, source: "EIIS_DECORATION_SHOP" },
+  { id: 45, type: "furniture", fb: 2100, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 46, type: "furniture", fb: 400, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 47, type: "furniture", fb: 950, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 48, type: "furniture", fb: 1240, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 49, type: "furniture", fb: 1600, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 50, type: "furniture", fb: 1060, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 51, type: "furniture", fb: 15000, fc: -1, rarity: 5, source: "EIIS_DECORATION_SHOP" },
+  { id: 52, type: "furniture", fb: 6300, fc: -1, rarity: 5, source: "EIIS_DECORATION_SHOP" },
+  { id: 53, type: "furniture", fb: 8700, fc: -1, rarity: 5, source: "EIIS_DECORATION_SHOP" },
+  { id: 54, type: "furniture", fb: 9600, fc: -1, rarity: 5, source: "EIIS_DECORATION_SHOP" },
+  { id: 55, type: "furniture", fb: 13200, fc: -1, rarity: 5, source: "EIIS_DECORATION_SHOP" },
+  { id: 56, type: "furniture", fb: 6600, fc: -1, rarity: 5, source: "EIIS_DECORATION_SHOP" },
+  { id: 57, type: "furniture", fb: 9000, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 58, type: "furniture", fb: 15900, fc: -1, rarity: 4, source: "EIIS_DECORATION_SHOP" },
+  { id: 59, type: "furniture", fb: 14000, fc: -1, rarity: 4, source: "EIIS_DECORATION_SHOP" },
+  { id: 60, type: "furniture", fb: 27000, fc: -1, rarity: 4, source: "EIIS_DECORATION_SHOP" },
+  { id: 61, type: "furniture", fb: 7500, fc: -1, rarity: 5, source: "EIIS_MISSION_REWARD" },
+  { id: 62, type: "wall", fb: 5400, fc: -1, rarity: 4, source: "EIIS_DECORATION_SHOP" },
+  { id: 63, type: "floor", fb: 16900, fc: -1, rarity: 5, source: "EIIS_DECORATION_SHOP" },
+  { id: 64, type: "wall", fb: 560, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 65, type: "floor", fb: 1400, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 66, type: "furniture", fb: 670, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 67, type: "furniture", fb: 1400, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 68, type: "furniture", fb: 450, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 69, type: "furniture", fb: 840, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 70, type: "furniture", fb: 1395, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 71, type: "furniture", fb: 1650, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 72, type: "furniture", fb: 300, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 73, type: "furniture", fb: 800, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 74, type: "furniture", fb: 375, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 75, type: "furniture", fb: 1650, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 76, type: "furniture", fb: 980, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 77, type: "furniture", fb: 420, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 78, type: "furniture", fb: 1700, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 79, type: "furniture", fb: 1100, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 80, type: "furniture", fb: 1950, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 81, type: "furniture", fb: 500, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 82, type: "furniture", fb: 1700, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 83, type: "floor", fb: 1350, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 84, type: "wall", fb: 1700, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 85, type: "wall", fb: 625, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 86, type: "wall", fb: 300, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 87, type: "wall", fb: 850, fc: -1, rarity: 4, source: "EIIS_DECORATION_SHOP" },
+  { id: 88, type: "wall", fb: 275, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 89, type: "wall", fb: 350, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 90, type: "wall", fb: 1575, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 91, type: "floor", fb: 940, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 92, type: "furniture", fb: 12000, fc: -1, rarity: 5, source: "EIIS_DECORATION_SHOP" },
+  { id: 93, type: "furniture", fb: 1450, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 94, type: "furniture", fb: 2200, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 95, type: "furniture", fb: 550, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 96, type: "furniture", fb: 1725, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 97, type: "furniture", fb: 2300, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 98, type: "furniture", fb: 380, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 99, type: "furniture", fb: 740, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 100, type: "furniture", fb: 1400, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 101, type: "furniture", fb: 1150, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 102, type: "furniture", fb: 25000, fc: -1, rarity: 5, source: "EIIS_DECORATION_SHOP" },
+  { id: 103, type: "furniture", fb: 1400, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 104, type: "furniture", fb: 975, fc: -1, rarity: 2, source: "EIIS_MISSION_REWARD" },
+  { id: 105, type: "furniture", fb: 605, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 106, type: "furniture", fb: 720, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 107, type: "furniture", fb: 475, fc: -1, rarity: 1, source: "EIIS_MISSION_REWARD" },
+  { id: 108, type: "furniture", fb: 740, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 109, type: "furniture", fb: 740, fc: -1, rarity: 4, source: "EIIS_DECORATION_SHOP" },
+  { id: 110, type: "furniture", fb: 1000, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 111, type: "furniture", fb: 550, fc: -1, rarity: 1, source: "EIIS_MISSION_REWARD" },
+  { id: 112, type: "furniture", fb: 625, fc: -1, rarity: 2, source: "EIIS_MISSION_REWARD" },
+  { id: 113, type: "furniture", fb: 780, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 114, type: "furniture", fb: 695, fc: -1, rarity: 1, source: "EIIS_MISSION_REWARD" },
+  { id: 115, type: "furniture", fb: 990, fc: -1, rarity: 4, source: "EIIS_DECORATION_SHOP" },
+  { id: 116, type: "furniture", fb: 735, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 117, type: "furniture", fb: 3000, fc: -1, rarity: 3, source: "EIIS_MISSION_REWARD" },
+  { id: 118, type: "furniture", fb: 4000, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 119, type: "furniture", fb: 6000, fc: -1, rarity: 3, source: "EIIS_MISSION_REWARD" },
+  { id: 120, type: "furniture", fb: 8000, fc: -1, rarity: 4, source: "EIIS_MISSION_REWARD" },
+  { id: 121, type: "furniture", fb: 10000, fc: -1, rarity: 4, source: "EIIS_DECORATION_SHOP" },
+  { id: 122, type: "furniture", fb: 12000, fc: -1, rarity: 4, source: "EIIS_MISSION_REWARD" },
+  { id: 123, type: "furniture", fb: 14000, fc: -1, rarity: 5, source: "EIIS_DECORATION_SHOP" },
+  { id: 124, type: "furniture", fb: 16000, fc: -1, rarity: 5, source: "EIIS_MISSION_REWARD" },
+  { id: 125, type: "furniture", fb: 18000, fc: -1, rarity: 5, source: "EIIS_MISSION_REWARD" },
+  { id: 126, type: "furniture", fb: 500, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 127, type: "furniture", fb: 1600, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 128, type: "furniture", fb: 2000, fc: -1, rarity: 2, source: "EIIS_MISSION_REWARD" },
+  { id: 129, type: "furniture", fb: 2400, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 130, type: "furniture", fb: 0, fc: -1, rarity: 1, source: "EIIS_MISSION_REWARD" },
+  { id: 131, type: "wall", fb: 2100, fc: -1, rarity: 3, source: "EIIS_MISSION_REWARD" },
+  { id: 132, type: "floor", fb: 1200, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 133, type: "floor", fb: 2400, fc: -1, rarity: 4, source: "EIIS_DECORATION_SHOP" },
+  { id: 134, type: "floor", fb: 815, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 135, type: "floor", fb: 650, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 136, type: "floor", fb: 1150, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 137, type: "floor", fb: 2800, fc: -1, rarity: 4, source: "EIIS_DECORATION_SHOP" },
+  { id: 138, type: "floor", fb: 2000, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 139, type: "floor", fb: 1600, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 140, type: "floor", fb: 1400, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 141, type: "floor", fb: 800, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 142, type: "floor", fb: 600, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 143, type: "furniture", fb: 275, fc: -1, rarity: 4, source: "EIIS_DECORATION_SHOP" },
+  { id: 144, type: "furniture", fb: 165, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 145, type: "furniture", fb: 7000, fc: -1, rarity: 5, source: "EIIS_DECORATION_SHOP" },
+  { id: 146, type: "furniture", fb: 350, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 147, type: "furniture", fb: 1200, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 148, type: "furniture", fb: 900, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 149, type: "furniture", fb: 200, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 150, type: "furniture", fb: 750, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 151, type: "furniture", fb: 900, fc: -1, rarity: 3, source: "EIIS_DECORATION_SHOP" },
+  { id: 152, type: "furniture", fb: 800, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 153, type: "furniture", fb: 120, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 154, type: "furniture", fb: 800, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 155, type: "furniture", fb: 320, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 156, type: "furniture", fb: 1100, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 157, type: "furniture", fb: 540, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 158, type: "furniture", fb: 1330, fc: -1, rarity: 4, source: "EIIS_DECORATION_SHOP" },
+  { id: 159, type: "furniture", fb: 230, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 160, type: "furniture", fb: 520, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 161, type: "furniture", fb: 770, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 162, type: "furniture", fb: 180, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 170, type: "wall", fb: 400, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 171, type: "floor", fb: 550, fc: -1, rarity: 1, source: "EIIS_DECORATION_SHOP" },
+  { id: 172, type: "wall", fb: 350, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 173, type: "floor", fb: 720, fc: -1, rarity: 2, source: "EIIS_DECORATION_SHOP" },
+  { id: 174, type: "furniture", fb: 400, fc: -1, rarity: 3, source: "EIIS_MISSION_REWARD" },
+  { id: 175, type: "furniture", fb: 800, fc: -1, rarity: 3, source: "EIIS_MISSION_REWARD" },
+  { id: 176, type: "furniture", fb: 1200, fc: -1, rarity: 3, source: "EIIS_MISSION_REWARD" },
+  { id: 177, type: "furniture", fb: 1600, fc: -1, rarity: 3, source: "EIIS_MISSION_REWARD" },
+  { id: 178, type: "furniture", fb: 2000, fc: -1, rarity: 3, source: "EIIS_MISSION_REWARD" },
+  { id: 179, type: "furniture", fb: 1300, fc: -1, rarity: 3, source: "EIIS_MISSION_REWARD" },
+  { id: 180, type: "furniture", fb: 450, fc: -1, rarity: 3, source: "EIIS_MISSION_REWARD" },
+  { id: 181, type: "wall", fb: 550, fc: -1, rarity: 2, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 182, type: "floor", fb: 100, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 183, type: "furniture", fb: 920, fc: -1, rarity: 3, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 184, type: "furniture", fb: 200, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 185, type: "furniture", fb: 1420, fc: -1, rarity: 4, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 186, type: "furniture", fb: 700, fc: -1, rarity: 2, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 187, type: "furniture", fb: 350, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 188, type: "furniture", fb: 220, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 189, type: "furniture", fb: 1100, fc: -1, rarity: 3, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 190, type: "furniture", fb: 400, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 191, type: "furniture", fb: 1700, fc: -1, rarity: 4, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 192, type: "furniture", fb: 840, fc: -1, rarity: 2, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 193, type: "wall", fb: 980, fc: -1, rarity: 3, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 194, type: "floor", fb: 220, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 195, type: "furniture", fb: 1250, fc: -1, rarity: 3, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 196, type: "furniture", fb: 440, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 197, type: "furniture", fb: 1950, fc: -1, rarity: 4, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 198, type: "furniture", fb: 150, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 199, type: "furniture", fb: 160, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 200, type: "furniture", fb: 620, fc: -1, rarity: 2, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 201, type: "furniture", fb: 850, fc: -1, rarity: 2, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 202, type: "furniture", fb: 250, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 203, type: "furniture", fb: 4400, fc: -1, rarity: 5, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 204, type: "furniture", fb: 1290, fc: -1, rarity: 3, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 205, type: "wall", fb: 490, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 206, type: "floor", fb: 3050, fc: -1, rarity: 5, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 207, type: "furniture", fb: 770, fc: -1, rarity: 2, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 208, type: "furniture", fb: 100, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 209, type: "furniture", fb: 110, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 210, type: "furniture", fb: 130, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 211, type: "furniture", fb: 150, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 212, type: "furniture", fb: 980, fc: -1, rarity: 3, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 213, type: "furniture", fb: 2900, fc: -1, rarity: 4, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 214, type: "furniture", fb: 300, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 215, type: "furniture", fb: 750, fc: -1, rarity: 2, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 216, type: "furniture", fb: 1330, fc: -1, rarity: 3, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 217, type: "wall", fb: 3000, fc: -1, rarity: 4, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 218, type: "floor", fb: 900, fc: -1, rarity: 2, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 219, type: "furniture", fb: 12000, fc: -1, rarity: 5, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 220, type: "furniture", fb: 2950, fc: -1, rarity: 4, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 221, type: "furniture", fb: 500, fc: -1, rarity: 2, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 222, type: "furniture", fb: 900, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 223, type: "furniture", fb: 880, fc: -1, rarity: 2, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 224, type: "furniture", fb: 1400, fc: -1, rarity: 3, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 225, type: "furniture", fb: 20000, fc: -1, rarity: 5, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 226, type: "furniture", fb: 3000, fc: -1, rarity: 4, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 227, type: "furniture", fb: 2970, fc: -1, rarity: 4, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 228, type: "furniture", fb: 2950, fc: -1, rarity: 4, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 229, type: "wall", fb: 1250, fc: -1, rarity: 3, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 230, type: "floor", fb: 1350, fc: -1, rarity: 3, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 231, type: "furniture", fb: 11000, fc: -1, rarity: 5, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 232, type: "furniture", fb: 620, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 233, type: "furniture", fb: 890, fc: -1, rarity: 2, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 234, type: "furniture", fb: 3100, fc: -1, rarity: 4, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 235, type: "furniture", fb: 720, fc: -1, rarity: 1, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 236, type: "furniture", fb: 2250, fc: -1, rarity: 3, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 237, type: "furniture", fb: 1105, fc: -1, rarity: 2, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 238, type: "furniture", fb: 1440, fc: -1, rarity: 2, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 239, type: "furniture", fb: 2950, fc: -1, rarity: 3, source: "EIIS_FURNITURE_FACTORY" },
+  { id: 240, type: "furniture", fb: 18000, fc: -1, rarity: 5, source: "EIIS_FURNITURE_FACTORY" }
+];
+
+if (typeof window !== 'undefined') {
+  window.FISHAO_GUIDE_DATA = {
+    tree: GUIDE_TREE_DATA,
+    line: GUIDE_LINE_DATA,
+    shop: GUIDE_SHOP_DATA,
+    decorations: GUIDE_DECORATIONS_DATA
+  };
+}
+
+var currentGuideSubTab = 'tree'; // 'tree' | 'line' | 'shop' | 'decorations'
 var guideShopCategory = 'baits'; // 'baits' | 'rods' | 'bobbers' | 'resources'
 var guideShopSearchQuery = '';
 var guideShopFbOnly = false;
 var guideShopBaitCategoryFilter = '';
 var guideShopBestValueOnly = false;
+var guideDecTypeFilter = 'all'; // 'all' | 'furniture' | 'floor' | 'wall'
+var guideDecSearchQuery = '';
+var guideDecRarityFilter = ''; // '' | '1' | '2' | '3' | '4' | '5'
+var guideDecSourceFilter = ''; // '' | 'EIIS_DECORATION_SHOP' | 'EIIS_FURNITURE_FACTORY' | 'EIIS_MISSION_REWARD' | 'EIIS_START'
+var guideDecSortBy = 'id_asc'; // 'id_asc' | 'name_asc' | 'price_asc' | 'price_desc' | 'rarity_desc' | 'rarity_asc'
 var guideTreeFromLevel = 1;
 var guideTreeToLevel = 20;
 var guideLineFromLevel = 1;
@@ -761,10 +1010,16 @@ function getShopItemTextSafe(key, fallback) {
     var txt = window.FISHAO_I18N.getShopItemText(key);
     if (txt) return txt;
   }
-  return fallback || key;
+  return fallback !== undefined ? fallback : key;
 }
 
 function renderShopItemImage(kind, id, altText) {
+  if (kind === 'decoration') {
+    var decSrc = 'https://play.fishao.net/data/image/private_house/graphics_128x128_' + id + '.png';
+    return '<div class="shop-img-box is-decoration">' +
+      '<img src="' + escapeHtml(decSrc) + '" alt="' + escapeHtml(altText) + '" class="shop-img" loading="lazy" decoding="async" onerror="this.style.display=\'none\';">' +
+    '</div>';
+  }
   var localSrc = '/images/shop_' + kind + '_' + id + '.webp';
   var remoteMap = {
     bait: 'https://play.fishao.net/data/image/baits/bait_56x56_' + id + '.png',
@@ -1157,11 +1412,277 @@ function renderGuideShopTable() {
   }).join('');
 }
 
+function getDecorationTypeLabel(type) {
+  if (type === 'floor') return t('guide_dec_cat_floor');
+  if (type === 'wall') return t('guide_dec_cat_wall');
+  return t('guide_dec_cat_furniture');
+}
+
+function renderDecorationTypeBadge(type) {
+  var cls = (type === 'floor' || type === 'wall') ? ('type-' + type) : 'type-furniture';
+  return '<span class="dec-type-badge ' + cls + '">' + escapeHtml(getDecorationTypeLabel(type)) + '</span>';
+}
+
+function getDecorationRarityLabel(rarity) {
+  var r = parseInt(rarity, 10);
+  if (r >= 1 && r <= 5) return t('guide_dec_rarity_' + r);
+  return t('guide_dec_rarity_1');
+}
+
+function renderDecorationRarityBadge(rarity) {
+  var r = Math.max(1, Math.min(5, parseInt(rarity, 10) || 1));
+  var stars = '★★★★★'.slice(0, r);
+  return '<span class="dec-rarity-badge rarity-' + r + '">' +
+    '<span class="dec-rarity-stars">' + stars + '</span>' +
+    '<span>' + escapeHtml(getDecorationRarityLabel(r)) + '</span>' +
+  '</span>';
+}
+
+function getDecorationSourceMeta(source) {
+  var map = {
+    EIIS_DECORATION_SHOP: { key: 'guide_dec_src_shop', cls: 'src-shop' },
+    EIIS_FURNITURE_FACTORY: { key: 'guide_dec_src_factory', cls: 'src-factory' },
+    EIIS_MISSION_REWARD: { key: 'guide_dec_src_mission', cls: 'src-mission' },
+    EIIS_START: { key: 'guide_dec_src_start', cls: 'src-start' }
+  };
+  return map[source] || { key: 'guide_dec_src_shop', cls: 'src-shop' };
+}
+
+function renderDecorationSourceBadge(source) {
+  var meta = getDecorationSourceMeta(source);
+  return '<span class="dec-source-badge ' + meta.cls + '">' + escapeHtml(t(meta.key)) + '</span>';
+}
+
+function formatDecorationPriceFbHtml(fbVal) {
+  var fb = Number(fbVal);
+  if (isFinite(fb) && fb === 0) {
+    return '<span class="shop-free-badge">' + escapeHtml(t('guide_shop_free')) + '</span>';
+  }
+  return formatShopPriceFbHtml(fbVal);
+}
+
+function matchesDecorationSearch(item, qNorm) {
+  var mainName = getShopItemTextSafe('decoration_' + item.id, '#' + item.id);
+  if (normStr(mainName).indexOf(qNorm) !== -1) return true;
+  var i18n = typeof window !== 'undefined' ? window.FISHAO_I18N : null;
+  var entry = i18n && i18n.shop && i18n.shop['decoration_' + item.id];
+  if (entry && typeof entry === 'object') {
+    var keys = Object.keys(entry);
+    for (var i = 0; i < keys.length; i++) {
+      if (normStr(entry[keys[i]]).indexOf(qNorm) !== -1) return true;
+    }
+  }
+  if (normStr(getDecorationTypeLabel(item.type)).indexOf(qNorm) !== -1) return true;
+  if (normStr(getDecorationRarityLabel(item.rarity)).indexOf(qNorm) !== -1) return true;
+  var srcMeta = getDecorationSourceMeta(item.source);
+  if (normStr(t(srcMeta.key)).indexOf(qNorm) !== -1) return true;
+  return false;
+}
+
+function getFilteredDecorations() {
+  var qNorm = normStr(guideDecSearchQuery || '');
+  var curLang = typeof getLang === 'function' ? getLang() : 'cs';
+  var filtered = GUIDE_DECORATIONS_DATA.filter(function (item) {
+    if (guideDecTypeFilter !== 'all' && item.type !== guideDecTypeFilter) return false;
+    if (guideDecRarityFilter && String(item.rarity) !== String(guideDecRarityFilter)) return false;
+    if (guideDecSourceFilter && item.source !== guideDecSourceFilter) return false;
+    if (qNorm && !matchesDecorationSearch(item, qNorm)) return false;
+    return true;
+  });
+  filtered.sort(function (a, b) {
+    if (guideDecSortBy === 'name_asc') {
+      var na = getShopItemTextSafe('decoration_' + a.id, '#' + a.id);
+      var nb = getShopItemTextSafe('decoration_' + b.id, '#' + b.id);
+      var cmp = String(na).localeCompare(String(nb), curLang);
+      return cmp !== 0 ? cmp : (a.id - b.id);
+    }
+    if (guideDecSortBy === 'price_asc') {
+      return a.fb !== b.fb ? (a.fb - b.fb) : (a.id - b.id);
+    }
+    if (guideDecSortBy === 'price_desc') {
+      return a.fb !== b.fb ? (b.fb - a.fb) : (a.id - b.id);
+    }
+    if (guideDecSortBy === 'rarity_desc') {
+      return a.rarity !== b.rarity ? (b.rarity - a.rarity) : (a.fb !== b.fb ? (b.fb - a.fb) : (a.id - b.id));
+    }
+    if (guideDecSortBy === 'rarity_asc') {
+      return a.rarity !== b.rarity ? (a.rarity - b.rarity) : (a.fb !== b.fb ? (a.fb - b.fb) : (a.id - b.id));
+    }
+    return a.id - b.id;
+  });
+  return filtered;
+}
+
+function setGuideDecType(type) {
+  var allowed = ['all', 'furniture', 'floor', 'wall'];
+  guideDecTypeFilter = allowed.indexOf(type) !== -1 ? type : 'all';
+  renderGuideView('decorations');
+}
+
+function onGuideDecSearchInput(val) {
+  guideDecSearchQuery = val || '';
+  renderGuideDecorationsTable();
+}
+
+function onGuideDecRarityChange(val) {
+  guideDecRarityFilter = val || '';
+  renderGuideDecorationsTable();
+}
+
+function onGuideDecSourceChange(val) {
+  guideDecSourceFilter = val || '';
+  renderGuideDecorationsTable();
+}
+
+function onGuideDecSortChange(val) {
+  guideDecSortBy = val || 'id_asc';
+  renderGuideDecorationsTable();
+}
+
+function resetGuideDecFilters() {
+  guideDecTypeFilter = 'all';
+  guideDecSearchQuery = '';
+  guideDecRarityFilter = '';
+  guideDecSourceFilter = '';
+  guideDecSortBy = 'id_asc';
+  renderGuideView('decorations');
+}
+
+function renderGuideDecorationsToolbar() {
+  var box = document.getElementById('guideCalcBox');
+  if (!box) return;
+
+  var counts = { all: GUIDE_DECORATIONS_DATA.length, furniture: 0, floor: 0, wall: 0 };
+  GUIDE_DECORATIONS_DATA.forEach(function (d) {
+    if (counts[d.type] !== undefined) counts[d.type]++;
+  });
+
+  var types = [
+    { key: 'all', label: t('guide_dec_type_all', { count: counts.all }) },
+    { key: 'furniture', label: t('guide_dec_type_furniture', { count: counts.furniture }) },
+    { key: 'floor', label: t('guide_dec_type_floor', { count: counts.floor }) },
+    { key: 'wall', label: t('guide_dec_type_wall', { count: counts.wall }) }
+  ];
+
+  var pillsHtml = types.map(function (tp) {
+    var cls = 'pill-btn' + (guideDecTypeFilter === tp.key ? ' active' : '');
+    return '<button type="button" class="' + cls + '" onclick="window.fishaoApp.setGuideDecType(\'' + tp.key + '\')">' + escapeHtml(tp.label) + '</button>';
+  }).join('');
+
+  var rarityOpts = '<option value="">' + escapeHtml(t('guide_dec_all_rarities')) + '</option>';
+  for (var r = 1; r <= 5; r++) {
+    var rSel = (String(guideDecRarityFilter) === String(r)) ? ' selected' : '';
+    rarityOpts += '<option value="' + r + '"' + rSel + '>' + '★★★★★'.slice(0, r) + ' ' + escapeHtml(t('guide_dec_rarity_' + r)) + '</option>';
+  }
+
+  var sources = [
+    { val: 'EIIS_DECORATION_SHOP', key: 'guide_dec_src_shop' },
+    { val: 'EIIS_FURNITURE_FACTORY', key: 'guide_dec_src_factory' },
+    { val: 'EIIS_MISSION_REWARD', key: 'guide_dec_src_mission' },
+    { val: 'EIIS_START', key: 'guide_dec_src_start' }
+  ];
+  var sourceOpts = '<option value="">' + escapeHtml(t('guide_dec_all_sources')) + '</option>' +
+    sources.map(function (s) {
+      var sSel = (guideDecSourceFilter === s.val) ? ' selected' : '';
+      return '<option value="' + escapeHtml(s.val) + '"' + sSel + '>' + escapeHtml(t(s.key)) + '</option>';
+    }).join('');
+
+  var sortModes = [
+    { val: 'id_asc', key: 'guide_dec_sort_id' },
+    { val: 'name_asc', key: 'guide_dec_sort_name' },
+    { val: 'price_asc', key: 'guide_dec_sort_price_asc' },
+    { val: 'price_desc', key: 'guide_dec_sort_price_desc' },
+    { val: 'rarity_desc', key: 'guide_dec_sort_rarity_desc' },
+    { val: 'rarity_asc', key: 'guide_dec_sort_rarity_asc' }
+  ];
+  var sortOpts = sortModes.map(function (sm) {
+    var smSel = (guideDecSortBy === sm.val) ? ' selected' : '';
+    return '<option value="' + escapeHtml(sm.val) + '"' + smSel + '>' + escapeHtml(t(sm.key)) + '</option>';
+  }).join('');
+
+  box.innerHTML =
+    '<div class="shop-filter-bar">' +
+      '<div class="shop-cat-pills">' + pillsHtml + '</div>' +
+      '<div class="shop-controls-row">' +
+        '<div class="search-input-wrapper">' +
+          '<span class="search-icon">🔍</span>' +
+          '<input type="text" id="guideDecSearchInput" class="filter-control search-input" ' +
+            'value="' + escapeHtml(guideDecSearchQuery) + '" ' +
+            'placeholder="' + escapeHtml(t('guide_dec_search_ph')) + '" ' +
+            'oninput="window.fishaoApp.onGuideDecSearchInput(this.value)">' +
+        '</div>' +
+        '<select id="guideDecRaritySelect" class="filter-control dec-select-control" aria-label="' + escapeHtml(t('guide_dec_col_rarity')) + '" onchange="window.fishaoApp.onGuideDecRarityChange(this.value)">' +
+          rarityOpts +
+        '</select>' +
+        '<select id="guideDecSourceSelect" class="filter-control dec-select-control" aria-label="' + escapeHtml(t('guide_dec_col_source')) + '" onchange="window.fishaoApp.onGuideDecSourceChange(this.value)">' +
+          sourceOpts +
+        '</select>' +
+        '<select id="guideDecSortSelect" class="filter-control dec-select-control" onchange="window.fishaoApp.onGuideDecSortChange(this.value)">' +
+          sortOpts +
+        '</select>' +
+        '<button type="button" class="btn-reset sm" onclick="window.fishaoApp.resetGuideDecFilters()">' +
+          escapeHtml(t('filter_btn_reset')) +
+        '</button>' +
+      '</div>' +
+    '</div>';
+}
+
+function renderGuideDecorationsTable() {
+  var thead = document.getElementById('guideTableHead');
+  var tbody = document.getElementById('guideTableBody');
+  var hintEl = document.getElementById('guideTableHint');
+  var tableCard = document.querySelector('.guide-table-card');
+  if (!thead || !tbody) return;
+
+  if (tableCard) tableCard.classList.add('is-shop');
+
+  var filtered = getFilteredDecorations();
+  if (hintEl) {
+    hintEl.textContent = t('guide_dec_showing', { shown: filtered.length, total: GUIDE_DECORATIONS_DATA.length });
+  }
+
+  thead.innerHTML = '<tr>' +
+    '<th style="width:82px;">' + escapeHtml(t('guide_shop_col_img')) + '</th>' +
+    '<th>' + escapeHtml(t('guide_dec_col_name')) + '</th>' +
+    '<th>' + escapeHtml(t('guide_shop_col_cat')) + '</th>' +
+    '<th>' + escapeHtml(t('guide_dec_col_rarity')) + '</th>' +
+    '<th>' + escapeHtml(t('guide_dec_col_source')) + '</th>' +
+    '<th>' + escapeHtml(t('guide_shop_col_price_fb')) + '</th>' +
+  '</tr>';
+
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 28px 14px; color: var(--text-muted);">' +
+      escapeHtml(t('guide_dec_empty')) + '</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(function (item) {
+    var name = getShopItemTextSafe('decoration_' + item.id, '#' + item.id);
+    var imgHtml = renderShopItemImage('decoration', item.id, name);
+    return '<tr onclick="window.fishaoApp.openGuideShopItemModal(\'decoration\', ' + item.id + ')">' +
+      '<td>' + imgHtml + '</td>' +
+      '<td><div class="shop-item-name-row"><span class="shop-item-title">' + escapeHtml(name) + '</span></div></td>' +
+      '<td>' + renderDecorationTypeBadge(item.type) + '</td>' +
+      '<td>' + renderDecorationRarityBadge(item.rarity) + '</td>' +
+      '<td>' + renderDecorationSourceBadge(item.source) + '</td>' +
+      '<td>' + formatDecorationPriceFbHtml(item.fb) + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
 function findShopEntryByKindAndId(kind, id) {
+  var numId = parseInt(id, 10);
+  if (kind === 'decoration') {
+    for (var di = 0; di < GUIDE_DECORATIONS_DATA.length; di++) {
+      if (GUIDE_DECORATIONS_DATA[di].id === numId) {
+        return { kind: 'decoration', cat: 'decorations', item: GUIDE_DECORATIONS_DATA[di] };
+      }
+    }
+    return null;
+  }
   var catMap = { bait: 'baits', rod: 'rods', float: 'bobbers', resource: 'resources' };
   var cat = catMap[kind];
   if (!cat || !GUIDE_SHOP_DATA[cat]) return null;
-  var numId = parseInt(id, 10);
   var arr = GUIDE_SHOP_DATA[cat];
   for (var i = 0; i < arr.length; i++) {
     if (arr[i].id === numId) {
@@ -1209,7 +1730,7 @@ function openGuideShopItemModal(kind, id) {
   var item = entry.item;
   var cat = entry.cat;
   var name = getShopItemTextSafe(kind + '_' + item.id, '#' + item.id);
-  var desc = getShopItemTextSafe(kind + '_desc_' + item.id, '');
+  var desc = (cat === 'decorations') ? '' : getShopItemTextSafe(kind + '_desc_' + item.id, '');
   var imgHtml = renderShopItemImage(kind, item.id, name);
 
   var badgesHtml = '';
@@ -1228,7 +1749,15 @@ function openGuideShopItemModal(kind, id) {
   else if (cat === 'resources') catBadgeText = t('guide_shop_cat_label_resources');
 
   var detailsCards = [];
-  if (cat === 'baits') {
+  if (cat === 'decorations') {
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_cat'), renderDecorationTypeBadge(item.type)));
+    detailsCards.push(renderShopDetailCard(t('guide_dec_col_rarity'), renderDecorationRarityBadge(item.rarity)));
+    detailsCards.push(renderShopDetailCard(t('guide_dec_col_source'), renderDecorationSourceBadge(item.source)));
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_price_fb'), formatDecorationPriceFbHtml(item.fb)));
+    if (item.fc >= 0) {
+      detailsCards.push(renderShopDetailCard(t('guide_shop_col_price_fc'), formatShopPriceFcHtml(item.fc), true));
+    }
+  } else if (cat === 'baits') {
     detailsCards.push(renderShopDetailCard(t('guide_shop_col_cat'), renderBaitTag(item.category)));
     detailsCards.push(renderShopDetailCard(t('guide_shop_col_uses'), formatShopUsesHtml(item.uses, item)));
     detailsCards.push(renderShopDetailCard(t('guide_shop_col_req_lvl'), formatShopReqLvlHtml(item.reqLvl, item)));
@@ -1248,8 +1777,10 @@ function openGuideShopItemModal(kind, id) {
     detailsCards.push(renderShopDetailCard(t('guide_shop_col_req_lvl'), formatShopReqLvlHtml(item.reqLvl)));
   }
 
-  detailsCards.push(renderShopDetailCard(t('guide_shop_col_price_fc'), formatShopPriceFcHtml(item.fc)));
-  detailsCards.push(renderShopDetailCard(t('guide_shop_col_price_fb'), formatShopPriceFbHtml(item.fb)));
+  if (cat !== 'decorations') {
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_price_fc'), formatShopPriceFcHtml(item.fc)));
+    detailsCards.push(renderShopDetailCard(t('guide_shop_col_price_fb'), formatShopPriceFbHtml(item.fb)));
+  }
 
   var overlay = ensureShopItemModalOverlay();
   var titleEl = document.getElementById('shopItemModalTitle');
@@ -1257,12 +1788,20 @@ function openGuideShopItemModal(kind, id) {
   if (titleEl) titleEl.textContent = name;
   if (bodyEl) {
     var heroCls = 'shop-detail-hero' + (cat === 'rods' && item.id === 10 ? ' is-golden' : '');
+    var heroMetaHtml = '';
+    if (cat === 'decorations') {
+      heroMetaHtml = '<div style="margin-top:6px;">' + renderDecorationTypeBadge(item.type) + '</div>';
+    } else if (cat === 'baits') {
+      heroMetaHtml = '<div style="margin-top:6px;">' + renderBaitTag(item.category) + '</div>';
+    } else {
+      heroMetaHtml = '<div style="margin-top:6px;"><span class="shop-cat-badge">' + escapeHtml(catBadgeText) + '</span></div>';
+    }
     bodyEl.innerHTML =
       '<div class="' + heroCls + '">' +
         imgHtml +
         '<div class="shop-detail-hero-info">' +
           '<div class="shop-item-name-row"><span class="shop-item-title">' + escapeHtml(name) + '</span>' + badgesHtml + '</div>' +
-          (cat === 'baits' ? '<div style="margin-top:6px;">' + renderBaitTag(item.category) + '</div>' : '<div style="margin-top:6px;"><span class="shop-cat-badge">' + escapeHtml(catBadgeText) + '</span></div>') +
+          heroMetaHtml +
         '</div>' +
       '</div>' +
       (desc ? '<div class="shop-detail-desc-box">' + escapeHtml(desc) + '</div>' : '') +
@@ -1953,6 +2492,14 @@ function renderGuideView(subType) {
     renderGuideShopBanner();
     renderGuideShopToolbar();
     renderGuideShopTable();
+    return;
+  }
+  if (subType === 'decorations') {
+    currentGuideSubTab = 'decorations';
+    if (snapBtn) snapBtn.style.display = 'none';
+    renderGuideShopBanner();
+    renderGuideDecorationsToolbar();
+    renderGuideDecorationsTable();
     return;
   }
   if (snapBtn) snapBtn.style.display = '';
