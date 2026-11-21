@@ -89,6 +89,17 @@ function toggleOnlyCaught() {
   applyFilters();
 }
 
+function toggleOnlyBackyard() {
+  if (!currentUser) {
+    showAuthNotice(t('coll_gate_title'));
+    return;
+  }
+  filterOnlyBackyard = !filterOnlyBackyard;
+  var btn = document.getElementById("btnOnlyBackyard");
+  if (btn) btn.classList.toggle("active", filterOnlyBackyard);
+  applyFilters();
+}
+
 function toggleNowActive() {
   filterNowActive = !filterNowActive;
   document.getElementById("btnNow").classList.toggle("active", filterNowActive);
@@ -218,6 +229,7 @@ function applyFilters() {
 
     if (filterUncaught && caughtFishIds.has(f.id)) return false;
     if (filterOnlyCaught && !caughtFishIds.has(f.id)) return false;
+    if (filterOnlyBackyard && !backyardFishIds.has(f.id)) return false;
 
     if (currentView === "all" || currentView === "market") {
       if (collectionFilterMode === "caught" && !caughtFishIds.has(f.id)) return false;
@@ -342,6 +354,9 @@ function applyFilters() {
   if (filterOnlyCaught) {
     filterNotes.push(t('filter_note_only_caught'));
   }
+  if (filterOnlyBackyard) {
+    filterNotes.push(t('filter_note_only_backyard'));
+  }
   if (location && currentView !== "club") {
     var locName = window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(location) : location;
     filterNotes.push(t('filter_note_location', { name: locName }));
@@ -451,6 +466,10 @@ function resetFilters() {
   filterOnlyCaught = false;
   var btnOnlyCaught = document.getElementById("btnOnlyCaught");
   if (btnOnlyCaught) btnOnlyCaught.classList.remove("active");
+
+  filterOnlyBackyard = false;
+  var btnOnlyBackyard = document.getElementById("btnOnlyBackyard");
+  if (btnOnlyBackyard) btnOnlyBackyard.classList.remove("active");
 
   var uncaughtCb = document.getElementById("filterUncaughtCheckbox");
   if (uncaughtCb) uncaughtCb.checked = false;

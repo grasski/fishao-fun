@@ -52,9 +52,80 @@ function getLocationPreviewImage(locKey) {
   };
 }
 
+var LOCATION_UNLOCK_INFO = {
+  location_1: { type: 'free', sortOrder: 1 },
+  location_2: { type: 'free', sortOrder: 2 },
+  location_3: { type: 'free', sortOrder: 3 },
+  location_4: { type: 'level', level: 10, sortOrder: 4 },
+  location_5: { type: 'level', level: 20, sortOrder: 5 },
+  location_6: { type: 'fish', fishId: 96, sortOrder: 6 },
+  location_7: { type: 'level', level: 40, sortOrder: 7 },
+  location_8: { type: 'level', level: 60, sortOrder: 8 },
+  location_9: { type: 'level', level: 80, sortOrder: 9 },
+  location_12: { type: 'level', level: 100, sortOrder: 10 },
+  location_10: { type: 'level', level: 120, sortOrder: 11 },
+  location_11: { type: 'fc', fc: 50, days: 30, sortOrder: 12 }
+};
+
 function getLocationNumericId(locKey) {
   var match = /^location_(\d+)$/.exec(String(locKey || ''));
   return match ? parseInt(match[1], 10) : 9999;
+}
+
+function getLocationSortOrder(locKey) {
+  var u = LOCATION_UNLOCK_INFO[locKey];
+  if (u && typeof u.sortOrder === 'number') return u.sortOrder;
+  return getLocationNumericId(locKey);
+}
+
+function getLocationUnlockBadgeData(locKey) {
+  var u = LOCATION_UNLOCK_INFO[locKey];
+  if (!u) return null;
+  if (u.type === 'free') {
+    var freeText = t('loc_unlock_free');
+    return {
+      type: 'free',
+      cls: 'unlock-free',
+      text: '🔓 ' + freeText,
+      title: freeText
+    };
+  }
+  if (u.type === 'level') {
+    var lvlText = t('loc_unlock_level', { level: u.level });
+    var lvlTitle = t('loc_unlock_level_title', { level: u.level });
+    return {
+      type: 'level',
+      cls: 'unlock-level',
+      text: '⭐ ' + lvlText,
+      title: lvlTitle
+    };
+  }
+  if (u.type === 'fish') {
+    var fishObj = (typeof getFishById === 'function') ? getFishById(u.fishId) : null;
+    var fishName = (fishObj && window.FISHAO_I18N && typeof window.FISHAO_I18N.getFishName === 'function')
+      ? window.FISHAO_I18N.getFishName(fishObj)
+      : (fishObj && fishObj.name ? fishObj.name : ('#' + u.fishId));
+    var fishText = t('loc_unlock_fish', { fish: fishName, id: u.fishId });
+    var fishTitle = t('loc_unlock_fish_title', { fish: fishName, id: u.fishId });
+    return {
+      type: 'fish',
+      cls: 'unlock-fish',
+      fishId: u.fishId,
+      text: '🐟 ' + fishText,
+      title: fishTitle
+    };
+  }
+  if (u.type === 'fc') {
+    var fcText = t('loc_unlock_fc_days', { fc: u.fc, days: u.days });
+    var fcTitle = t('loc_unlock_fc_days_title', { fc: u.fc, days: u.days });
+    return {
+      type: 'fc',
+      cls: 'unlock-fc',
+      text: '🪙 ' + fcText,
+      title: fcTitle
+    };
+  }
+  return null;
 }
 
 function getLocationCategoryInfo(locKey) {
@@ -107,7 +178,7 @@ function computeLocationsData() {
   });
 
   var locKeys = Object.keys(byLoc).sort(function (a, b) {
-    return getLocationNumericId(a) - getLocationNumericId(b);
+    return getLocationSortOrder(a) - getLocationSortOrder(b);
   });
 
   return locKeys.map(function (locKey) {
@@ -176,6 +247,7 @@ function computeLocationsData() {
       badgeKey: info.badgeKey,
       icon: info.icon,
       image: getLocationPreviewImage(locKey),
+      unlock: getLocationUnlockBadgeData(locKey),
       fishes: locFishes,
       total: total,
       caughtCount: caughtCount,
@@ -365,7 +437,8 @@ function renderLocationsView() {
         }
         return normStr(f.name).indexOf(qNorm) !== -1;
       });
-      if (!nameMatch && !areaMatch && !fishMatch) return false;
+      var unlockMatch = !!(loc.unlock && normStr(loc.unlock.text).indexOf(qNorm) !== -1);
+      if (!nameMatch && !areaMatch && !fishMatch && !unlockMatch) return false;
     }
     return true;
   });
@@ -471,6 +544,25 @@ function renderLocationsView() {
       '</div>';
     }
 
+    var unlockBadgeHtml = '';
+    if (loc.unlock) {
+      if (loc.unlock.type === 'fish' && loc.unlock.fishId) {
+        unlockBadgeHtml = '<button type="button" class="loc-unlock-badge ' + loc.unlock.cls + '" ' +
+          'onclick="window.fishaoApp.openPriceModal(' + Number(loc.unlock.fishId) + ')" ' +
+          'title="' + escapeHtml(loc.unlock.title) + '">' + escapeHtml(loc.unlock.text) + '</button>';
+      } else {
+        unlockBadgeHtml = '<span class="loc-unlock-badge ' + loc.unlock.cls + '" title="' +
+          escapeHtml(loc.unlock.title) + '">' + escapeHtml(loc.unlock.text) + '</span>';
+      }
+    }
+
+    var completeBadgeHtml = loc.isComplete
+      ? '<span class="loc-complete-badge">' + escapeHtml(t('loc_badge_complete')) + '</span>'
+      : '';
+    var headerRightHtml = (unlockBadgeHtml || completeBadgeHtml)
+      ? '<div class="loc-card-header-right">' + unlockBadgeHtml + completeBadgeHtml + '</div>'
+      : '';
+
     return '<article class="location-card' + (loc.isComplete ? ' is-complete' : '') + '">' +
       '<div class="loc-card-header">' +
         '<div class="loc-card-title-row">' +
@@ -480,7 +572,7 @@ function renderLocationsView() {
             '<span class="loc-category-badge cat-' + loc.category + '">' + badgeLabel + '</span>' +
           '</div>' +
         '</div>' +
-        (loc.isComplete ? '<span class="loc-complete-badge">' + escapeHtml(t('loc_badge_complete')) + '</span>' : '') +
+        headerRightHtml +
       '</div>' +
       '<div class="loc-progress-block">' +
         '<div class="loc-progress-labels">' +

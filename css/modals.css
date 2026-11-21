@@ -442,6 +442,18 @@ body.modal-open {
 .price-chart-axis-lbl.med {
   fill: #c084fc;
 }
+.price-chart-date-lbl {
+  font-size: 9.5px;
+  font-weight: 600;
+  fill: #64748b;
+  user-select: none;
+}
+.price-chart-date-lbl.start {
+  text-anchor: start;
+}
+.price-chart-date-lbl.end {
+  text-anchor: end;
+}
 .price-chart-inspector {
   display: flex;
   align-items: center;

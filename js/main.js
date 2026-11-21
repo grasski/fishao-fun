@@ -843,6 +843,7 @@ window.fishaoApp = {
   toggleTodayHighPrice: toggleTodayHighPrice,
   onTodayHighPricePctInput: onTodayHighPricePctInput,
   toggleOnlyCaught: toggleOnlyCaught,
+  toggleOnlyBackyard: toggleOnlyBackyard,
   openPriceModal: openPriceModal,
   togglePriceChartVisibility: togglePriceChartVisibility,
   closePriceModal: closePriceModal,

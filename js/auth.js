@@ -904,6 +904,18 @@ function updateAuthUI() {
     if (collBannerGuest.style.display !== wantGuestDisp) collBannerGuest.style.display = wantGuestDisp;
   }
 
+  var btnOnlyBackyard = document.getElementById("btnOnlyBackyard");
+  if (btnOnlyBackyard) {
+    var wantBackyardBtnDisp = currentUser ? "" : "none";
+    if (btnOnlyBackyard.style.display !== wantBackyardBtnDisp) {
+      btnOnlyBackyard.style.display = wantBackyardBtnDisp;
+    }
+    if (!currentUser) {
+      filterOnlyBackyard = false;
+      btnOnlyBackyard.classList.remove("active");
+    }
+  }
+
   var gatePlayers = document.getElementById("gatePlayers");
   var playersContent = document.getElementById("playersContent");
   if (gatePlayers && playersContent) {
@@ -926,6 +938,7 @@ function updateAuthUI() {
     if (adminBadge) adminBadge.style.display = "none";
     if (collBannerAuth) collBannerAuth.style.display = "none";
     if (collBannerGuest) collBannerGuest.style.display = "none";
+    if (btnOnlyBackyard) btnOnlyBackyard.style.display = "none";
     return;
   }
 

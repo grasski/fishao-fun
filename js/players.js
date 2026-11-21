@@ -1104,6 +1104,8 @@ async function toggleBackyardFish(fishId) {
   populatePlayerFishFilterDropdown();
   if (currentView === "players") {
     renderPlayersList();
+  } else if (typeof filterOnlyBackyard !== "undefined" && filterOnlyBackyard && typeof isTableViewActive === "function" && isTableViewActive() && typeof applyFilters === "function") {
+    applyFilters();
   }
 }
 

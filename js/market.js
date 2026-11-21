@@ -9,6 +9,8 @@
 var _bulkFishNameCacheLang = null;
 var _bulkFishNameCacheMap = null;
 var _selectedChartPointIdx = 0;
+var _selectedChartPointKey = "";
+var _loadingDailyMonths = new Map();
 
 function saveLocalPriceSummary(metaLastUpdated) {
   try {
@@ -725,6 +727,7 @@ function openPriceModal(fid, skipSync) {
   selectedModalFishId = fid;
   modalBaitExpandedKeys = {};
   _selectedChartPointIdx = -1;
+  _selectedChartPointKey = "";
   var fishObj = (typeof getFishById === "function") ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
   if (!fishObj) return;
 
@@ -963,16 +966,169 @@ function togglePriceChartVisibility() {
   }
 }
 
+function getCandidateMonthsForFish(fid, list) {
+  var minMonth = "2026-11";
+  var curMonth = (typeof getTodayISO === "function") ? getTodayISO().slice(0, 7) : "";
+  var maxMonth = curMonth || minMonth;
+  var earliestListMonth = "";
+
+  (list || []).forEach(function (item) {
+    if (item && typeof item.date === "string" && /^\d{4}-\d{2}/.test(item.date)) {
+      var m = item.date.slice(0, 7);
+      if (!earliestListMonth || m < earliestListMonth) earliestListMonth = m;
+      if (m > maxMonth) maxMonth = m;
+    }
+  });
+
+  var startMonth = minMonth;
+  if (earliestListMonth && earliestListMonth < startMonth) {
+    startMonth = earliestListMonth < "2026-11" ? "2026-11" : earliestListMonth;
+  }
+  if (maxMonth < startMonth) return [];
+
+  var startParts = startMonth.split("-");
+  var endParts = maxMonth.split("-");
+  var y = parseInt(startParts[0], 10);
+  var m = parseInt(startParts[1], 10);
+  var endY = parseInt(endParts[0], 10);
+  var endM = parseInt(endParts[1], 10);
+  var months = [];
+
+  while (y < endY || (y === endY && m <= endM)) {
+    months.push(y + "-" + String(m).padStart(2, "0"));
+    m++;
+    if (m > 12) {
+      m = 1;
+      y++;
+    }
+    if (months.length > 120) break;
+  }
+  return months;
+}
+
+function ensureDailyMonthsLoadedForFish(fid, list) {
+  if (!fid || !db || !Array.isArray(list) || list.length === 0) return;
+  var hasRepeated = list.some(function (item) {
+    return item && (item.count || 1) > 1;
+  });
+  if (!hasRepeated) return;
+
+  var months = getCandidateMonthsForFish(fid, list);
+  var missing = months.filter(function (mId) {
+    return !dailyMonthsCache.has(mId);
+  });
+  if (missing.length === 0) return;
+
+  var fetchPromises = missing.map(function (mId) {
+    if (_loadingDailyMonths.has(mId)) {
+      return _loadingDailyMonths.get(mId);
+    }
+    var p = (async function () {
+      try {
+        var fs = await getFirestoreModule();
+        var mRef = fs.doc(db, "fishao_market_daily", mId);
+        var mSnap = await fs.getDoc(mRef);
+        var days = (mSnap.exists() && mSnap.data() && typeof mSnap.data().days === "object")
+          ? mSnap.data().days
+          : {};
+        dailyMonthsCache.set(mId, days);
+      } catch (err) {
+        console.warn("Failed to load daily price month:", mId, err);
+      } finally {
+        _loadingDailyMonths.delete(mId);
+      }
+    })();
+    _loadingDailyMonths.set(mId, p);
+    return p;
+  });
+
+  Promise.all(fetchPromises).then(function () {
+    if (selectedModalFishId === fid) {
+      renderModalPriceScale(getNormalizedFishPrices(fid), fid);
+    }
+  });
+}
+
+function buildDailyPriceChartList(fid, list) {
+  var fidStr = (fid !== undefined && fid !== null) ? String(fid) : "";
+  var byDatePrice = Object.create(null);
+  var validPrices = Object.create(null);
+  var dailyList = [];
+
+  (list || []).forEach(function (item) {
+    if (item && isFinite(Number(item.price)) && Number(item.price) > 0) {
+      validPrices[String(Number(item.price))] = true;
+    }
+  });
+
+  if (fidStr && typeof dailyMonthsCache !== "undefined" && dailyMonthsCache && typeof dailyMonthsCache.forEach === "function") {
+    dailyMonthsCache.forEach(function (daysMap) {
+      if (!daysMap || typeof daysMap !== "object") return;
+      Object.keys(daysMap).forEach(function (dateISO) {
+        var dayBucket = daysMap[dateISO];
+        if (!dayBucket || dayBucket[fidStr] === undefined) return;
+        var prices = toDayEntryList(dayBucket[fidStr]);
+        prices.forEach(function (p) {
+          if (!validPrices[String(p)]) return;
+          var key = dateISO + "|" + String(p);
+          if (byDatePrice[key]) return;
+          var entry = { date: dateISO, price: p, count: 1 };
+          byDatePrice[key] = entry;
+          dailyList.push(entry);
+        });
+      });
+    });
+  }
+
+  (list || []).forEach(function (item) {
+    if (!item || !item.date || !isFinite(Number(item.price)) || Number(item.price) <= 0) return;
+    var p = Number(item.price);
+    var key = item.date + "|" + String(p);
+    if (!byDatePrice[key]) {
+      var entry = { date: item.date, price: p, count: 1 };
+      byDatePrice[key] = entry;
+      dailyList.push(entry);
+    }
+  });
+
+  var expandedByPrice = Object.create(null);
+  dailyList.forEach(function (entry) {
+    var pKey = String(entry.price);
+    expandedByPrice[pKey] = (expandedByPrice[pKey] || 0) + 1;
+  });
+
+  (list || []).forEach(function (item) {
+    if (!item || !item.date || !isFinite(Number(item.price)) || Number(item.price) <= 0) return;
+    var p = Number(item.price);
+    var pKey = String(p);
+    var expectedCount = Math.max(1, Number(item.count) || 1);
+    var expandedCount = expandedByPrice[pKey] || 0;
+    if (expectedCount > expandedCount) {
+      var summaryEntry = byDatePrice[item.date + "|" + pKey];
+      if (summaryEntry) {
+        summaryEntry.count = expectedCount - expandedCount + 1;
+      }
+    }
+  });
+
+  dailyList.sort(function (a, b) {
+    return String(a.date || "").localeCompare(String(b.date || "")) || (a.price - b.price);
+  });
+
+  return dailyList;
+}
+
 /**
- * Renders the visual price distribution mini-chart & touch/pointer point inspector
- * inside #modalPriceScale so values, last-seen dates, and occurrence counts are
- * readable and interactive on both mobile (tap/step) and desktop (hover/click).
+ * Renders the chronological day-by-day price chart & touch/pointer point inspector
+ * inside #modalPriceScale so values, dates, and occurrence counts are readable
+ * and interactive on both mobile (tap/step) and desktop (hover/click).
  */
 function renderModalPriceScale(list, fid) {
   var box = document.getElementById("modalPriceScale");
   if (!box) return;
   var fishId = fid || selectedModalFishId;
-  var stats = computePriceStats(list);
+  var sorted = buildDailyPriceChartList(fishId, list || []);
+  var stats = computePriceStats(sorted);
   if (!stats) {
     box.style.display = "none";
     box.classList.remove("collapsed");
@@ -1008,26 +1164,37 @@ function renderModalPriceScale(list, fid) {
     return;
   }
 
-  var sorted = list.slice().sort(function (a, b) {
-    return a.price - b.price || String(a.date || "").localeCompare(String(b.date || ""));
-  });
+  ensureDailyMonthsLoadedForFish(fishId, list || []);
 
-  // Default to the newest entry on initial open so the latest recorded price & date are immediately visible
-  if (_selectedChartPointIdx < 0 || _selectedChartPointIdx >= sorted.length) {
-    var newestItem = list[0];
-    var newestIdx = newestItem ? sorted.indexOf(newestItem) : sorted.length - 1;
-    _selectedChartPointIdx = newestIdx >= 0 ? newestIdx : sorted.length - 1;
+  // Preserve selected point across daily-archive enrichment, defaulting to the newest entry on initial open
+  var resolvedIdx = -1;
+  if (_selectedChartPointKey) {
+    for (var si = 0; si < sorted.length; si++) {
+      if ((sorted[si].date + "|" + sorted[si].price) === _selectedChartPointKey) {
+        resolvedIdx = si;
+        break;
+      }
+    }
+  }
+  if (resolvedIdx < 0) {
+    resolvedIdx = (_selectedChartPointIdx >= 0 && _selectedChartPointIdx < sorted.length)
+      ? _selectedChartPointIdx
+      : (sorted.length - 1);
+  }
+  _selectedChartPointIdx = resolvedIdx;
+  if (sorted[resolvedIdx]) {
+    _selectedChartPointKey = sorted[resolvedIdx].date + "|" + sorted[resolvedIdx].price;
   }
 
   var chartHtml = '';
   var pts = [];
   if (stats.count >= 2) {
     var W = 420;
-    var H = 124;
+    var H = 138;
     var padL = 46;
     var padR = 14;
     var padT = 14;
-    var padB = 14;
+    var padB = 24;
     var plotW = W - padL - padR;
     var plotH = H - padT - padB;
     var span = stats.max - stats.min;
@@ -1077,29 +1244,48 @@ function renderModalPriceScale(list, fid) {
       '</g>';
     }).join('');
 
-    var axisLblsHtml =
-      '<text class="price-chart-axis-lbl" x="' + (padL - 6) + '" y="' + (padT + 3) + '">' + escapeHtml(stats.max.toLocaleString(locale)) + '</text>' +
-      '<text class="price-chart-axis-lbl med" x="' + (padL - 6) + '" y="' + (Number(medY) + 3).toFixed(1) + '">' + escapeHtml(Math.round(stats.median).toLocaleString(locale)) + '</text>' +
-      '<text class="price-chart-axis-lbl" x="' + (padL - 6) + '" y="' + (Number(bottomY) + 3).toFixed(1) + '">' + escapeHtml(stats.min.toLocaleString(locale)) + '</text>';
+    var axisLblsHtml = '';
+    if (span <= 0) {
+      axisLblsHtml =
+        '<text class="price-chart-axis-lbl" x="' + (padL - 6) + '" y="' + (Number(midY) + 3).toFixed(1) + '">' + escapeHtml(stats.max.toLocaleString(locale)) + '</text>';
+    } else {
+      var showMedLbl = Math.abs(Number(medY) - padT) > 10 && Math.abs(Number(medY) - Number(bottomY)) > 10;
+      axisLblsHtml =
+        '<text class="price-chart-axis-lbl" x="' + (padL - 6) + '" y="' + (padT + 3) + '">' + escapeHtml(stats.max.toLocaleString(locale)) + '</text>' +
+        (showMedLbl
+          ? '<text class="price-chart-axis-lbl med" x="' + (padL - 6) + '" y="' + (Number(medY) + 3).toFixed(1) + '">' + escapeHtml(Math.round(stats.median).toLocaleString(locale)) + '</text>'
+          : '') +
+        '<text class="price-chart-axis-lbl" x="' + (padL - 6) + '" y="' + (Number(bottomY) + 3).toFixed(1) + '">' + escapeHtml(stats.min.toLocaleString(locale)) + '</text>';
+    }
+
+    var dateLblY = (Number(bottomY) + 15).toFixed(1);
+    var firstDate = sorted[0].date;
+    var lastDate = sorted[sorted.length - 1].date;
+    var xAxisLblsHtml =
+      '<text class="price-chart-date-lbl start" x="' + padL + '" y="' + dateLblY + '">' + escapeHtml(formatPriceDate(firstDate)) + '</text>' +
+      (lastDate !== firstDate
+        ? '<text class="price-chart-date-lbl end" x="' + (W - padR) + '" y="' + dateLblY + '">' + escapeHtml(formatPriceDate(lastDate)) + '</text>'
+        : '');
 
     chartHtml =
       '<div class="price-chart-wrap">' +
         '<svg class="price-chart-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + escapeHtml(t('modal_price_scale_title')) + '">' +
           '<defs>' +
-            '<linearGradient id="priceChartAreaGrad" x1="0" y1="0" x2="0" y2="1">' +
+            '<linearGradient id="priceChartAreaGrad" gradientUnits="userSpaceOnUse" x1="0" y1="' + topY + '" x2="0" y2="' + bottomY + '">' +
               '<stop offset="0%" stop-color="#34d399" stop-opacity="0.28"/>' +
               '<stop offset="100%" stop-color="#34d399" stop-opacity="0.02"/>' +
             '</linearGradient>' +
-            '<linearGradient id="priceChartLineGrad" x1="0" y1="0" x2="1" y2="0">' +
-              '<stop offset="0%" stop-color="#f87171"/>' +
+            '<linearGradient id="priceChartLineGrad" gradientUnits="userSpaceOnUse" x1="0" y1="' + topY + '" x2="0" y2="' + bottomY + '">' +
+              '<stop offset="0%" stop-color="#34d399"/>' +
               '<stop offset="50%" stop-color="#fbbf24"/>' +
-              '<stop offset="100%" stop-color="#34d399"/>' +
+              '<stop offset="100%" stop-color="#f87171"/>' +
             '</linearGradient>' +
           '</defs>' +
           '<line class="price-chart-grid" x1="' + padL + '" y1="' + topY + '" x2="' + (W - padR) + '" y2="' + topY + '"/>' +
           '<line class="price-chart-grid" x1="' + padL + '" y1="' + midY + '" x2="' + (W - padR) + '" y2="' + midY + '"/>' +
           '<line class="price-chart-grid" x1="' + padL + '" y1="' + bottomY + '" x2="' + (W - padR) + '" y2="' + bottomY + '"/>' +
           axisLblsHtml +
+          xAxisLblsHtml +
           '<path d="' + areaPath + '" fill="url(#priceChartAreaGrad)"/>' +
           '<line class="price-chart-ref median" x1="' + padL + '" y1="' + medY + '" x2="' + (W - padR) + '" y2="' + medY + '"><title>' + escapeHtml(medLabel + ': ' + fmt(stats.median)) + '</title></line>' +
           '<line class="price-chart-crosshair" x1="' + selPt.x.toFixed(1) + '" y1="' + topY + '" x2="' + selPt.x.toFixed(1) + '" y2="' + bottomY + '"/>' +
@@ -1139,6 +1325,9 @@ function renderModalPriceScale(list, fid) {
     if (idx < 0 || idx >= sorted.length) return;
     _selectedChartPointIdx = idx;
     var item = sorted[idx];
+    if (item) {
+      _selectedChartPointKey = item.date + "|" + item.price;
+    }
     var mainEl = box.querySelector("#priceChartInspectorMain");
     if (mainEl && item) {
       var occHtml = (item.count && item.count > 1)

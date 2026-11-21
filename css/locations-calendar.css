@@ -335,6 +335,16 @@
   line-height: 1.25;
 }
 
+.loc-card-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  flex-shrink: 0;
+  margin-left: auto;
+  text-align: right;
+}
+
 .loc-category-badge {
   display: inline-block;
   font-size: 10.5px;
@@ -354,6 +364,47 @@
 .loc-category-badge.cat-events {
   background: rgba(245, 158, 11, 0.15);
   color: #fbbf24;
+}
+
+.loc-unlock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.loc-unlock-badge.unlock-free {
+  background: rgba(16, 185, 129, 0.14);
+  border-color: rgba(16, 185, 129, 0.32);
+  color: #34d399;
+}
+.loc-unlock-badge.unlock-level {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+}
+.loc-unlock-badge.unlock-fish {
+  background: rgba(168, 85, 247, 0.16);
+  border-color: rgba(168, 85, 247, 0.4);
+  color: #e9d5ff;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.loc-unlock-badge.unlock-fish:hover {
+  background: rgba(168, 85, 247, 0.28);
+  border-color: #c084fc;
+  color: #fff;
+}
+.loc-unlock-badge.unlock-fc {
+  background: rgba(234, 179, 8, 0.16);
+  border-color: rgba(250, 204, 21, 0.42);
+  color: #fde047;
 }
 
 .loc-complete-badge {
