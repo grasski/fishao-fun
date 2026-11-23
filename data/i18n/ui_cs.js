@@ -211,6 +211,8 @@
       "modal_club_unlock": "🏰 Klubové podmínky odemčení",
       "modal_dimensions": "📏 Velikost (Min / Průměr / Max)",
       "modal_fish_detail": "🐟 Detail ryby & Fish Market",
+      "modal_fruit_recipe": "🍹 Ovocný recept (Palm Island)",
+      "fruit_recipe_badge_title": "Ovocný recept: {recipe}",
       "modal_login_notice_link": "přihlásit přes Google",
       "modal_login_notice_prefix": "🔒 Pro zadání ceny do Fish Marketu se musíš",
       "modal_market_divider": "💵 Fish Market – Výkupní ceny a historie",

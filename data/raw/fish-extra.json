@@ -1,0 +1,2000 @@
+{
+    "0": {
+        "name": "Piraňa obecná"
+    },
+    "1": {
+        "name": "Arapaima velká"
+    },
+    "2": {
+        "name": "Parma obecná"
+    },
+    "3": {
+        "name": "Hořavka duhová"
+    },
+    "4": {
+        "name": "Okounek pstruhový"
+    },
+    "5": {
+        "name": "Slunečnice velkoploutvá"
+    },
+    "6": {
+        "name": "Marlín modrý"
+    },
+    "7": {
+        "name": "Kapr obecný"
+    },
+    "8": {
+        "name": "Sumec velký"
+    },
+    "9": {
+        "name": "Vyza velká"
+    },
+    "10": {
+        "name": "Siven severní"
+    },
+    "11": {
+        "name": "Losos masu"
+    },
+    "12": {
+        "name": "Latimérie podivná"
+    },
+    "13": {
+        "name": "Karas obecný"
+    },
+    "14": {
+        "name": "Limanda obecná"
+    },
+    "15": {
+        "name": "Jelec proudník"
+    },
+    "16": {
+        "name": "Kujaba brazilská"
+    },
+    "17": {
+        "name": "Úhoř"
+    },
+    "18": {
+        "name": "Hlaváč"
+    },
+    "19": {
+        "name": "Kostlín"
+    },
+    "20": {
+        "name": "Hadohlavec červený"
+    },
+    "21": {
+        "name": "Kapr zlatý"
+    },
+    "22": {
+        "name": "Žralok kladivoun"
+    },
+    "23": {
+        "name": "Kranas obecný"
+    },
+    "24": {
+        "name": "Losos čavyča"
+    },
+    "25": {
+        "name": "Měsíčník svítivý"
+    },
+    "26": {
+        "name": "Okoun žlutý"
+    },
+    "27": {
+        "name": "Tuňák obecný"
+    },
+    "28": {
+        "name": "Platýs velký"
+    },
+    "29": {
+        "name": "Zako japonský"
+    },
+    "30": {
+        "name": "Koruška maloústá"
+    },
+    "31": {
+        "name": "Čtverzubec"
+    },
+    "32": {
+        "name": "Pstruh duhový"
+    },
+    "33": {
+        "name": "Chňapal červený"
+    },
+    "34": {
+        "name": "Losos obecný"
+    },
+    "35": {
+        "name": "Mořčák evropský"
+    },
+    "36": {
+        "name": "Žralok"
+    },
+    "37": {
+        "name": "Štika obecná"
+    },
+    "38": {
+        "name": "Cejn velký"
+    },
+    "39": {
+        "name": "Slunečnice malá"
+    },
+    "40": {
+        "name": "Lín obecný"
+    },
+    "41": {
+        "name": "Akara dvouskvrnná"
+    },
+    "42": {
+        "name": "Anténovec paranánský"
+    },
+    "43": {
+        "name": "Paúhoř elektrický"
+    },
+    "44": {
+        "name": "Vějířovka černoploutvá"
+    },
+    "45": {
+        "name": "Úzkotlamka cejnovitá"
+    },
+    "46": {
+        "name": "Hřebenáč paví"
+    },
+    "47": {
+        "name": "Útesník pruhovaný"
+    },
+    "48": {
+        "name": "Havýš plástevný"
+    },
+    "49": {
+        "name": "Soltýn barakuda"
+    },
+    "50": {
+        "name": "Tarpon atlantský"
+    },
+    "51": {
+        "name": "Kranas duhový"
+    },
+    "52": {
+        "name": "Žabohlavec surinamský"
+    },
+    "53": {
+        "name": "Vidlatka tuňákovitá"
+    },
+    "54": {
+        "name": "Kanic modroskvrnný"
+    },
+    "55": {
+        "name": "Sardinka oblá"
+    },
+    "56": {
+        "name": "Vyza malá"
+    },
+    "57": {
+        "name": "Pomec modročelý"
+    },
+    "58": {
+        "name": "Chrochtal modropásý"
+    },
+    "59": {
+        "name": "Kanic bělopruhý"
+    },
+    "60": {
+        "name": "Pomec černý"
+    },
+    "61": {
+        "name": "Chňapal"
+    },
+    "62": {
+        "name": "Ostenec sargasový"
+    },
+    "63": {
+        "name": "Pyskoun perlový"
+    },
+    "64": {
+        "name": "Kranas mosazopruhý"
+    },
+    "65": {
+        "name": "Křížovec dlouhoploutvý"
+    },
+    "66": {
+        "name": "Tlamovec Livingstonův"
+    },
+    "67": {
+        "name": "Gurama velká"
+    },
+    "68": {
+        "name": "Arowana zlatá"
+    },
+    "69": {
+        "name": "Keříčkovec červenolemý"
+    },
+    "70": {
+        "name": "Afrotetra Forskållova"
+    },
+    "71": {
+        "name": "Rypoun úhořovitý"
+    },
+    "72": {
+        "name": "Tlamoun nilský"
+    },
+    "73": {
+        "name": "Sumčík stříbřitý"
+    },
+    "74": {
+        "name": "Klaun očkatý"
+    },
+    "75": {
+        "name": "Perlín ostrobřichý"
+    },
+    "76": {
+        "name": "Robalo nilský"
+    },
+    "77": {
+        "name": "Candát severoamerický"
+    },
+    "78": {
+        "name": "Cichlida"
+    },
+    "79": {
+        "name": "Parma velkotlamá"
+    },
+    "80": {
+        "name": "Smuha chrochtavá"
+    },
+    "81": {
+        "name": "Nožovec velký"
+    },
+    "82": {
+        "name": "Hrouzkovka skvrnoploutvá"
+    },
+    "83": {
+        "name": "Sekavec vepřorypý"
+    },
+    "84": {
+        "name": "Jeseter čínský"
+    },
+    "85": {
+        "name": "Katla obecná"
+    },
+    "86": {
+        "name": "Rypoun zobanitý"
+    },
+    "87": {
+        "name": "Leskyně skvrnitá"
+    },
+    "88": {
+        "name": "Tkaničnice stříbřitá"
+    },
+    "89": {
+        "name": "Cípal pyskatý"
+    },
+    "90": {
+        "name": "Sleď obecný"
+    },
+    "91": {
+        "name": "Žralok psí"
+    },
+    "92": {
+        "name": "Úhořovec mořský"
+    },
+    "93": {
+        "name": "Ostnatec zmijí"
+    },
+    "94": {
+        "name": "Treska skvrnitá"
+    },
+    "95": {
+        "name": "Mořan zlatý"
+    },
+    "96": {
+        "name": "Pasumec elektrický"
+    },
+    "97": {
+        "name": "Pstruh obecný"
+    },
+    "98": {
+        "name": "Kostlín obrovský"
+    },
+    "99": {
+        "name": "Vlkouš obecný"
+    },
+    "100": {
+        "name": "Kaprovec velkoústý"
+    },
+    "101": {
+        "name": "Lipan podhorní"
+    },
+    "102": {
+        "name": "Pomčík ohnivý"
+    },
+    "103": {
+        "name": "Paokoun zlatavý"
+    },
+    "104": {
+        "name": "Binga tygří"
+    },
+    "105": {
+        "name": "Piloun mnohozubý"
+    },
+    "106": {
+        "name": "Jeseter jezerní"
+    },
+    "107": {
+        "name": "Karas Lví hlava"
+    },
+    "108": {
+        "name": "Paokoun mramorovaný"
+    },
+    "109": {
+        "name": "Vrubozubec paví"
+    },
+    "110": {
+        "name": "Kanic písmenkový"
+    },
+    "111": {
+        "name": "Zubatice makrelová"
+    },
+    "112": {
+        "name": "Losos gorbuša"
+    },
+    "113": {
+        "name": "Plachetník širokoploutvý"
+    },
+    "114": {
+        "name": "Hlavačka"
+    },
+    "115": {
+        "name": "Losos nerka"
+    },
+    "116": {
+        "name": "Ostnovec skvrnoocasý"
+    },
+    "117": {
+        "name": "Piraňa rostlinožravá"
+    },
+    "118": {
+        "name": "Ostnatec skvrnkovaný"
+    },
+    "119": {
+        "name": "Pstruh aguabonita"
+    },
+    "120": {
+        "name": "Siven americký"
+    },
+    "121": {
+        "name": "Tygří ryba"
+    },
+    "122": {
+        "name": "Chobotnice pobřežní"
+    },
+    "123": {
+        "name": "Rejnok říční"
+    },
+    "124": {
+        "name": "Vranka mnohoostná"
+    },
+    "125": {
+        "name": "Amuřice Hoevenova"
+    },
+    "126": {
+        "name": "Pilohřbetec malošupinatý"
+    },
+    "127": {
+        "name": "Rejnok severní"
+    },
+    "128": {
+        "name": "Platýs bradavičnatý"
+    },
+    "129": {
+        "name": "Blatňák menší"
+    },
+    "130": {
+        "name": "Okoun říční"
+    },
+    "131": {
+        "name": "Karas zlatý"
+    },
+    "132": {
+        "name": "Jelec tloušť"
+    },
+    "133": {
+        "name": "Candát obecný"
+    },
+    "134": {
+        "name": "Sumeček černý"
+    },
+    "135": {
+        "name": "Strašík maloústý"
+    },
+    "136": {
+        "name": "Ropušnice malá"
+    },
+    "137": {
+        "name": "Siven malma"
+    },
+    "138": {
+        "name": "Krunýřovec guyanský"
+    },
+    "139": {
+        "name": "Veslonos americký"
+    },
+    "140": {
+        "name": "Perutýn ohnivý"
+    },
+    "141": {
+        "name": "Havýš hladký"
+    },
+    "142": {
+        "name": "Ploskozubec duhový"
+    },
+    "143": {
+        "name": "Velkotlamec Johnsonův"
+    },
+    "144": {
+        "name": "Pangas velký"
+    },
+    "145": {
+        "name": "Slunečnice červenooká"
+    },
+    "146": {
+        "name": "Vřeténka mandarín"
+    },
+    "147": {
+        "name": "Okounek černý"
+    },
+    "148": {
+        "name": "Okounek tmavoskvrnný"
+    },
+    "149": {
+        "name": "Koryféna velká"
+    },
+    "150": {
+        "name": "Letoun středomořský"
+    },
+    "151": {
+        "name": "Muréna jávská"
+    },
+    "152": {
+        "name": "Sisora Yarrellova"
+    },
+    "153": {
+        "name": "Sekernatka drobná"
+    },
+    "154": {
+        "name": "Okounek černoskvrnný"
+    },
+    "155": {
+        "name": "Ouklej obecná"
+    },
+    "156": {
+        "name": "Živorodka duhová"
+    },
+    "157": {
+        "name": "Veleparma thajská"
+    },
+    "158": {
+        "name": "Terčovec"
+    },
+    "159": {
+        "name": "Sumíček bajad"
+    },
+    "160": {
+        "name": "Kaprovec černý"
+    },
+    "161": {
+        "name": "Kančík citrónový"
+    },
+    "162": {
+        "name": "Hlavatka obecná"
+    },
+    "163": {
+        "name": "Candátek modropásý"
+    },
+    "164": {
+        "name": "Bahník východoafrický"
+    },
+    "165": {
+        "name": "Nožovec černý"
+    },
+    "166": {
+        "name": "Mník jednovousý"
+    },
+    "167": {
+        "name": "Trnovec černý"
+    },
+    "168": {
+        "name": "Vandélie obecná"
+    },
+    "169": {
+        "name": "Štika muskalunga"
+    },
+    "170": {
+        "name": "Žralok bělavý"
+    },
+    "171": {
+        "name": "Trnucha thajská"
+    },
+    "172": {
+        "name": "Kančík modroskvrnný"
+    },
+    "173": {
+        "name": "Sumeček plochohlavý"
+    },
+    "174": {
+        "name": "Siven velkohlavý"
+    },
+    "175": {
+        "name": "Pstruh apačský"
+    },
+    "176": {
+        "name": "Sumeček velký"
+    },
+    "177": {
+        "name": "Vranka pruhoploutvá"
+    },
+    "178": {
+        "name": "Drsek menší"
+    },
+    "179": {
+        "name": "Slunečnice pestrá"
+    },
+    "180": {
+        "name": "Vranka čtyřrohá"
+    },
+    "181": {
+        "name": "Razbora červenopruhá"
+    },
+    "182": {
+        "name": "Úzkotlamka nádherná"
+    },
+    "183": {
+        "name": "Halančík Gardnerův"
+    },
+    "184": {
+        "name": "Trnovec hřebenočelý"
+    },
+    "185": {
+        "name": "Sekavec příčnopásý"
+    },
+    "186": {
+        "name": "Motýlkovec africký"
+    },
+    "187": {
+        "name": "Hrotočelec ohnivý"
+    },
+    "188": {
+        "name": "Ostnáč jednovousý"
+    },
+    "189": {
+        "name": "Kaproun obecný"
+    },
+    "190": {
+        "name": "Jeseter bílý"
+    },
+    "191": {
+        "name": "Hlavatka sibiřská"
+    },
+    "192": {
+        "name": "Hlístoun červenohřívý"
+    },
+    "193": {
+        "name": "Čtverzubec trpasličí"
+    },
+    "194": {
+        "name": "Duhovka"
+    },
+    "195": {
+        "name": "Pangas vláknoploutvý"
+    },
+    "196": {
+        "name": "Arowana dvojvousá"
+    },
+    "197": {
+        "name": "Arowana asijská"
+    },
+    "198": {
+        "name": "Bojovnice pestrá"
+    },
+    "199": {
+        "name": "Čtverzubec konžský"
+    },
+    "200": {
+        "name": "Čtverzubec baileyi"
+    },
+    "201": {
+        "name": "Chaka indonéská"
+    },
+    "202": {
+        "name": "Žabohlavec trojtrnný"
+    },
+    "203": {
+        "name": "Žralok sedmižábrý"
+    },
+    "204": {
+        "name": "Žralok límcový"
+    },
+    "205": {
+        "name": "Žralok trnitý"
+    },
+    "206": {
+        "name": "Ostroun obecný"
+    },
+    "207": {
+        "name": "Žralok Cookeův"
+    },
+    "208": {
+        "name": "Polorejnok"
+    },
+    "209": {
+        "name": "Různozubec Francisův"
+    },
+    "210": {
+        "name": "Wobegong skvrnitý"
+    },
+    "211": {
+        "name": "Žralok zebrovitý"
+    },
+    "212": {
+        "name": "Žralok vouskatý"
+    },
+    "213": {
+        "name": "Žralok obrovský"
+    },
+    "214": {
+        "name": "Vousatec Smithův"
+    },
+    "215": {
+        "name": "Pruhoun novozélandský"
+    },
+    "216": {
+        "name": "Máčka korálová"
+    },
+    "217": {
+        "name": "Žralok modrý"
+    },
+    "218": {
+        "name": "Žralok tygří"
+    },
+    "219": {
+        "name": "Žralok šotek"
+    },
+    "220": {
+        "name": "Žralok veliký"
+    },
+    "221": {
+        "name": "Žralok velkoústý"
+    },
+    "222": {
+        "name": "Liškoun obecný"
+    },
+    "223": {
+        "name": "Žralok východní"
+    },
+    "224": {
+        "name": "Žralok bílý"
+    },
+    "225": {
+        "name": "Siven obří"
+    },
+    "226": {
+        "name": "Veslonos čínský"
+    },
+    "227": {
+        "name": "Sumec albín"
+    },
+    "228": {
+        "name": "Tolstolobik bílý"
+    },
+    "229": {
+        "name": "Bahník americký"
+    },
+    "230": {
+        "name": "Pyskoun skvrnitý"
+    },
+    "231": {
+        "name": "Kytarovec křivoústý"
+    },
+    "232": {
+        "name": "Kanic obrovský"
+    },
+    "233": {
+        "name": "Platýs tichomořský"
+    },
+    "234": {
+        "name": "Ploskozubec vysokočelý"
+    },
+    "235": {
+        "name": "Udicovka tasmánská"
+    },
+    "236": {
+        "name": "Řasovník rozedraný"
+    },
+    "237": {
+        "name": "Muréna obecná"
+    },
+    "238": {
+        "name": "Jeseter perský"
+    },
+    "239": {
+        "name": "Ostenec chřestivý"
+    },
+    "240": {
+        "name": "Jeseter hvězdnatý"
+    },
+    "241": {
+        "name": "Jeseter velký"
+    },
+    "242": {
+        "name": "Arowana zlatá červenoocasá"
+    },
+    "243": {
+        "name": "Arowana černá"
+    },
+    "244": {
+        "name": "Fantang nilský"
+    },
+    "245": {
+        "name": "Zelená arowana"
+    },
+    "246": {
+        "name": "Zeleno-červená arowana"
+    },
+    "247": {
+        "name": "Arowana žlutoocasá"
+    },
+    "248": {
+        "name": "Baramundi malajský"
+    },
+    "249": {
+        "name": "Arowana platinová"
+    },
+    "250": {
+        "name": "Baramundi severní"
+    },
+    "251": {
+        "name": "Arowana modrá"
+    },
+    "252": {
+        "name": "Piraňa plodožravá"
+    },
+    "253": {
+        "name": "Pachiméra sagamská"
+    },
+    "254": {
+        "name": "Štítovec krátkoploutvý"
+    },
+    "255": {
+        "name": "Pilníkotrn velký"
+    },
+    "256": {
+        "name": "Okouník černopásý"
+    },
+    "257": {
+        "name": "Muréna nosatá"
+    },
+    "258": {
+        "name": "Manta obrovská"
+    },
+    "259": {
+        "name": "Lopatonos alabamský"
+    },
+    "260": {
+        "name": "Krakatice obrovská"
+    },
+    "261": {
+        "name": "Mečoun obecný"
+    },
+    "262": {
+        "collections": {
+            "0": "Gyrodus fosílie"
+        }
+    },
+    "263": {
+        "collections": {
+            "0": "Acanthodes fosílie"
+        }
+    },
+    "264": {
+        "collections": {
+            "0": "Antiarchi fosílie"
+        }
+    },
+    "265": {
+        "collections": {
+            "0": "Dunkleosteus fosílie"
+        }
+    },
+    "266": {
+        "collections": {
+            "0": "Xiphactinus fosílie"
+        }
+    },
+    "267": {
+        "collections": {
+            "0": "Titanichthys fosílie"
+        }
+    },
+    "268": {
+        "collections": {
+            "0": "Thelodus fosílie"
+        }
+    },
+    "269": {
+        "collections": {
+            "0": "Osteolepis fosílie"
+        }
+    },
+    "270": {
+        "collections": {
+            "0": "Pteraspis fosílie"
+        }
+    },
+    "271": {
+        "collections": {
+            "0": "Platysomus fosílie"
+        }
+    },
+    "272": {
+        "collections": {
+            "0": "Cheirolepis fosílie"
+        }
+    },
+    "273": {
+        "collections": {
+            "0": "Materpiscis fosílie"
+        }
+    },
+    "274": {
+        "collections": {
+            "0": "Macropoma fosílie"
+        }
+    },
+    "275": {
+        "collections": {
+            "0": "Leedsichthys fosílie"
+        }
+    },
+    "276": {
+        "collections": {
+            "0": "Hyneria fosílie"
+        }
+    },
+    "277": {
+        "collections": {
+            "0": "Helicoprion fosílie"
+        }
+    },
+    "278": {
+        "collections": {
+            "0": "Fosílie megalodona"
+        }
+    },
+    "279": {
+        "collections": {
+            "0": "Arandaspis fosílie"
+        }
+    },
+    "280": {
+        "collections": {
+            "0": "Aspidorhynchus fosílie"
+        }
+    },
+    "281": {
+        "collections": {
+            "0": "Cladoselache fosílie"
+        }
+    },
+    "282": {
+        "collections": {
+            "0": "Cheiracanthus fosílie"
+        }
+    },
+    "283": {
+        "collections": {
+            "0": "Cobelodus fosílie"
+        }
+    },
+    "284": {
+        "collections": {
+            "0": "Coccosteus fosílie"
+        }
+    },
+    "285": {
+        "collections": {
+            "0": "Dapedium fosílie"
+        }
+    },
+    "286": {
+        "collections": {
+            "0": "Drepanaspis fosílie"
+        }
+    },
+    "287": {
+        "collections": {
+            "0": "Enchodus fosílie"
+        }
+    },
+    "288": {
+        "collections": {
+            "0": "Gyrosteus fosílie"
+        }
+    },
+    "289": {
+        "collections": {
+            "0": "Moythomasia fosílie"
+        }
+    },
+    "290": {
+        "collections": {
+            "0": "Orthacanthus fosílie"
+        }
+    },
+    "291": {
+        "collections": {
+            "0": "Pharyngolepis fosílie"
+        }
+    },
+    "292": {
+        "collections": {
+            "0": "Pikaia fosílie"
+        }
+    },
+    "293": {
+        "collections": {
+            "0": "Saurichthys fosílie"
+        }
+    },
+    "294": {
+        "collections": {
+            "0": "Semionotus fosílie"
+        }
+    },
+    "295": {
+        "collections": {
+            "0": "Stethacanthus fosílie"
+        }
+    },
+    "296": {
+        "collections": {
+            "0": "Xenacanthus fosílie"
+        }
+    },
+    "297": {
+        "name": "Bodlok pestrý"
+    },
+    "298": {
+        "name": "Pyskoun korunkatý",
+        "fruitCombos": {
+            "0": "Kokos, Kokos, Pomeranč"
+        }
+    },
+    "299": {
+        "name": "Trubkotlamka skvrnitá",
+        "fruitCombos": {
+            "0": "Pitaja, Banán, Banán"
+        }
+    },
+    "300": {
+        "name": "Kněžík dvoupruhý"
+    },
+    "301": {
+        "name": "Ostnatec ryšavý",
+        "fruitCombos": {
+            "0": "Banán, Citron, Citron"
+        }
+    },
+    "302": {
+        "name": "Ploskozubec královský",
+        "fruitCombos": {
+            "0": "Papája, Pomeranč, Pitaja"
+        }
+    },
+    "303": {
+        "name": "Pruhatec černopruhý",
+        "fruitCombos": {
+            "0": "Pomeranč, Ananas, Pomeranč"
+        }
+    },
+    "304": {
+        "name": "Štíhlice písečná"
+    },
+    "305": {
+        "name": "Kněžík Garnotův",
+        "fruitCombos": {
+            "0": "Mango, Papája, Ananas"
+        }
+    },
+    "306": {
+        "name": "Očař noční"
+    },
+    "307": {
+        "name": "Bodlok žlutý",
+        "fruitCombos": {
+            "0": "Citron, Citron, Citron"
+        }
+    },
+    "308": {
+        "name": "Jednotrn vlajkoocasý",
+        "fruitCombos": {
+            "0": "Pitaja, Papája, Pitaja"
+        }
+    },
+    "309": {
+        "name": "Kanic tmavý",
+        "fruitCombos": {
+            "0": "Kiwi, Pitaja, Kiwi"
+        }
+    },
+    "310": {
+        "name": "Akilolo zelený"
+    },
+    "311": {
+        "name": "Bičonoš zobanovitý"
+    },
+    "312": {
+        "name": "Klipka žlutopruhá"
+    },
+    "313": {
+        "name": "Ploskozubec modrý",
+        "fruitCombos": {
+            "0": "Pitaja, Mango, Papája"
+        }
+    },
+    "314": {
+        "name": "Ostenec Picassův",
+        "fruitCombos": {
+            "0": "Pomeranč, Pitaja, Banán"
+        }
+    },
+    "315": {
+        "name": "Kněžík žlutoocasý",
+        "fruitCombos": {
+            "0": "Citron, Kokos, Kokos"
+        }
+    },
+    "316": {
+        "name": "Ostenec vdova",
+        "fruitCombos": {
+            "0": "Pomeranč, Pomeranč, Pitaja"
+        }
+    },
+    "317": {
+        "name": "Tloušťovka bermudská"
+    },
+    "318": {
+        "name": "Klipka příčnopruhá"
+    },
+    "319": {
+        "name": "Kambala tropická",
+        "fruitCombos": {
+            "0": "Pitaja, Ananas, Ananas"
+        }
+    },
+    "320": {
+        "name": "Pomec tříbarevný"
+    },
+    "321": {
+        "name": "Siba skvrnitá"
+    },
+    "322": {
+        "name": "Oliheň Lessonova"
+    },
+    "323": {
+        "name": "Ploskozubec půlnoční",
+        "fruitCombos": {
+            "0": "Pitaja, Kokos, Kokos"
+        }
+    },
+    "324": {
+        "name": "Vidlatka palometa"
+    },
+    "325": {
+        "name": "Ostenec zelenavý",
+        "fruitCombos": {
+            "0": "Ananas, Banán, Papája"
+        }
+    },
+    "326": {
+        "name": "Chňapal modropruhý",
+        "fruitCombos": {
+            "0": "Banán, Ananas, Banán"
+        }
+    },
+    "327": {
+        "name": "Klipka fantomová"
+    },
+    "328": {
+        "name": "Žralok dlouhoploutvý"
+    },
+    "329": {
+        "name": "Žralok hnědý"
+    },
+    "330": {
+        "name": "Žralok západoaustralský"
+    },
+    "331": {
+        "name": "Žraloček brazilský"
+    },
+    "332": {
+        "name": "Žralok citronový"
+    },
+    "333": {
+        "name": "Žralok ostrý"
+    },
+    "334": {
+        "name": "Chřestivec Darwinův"
+    },
+    "335": {
+        "name": "Jehla pruhovaná",
+        "fruitCombos": {
+            "0": "Pomeranč, Pomeranč, Banán"
+        }
+    },
+    "336": {
+        "name": "Bodlok jednorohý"
+    },
+    "337": {
+        "name": "Světloun Carterův"
+    },
+    "338": {
+        "name": "Kněžík šachovnicovitý"
+    },
+    "339": {
+        "name": "Kanic tygří"
+    },
+    "340": {
+        "name": "Kanícek fialovožlutý"
+    },
+    "341": {
+        "name": "Kanic hřbetoskvrnný"
+    },
+    "342": {
+        "name": "Klipka žlutá"
+    },
+    "343": {
+        "name": "Kranas modroploutvý"
+    },
+    "344": {
+        "name": "Pilníkotrn nejmenší"
+    },
+    "345": {
+        "name": "Komorník havajský"
+    },
+    "346": {
+        "name": "Klipka hrotcová"
+    },
+    "347": {
+        "name": "Bodianus diplotaenia"
+    },
+    "348": {
+        "name": "Havýš běloskvrnný"
+    },
+    "349": {
+        "name": "Ostenec bělolemý"
+    },
+    "350": {
+        "name": "Pomec prstenčitý"
+    },
+    "351": {
+        "name": "Halančíkovec ďábelský"
+    },
+    "352": {
+        "name": "Anténovec červenoocasý"
+    },
+    "353": {
+        "name": "Kohoutovec dlouhoploutvý"
+    },
+    "354": {
+        "name": "Muréna zebrovaná"
+    },
+    "355": {
+        "name": "Muréna hvězdovitá"
+    },
+    "356": {
+        "name": "Muréna zelenavá"
+    },
+    "357": {
+        "name": "Muréna poskvrněná"
+    },
+    "358": {
+        "name": "Muréna žlutolemá"
+    },
+    "359": {
+        "name": "Muréna leopardí"
+    },
+    "360": {
+        "name": "Muréna žlutoocasá"
+    },
+    "361": {
+        "name": "Muréna žlutotlamá"
+    },
+    "362": {
+        "name": "Muréna tygrovitá"
+    },
+    "363": {
+        "name": "Muréna pestrá"
+    },
+    "364": {
+        "name": "Muréna běloústá"
+    },
+    "365": {
+        "name": "Muréna pardálí"
+    },
+    "366": {
+        "name": "Muréna řetízková"
+    },
+    "367": {
+        "name": "Muréna Breedenova"
+    },
+    "368": {
+        "name": "Muréna psí"
+    },
+    "369": {
+        "name": "Muréna žlutohlavá"
+    },
+    "370": {
+        "name": "Muréna bělooká"
+    },
+    "372": {
+        "name": "Chrochtal žlutopruhý"
+    },
+    "373": {
+        "name": "Kanic tygrovaný"
+    },
+    "374": {
+        "name": "Chňapal žlutoploutvý"
+    },
+    "375": {
+        "name": "Ještěrohlavec prostřední"
+    },
+    "376": {
+        "name": "Chrochtal prasečí"
+    },
+    "377": {
+        "name": "Rozedranec červenoskvrnný"
+    },
+    "378": {
+        "name": "Pyskoun dlouhoploutvý"
+    },
+    "379": {
+        "name": "Kapr lysec"
+    },
+    "380": {
+        "name": "Losos kisuč"
+    },
+    "381": {
+        "name": "Úhoř novozélandský"
+    },
+    "382": {
+        "name": "Kostlín albín"
+    },
+    "383": {
+        "name": "Úhoř japonský"
+    },
+    "384": {
+        "name": "Hybridní mořčák pruhovaný"
+    },
+    "385": {
+        "name": "Mořčák stříbřitý"
+    },
+    "386": {
+        "name": "Mořčák pruhovaný"
+    },
+    "387": {
+        "name": "Dlouhonos třásnitý"
+    },
+    "388": {
+        "name": "Amur bílý"
+    },
+    "389": {
+        "name": "Tolstolobec pestrý"
+    },
+    "390": {
+        "name": "Příčnoústka čtyřvousá"
+    },
+    "391": {
+        "name": "Labeo černé"
+    },
+    "392": {
+        "name": "Jehlice lagunová"
+    },
+    "393": {
+        "name": "Krunýřovec"
+    },
+    "394": {
+        "name": "Bichir senegalský"
+    },
+    "395": {
+        "name": "Anténovec vláknovitý"
+    },
+    "396": {
+        "name": "Čtverzubec mbu"
+    },
+    "397": {
+        "name": "Nožovka běločelá"
+    },
+    "398": {
+        "name": "Krunýřovec zebra"
+    },
+    "399": {
+        "name": "Panceřníček Juliin"
+    },
+    "400": {
+        "name": "Polozobánka malajská"
+    },
+    "401": {
+        "name": "Štika amurská"
+    },
+    "402": {
+        "name": "Aju východní"
+    },
+    "403": {
+        "name": "Sekavka nádherná"
+    },
+    "404": {
+        "name": "Piloun mikrodon"
+    },
+    "405": {
+        "name": "Živorodka ostrotlamá"
+    },
+    "406": {
+        "name": "Okounek světlý"
+    },
+    "407": {
+        "name": "Panchax prstencový"
+    },
+    "408": {
+        "name": "Tlamovec čelnatý"
+    },
+    "409": {
+        "name": "Hrotočelec ozbrojený"
+    },
+    "410": {
+        "name": "Žralok kyklop"
+    },
+    "411": {
+        "name": "Šírotlamka pelikánovitá"
+    },
+    "412": {
+        "name": "Tupohlavec Rosenův"
+    },
+    "413": {
+        "name": "Sliznatá ryba"
+    },
+    "414": {
+        "name": "Ďas mořský"
+    },
+    "415": {
+        "name": "Svítivec"
+    },
+    "416": {
+        "name": "Neoclinus blanchardi"
+    },
+    "417": {
+        "name": "Čtverzubec běloskvrnný"
+    },
+    "418": {
+        "name": "Králíčkovec zlatoskvrnný"
+    },
+    "419": {
+        "name": "Klaun uzdičkatý"
+    },
+    "420": {
+        "name": "Sapín zelený"
+    },
+    "421": {
+        "name": "Pomčík Potterův"
+    },
+    "422": {
+        "name": "Pilohřbet jihoaustralský"
+    },
+    "423": {
+        "name": "Havýš rohatý"
+    },
+    "424": {
+        "name": "Kněžík duhový"
+    },
+    "425": {
+        "name": "Pásovka černá"
+    },
+    "426": {
+        "name": "Channa aurantimaculata"
+    },
+    "427": {
+        "name": "Štika americká červenoploutvá"
+    },
+    "428": {
+        "name": "Štika americká"
+    },
+    "429": {
+        "name": "Štika zlatá"
+    },
+    "430": {
+        "name": "Tlamovec Thomasův"
+    },
+    "431": {
+        "name": "Kanic tečkovaný"
+    },
+    "432": {
+        "name": "Jehlice krokodýlí"
+    },
+    "433": {
+        "name": "Chanos stříbřitý"
+    },
+    "434": {
+        "name": "Pilonos vouskatý"
+    },
+    "435": {
+        "name": "Cichlida plochohlavá"
+    },
+    "436": {
+        "name": "Řasovník protáhlý"
+    },
+    "437": {
+        "name": "Okouníček sklovitý"
+    },
+    "438": {
+        "name": "Chimérovka tasmánská"
+    },
+    "439": {
+        "name": "Netopýrník hrbohlavý"
+    },
+    "440": {
+        "name": "Pyskoun třásniploutvý"
+    },
+    "441": {
+        "name": "Vlajkovka červenavá"
+    },
+    "442": {
+        "name": "Ještěrohlavec hlubokomořský"
+    },
+    "443": {
+        "name": "Kostlín černý"
+    },
+    "444": {
+        "name": "Chrochtal východní"
+    },
+    "445": {
+        "name": "Hlaváčovec nádherný"
+    },
+    "446": {
+        "name": "Klipka krokvicová"
+    },
+    "447": {
+        "name": "Pomčík citronový"
+    },
+    "448": {
+        "name": "Čtverzubec lysý"
+    },
+    "449": {
+        "name": "Plošák stříbřitý"
+    },
+    "450": {
+        "name": "Neonka obecná"
+    },
+    "451": {
+        "name": "Perleťovka démon"
+    },
+    "452": {
+        "name": "Dánio duhové"
+    },
+    "453": {
+        "name": "Galaxie velká"
+    },
+    "454": {
+        "name": "Jeseter amurský"
+    },
+    "455": {
+        "name": "Manta velká"
+    },
+    "456": {
+        "name": "Ploskozubec zelenozubý"
+    },
+    "457": {
+        "name": "Pomec císařský"
+    },
+    "458": {
+        "name": "Vějířník třásnitý"
+    },
+    "459": {
+        "name": "Různozubec přilbovitý"
+    },
+    "460": {
+        "name": "Rozedranec pestrý"
+    },
+    "461": {
+        "name": "Trnonoš australský"
+    },
+    "462": {
+        "name": "Oblohlav divukrásný"
+    },
+    "463": {
+        "name": "Lampař severní"
+    },
+    "464": {
+        "name": "Kněžík srpkovitý"
+    },
+    "465": {
+        "name": "Štětičkovec obecný"
+    },
+    "466": {
+        "name": "Havýš žlutohnědý"
+    },
+    "467": {
+        "name": "Bodlok Achillův"
+    },
+    "468": {
+        "name": "Jeseter jihočínský"
+    },
+    "469": {
+        "name": "Pardachirus morrowi"
+    },
+    "470": {
+        "name": "Chňapal císařský"
+    },
+    "471": {
+        "name": "Čtverzubec ostnatý"
+    },
+    "472": {
+        "name": "Hlaváč červenopruhý"
+    },
+    "473": {
+        "name": "Jeseter sibiřský"
+    },
+    "474": {
+        "name": "Jeseter krátkorypý"
+    },
+    "475": {
+        "name": "Kostlín floridský"
+    },
+    "476": {
+        "name": "Tuňák žlutoploutvý"
+    },
+    "477": {
+        "name": "Tuňák velkooký"
+    },
+    "478": {
+        "name": "Tuňák tichomořský"
+    },
+    "479": {
+        "name": "Marlín černý"
+    },
+    "480": {
+        "name": "Marlín pruhovaný"
+    },
+    "481": {
+        "name": "Marlín bílý"
+    },
+    "482": {
+        "name": "Soltýn ostroploutvý"
+    },
+    "483": {
+        "name": "Soltýn pelikání"
+    },
+    "484": {
+        "name": "Soltýn žlutoocasý"
+    },
+    "485": {
+        "name": "Soltýn velkooký"
+    },
+    "486": {
+        "name": "Kostlín skvrnitý"
+    },
+    "487": {
+        "name": "Bojovnice Brownových"
+    },
+    "488": {
+        "name": "Halančíkovec slaništní"
+    },
+    "489": {
+        "name": "Štikovka skvrnitá"
+    },
+    "490": {
+        "name": "Hlaváč Griessingerův"
+    },
+    "491": {
+        "name": "Soltýn stříbřitý"
+    },
+    "492": {
+        "name": "Soltýn pobřežní"
+    },
+    "493": {
+        "name": "Soltýn Hellerův"
+    },
+    "494": {
+        "name": "Soltýn tmavopruhý"
+    },
+    "495": {
+        "name": "Soltýn Australský"
+    },
+    "496": {
+        "name": "Žralok grónský"
+    },
+    "497": {
+        "name": "Piloun malozubý"
+    },
+    "498": {
+        "name": "Piloun obecný"
+    },
+    "499": {
+        "name": "Lesklec africký"
+    },
+    "500": {
+        "name": "Hrdložábřík bělavý"
+    },
+    "501": {
+        "name": "Kranas zlatý"
+    },
+    "502": {
+        "name": "Kladivoun tiburo"
+    },
+    "503": {
+        "name": "Kladivoun křídlohlavý"
+    },
+    "504": {
+        "name": "Noční poutník"
+    },
+    "505": {
+        "name": "Medúzovec okounovitý"
+    },
+    "506": {
+        "name": "Rypoun vidlozubý"
+    },
+    "507": {
+        "name": "Tetra Sweglesova"
+    },
+    "508": {
+        "name": "Cichlida madagaskarská"
+    },
+    "509": {
+        "name": "Piraňa tmavá"
+    },
+    "510": {
+        "name": "Vějířovka příčnopruhá"
+    },
+    "511": {
+        "name": "Kanic cukrový",
+        "collections": {
+            "0": "Balónový set"
+        }
+    },
+    "512": {
+        "name": "Kanic oranžovoskvrnný",
+        "collections": {
+            "0": "Bonbónový set"
+        }
+    },
+    "513": {
+        "name": "Kanic křiklavý",
+        "collections": {
+            "0": "Fotbalový set"
+        }
+    },
+    "514": {
+        "name": "Pomec maskový",
+        "collections": {
+            "0": "Vesmírný set"
+        }
+    },
+    "515": {
+        "name": "Pomčík Boyleův",
+        "collections": {
+            "0": "Půvabný set"
+        }
+    },
+    "516": {
+        "name": "Tuňák křídlatý"
+    },
+    "517": {
+        "name": "Tuňák australský"
+    },
+    "518": {
+        "name": "Tuňák atlantský"
+    },
+    "519": {
+        "name": "Tuňák dlouhoocasý"
+    },
+    "520": {
+        "name": "Tuňák malý"
+    },
+    "521": {
+        "name": "Hlubinář"
+    },
+    "522": {
+        "name": "Ipnops"
+    },
+    "523": {
+        "name": "Tlamovec sprengerae"
+    },
+    "524": {
+        "name": "Dánio jayarami"
+    },
+    "525": {
+        "name": "Rypoun západoafrický"
+    },
+    "526": {
+        "name": "Slimule bělopruhá"
+    },
+    "527": {
+        "name": "Hlaváčovec černoploutvý"
+    },
+    "528": {
+        "name": "Terčovka Beckerova"
+    },
+    "529": {
+        "name": "Sekavec sabažský"
+    },
+    "530": {
+        "name": "Pakaprovec ostrohřbetý"
+    },
+    "531": {
+        "name": "Křížovec panamský"
+    },
+    "532": {
+        "name": "Ostroretka stěhovavá"
+    },
+    "533": {
+        "name": "Plotice obecná"
+    },
+    "534": {
+        "name": "Střevle potoční"
+    },
+    "535": {
+        "name": "Makrela obecná"
+    },
+    "536": {
+        "name": "Sardel obecná"
+    },
+    "537": {
+        "name": "Šprot obecný"
+    },
+    "538": {
+        "name": "Ježdík obecný"
+    },
+    "539": {
+        "name": "Síh peleď"
+    },
+    "540": {
+        "name": "Skalára amazonská"
+    },
+    "541": {
+        "name": "Koljuška tříostná"
+    },
+    "542": {
+        "name": "Řasovník rubínový"
+    },
+    "543": {
+        "name": "Lates stříbřitý"
+    },
+    "545": {
+        "name": "Žralok krátkoploutvý"
+    },
+    "546": {
+        "name": "Žralok černoploutvý"
+    },
+    "547": {
+        "name": "Světloun Bonnaterrův"
+    },
+    "548": {
+        "name": "Žralůček indonéský"
+    },
+    "549": {
+        "name": "Polorejnok obecný"
+    },
+    "550": {
+        "name": "Chobotnice kroužkovaná"
+    },
+    "551": {
+        "name": "Bezkýlovec listošupinatý"
+    },
+    "552": {
+        "name": "Žralok velrybář"
+    },
+    "553": {
+        "name": "Parmovec skvělý"
+    },
+    "554": {
+        "name": "Studnař Rosenblattův"
+    },
+    "555": {
+        "name": "Studnař řemínkový"
+    },
+    "556": {
+        "name": "Slizoun znamenitý"
+    },
+    "557": {
+        "name": "Vranka červená"
+    },
+    "558": {
+        "name": "Hlaváč širokopruhý"
+    },
+    "559": {
+        "name": "Hlaváč krabí"
+    },
+    "560": {
+        "name": "Placka pomořanská"
+    },
+    "561": {
+        "name": "Bolen dravý"
+    },
+    "562": {
+        "name": "Slunka obecná"
+    },
+    "563": {
+        "name": "Podoustev říční"
+    },
+    "564": {
+        "name": "Mřenka mramorovaná"
+    },
+    "565": {
+        "collections": {
+            "0": "Carcharocles chubutensis fosílie"
+        }
+    },
+    "566": {
+        "collections": {
+            "0": "Cretoxyrhina fosílie"
+        }
+    },
+    "567": {
+        "collections": {
+            "0": "Deltoptychius fosílie"
+        }
+    },
+    "568": {
+        "collections": {
+            "0": "Ischnacanthus fosílie"
+        }
+    },
+    "569": {
+        "collections": {
+            "0": "Ctenurella fosílie"
+        }
+    },
+    "570": {
+        "collections": {
+            "0": "Astraspis fosílie"
+        }
+    },
+    "571": {
+        "collections": {
+            "0": "Boreaspis fosílie"
+        }
+    },
+    "572": {
+        "collections": {
+            "0": "Dartmuthia fosílie"
+        }
+    },
+    "573": {
+        "collections": {
+            "0": "Doryaspis arctica fosílie"
+        }
+    },
+    "574": {
+        "collections": {
+            "0": "Doryaspis nathorsti fosílie"
+        }
+    },
+    "575": {
+        "name": "Kančík papouščí"
+    },
+    "576": {
+        "name": "Kančík perleťový"
+    },
+    "577": {
+        "name": "Kančík Doviův"
+    },
+    "578": {
+        "name": "Kančík managujský"
+    },
+    "579": {
+        "name": "Kančík červenohlavý"
+    },
+    "580": {
+        "name": "Keříčkovec jeskynní"
+    },
+    "581": {
+        "name": "Anténovec ozdobný"
+    },
+    "582": {
+        "name": "Sanak asijský"
+    },
+    "583": {
+        "name": "Pilníkotrn slepený"
+    },
+    "584": {
+        "name": "Uzlatka východoatlantská"
+    },
+    "585": {
+        "name": "Štikovka brazilská"
+    },
+    "586": {
+        "name": "Máčka úzkohlavá"
+    },
+    "587": {
+        "name": "Narcina surinamská"
+    },
+    "588": {
+        "name": "Dlouhozubec dravý"
+    },
+    "589": {
+        "name": "Páskoun pruhovaný"
+    },
+    "590": {
+        "name": "Cichlida piquiti"
+    },
+    "591": {
+        "name": "Trahir krátkoocasý"
+    },
+    "592": {
+        "name": "Anténovec skvrnitý"
+    },
+    "593": {
+        "name": "Terčovka pulcovitá"
+    },
+    "594": {
+        "name": "Slimule pelagická"
+    },
+    "595": {
+        "name": "Pseudoliparis Swirei"
+    },
+    "596": {
+        "name": "Muréna zlatá"
+    },
+    "597": {
+        "name": "Manta mexická"
+    },
+    "598": {
+        "name": "Pilníkotrn Taylorův"
+    },
+    "599": {
+        "name": "Tupohlavec krátkochvostý"
+    },
+    "600": {
+        "name": "Muréna sladkovodní"
+    },
+    "601": {
+        "name": "Jeskyňovka Yunokawa"
+    },
+    "602": {
+        "name": "Akilolo nosatý"
+    },
+    "603": {
+        "name": "Duhovka lososová"
+    },
+    "604": {
+        "name": "Hadař zubatkový"
+    },
+    "605": {
+        "name": "Bezkýlovec lopatonosý"
+    },
+    "606": {
+        "name": "Lampovníček Barnardův"
+    },
+    "607": {
+        "name": "Kanic šípohlavý"
+    },
+    "608": {
+        "name": "Parmice pruhovaná"
+    },
+    "609": {
+        "name": "Kostlín zlatý"
+    },
+    "610": {
+        "name": "Jehlice modropruhá"
+    },
+    "611": {
+        "name": "Celakant ze Sulawesi"
+    },
+    "612": {
+        "name": "Úhoř africký skvrnitý"
+    },
+    "613": {
+        "name": "Panchax modrý"
+    },
+    "614": {
+        "name": "Jehlice krokodýlozubá"
+    }
+}

@@ -239,6 +239,32 @@ body.modal-open {
   box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
 }
 
+/* PALM ISLAND FRUIT RECIPE (ordered fruit chips in the fish detail modal) */
+.fruit-recipe-chips {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  vertical-align: middle;
+}
+.fruit-recipe-chip {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  background: rgba(251, 146, 60, 0.14);
+  border: 1px solid rgba(251, 146, 60, 0.4);
+  color: #fdba74;
+  white-space: nowrap;
+}
+.fruit-recipe-arrow {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .modal-market-divider {
   font-size: 13px;
   font-weight: 800;

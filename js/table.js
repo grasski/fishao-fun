@@ -604,6 +604,15 @@ function renderFishRowHtml(f, idx, ctx) {
   var altMatchHtml = altMatch ? '<div style="font-size: 11px; color: #38bdf8; font-weight: 500; margin-top: 2px;">' + escapeHtml(altMatch) + '</div>' : '';
   var safeFishName = rc.safeFishName;
 
+  var fruitBadgeHtml = "";
+  if (Array.isArray(f.fruit_recipe) && f.fruit_recipe.length) {
+    var fruitRecipeText = f.fruit_recipe.map(function (fruitId) {
+      return window.FISHAO_I18N ? window.FISHAO_I18N.getFruitName(fruitId) : String(fruitId);
+    }).join(", ");
+    fruitBadgeHtml = '<span class="badge-fruit-tag" title="' +
+      escapeHtml(t('fruit_recipe_badge_title', { recipe: fruitRecipeText })) + '">🍹</span>';
+  }
+
   if (ctx.isClubView) {
     var unlock = getUnlockStatus(f, currentClubPoints);
     var rowClass = [];
@@ -651,6 +660,7 @@ function renderFishRowHtml(f, idx, ctx) {
     '<td><div class="fish-img-box"><img src="/images/fish_' + f.id + '.webp" alt="' + safeFishName + '" class="fish-img" width="92" height="52" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
     '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName +
     (f.is_club ? '<span class="badge-club-tag">' + ctx.clubTagText + '</span>' : '') +
+    fruitBadgeHtml +
     '</div>' + altMatchHtml + '</td>' +
     '<td>' + renderRatingBadge(f.rating) + '</td>' +
     '<td>' + renderPriceCell(f.id, ctx.priceCtx) + '</td>' +

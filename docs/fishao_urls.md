@@ -71,3 +71,20 @@
 | Nábytek do domu (128×128 px) | `https://play.fishao.net/data/image/private_house/graphics_128x128_<id>.png` |
 | Náhledy lokací | `https://play.fishao.net/data/image/locations/location_preview_<id>.png` |
 | Klubové emblémy | `https://play.fishao.net/data/image/club_emblems/200/<id>.png` |
+
+
+---
+
+## 4. Dodatečné informace o rybách (ovocné kombinace, sbírky, atd)
+
+- Reverse-engineered z oficiální wiki FISHAO stránky: https://www.fishao.net/wiki
+
+Postup:
+1. Otevři vývojářskou konzoli
+2. Otevři oficiální wiki stránku
+3. Dej vyhledat slovo "Kokos", mělo by to najít přesně jeden JS soubor
+4. Hned v úvodu nalezeného souboru je JSON uložený jako text.
+
+| Kategorie | Vzor URL |
+| :--- | :--- |
+| Požadavky k odemčení ryb | https://www.fishao.net/_app/immutable/chunks/DbvNqMD0.js |

@@ -168,6 +168,16 @@ tbody tr:hover .fish-img {
   margin-left: 6px;
   vertical-align: middle;
 }
+.badge-fruit-tag {
+  background: rgba(251, 146, 60, 0.14);
+  border: 1px solid rgba(251, 146, 60, 0.4);
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+  cursor: help;
+}
 
 /* RATING BADGES (Clear rarity-based star tiers) */
 .rating-badge {

@@ -897,6 +897,25 @@ function openPriceModal(fid, skipSync) {
     }
   }
 
+  // Palm Island fruit recipe (fruit_combinations_done -> ordered fruit IDs)
+  var fruitBox = document.getElementById("modalFishFruitBox");
+  var fruitRecipeEl = document.getElementById("modalFishFruitRecipe");
+  if (fruitBox && fruitRecipeEl) {
+    if (Array.isArray(f.fruit_recipe) && f.fruit_recipe.length) {
+      fruitBox.style.display = "block";
+      var fruitNames = f.fruit_recipe.map(function (fruitId) {
+        return window.FISHAO_I18N ? window.FISHAO_I18N.getFruitName(fruitId) : String(fruitId);
+      });
+      fruitRecipeEl.innerHTML = '<span class="fruit-recipe-chips">' +
+        fruitNames.map(function (fruitName) {
+          return '<span class="fruit-recipe-chip">' + escapeHtml(fruitName) + '</span>';
+        }).join('<span class="fruit-recipe-arrow">→</span>') +
+        '</span>';
+    } else {
+      fruitBox.style.display = "none";
+    }
+  }
+
   var initialPriceDate = getTodayISO();
   var elNewDate = document.getElementById("newPriceDate");
   if (elNewDate) elNewDate.value = initialPriceDate;

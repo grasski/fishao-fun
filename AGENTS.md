@@ -31,9 +31,9 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
      - `data/i18n/ui_cs.js`: Czech UI strings (`FISHAO_I18N_UI_CS`).
      - `data/i18n/ui_en.js`: English UI strings (`FISHAO_I18N_UI_EN`).
      - `data/i18n/ui_pl.js`: Polish UI strings (`FISHAO_I18N_UI_PL`).
-     - `data/i18n/taxonomies.js`: Baits, waters, locations, and timezone city translations (`FISHAO_I18N_TAXONOMIES`).
+     - `data/i18n/taxonomies.js`: Baits, waters, locations, timezone city, and Palm Island fruit translations (`FISHAO_I18N_TAXONOMIES`).
      - `data/i18n/fish_names.js`: 615 fish translations (`FISHAO_I18N_FISH_NAMES`), auto-generated from `data/raw/lang_cz.json`, `data/raw/lang_en.json`, and `data/raw/lang_pl.json` by `scripts/build_i18n.py`.
-     - `data/i18n.js`: Core engine, `LANGUAGES` registry, `Intl.PluralRules` support, and helpers (`t()`, `getFishName()`, `getAltFishName()`, `getLocationName()`, `getBaitName()`, `getWaterName()`, `getCityName()`, `formatDayMonth()`, `formatDate()`, `norm()`).
+     - `data/i18n.js`: Core engine, `LANGUAGES` registry, `Intl.PluralRules` support, and helpers (`t()`, `getFishName()`, `getAltFishName()`, `getLocationName()`, `getBaitName()`, `getWaterName()`, `getCityName()`, `getFruitName()`, `formatDayMonth()`, `formatDate()`, `norm()`).
    * Add all new text keys to `ui_cs.js`, `ui_en.js`, and `ui_pl.js`.
    * Use HTML attributes `data-i18n`, `data-i18n-placeholder`, `data-i18n-title`, and `data-i18n-aria-label` for static elements.
 6. **Modular Stylesheets (`css/`):**

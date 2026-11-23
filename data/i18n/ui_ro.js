@@ -211,6 +211,8 @@
       "modal_club_unlock": "🏰 Cerințe deblocare club",
       "modal_dimensions": "📏 Lungime (Min / Med / Max)",
       "modal_fish_detail": "🐟 Detalii pește & Fish Market",
+      "modal_fruit_recipe": "🍹 Rețetă de fructe (Palm Island)",
+      "fruit_recipe_badge_title": "Rețetă de fructe: {recipe}",
       "modal_login_notice_link": "autentificare cu Google",
       "modal_login_notice_prefix": "🔒 Pentru a trimite prețuri în Fish Market este necesară",
       "modal_market_divider": "💵 Fish Market – Prețuri de achiziție & istoric",

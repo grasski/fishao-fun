@@ -1,9 +1,13 @@
 """
 FISHAO - Data Generator (build_data.py)
 ---------------------------------------
-Parses raw game data (fish.json, lang_cz.json)
+Parses raw game data (fish.json, lang_cz.json, fish-extra.json)
 to generate structured JavaScript data files:
   - data/fishes.js (615 fishes; club metadata embedded via is_club)
+
+fish-extra.json carries supplementary per-fish data keyed by a separate
+0-based fishdex index, so its entries are joined to game fish by Czech
+fish name.
 """
 
 import json
@@ -16,6 +20,7 @@ os.makedirs(DATA_DIR, exist_ok=True)
 
 FISH_JSON = os.path.join(RAW_DIR, "fish.json")
 LANG_JSON = os.path.join(RAW_DIR, "lang_cz.json")
+FISH_EXTRA_JSON = os.path.join(RAW_DIR, "fish-extra.json")
 
 print("-> Loading source data files...")
 with open(FISH_JSON, "r", encoding="utf-8") as f:
@@ -24,6 +29,32 @@ fishes = fish_raw.get("data", fish_raw)
 
 with open(LANG_JSON, "r", encoding="utf-8") as f:
     cz = json.load(f)
+
+# Supplementary per-fish data from fish-extra.json, joined by Czech fish name.
+# `fruitCombos` values (ordered Czech fruit names, e.g. "Kokos, Kokos,
+# Pomeranč") are converted to ordered fruit IDs (fruit_1..fruit_9 in
+# lang_cz.json) so the generated data stays language-neutral and translates
+# via data/i18n/taxonomies.js.
+print("-> Processing fish-extra.json supplementary data...")
+with open(FISH_EXTRA_JSON, "r", encoding="utf-8") as f:
+    fish_extra = json.load(f)
+
+FRUIT_IDS = {cz[f"fruit_{i}"]: i for i in range(1, 10)}
+fruit_recipe_by_name = {}
+for extra_entry in fish_extra.values():
+    combos = extra_entry.get("fruitCombos")
+    if not combos:
+        continue
+    extra_name = extra_entry.get("name")
+    recipe_str = combos.get("0", "")
+    try:
+        recipe = [FRUIT_IDS[w.strip()] for w in recipe_str.split(",") if w.strip()]
+    except KeyError as e:
+        raise SystemExit(f"ERROR: unknown fruit name {e} in fish-extra.json recipe for '{extra_name}'")
+    if not extra_name or not recipe:
+        raise SystemExit(f"ERROR: malformed fruitCombos entry in fish-extra.json: {extra_entry}")
+    fruit_recipe_by_name[extra_name] = recipe
+print(f"   {len(fruit_recipe_by_name)} fruit recipes loaded.")
 
 # Supported specific fishing sub-locations (EFPT_* codes from catch_req.fishing_place).
 # These are stored as stable identifiers in data/fishes.js and translated in
@@ -134,6 +165,7 @@ club_map = {item['id']: item for item in club_data}
 # 2. Process all 615 fishes for encyclopedia
 print("-> Processing all 615 encyclopedia fishes...")
 all_fishes = []
+matched_fruit_names = set()
 for f in fishes:
     fid = int(f['id'])
     name = cz.get(f'fish_{fid}') or f.get('name') or f"Neznámá ryba #{fid}"
@@ -168,6 +200,12 @@ for f in fishes:
         fish_entry['raw_times'] = times
     if dates:
         fish_entry['raw_dates'] = dates
+    if req.get('fruit_combinations_done'):
+        recipe = fruit_recipe_by_name.get(name)
+        if not recipe:
+            raise SystemExit(f"ERROR: fish {fid} ({name}) has fruit_combinations_done but no recipe in fish-extra.json")
+        fish_entry['fruit_recipe'] = recipe
+        matched_fruit_names.add(name)
     if is_night_time_window(times):
         fish_entry['is_night'] = True
     if club_info:
@@ -178,6 +216,11 @@ for f in fishes:
         fish_entry['order'] = club_info.get('order')
 
     all_fishes.append(fish_entry)
+
+unmatched_recipes = set(fruit_recipe_by_name) - matched_fruit_names
+if unmatched_recipes:
+    raise SystemExit(f"ERROR: fish-extra.json recipes without a fruit_combinations_done fish: {sorted(unmatched_recipes)}")
+print(f"   {len(matched_fruit_names)} fruit recipes matched to fishes.")
 
 # Write data/fishes.js
 fishes_file = os.path.join(DATA_DIR, "fishes.js")

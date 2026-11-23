@@ -211,6 +211,8 @@
       "modal_club_unlock": "🏰 Club Unlock Requirements",
       "modal_dimensions": "📏 Size (Min / Avg / Max)",
       "modal_fish_detail": "🐟 Fish Detail & Fish Market",
+      "modal_fruit_recipe": "🍹 Fruit Recipe (Palm Island)",
+      "fruit_recipe_badge_title": "Fruit recipe: {recipe}",
       "modal_login_notice_link": "sign in with Google",
       "modal_login_notice_prefix": "🔒 To submit prices to Fish Market you must",
       "modal_market_divider": "💵 Fish Market – Buy prices & history",

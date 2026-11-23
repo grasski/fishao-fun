@@ -211,6 +211,8 @@
       "modal_club_unlock": "🏰 Warunki odblokowania w klubie",
       "modal_dimensions": "📏 Rozmiar (Min / Średnia / Max)",
       "modal_fish_detail": "🐟 Szczegóły ryby & Fish Market",
+      "modal_fruit_recipe": "🍹 Przepis owocowy (Palm Island)",
+      "fruit_recipe_badge_title": "Przepis owocowy: {recipe}",
       "modal_login_notice_link": "zalogować się przez Google",
       "modal_login_notice_prefix": "🔒 Aby dodać cenę do Fish Marketu, musisz",
       "modal_market_divider": "💵 Fish Market – Ceny skupu i historia",

@@ -211,6 +211,8 @@
       "modal_club_unlock": "🏰 Kulüp Açma Gereksinimleri",
       "modal_dimensions": "📏 Boy (Min / Ort / Max)",
       "modal_fish_detail": "🐟 Balık Detayı & Fish Market",
+      "modal_fruit_recipe": "🍹 Meyve Tarifi (Palm Island)",
+      "fruit_recipe_badge_title": "Meyve tarifi: {recipe}",
       "modal_login_notice_link": "Google ile giriş yapın",
       "modal_login_notice_prefix": "🔒 Fish Market'e fiyat eklemek için",
       "modal_market_divider": "💵 Fish Market – Alış fiyatları & geçmiş",

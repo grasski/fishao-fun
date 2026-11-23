@@ -211,6 +211,8 @@
       "modal_club_unlock": "🏰 Club-ontgrendelvereisten",
       "modal_dimensions": "📏 Lengte (Min / Gem / Max)",
       "modal_fish_detail": "🐟 Visdetail & Fish Market",
+      "modal_fruit_recipe": "🍹 Fruitrecept (Palm Island)",
+      "fruit_recipe_badge_title": "Fruitrecept: {recipe}",
       "modal_login_notice_link": "inloggen met Google",
       "modal_login_notice_prefix": "🔒 Om prijzen toe te voegen aan Fish Market moet je",
       "modal_market_divider": "💵 Fish Market – Inkoopprijzen & geschiedenis",
