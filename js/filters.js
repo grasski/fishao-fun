@@ -207,7 +207,10 @@ function applyFilters() {
     if (location && currentView !== "club" &&
         !((f.locations && f.locations.includes(location)) ||
           (f.places && f.places.includes(location)))) return false;
-    if (area && !(f.places && f.places.includes(area))) return false;
+    if (area === AREA_FILTER_ANY) {
+      // "Anywhere": keep only fish with no specific area in the selected location.
+      if (getFishPlacesForLocation(f, location).indexOf(null) === -1) return false;
+    } else if (area && !(f.places && f.places.includes(area))) return false;
 
     if (!isNaN(minSize) && f.max_l < minSize) return false;
     if (!isNaN(maxSize) && f.min_l > maxSize) return false;
@@ -362,7 +365,9 @@ function applyFilters() {
     filterNotes.push(t('filter_note_location', { name: locName }));
   }
   if (area) {
-    var areaName = window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(area) : area;
+    var areaName = area === AREA_FILTER_ANY
+      ? t('opt_area_any')
+      : (window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(area) : area);
     filterNotes.push(t('filter_note_area', { name: areaName }));
   }
   if (bait) {
@@ -575,12 +580,19 @@ function updateAreaFilterOptions() {
     });
   }
 
+  // "Anywhere" (fish with no specific area) is offered only for locations that
+  // actually have such fish; never in the club view (all club fish have areas).
+  var hasAnywhere = !isClubView && Boolean(location) && locationHasArealessFish(location);
+
   select.innerHTML = '<option value="">' + t('opt_area_all') + '</option>' +
+    (hasAnywhere ? '<option value="' + AREA_FILTER_ANY + '">' + t('opt_area_any') + '</option>' : '') +
     sortedAreas.map(function (a) {
       return '<option value="' + a.value + '">' + a.label + '</option>';
     }).join('');
 
-  var keepValue = sortedAreas.some(function (a) { return a.value === currentVal; });
+  var keepValue = currentVal === AREA_FILTER_ANY
+    ? hasAnywhere
+    : sortedAreas.some(function (a) { return a.value === currentVal; });
   select.value = keepValue ? currentVal : "";
   select.disabled = false;
 }

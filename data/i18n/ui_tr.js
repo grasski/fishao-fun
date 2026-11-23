@@ -253,6 +253,7 @@
       "nav_market": "Fish Market",
       "nav_market_pill": "Fiyatlar",
       "opt_area_all": "Tüm noktalar",
+      "opt_area_any": "Her yerde",
       "opt_bait_all": "Tüm yemler",
       "opt_loc_all": "Tüm bölgeler ({count})",
       "opt_rating_all": "Tüm dereceler",

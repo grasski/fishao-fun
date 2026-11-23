@@ -253,6 +253,7 @@
       "nav_market": "Fish Market",
       "nav_market_pill": "Ceny",
       "opt_area_all": "Wszystkie miejsca",
+      "opt_area_any": "Gdziekolwiek",
       "opt_bait_all": "Wszystkie przynęty",
       "opt_loc_all": "Wszystkie lokalizacje ({count})",
       "opt_rating_all": "Wszystkie oceny",

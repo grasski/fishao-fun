@@ -253,6 +253,7 @@
       "nav_market": "Fish Market",
       "nav_market_pill": "Výkup",
       "opt_area_all": "Všechna místa",
+      "opt_area_any": "Kdekoli",
       "opt_bait_all": "Všechny návnady",
       "opt_loc_all": "Všechny lokace ({count})",
       "opt_rating_all": "Všechny",

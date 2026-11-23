@@ -491,8 +491,17 @@ function toggleModalBaitCompetitors(spotBaitKey) {
 function openSpotBaitInFishdex(locKey, placeKey, baitCode) {
   closePriceModal();
   var timeArg = (modalBaitAdvisorTimeMode === 'now') ? 'now' : '';
+  var areaArg = placeKey || '';
+  // Shore spots (no specific area) map to the "Anywhere" filter so the table
+  // shows exactly the unrestricted fish competing at that spot. Locations
+  // without specific areas keep the plain "All areas" value.
+  if (!areaArg && typeof getFishAreasForLocation === 'function' &&
+      getFishAreasForLocation(locKey).length &&
+      typeof locationHasArealessFish === 'function' && locationHasArealessFish(locKey)) {
+    areaArg = AREA_FILTER_ANY;
+  }
   if (typeof openLocationInFishdex === 'function') {
-    openLocationInFishdex(locKey, placeKey || '', timeArg, 'all');
+    openLocationInFishdex(locKey, areaArg, timeArg, 'all');
   }
   if (baitCode) {
     var baitSelect = document.getElementById('baitFilter');

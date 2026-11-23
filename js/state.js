@@ -122,6 +122,25 @@ function getFishAreasForLocation(location) {
 }
 
 /**
+ * Sentinel value of the "Anywhere" area filter option: fish with no specific
+ * area in the selected location. Such fish are catchable anywhere in the
+ * location, including its specific areas (see isFishInSpot).
+ */
+var AREA_FILTER_ANY = '__any__';
+
+/**
+ * True when at least one fish in the location has no specific area there,
+ * i.e. the "Anywhere" area filter option should be offered for the location.
+ */
+function locationHasArealessFish(location) {
+  if (!location) return false;
+  return allFishes.some(function (f) {
+    return (f.locations || []).indexOf(location) !== -1 &&
+      getFishPlacesForLocation(f, location).indexOf(null) !== -1;
+  });
+}
+
+/**
  * Resolve the specific fishing areas of the club waters. Every club fish shares
  * the parent location "Klubový revír", so the club view cannot derive its area
  * filter options from a selected parent location.
@@ -1399,7 +1418,10 @@ function computeFishBaitRecommendations(fish, options) {
 
   locKeys.forEach(function (locKey) {
     var places = getFishPlacesForLocation(fish, locKey);
-    if (filterArea && places.indexOf(filterArea) !== -1) {
+    if (filterArea === AREA_FILTER_ANY) {
+      // "Anywhere" filter: evaluate only the general/shore spot of the location.
+      places = places.indexOf(null) !== -1 ? [null] : [];
+    } else if (filterArea && places.indexOf(filterArea) !== -1) {
       places = [filterArea];
     }
 

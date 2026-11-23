@@ -253,6 +253,7 @@
       "nav_market": "Fish Market",
       "nav_market_pill": "Prijzen",
       "opt_area_all": "Alle plekken",
+      "opt_area_any": "Overal",
       "opt_bait_all": "Alle soorten aas",
       "opt_loc_all": "Alle locaties ({count})",
       "opt_rating_all": "Alle ratings",

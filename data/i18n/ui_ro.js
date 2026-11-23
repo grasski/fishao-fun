@@ -253,6 +253,7 @@
       "nav_market": "Fish Market",
       "nav_market_pill": "Prețuri",
       "opt_area_all": "Toate zonele",
+      "opt_area_any": "Oriunde",
       "opt_bait_all": "Toate momelile",
       "opt_loc_all": "Toate locațiile ({count})",
       "opt_rating_all": "Toate ratingurile",
