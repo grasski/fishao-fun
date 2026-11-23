@@ -155,7 +155,7 @@ function applyFilters() {
   var searchEl = document.getElementById("search");
   var q = searchEl ? searchEl.value.trim() : "";
   var bait = document.getElementById("baitFilter").value;
-  var rating = document.getElementById("ratingFilter").value;
+  var ratingValues = ratingFilterValues;
   var location = document.getElementById("locationFilter").value;
   var areaEl = document.getElementById("areaFilter");
   var area = areaEl ? areaEl.value : "";
@@ -202,7 +202,7 @@ function applyFilters() {
 
     if (bait && (!Array.isArray(f.baits) || !f.baits.includes(bait))) return false;
 
-    if (rating && !matchesFishRatingFilter(f, rating)) return false;
+    if (ratingValues.length && !matchesFishRatingFilter(f, ratingValues)) return false;
 
     if (location && currentView !== "club" &&
         !((f.locations && f.locations.includes(location)) ||
@@ -368,11 +368,10 @@ function applyFilters() {
   if (bait) {
     filterNotes.push('__BAIT_INLINE__');
   }
-  if (rating) {
-    var starStr = rating;
-    if (rating === "min3") starStr = "3★+";
-    else if (rating === "min4") starStr = "4★+";
-    else if (rating.match(/^\d$/)) starStr = rating + "★";
+  if (ratingValues.length) {
+    var starStr = sortMultiSelectValuesDesc(ratingValues).map(function (v) {
+      return getMultiSelectLabel(v, 'opt_rating_all');
+    }).join(', ');
     filterNotes.push(t('filter_note_rating', { stars: starStr }));
   }
   if (filterUncaught) filterNotes.push(t('filter_note_uncaught'));
@@ -430,8 +429,8 @@ function resetFilters() {
   var baitEl = document.getElementById("baitFilter");
   if (baitEl) baitEl.value = "";
   syncBaitSelectIcon('baitFilter', 'baitFilterIcon');
-  var ratingEl = document.getElementById("ratingFilter");
-  if (ratingEl) ratingEl.value = "";
+  ratingFilterValues = [];
+  if (typeof MULTI_SELECT !== 'undefined' && MULTI_SELECT.rating) MULTI_SELECT.rating.reset();
   var loc = document.getElementById("locationFilter");
   if (loc) loc.value = "";
   var areaSelect = document.getElementById("areaFilter");
@@ -655,19 +654,38 @@ function updateSortByOptions() {
   select.value = (curVal && curVal !== "default") ? curVal : "name_asc";
 }
 
-function updateRatingFilterOptions() {
-  var select = document.getElementById("ratingFilter");
-  if (!select) return;
-  var curVal = select.value;
-  select.innerHTML =
-    '<option value="">' + t('opt_rating_all') + '</option>' +
-    '<option value="5">★★★★★ (5)</option>' +
-    '<option value="4">★★★★☆ (4)</option>' +
-    '<option value="3">★★★☆☆ (3)</option>' +
-    '<option value="2">★★☆☆☆ (2)</option>' +
-    '<option value="1">★☆☆☆☆ (1)</option>' +
-    '<option value="min3">' + t('opt_rating_min3') + '</option>' +
-    '<option value="min4">' + t('opt_rating_min4') + '</option>';
-  select.value = curVal;
+function getRatingFilterOptions() {
+  var opts = [];
+  for (var n = 5; n >= 1; n--) {
+    opts.push({
+      value: String(n),
+      label: '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n) + ' (' + n + ')'
+    });
+  }
+  return opts;
+}
+
+function initRatingFilterOptions() {
+  var mount = document.getElementById('ratingFilterMount');
+  if (!mount || typeof createMultiSelect !== 'function') return;
+  var opts = getRatingFilterOptions();
+  if (typeof MULTI_SELECT !== 'undefined' && MULTI_SELECT.rating) {
+    MULTI_SELECT.rating.setOptions(opts);
+    MULTI_SELECT.rating.setValues(ratingFilterValues);
+    return;
+  }
+  createMultiSelect({
+    id: 'rating',
+    mountEl: mount,
+    options: opts,
+    selected: ratingFilterValues,
+    allLabelKey: 'opt_rating_all',
+    ariaLabelKey: 'filter_rating_label',
+    summaryMax: 4,
+    onChange: function (values) {
+      ratingFilterValues = values;
+      applyFilters();
+    }
+  });
 }
 

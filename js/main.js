@@ -518,7 +518,7 @@ function setLanguage(lang, opts) {
   initBaitOptions();
   updateTimeFilterOptions();
   updateSortByOptions();
-  updateRatingFilterOptions();
+  initRatingFilterOptions();
   renderTableHead();
 
   if (opts.skipRender) return;
@@ -912,7 +912,7 @@ window.fishaoApp = {
   onPlayerTimeFilterChange: onPlayerTimeFilterChange,
   onPlayerFishFilterChange: onPlayerFishFilterChange,
   onPlayerBaitFilterChange: onPlayerBaitFilterChange,
-  onPlayerRatingFilterChange: onPlayerRatingFilterChange,
+  onPlayerRatingSelectionChange: onPlayerRatingSelectionChange,
   onPlayerSortChange: onPlayerSortChange,
   resetPlayerFilters: resetPlayerFilters,
   toggleBackyardMenu: toggleBackyardMenu,

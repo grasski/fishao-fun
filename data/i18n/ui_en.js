@@ -256,8 +256,6 @@
       "opt_bait_all": "All baits",
       "opt_loc_all": "All locations ({count})",
       "opt_rating_all": "All ratings",
-      "opt_rating_min3": "At least 3★",
-      "opt_rating_min4": "At least 4★",
       "opt_sort_avg_asc": "Avg length (smallest)",
       "opt_sort_avg_desc": "Avg length (largest)",
       "opt_sort_chance_asc": "Catch chance (lowest)",

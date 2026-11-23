@@ -134,7 +134,7 @@
   <link rel="stylesheet" href="css/base.css?v=3.2">
   <link rel="stylesheet" href="css/header.css?v=3.3">
   <link rel="stylesheet" href="css/nav.css?v=3.4">
-  <link rel="stylesheet" href="css/filters.css?v=3.6">
+  <link rel="stylesheet" href="css/filters.css?v=3.7">
   <link rel="stylesheet" href="css/table.css?v=4.1">
   <link rel="stylesheet" href="css/clubs.css?v=3.3">
   <link rel="stylesheet" href="css/players.css?v=3.3">
@@ -534,18 +534,8 @@
         </div>
 
         <div class="filter-group sm">
-          <label class="filter-label" for="playerRatingFilterSelect" data-i18n="filter_rating_label">Rating</label>
-          <select id="playerRatingFilterSelect" class="filter-control"
-            onchange="window.fishaoApp.onPlayerRatingFilterChange(this.value)">
-            <option value="" data-i18n="opt_rating_all">Všechny</option>
-            <option value="5">★★★★★ (5)</option>
-            <option value="4">★★★★☆ (4)</option>
-            <option value="3">★★★☆☆ (3)</option>
-            <option value="2">★★☆☆☆ (2)</option>
-            <option value="1">★☆☆☆☆ (1)</option>
-            <option value="min3" data-i18n="opt_rating_min3">Minimálně 3★</option>
-            <option value="min4" data-i18n="opt_rating_min4">Minimálně 4★</option>
-          </select>
+          <span class="filter-label" data-i18n="filter_rating_label">Rating</span>
+          <div id="playerRatingFilterMount" class="rating-filter-mount"></div>
         </div>
 
         <div class="filter-group">
@@ -1028,17 +1018,8 @@
           </div>
 
           <div class="filter-group sm">
-            <label class="filter-label" for="ratingFilter" data-i18n="filter_rating_label">Rating</label>
-            <select id="ratingFilter" class="filter-control" onchange="window.fishaoApp.applyFilters()">
-              <option value="">Všechny</option>
-              <option value="5">★★★★★ (5)</option>
-              <option value="4">★★★★☆ (4)</option>
-              <option value="3">★★★☆☆ (3)</option>
-              <option value="2">★★☆☆☆ (2)</option>
-              <option value="1">★☆☆☆☆ (1)</option>
-              <option value="min3">Minimálně 3★</option>
-              <option value="min4">Minimálně 4★</option>
-            </select>
+            <span class="filter-label" data-i18n="filter_rating_label">Rating</span>
+            <div id="ratingFilterMount" class="rating-filter-mount"></div>
           </div>
 
           <div class="filter-group">
@@ -2121,20 +2102,20 @@
   <script defer src="data/estimated_prices.js?v=1.0"></script>
   <script defer src="firebase-config.js?v=3.2"></script>
   <!-- Modular FISHAO Application Logic -->
-  <script defer src="js/state.js?v=5.0"></script>
+  <script defer src="js/state.js?v=5.1"></script>
   <script defer src="js/firestore-tx.js?v=3.2"></script>
   <script defer src="js/table.js?v=4.5"></script>
   <script defer src="js/clubs.js?v=4.0"></script>
   <script defer src="js/market.js?v=4.20"></script>
-  <script defer src="js/filters.js?v=4.6"></script>
+  <script defer src="js/filters.js?v=4.7"></script>
   <script defer src="js/auth.js?v=4.10"></script>
-  <script defer src="js/players.js?v=4.2"></script>
+  <script defer src="js/players.js?v=4.3"></script>
   <script defer src="js/chat.js?v=2.6"></script>
   <script defer src="js/locations.js?v=1.2"></script>
   <script defer src="js/calendar.js?v=1.1"></script>
   <script defer src="js/guide.js?v=1.7"></script>
   <script defer src="js/reminders.js?v=1.3"></script>
-  <script defer src="js/main.js?v=5.14"></script>
+  <script defer src="js/main.js?v=5.15"></script>
 
 </body>
 

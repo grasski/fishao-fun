@@ -201,6 +201,52 @@
   display: block;
 }
 
+/* Multi-select variant of the bait dropdown (rating filters) */
+.rating-filter-mount {
+  width: 100%;
+}
+
+.multi-select .multiselect-option {
+  gap: 6px;
+}
+
+.multi-select .ms-check {
+  width: 14px;
+  flex: 0 0 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--border-focus);
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.multi-select .bait-custom-option.active .ms-check {
+  opacity: 1;
+}
+
+.multi-select .ms-option-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.multi-select .bait-custom-menu {
+  min-width: 200px;
+  max-width: min(280px, calc(100vw - 32px));
+}
+
+.multi-select .bait-custom-option:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: -2px;
+}
+
+@media (max-width: 640px) {
+  .multi-select .bait-custom-menu {
+    min-width: 0;
+    max-width: min(240px, calc(100vw - 32px));
+  }
+}
+
 .filter-control:focus {
   outline: none;
   border-color: var(--border-focus);

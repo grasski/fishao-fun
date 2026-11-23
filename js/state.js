@@ -174,6 +174,7 @@ var filterOnlyCaught = false;
 var filterOnlyBackyard = false;
 var sortBestChanceOverride = false;
 var collectionFilterMode = "all"; // 'all' | 'caught' | 'missing'
+var ratingFilterValues = []; // Selected star ratings (["1".."5"]); empty = all ratings
 
 // Authentication & User Profile State
 var currentUser = null;
@@ -188,7 +189,7 @@ var filterPlayerActiveNow = false;
 var filterPlayerTime = "";
 var filterPlayerFishId = null;
 var filterPlayerBait = "";
-var filterPlayerRating = null;
+var filterPlayerRating = []; // Selected star ratings (["1".."5"]); empty = all ratings
 var filterPlayerSearchText = "";
 var sortPlayersBy = "default";
 var isProfileBackyardCatalogOpen = false;
@@ -798,6 +799,258 @@ function syncBaitSelectIcon(selectId, iconId) {
 }
 
 // -------------------------------------------------------------
+// Generic Multi-Select Dropdown (reuses the bait dropdown design)
+// -------------------------------------------------------------
+
+var MULTI_SELECT = {};
+
+function getMultiSelectLabel(value, allLabelKey) {
+  if (!value) return t(allLabelKey || 'opt_rating_all');
+  return value + '★';
+}
+
+function sortMultiSelectValuesDesc(values) {
+  return values.slice().sort(function (a, b) {
+    return (parseInt(b, 10) || 0) - (parseInt(a, 10) || 0);
+  });
+}
+
+/**
+ * Render a checkbox-style multi-select dropdown inside a mount element,
+ * reusing the bait dropdown trigger/menu markup & styling.
+ *
+ * cfg: {
+ *   id, mountEl | mountId, options: [{ value, label }], selected,
+ *   allLabelKey, ariaLabelKey, summaryMax, onChange(values)
+ * }
+ */
+function createMultiSelect(cfg) {
+  cfg = cfg || {};
+  var mount = cfg.mountEl || (cfg.mountId ? document.getElementById(cfg.mountId) : null);
+  if (!mount) return null;
+
+  var options = Array.isArray(cfg.options) ? cfg.options.slice() : [];
+  var selected = [];
+  var menuSig = '';
+  var allLabelKey = cfg.allLabelKey || 'opt_rating_all';
+  var summaryMax = typeof cfg.summaryMax === 'number' ? cfg.summaryMax : 4;
+
+  function normalizeValues(values) {
+    if (!values) return [];
+    if (!Array.isArray(values)) values = [values];
+    var allowed = options.map(function (opt) { return String(opt.value); });
+    var out = [];
+    values.forEach(function (v) {
+      var s = String(v);
+      if (v !== '' && allowed.indexOf(s) !== -1 && out.indexOf(s) === -1) out.push(s);
+    });
+    return sortMultiSelectValuesDesc(out);
+  }
+
+  mount.innerHTML = '';
+
+  var wrapper = document.createElement('div');
+  wrapper.className = 'bait-select-wrapper multi-select';
+
+  var trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = 'filter-control bait-custom-trigger';
+  trigger.setAttribute('aria-haspopup', 'listbox');
+  trigger.setAttribute('aria-expanded', 'false');
+
+  var menu = document.createElement('div');
+  menu.className = 'bait-custom-menu';
+  menu.setAttribute('role', 'listbox');
+  menu.setAttribute('aria-multiselectable', 'true');
+  if (cfg.id) menu.id = 'msMenu_' + cfg.id;
+  if (cfg.id) trigger.setAttribute('aria-controls', menu.id);
+
+  wrapper.appendChild(trigger);
+  wrapper.appendChild(menu);
+  mount.appendChild(wrapper);
+
+  selected = normalizeValues(cfg.selected);
+  bindGlobalBaitDropdownListeners();
+  closeAllBaitDropdowns(null);
+
+  function isOpen() {
+    return wrapper.classList.contains('open');
+  }
+
+  function setOpen(open) {
+    closeAllBaitDropdowns(open ? wrapper : null);
+    wrapper.classList.toggle('open', open);
+    trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) fitTriggerSummary();
+  }
+
+  trigger.onclick = function (e) {
+    e.stopPropagation();
+    setOpen(!isOpen());
+  };
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && isOpen()) {
+      setOpen(false);
+      trigger.focus();
+    }
+  });
+
+  menu.addEventListener('click', function (e) {
+    var optBtn = e.target && e.target.closest ? e.target.closest('.bait-custom-option') : null;
+    if (!optBtn) return;
+    e.stopPropagation();
+    var shouldFocus = document.activeElement === optBtn;
+    var nextVal = optBtn.getAttribute('data-value') || '';
+    if (!nextVal) {
+      selected = [];
+    } else {
+      var idx = selected.indexOf(nextVal);
+      if (idx === -1) selected.push(nextVal);
+      else selected.splice(idx, 1);
+      selected = sortMultiSelectValuesDesc(selected);
+    }
+    refresh();
+    if (shouldFocus) {
+      var again = menu.querySelector('.bait-custom-option[data-value="' + nextVal + '"]');
+      if (again) again.focus();
+    }
+    if (typeof cfg.onChange === 'function') cfg.onChange(selected.slice());
+  });
+
+  function fullSummaryText() {
+    if (!selected.length) return t(allLabelKey);
+    return sortMultiSelectValuesDesc(selected).map(function (v) {
+      return getMultiSelectLabel(v, allLabelKey);
+    }).join(', ');
+  }
+
+  function buildCompactSummary(values, count) {
+    var shown = values.slice(0, count);
+    // Compact form: only the last shown value keeps the star ("1, 2, 3★").
+    var text = shown.map(function (v, i) {
+      return i === shown.length - 1 ? v + '★' : v;
+    }).join(', ');
+    return count < values.length ? text + '…' : text;
+  }
+
+  function fitTriggerSummary() {
+    var labelEl = trigger.querySelector('.bait-trigger-label');
+    if (!labelEl) return;
+
+    var values = sortMultiSelectValuesDesc(selected);
+    if (!values.length) {
+      labelEl.textContent = t(allLabelKey);
+      return;
+    }
+
+    // Hidden containers (inactive tabs) have no measurable width: fall back to
+    // the configured cap and refit once the trigger becomes visible.
+    if (!trigger.clientWidth) {
+      labelEl.textContent = buildCompactSummary(values, Math.min(values.length, summaryMax));
+      return;
+    }
+
+    for (var count = values.length; count > 1; count--) {
+      labelEl.textContent = buildCompactSummary(values, count);
+      if (labelEl.scrollWidth <= labelEl.clientWidth + 1) return;
+    }
+    labelEl.textContent = buildCompactSummary(values, 1);
+  }
+
+  var _fitFrame = null;
+  function scheduleSummaryFit() {
+    if (_fitFrame !== null) return;
+    if (typeof requestAnimationFrame === 'function') {
+      _fitFrame = requestAnimationFrame(function () {
+        _fitFrame = null;
+        fitTriggerSummary();
+      });
+    } else {
+      fitTriggerSummary();
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('resize', scheduleSummaryFit);
+  }
+
+  function updateTrigger() {
+    var full = fullSummaryText();
+    trigger.innerHTML =
+      '<span class="bait-trigger-content">' +
+        '<span class="bait-trigger-label"></span>' +
+      '</span>' +
+      '<span class="bait-trigger-arrow" aria-hidden="true">▼</span>';
+    fitTriggerSummary();
+    trigger.title = full;
+    trigger.setAttribute('aria-label', t(cfg.ariaLabelKey || 'filter_rating_label') + ': ' + full);
+  }
+
+  function buildMenuHtml() {
+    var html = '<button type="button" role="option" class="bait-custom-option multiselect-option' +
+      (selected.length ? '' : ' active') + '" data-value="" aria-selected="' +
+      (selected.length ? 'false' : 'true') + '">' +
+        '<span class="ms-check" aria-hidden="true">✓</span>' +
+        '<span class="ms-option-label">' + escapeHtml(t(allLabelKey)) + '</span>' +
+      '</button>';
+    options.forEach(function (opt) {
+      var val = String(opt.value);
+      var isSel = selected.indexOf(val) !== -1;
+      html += '<button type="button" role="option" class="bait-custom-option multiselect-option' +
+        (isSel ? ' active' : '') + '" data-value="' + escapeHtml(val) + '" aria-selected="' +
+        (isSel ? 'true' : 'false') + '">' +
+          '<span class="ms-check" aria-hidden="true">✓</span>' +
+          '<span class="ms-option-label">' + escapeHtml(opt.label) + '</span>' +
+        '</button>';
+    });
+    return html;
+  }
+
+  function renderMenu(force) {
+    var sig = selected.join(',') + '|' + t(allLabelKey) + '|' +
+      options.map(function (o) { return o.value + ':' + o.label; }).join('|');
+    if (!force && sig === menuSig) return;
+    menuSig = sig;
+    menu.innerHTML = buildMenuHtml();
+  }
+
+  function refresh() {
+    updateTrigger();
+    renderMenu(false);
+    scheduleSummaryFit();
+  }
+
+  var api = {
+    wrapperEl: wrapper,
+    triggerEl: trigger,
+    menuEl: menu,
+    getValues: function () { return selected.slice(); },
+    setValues: function (values) {
+      selected = normalizeValues(values);
+      refresh();
+      return api;
+    },
+    setOptions: function (nextOptions) {
+      options = Array.isArray(nextOptions) ? nextOptions.slice() : [];
+      selected = normalizeValues(selected);
+      refresh();
+      return api;
+    },
+    reset: function () {
+      selected = [];
+      refresh();
+      return api;
+    },
+    refresh: function () { refresh(); return api; }
+  };
+
+  if (cfg.id) MULTI_SELECT[cfg.id] = api;
+  refresh();
+  return api;
+}
+
+// -------------------------------------------------------------
 // Shared Time, Date & Filter Helpers (Memoized)
 // -------------------------------------------------------------
 
@@ -944,12 +1197,18 @@ function matchesFishTimeFilter(f, timeVal, nowCtx) {
 
 function matchesFishRatingFilter(f, ratingVal) {
   if (!f) return false;
-  if (!ratingVal) return true;
-  var r = f.rating || 1;
-  if (ratingVal === "min3") return r >= 3;
-  if (ratingVal === "min4") return r >= 4;
-  if (/^\d$/.test(String(ratingVal))) return r === parseInt(ratingVal, 10);
-  return true;
+  var vals;
+  if (Array.isArray(ratingVal)) vals = ratingVal;
+  else if (ratingVal === null || ratingVal === undefined || ratingVal === "") vals = [];
+  else vals = [ratingVal];
+  if (!vals.length) return true;
+  var wanted = [];
+  for (var i = 0; i < vals.length; i++) {
+    var num = parseInt(vals[i], 10);
+    if (isFinite(num) && wanted.indexOf(num) === -1) wanted.push(num);
+  }
+  if (!wanted.length) return true;
+  return wanted.indexOf(f.rating || 1) !== -1;
 }
 
 // -------------------------------------------------------------

@@ -404,18 +404,24 @@ function populatePlayerFishFilterDropdown() {
     syncBaitSelectIcon('playerBaitFilterSelect', 'playerBaitFilterIcon');
   }
 
-  var selectRating = document.getElementById("playerRatingFilterSelect");
-  if (selectRating) {
-    var curRating = selectRating.value || (filterPlayerRating !== null ? String(filterPlayerRating) : "");
-    selectRating.innerHTML =
-      '<option value="">' + t('opt_rating_all') + '</option>' +
-      '<option value="5"' + (curRating === '5' ? ' selected' : '') + '>★★★★★ (5)</option>' +
-      '<option value="4"' + (curRating === '4' ? ' selected' : '') + '>★★★★☆ (4)</option>' +
-      '<option value="3"' + (curRating === '3' ? ' selected' : '') + '>★★★☆☆ (3)</option>' +
-      '<option value="2"' + (curRating === '2' ? ' selected' : '') + '>★★☆☆☆ (2)</option>' +
-      '<option value="1"' + (curRating === '1' ? ' selected' : '') + '>★☆☆☆☆ (1)</option>' +
-      '<option value="min3"' + (curRating === 'min3' ? ' selected' : '') + '>' + t('opt_rating_min3') + '</option>' +
-      '<option value="min4"' + (curRating === 'min4' ? ' selected' : '') + '>' + t('opt_rating_min4') + '</option>';
+  var ratingMount = document.getElementById("playerRatingFilterMount");
+  if (ratingMount && typeof createMultiSelect === 'function') {
+    var ratingOpts = (typeof getRatingFilterOptions === 'function') ? getRatingFilterOptions() : [];
+    if (typeof MULTI_SELECT !== 'undefined' && MULTI_SELECT.playerRating) {
+      MULTI_SELECT.playerRating.setOptions(ratingOpts);
+      MULTI_SELECT.playerRating.setValues(filterPlayerRating);
+    } else {
+      createMultiSelect({
+        id: 'playerRating',
+        mountEl: ratingMount,
+        options: ratingOpts,
+        selected: filterPlayerRating,
+        allLabelKey: 'opt_rating_all',
+        ariaLabelKey: 'filter_rating_label',
+        summaryMax: 4,
+        onChange: onPlayerRatingSelectionChange
+      });
+    }
   }
 
   var selectTime = document.getElementById("playerTimeFilterSelect");
@@ -554,8 +560,8 @@ function onPlayerBaitFilterChange(val) {
   renderPlayersList();
 }
 
-function onPlayerRatingFilterChange(val) {
-  filterPlayerRating = val || null;
+function onPlayerRatingSelectionChange(values) {
+  filterPlayerRating = Array.isArray(values) ? values.slice() : [];
   playerCurrentPage = 1;
   renderPlayersList();
 }
@@ -592,7 +598,8 @@ function resetPlayerFilters(skipRender) {
   filterPlayerTime = "";
   filterPlayerFishId = null;
   filterPlayerBait = "";
-  filterPlayerRating = null;
+  filterPlayerRating = [];
+  if (typeof MULTI_SELECT !== 'undefined' && MULTI_SELECT.playerRating) MULTI_SELECT.playerRating.reset();
   sortPlayersBy = "default";
   playerCurrentPage = 1;
 
@@ -608,8 +615,6 @@ function resetPlayerFilters(skipRender) {
   var sBait = document.getElementById("playerBaitFilterSelect");
   if (sBait) sBait.value = "";
   syncBaitSelectIcon('playerBaitFilterSelect', 'playerBaitFilterIcon');
-  var sRating = document.getElementById("playerRatingFilterSelect");
-  if (sRating) sRating.value = "";
   var sSort = document.getElementById("playerSortSelect");
   if (sSort) sSort.value = "default";
   var sTime = document.getElementById("playerTimeFilterSelect");
@@ -714,7 +719,7 @@ function renderPlayersList() {
       });
       if (!hasBait) return false;
     }
-    if (filterPlayerRating) {
+    if (filterPlayerRating.length) {
       var hasRating = pBackyard.some(function (fid) {
         var fObj = (typeof getFishById === 'function') ? getFishById(fid) : allFishes.find(function (x) { return x.id === fid; });
         return fObj && matchesFishRatingFilter(fObj, filterPlayerRating);

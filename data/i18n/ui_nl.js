@@ -256,8 +256,6 @@
       "opt_bait_all": "Alle soorten aas",
       "opt_loc_all": "Alle locaties ({count})",
       "opt_rating_all": "Alle ratings",
-      "opt_rating_min3": "Minimaal 3★",
-      "opt_rating_min4": "Minimaal 4★",
       "opt_sort_avg_asc": "Gem. lengte (kleinste)",
       "opt_sort_avg_desc": "Gem. lengte (grootste)",
       "opt_sort_chance_asc": "Vangstkans (laagste)",

@@ -256,8 +256,6 @@
       "opt_bait_all": "Tüm yemler",
       "opt_loc_all": "Tüm bölgeler ({count})",
       "opt_rating_all": "Tüm dereceler",
-      "opt_rating_min3": "En az 3★",
-      "opt_rating_min4": "En az 4★",
       "opt_sort_avg_asc": "Ort. boy (en küçük)",
       "opt_sort_avg_desc": "Ort. boy (en büyük)",
       "opt_sort_chance_asc": "Yakalama şansı (en düşük)",

@@ -256,8 +256,6 @@
       "opt_bait_all": "Wszystkie przynęty",
       "opt_loc_all": "Wszystkie lokalizacje ({count})",
       "opt_rating_all": "Wszystkie oceny",
-      "opt_rating_min3": "Co najmniej 3★",
-      "opt_rating_min4": "Co najmniej 4★",
       "opt_sort_avg_asc": "Średnia długość (najmniejsze)",
       "opt_sort_avg_desc": "Średnia długość (największe)",
       "opt_sort_chance_asc": "Szansa na połów (najniższa)",

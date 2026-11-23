@@ -256,8 +256,6 @@
       "opt_bait_all": "Všechny návnady",
       "opt_loc_all": "Všechny lokace ({count})",
       "opt_rating_all": "Všechny",
-      "opt_rating_min3": "Minimálně 3★",
-      "opt_rating_min4": "Minimálně 4★",
       "opt_sort_avg_asc": "Průměrná délka (od nejmenší)",
       "opt_sort_avg_desc": "Průměrná délka (od největší)",
       "opt_sort_chance_asc": "Šance na úlovek (od nejnižší)",

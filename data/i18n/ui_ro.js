@@ -256,8 +256,6 @@
       "opt_bait_all": "Toate momelile",
       "opt_loc_all": "Toate locațiile ({count})",
       "opt_rating_all": "Toate ratingurile",
-      "opt_rating_min3": "Cel puțin 3★",
-      "opt_rating_min4": "Cel puțin 4★",
       "opt_sort_avg_asc": "Lungime medie (cea mai mică)",
       "opt_sort_avg_desc": "Lungime medie (cea mai mare)",
       "opt_sort_chance_asc": "Șansă de prindere (cea mai mică)",
