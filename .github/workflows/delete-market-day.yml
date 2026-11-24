@@ -1,0 +1,89 @@
+name: Delete Fish Market Day
+
+on:
+  # Manual only: this is a destructive admin tool, never scheduled.
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Date to delete (YYYY-MM-DD). Leave empty for today (UTC).'
+        type: string
+        required: false
+        default: ''
+      dry_run:
+        description: 'Preview only - do NOT write to Firestore'
+        type: boolean
+        default: true
+      keep_sync_status:
+        description: 'Keep /fishao_market/sync_status (otherwise today is re-fetched by the next sync)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  # Never run two deletions of the market data at the same time.
+  group: delete-market-day
+  cancel-in-progress: false
+
+jobs:
+  delete-market-day:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+
+      - name: Cache firebase-admin
+        id: cache-firebase-admin
+        uses: actions/cache@v6
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-firebase-admin-13
+
+      - name: Install firebase-admin
+        if: steps.cache-firebase-admin.outputs.cache-hit != 'true'
+        run: npm install --no-save --no-audit --no-fund firebase-admin@^13.0.0
+
+      - name: Delete market prices for the selected day
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          TARGET_DATE: ${{ inputs.date }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          KEEP_SYNC_STATUS: ${{ inputs.keep_sync_status }}
+        run: |
+          set -euo pipefail
+
+          BACKUP_FILE="market-day-backup-${TARGET_DATE:-today}.json"
+          ARGS=("--backup-out=${BACKUP_FILE}")
+
+          if [ -n "${TARGET_DATE}" ]; then
+            ARGS+=("--date=${TARGET_DATE}")
+          fi
+
+          if [ "${DRY_RUN}" = "true" ]; then
+            ARGS+=("--dry-run")
+            echo "Mode: DRY RUN (no Firestore writes)"
+          else
+            ARGS+=("--yes")
+            echo "Mode: DELETE (Firestore writes enabled)"
+          fi
+
+          if [ "${KEEP_SYNC_STATUS}" = "true" ]; then
+            ARGS+=("--keep-sync-status")
+          fi
+
+          node scripts/delete-market-day.mjs "${ARGS[@]}"
+
+      - name: Upload deletion backup
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: market-day-backup
+          path: market-day-backup-*.json
+          if-no-files-found: warn
+          retention-days: 14
