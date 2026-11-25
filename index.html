@@ -235,6 +235,7 @@
             <div class="user-details">
               <div class="user-name-row">
                 <span class="user-name" id="userName" data-i18n="user_default">Uživatel</span>
+                <span id="userLangFlag" class="user-lang-flag"></span>
                 <button type="button" class="edit-nick-btn" onclick="event.stopPropagation(); window.fishaoApp.openProfileModal()"
                   title="Změnit přezdívku a avatar" data-i18n-title="modal_profile_title">✏️</button>
               </div>
@@ -1526,6 +1527,34 @@
             </label>
             <input type="text" id="inputProfileNickname" class="dash-input" maxlength="40"
               placeholder="Zadej svou přezdívku..." data-i18n-placeholder="profile_nick_placeholder" onkeydown="if(event.key==='Enter') window.fishaoApp.saveProfile()">
+
+            <!-- Optional preferred-language flag (opt-in) -->
+            <div class="profile-lang-block">
+              <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 6px;"
+                data-i18n="profile_lang_label">
+                Preferovaný jazyk (zobrazí se u tvé přezdívky):
+              </label>
+              <div class="profile-lang-grid" id="profileLangPicker" role="group">
+                <button type="button" class="profile-lang-btn toggle-pill" data-lang="cs" aria-pressed="false"
+                  title="Čeština" onclick="window.fishaoApp.selectPreferredLang('cs')">🇨🇿</button>
+                <button type="button" class="profile-lang-btn toggle-pill" data-lang="en" aria-pressed="false"
+                  title="English" onclick="window.fishaoApp.selectPreferredLang('en')">🇬🇧</button>
+                <button type="button" class="profile-lang-btn toggle-pill" data-lang="pl" aria-pressed="false"
+                  title="Polski" onclick="window.fishaoApp.selectPreferredLang('pl')">🇵🇱</button>
+                <button type="button" class="profile-lang-btn toggle-pill" data-lang="nl" aria-pressed="false"
+                  title="Nederlands" onclick="window.fishaoApp.selectPreferredLang('nl')">🇳🇱</button>
+                <button type="button" class="profile-lang-btn toggle-pill" data-lang="ro" aria-pressed="false"
+                  title="Română" onclick="window.fishaoApp.selectPreferredLang('ro')">🇷🇴</button>
+                <button type="button" class="profile-lang-btn toggle-pill" data-lang="tr" aria-pressed="false"
+                  title="Türkçe" onclick="window.fishaoApp.selectPreferredLang('tr')">🇹🇷</button>
+                <button type="button" class="profile-lang-btn profile-lang-none toggle-pill" data-lang="" aria-pressed="false"
+                  data-i18n-aria-label="profile_lang_none" data-i18n-title="profile_lang_none"
+                  onclick="window.fishaoApp.selectPreferredLang('')">🚫</button>
+              </div>
+              <div class="profile-lang-hint" data-i18n="profile_lang_hint">
+                Nepovinné. Ostatní uvidí vlaječku vedle tvého jména v komunitě.
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1673,7 +1702,10 @@
         <div class="player-modal-avatar-wrap" id="playerModalAvatarWrap">
           <!-- Large Avatar -->
         </div>
-        <h3 id="playerModalName" style="margin: 10px 0 4px 0; font-size: 20px; color: var(--text-main);"></h3>
+        <div class="player-modal-name-row">
+          <h3 id="playerModalName" style="margin: 10px 0 4px 0; font-size: 20px; color: var(--text-main);"></h3>
+          <span id="playerModalLangFlag"></span>
+        </div>
         <div class="player-modal-badges-bar"
           style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 8px 0 16px 0;">
           <span id="playerModalRole"

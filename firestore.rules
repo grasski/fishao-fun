@@ -92,6 +92,8 @@ service cloud.firestore {
       function validMemberEntry(m) {
         return m is map
           && (!('displayName' in m) || (m.displayName is string && m.displayName.size() <= 40))
+          && (!('preferredLang' in m) || (m.preferredLang is string
+              && m.preferredLang in ['cs', 'en', 'pl', 'nl', 'ro', 'tr']))
           && (!('avatarUrl' in m) || (m.avatarUrl is string
               && m.avatarUrl.size() <= 500
               && !m.avatarUrl.matches('.*[<>\"\'`].*')
@@ -182,6 +184,9 @@ service cloud.firestore {
       function validPublicUserFields() {
         return request.resource.data.displayName is string
           && request.resource.data.displayName.size() <= 40
+          && (!('preferredLang' in request.resource.data)
+              || (request.resource.data.preferredLang is string
+                  && request.resource.data.preferredLang in ['cs', 'en', 'pl', 'nl', 'ro', 'tr']))
           && (!('avatarUrl' in request.resource.data)
               || (request.resource.data.avatarUrl is string
                   && request.resource.data.avatarUrl.size() <= 500
@@ -206,7 +211,8 @@ service cloud.firestore {
         && request.auth.uid == userId
         && request.resource.data.keys().hasOnly([
              'displayName', 'role', 'clubId', 'clubName',
-             'caughtFishIds', 'shinyFishIds', 'backyardFishIds', 'createdAt', 'avatarUrl'
+             'caughtFishIds', 'shinyFishIds', 'backyardFishIds', 'createdAt', 'avatarUrl',
+             'preferredLang'
            ])
         && request.resource.data.role == 'member'
         && validPublicUserFields();
@@ -215,13 +221,13 @@ service cloud.firestore {
       allow update: if (isSignedIn()
         && request.auth.uid == userId
         && request.resource.data.diff(resource.data).addedKeys().hasOnly([
-             'displayName', 'clubId', 'clubName', 'caughtFishIds', 'shinyFishIds', 'backyardFishIds', 'avatarUrl'
+             'displayName', 'clubId', 'clubName', 'caughtFishIds', 'shinyFishIds', 'backyardFishIds', 'avatarUrl', 'preferredLang'
            ])
         && request.resource.data.diff(resource.data).changedKeys().hasOnly([
-             'displayName', 'clubId', 'clubName', 'caughtFishIds', 'shinyFishIds', 'backyardFishIds', 'avatarUrl'
+             'displayName', 'clubId', 'clubName', 'caughtFishIds', 'shinyFishIds', 'backyardFishIds', 'avatarUrl', 'preferredLang'
            ])
         && request.resource.data.diff(resource.data).removedKeys().hasOnly([
-             'avatarUrl'
+             'avatarUrl', 'preferredLang'
            ])
         && validPublicUserFields())
         || isAdmin();
@@ -268,7 +274,7 @@ service cloud.firestore {
 
     function validChatParticipantInfo(info) {
       return info is map
-        && info.keys().hasOnly(['displayName', 'avatarUrl', 'deleted'])
+        && info.keys().hasOnly(['displayName', 'avatarUrl', 'deleted', 'lang'])
         && 'displayName' in info
         && 'avatarUrl' in info
         && info.displayName is string
@@ -278,6 +284,8 @@ service cloud.firestore {
         && info.avatarUrl.size() <= 500
         && !info.avatarUrl.matches('(?s).*[<>\"\'`].*')
         && !info.avatarUrl.matches('(?is)^\\s*(http:|javascript:|data:|vbscript:).*')
+        && (!('lang' in info)
+            || (info.lang is string && info.lang in ['cs', 'en', 'pl', 'nl', 'ro', 'tr']))
         && (!('deleted' in info)
             || (info.deleted is bool
                 && (!info.deleted || !exists(/databases/$(database)/documents/users/$(request.auth.uid)))));

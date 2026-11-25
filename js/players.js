@@ -19,7 +19,7 @@ function isBackyardBreedable(fish) {
   });
 }
 
-var PLAYERS_CACHE_KEY = 'fishao_players_cache_v1';
+var PLAYERS_CACHE_KEY = 'fishao_players_cache_v2';
 var PLAYERS_CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes across tabs
 var lastPlayersFetchTime = 0;
 var _playersLoadPromise = null;
@@ -164,6 +164,7 @@ function savePlayersSessionCache(ts) {
         uid: p.uid,
         displayName: p.displayName,
         avatarUrl: p.avatarUrl,
+        preferredLang: p.preferredLang || "",
         role: p.role,
         badges: Array.isArray(p.badges) ? p.badges : [],
         clubId: p.clubId,
@@ -229,6 +230,7 @@ async function loadAllPlayers(force) {
         uid: currentUser ? currentUser.uid : "local_user",
         displayName: userProfile.displayName || t('user_default_player'),
         avatarUrl: userProfile.avatarUrl || "🎣",
+        preferredLang: userProfile.preferredLang || "",
         role: userProfile.role || "member",
         badges: Array.isArray(userProfile.badges) ? userProfile.badges : [],
         clubId: userProfile.clubId || "",
@@ -290,6 +292,7 @@ async function loadAllPlayers(force) {
           uid: doc.id,
           displayName: d.displayName || t('user_default_player'),
           avatarUrl: d.avatarUrl || "🎣",
+          preferredLang: d.preferredLang || "",
           role: d.role || "member",
           badges: Array.isArray(d.badges) ? d.badges : [],
           clubId: cId,
@@ -918,6 +921,7 @@ function renderPlayersList() {
           '<div class="player-card-meta">' +
             '<div class="player-card-name-row">' +
               '<span class="player-card-name">' + escapeHtml(p.displayName) + '</span>' +
+              renderPlayerLangFlag(p.preferredLang) +
               (isMe ? '<span class="player-card-me-tag">(' + escapeHtml(t('player_card_me_tag')) + ')</span>' : '') +
               roleBadge +
             '</div>' +
@@ -1213,7 +1217,7 @@ function renderModalBackyardOwners(fishId) {
     var av = p.avatarUrl || "🎣";
     var avIcon = (isValidHttpsUrl(av) || /^https?:\/\//i.test(av)) ? "🎣" : av;
     pillsHtml += '<button type="button" class="modal-backyard-owner-pill' + (isFriend ? ' is-friend' : '') + '" data-uid="' + escapeHtml(p.uid) + '" title="' + escapeHtml(p.displayName) + (isFriend ? ' (' + escapeHtml(t('btn_friend_yes')) + ')' : '') + '">' +
-      (isFriend ? '⭐ ' : '') + escapeHtml(avIcon) + ' ' + escapeHtml(p.displayName) +
+      (isFriend ? '⭐ ' : '') + escapeHtml(avIcon) + ' ' + escapeHtml(p.displayName) + renderPlayerLangFlag(p.preferredLang) +
       '</button>';
   });
 
@@ -1445,6 +1449,7 @@ async function openPlayerModal(uid) {
           uid: uid,
           displayName: d.displayName || t('user_default_player'),
           avatarUrl: d.avatarUrl || "🎣",
+           preferredLang: d.preferredLang || "",
           role: d.role || "member",
           badges: Array.isArray(d.badges) ? d.badges : [],
           clubId: d.clubId || "",
@@ -1474,6 +1479,10 @@ async function openPlayerModal(uid) {
   var av = isMe
     ? ((userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : ((player && player.avatarUrl) || "🎣"))
     : ((player && player.avatarUrl) || (clubMem && clubMem.avatarUrl) || "🎣");
+
+  var prefLang = isMe
+    ? ((userProfile && userProfile.preferredLang) ? userProfile.preferredLang : ((player && player.preferredLang) || ""))
+    : ((player && player.preferredLang) || (clubMem && clubMem.preferredLang) || "");
 
   var role = isMe
     ? ((userProfile && userProfile.role) || "member")
@@ -1515,6 +1524,10 @@ async function openPlayerModal(uid) {
   if (nameEl) {
     nameEl.innerText = dName + (isMe ? (" (" + t('player_card_me_tag') + ")") : "");
     nameEl.dataset.currentUid = uid;
+  }
+  var langFlagEl = document.getElementById("playerModalLangFlag");
+  if (langFlagEl) {
+    langFlagEl.innerHTML = renderPlayerLangFlag(prefLang);
   }
 
   var modalBadges = isMe

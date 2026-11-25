@@ -250,6 +250,15 @@
   white-space: nowrap;
 }
 
+.player-lang-flag,
+.user-lang-flag {
+  font-size: .95em;
+  line-height: 1;
+  vertical-align: middle;
+  user-select: none;
+  cursor: default;
+}
+
 .edit-nick-btn {
   background: transparent;
   border: none;

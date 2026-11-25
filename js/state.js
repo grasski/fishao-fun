@@ -521,6 +521,45 @@ function renderAvatarHtml(avatarVal, fallbackEmoji, imgCss) {
   return escapeHtml(val);
 }
 
+/**
+ * Preferred-language flag helpers.
+ * The stored field is optional and whitelisted; it never changes the viewer's UI language.
+ */
+var FISHAO_PLAYER_LANGS = ['cs', 'en', 'pl', 'nl', 'ro', 'tr'];
+
+function normalizePlayerLang(code) {
+  if (typeof code !== 'string') return "";
+  var c = code.toLowerCase().split(/[-_]/)[0];
+  return FISHAO_PLAYER_LANGS.indexOf(c) !== -1 ? c : "";
+}
+
+function getPlayerLang(obj) {
+  if (!obj) return "";
+  return normalizePlayerLang(obj.preferredLang || obj.lang);
+}
+
+function getPlayerLangMeta(code) {
+  var c = normalizePlayerLang(code);
+  if (!c) return null;
+  var i18n = (typeof window !== "undefined") ? window.FISHAO_I18N : null;
+  var meta = (i18n && i18n.languages) ? i18n.languages[c] : null;
+  return meta || { code: c, label: c.toUpperCase(), flag: c.toUpperCase() };
+}
+
+function getPlayerLangLabel(code) {
+  var meta = getPlayerLangMeta(code);
+  return meta ? (meta.label || meta.code.toUpperCase()) : "";
+}
+
+function renderPlayerLangFlag(code) {
+  var meta = getPlayerLangMeta(code);
+  if (!meta) return "";
+  var label = escapeHtml(meta.label || meta.code.toUpperCase());
+  return '<span class="player-lang-flag" title="' + label + '" aria-label="' + label + '">' +
+    escapeHtml(meta.flag || meta.code.toUpperCase()) + '</span>';
+}
+
+
 function updateNavClubBadge() {
   var navClubPtsBadge = document.getElementById("navClubPtsBadge");
   if (!navClubPtsBadge) return;
@@ -584,6 +623,7 @@ if (elBulkDate) elBulkDate.value = todayISO;
 var confirmModalResolver = null;
 var appToastTimer = null;
 var selectedProfilePresetEmoji = "🎣";
+var selectedProfileLang = "";
 
 function showToast(msg, type) {
   var toast = document.getElementById("appToast");

@@ -171,11 +171,12 @@ In memory (`js/state.js` / `js/market.js`), `summaryMapToPriceHistory(priceSumma
   * `unlockedFcFishIds`: Array<Number> (List of unlocked FC fish IDs).
   * `unlockedMonsterIds`: Array<Number> (List of unlocked Monster fish IDs).
   * `memberCount`: Number (Current member count).
-  * `members`: Map<UID, { displayName, avatarUrl, isCreator, joinedAt, caughtCount, caughtClubCount }>.
+  * `members`: Map<UID, { displayName, avatarUrl, preferredLang?, isCreator, joinedAt, caughtCount, caughtClubCount }>.
   * `createdAt`, `updatedAt`, `lastUpdatedBy`.
 * `/users/{userId}` (public community profile):
   * `displayName`: String (Player game nickname, max 40 chars).
   * `avatarUrl`: String (strictly `https://` URL max 500 chars, or emoji preset).
+  * `preferredLang`: String (optional; one of `cs`, `en`, `pl`, `nl`, `ro`, `tr`; opt-in flag rendered next to the nickname).
   * `role`: String ('member' | 'admin', immutable by client).
   * `clubId`: String | null.
   * `clubName`: String | null.
@@ -191,7 +192,7 @@ In memory (`js/state.js` / `js/market.js`), `summaryMapToPriceHistory(priceSumma
   * `lastLogin`, `updatedAt`.
 * `/chats/{pairId}` (private to the 2 participants; deterministic `minUid_maxUid`):
   * `participants`: `[uid0, uid1]` (`uid0 < uid1`).
-  * `participantInfo`: `{ [uid]: { displayName, avatarUrl, deleted? } }`.
+  * `participantInfo`: `{ [uid]: { displayName, avatarUrl, deleted?, lang? } }`.
   * `status`: `'pending' | 'accepted' | 'rejected' | 'blocked'`.
   * `requestedBy`: String (UID of request sender).
   * `blockedBy`: String | null (UID of blocker when `status == 'blocked'`).

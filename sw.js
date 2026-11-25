@@ -1,5 +1,5 @@
 const CACHE_IMAGES = 'fishao-images-v1';
-const CACHE_STATIC = 'fishao-static-v2';
+const CACHE_STATIC = 'fishao-static-v3';
 const IS_LOCAL_DEV = (self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1');
 
 self.addEventListener('install', (event) => {

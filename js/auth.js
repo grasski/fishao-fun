@@ -77,6 +77,7 @@ function saveProfileToCache(uid, profile, privData) {
       uid: uid,
       displayName: profile.displayName || "",
       avatarUrl: profile.avatarUrl || "",
+      preferredLang: normalizePlayerLang(profile.preferredLang),
       role: profile.role || "member",
       clubId: profile.clubId || "",
       clubName: profile.clubName || "",
@@ -704,6 +705,7 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
         lastAppliedProfileSig = JSON.stringify({
           displayName: userProfile.displayName || "",
           avatarUrl: userProfile.avatarUrl || "",
+          preferredLang: userProfile.preferredLang || "",
           role: userProfile.role || "member",
           badges: Array.isArray(userProfile.badges) ? userProfile.badges : [],
           clubId: userProfile.clubId || "",
@@ -956,6 +958,11 @@ function updateAuthUI() {
     var nameEl = document.getElementById("userName");
     if (nameEl) nameEl.innerText = (userProfile && userProfile.displayName) ? userProfile.displayName : t('user_default_player');
 
+    var userLangFlagEl = document.getElementById("userLangFlag");
+    if (userLangFlagEl) {
+      userLangFlagEl.innerHTML = renderPlayerLangFlag(getPlayerLang(userProfile));
+    }
+
     var avatarImg = document.getElementById("userAvatarImg");
     var avatarBadge = document.getElementById("userAvatarBadge");
     var uAv = (userProfile && userProfile.avatarUrl) ? userProfile.avatarUrl : "";
@@ -1053,6 +1060,24 @@ function updateAuthUI() {
   }
 }
 
+function syncProfileLangPicker() {
+  var btns = document.querySelectorAll("#profileLangPicker .profile-lang-btn");
+  btns.forEach(function (b) {
+    var isActive = (b.getAttribute("data-lang") || "") === selectedProfileLang;
+    b.classList.toggle("active", isActive);
+    b.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
+}
+
+function selectPreferredLang(code) {
+  var lang = normalizePlayerLang(code);
+  selectedProfileLang = lang;
+  syncProfileLangPicker();
+  if (lang && window.FISHAO_I18N && window.FISHAO_I18N.currentLang !== lang && typeof setLanguage === "function") {
+    setLanguage(lang);
+  }
+}
+
 function openProfileModal(scrollToAdmin) {
   if (!currentUser) {
     signIn();
@@ -1081,6 +1106,9 @@ function openProfileModal(scrollToAdmin) {
   btns.forEach(function (b) {
     b.classList.toggle("active", b.innerText.trim() === selectedProfilePresetEmoji);
   });
+
+  selectedProfileLang = normalizePlayerLang(userProfile && userProfile.preferredLang);
+  syncProfileLangPicker();
 
   if (typeof renderBackyardProfilePicker === 'function') {
     renderBackyardProfilePicker();
@@ -1185,17 +1213,26 @@ async function saveProfile() {
     finalAvatar = selectedProfilePresetEmoji || "🎣";
   }
 
+  var finalLang = normalizePlayerLang(selectedProfileLang);
+
   try {
     var fsModule = await getFirestoreModule();
     var userDocRef = fsModule.doc(db, "users", currentUser.uid);
-    await fsModule.updateDoc(userDocRef, {
+    var profileUpdate = {
       displayName: newNick,
       avatarUrl: finalAvatar
-    });
+    };
+    profileUpdate.preferredLang = finalLang ? finalLang : fsModule.deleteField();
+    await fsModule.updateDoc(userDocRef, profileUpdate);
 
     if (userProfile) {
       userProfile.displayName = newNick;
       userProfile.avatarUrl = finalAvatar;
+      if (finalLang) {
+        userProfile.preferredLang = finalLang;
+      } else {
+        delete userProfile.preferredLang;
+      }
       saveProfileToCache(currentUser.uid, userProfile);
     }
 
@@ -1204,8 +1241,10 @@ async function saveProfile() {
       if (meEntry) {
         meEntry.displayName = newNick;
         meEntry.avatarUrl = finalAvatar;
-        if (typeof savePlayersSessionCache === "function" && typeof lastPlayersFetchTime !== "undefined") {
-          savePlayersSessionCache(lastPlayersFetchTime);
+        if (finalLang) {
+          meEntry.preferredLang = finalLang;
+        } else {
+          delete meEntry.preferredLang;
         }
         if (currentView === "players" && typeof renderPlayersList === "function") {
           renderPlayersList();
@@ -1219,6 +1258,7 @@ async function saveProfile() {
         var memUp = {};
         memUp["members." + currentUser.uid + ".displayName"] = newNick;
         memUp["members." + currentUser.uid + ".avatarUrl"] = finalAvatar;
+        memUp["members." + currentUser.uid + ".preferredLang"] = finalLang ? finalLang : fsModule.deleteField();
         await fsModule.updateDoc(clubDocRef, memUp);
       } catch (e) {
         console.warn("Could not sync member profile to club doc:", e);

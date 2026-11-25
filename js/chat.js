@@ -72,10 +72,13 @@ function getMyChatParticipantInfo() {
   if (!av || /[<>\"'`]/.test(av) || /^(http:|javascript:|data:|vbscript:)/i.test(av)) {
     av = '🎣';
   }
-  return {
+  var lang = normalizePlayerLang(userProfile && userProfile.preferredLang);
+  var out = {
     displayName: nick,
     avatarUrl: av.slice(0, 500)
   };
+  if (lang) out.lang = lang;
+  return out;
 }
 
 function isChatUserKnownDeleted(uid) {
@@ -154,6 +157,7 @@ function getChatParticipantDisplay(chat, uid) {
     return {
       displayName: t('chat_deleted_player_name'),
       avatarUrl: '🎣',
+      lang: '',
       isDeleted: true
     };
   }
@@ -162,7 +166,8 @@ function getChatParticipantDisplay(chat, uid) {
     : null;
   var name = (listPlayer && listPlayer.displayName) || (info && info.displayName) || t('user_default_player');
   var avatar = (listPlayer && listPlayer.avatarUrl) || (info && info.avatarUrl) || '🎣';
-  return { displayName: name, avatarUrl: avatar, isDeleted: false };
+  var lang = normalizePlayerLang((listPlayer && listPlayer.preferredLang) || (info && info.lang));
+  return { displayName: name, avatarUrl: avatar, lang: lang, isDeleted: false };
 }
 
 function chatTsToMs(ts) {
@@ -774,11 +779,13 @@ function openChatWithPlayer(uid) {
 
   var pName = (playerObj && playerObj.displayName) || (clubMem && clubMem.displayName) || t('user_default_player');
   var pAv = (playerObj && playerObj.avatarUrl) || (clubMem && clubMem.avatarUrl) || '🎣';
+  var pLang = normalizePlayerLang((playerObj && playerObj.preferredLang) || (clubMem && clubMem.preferredLang));
 
   chatRequestTargetPlayer = {
     uid: uid,
     displayName: String(pName).slice(0, 40),
-    avatarUrl: String(pAv).slice(0, 500)
+    avatarUrl: String(pAv).slice(0, 500),
+    preferredLang: pLang
   };
 
   openChatRequestModal();
@@ -794,7 +801,7 @@ function openChatRequestModal() {
     targetBox.innerHTML =
       '<div class="chat-req-avatar">' + renderAvatarHtml(chatRequestTargetPlayer.avatarUrl, '🎣') + '</div>' +
       '<div class="chat-req-meta">' +
-        '<div class="chat-req-name">' + escapeHtml(chatRequestTargetPlayer.displayName) + '</div>' +
+        '<div class="chat-req-name">' + escapeHtml(chatRequestTargetPlayer.displayName) + renderPlayerLangFlag(chatRequestTargetPlayer.preferredLang) + '</div>' +
         '<div class="chat-req-sub">' + escapeHtml(t('chat_req_target_sub')) + '</div>' +
       '</div>';
   }
@@ -1358,7 +1365,7 @@ function buildChatThreadItemHtml(c, myUid) {
     '<div class="chat-thread-avatar">' + renderAvatarHtml(other.avatarUrl, '🎣') + '</div>' +
     '<div class="chat-thread-body">' +
       '<div class="chat-thread-top">' +
-        '<span class="chat-thread-name">' + escapeHtml(other.displayName) + '</span>' +
+        '<span class="chat-thread-name">' + escapeHtml(other.displayName) + renderPlayerLangFlag(other.lang) + '</span>' +
         '<span class="chat-thread-time">' + escapeHtml(timeLabel) + '</span>' +
       '</div>' +
       '<div class="chat-thread-bottom">' +
@@ -1441,7 +1448,7 @@ function renderChatSidebarList() {
         searchHtml += '<button type="button" class="chat-player-result-item" data-player-uid="' + escapeHtml(p.uid) + '">' +
           '<div class="chat-thread-avatar">' + renderAvatarHtml(p.avatarUrl || '🎣', '🎣') + '</div>' +
           '<div class="chat-thread-body">' +
-            '<div class="chat-thread-name">' + escapeHtml(p.displayName || t('user_default_player')) + '</div>' +
+            '<div class="chat-thread-name">' + escapeHtml(p.displayName || t('user_default_player')) + renderPlayerLangFlag(p.preferredLang) + '</div>' +
             '<div class="chat-thread-preview">' + escapeHtml(clubSub) + '</div>' +
           '</div>' +
           '<span class="chat-player-result-cta">📨 ' + escapeHtml(t('chat_search_send_req_short')) + '</span>' +
@@ -1527,7 +1534,7 @@ function renderChatActivePane() {
       (isPeerDeleted || document.getElementById('chatMessageInput')) &&
       document.getElementById('chatMessagesContainer')) {
     var peerNameEl = document.getElementById('chatPeerName');
-    if (peerNameEl) peerNameEl.textContent = other.displayName;
+    if (peerNameEl) peerNameEl.innerHTML = escapeHtml(other.displayName) + renderPlayerLangFlag(other.lang);
     var peerAvEl = document.getElementById('chatPeerAvatar');
     if (peerAvEl) peerAvEl.innerHTML = renderAvatarHtml(other.avatarUrl, '🎣');
     return;
@@ -1580,7 +1587,7 @@ function renderChatActivePane() {
       '<button type="button" class="chat-peer-profile-btn" onclick="window.fishaoApp.openPlayerModal(\'' + safeOtherUid + '\')">' +
         '<div id="chatPeerAvatar" class="chat-peer-avatar">' + renderAvatarHtml(other.avatarUrl, '🎣') + '</div>' +
         '<div class="chat-peer-meta">' +
-          '<div id="chatPeerName" class="chat-peer-name">' + escapeHtml(other.displayName) + '</div>' +
+          '<div id="chatPeerName" class="chat-peer-name">' + escapeHtml(other.displayName) + renderPlayerLangFlag(other.lang) + '</div>' +
           '<div class="chat-peer-reason">' + escapeHtml(reasonText) + '</div>' +
         '</div>' +
       '</button>' +
@@ -2114,17 +2121,18 @@ function setAdminReportsFilterMode(mode) {
 }
 
 function resolveAdminPlayerInfo(uid) {
-  if (!uid) return { displayName: '', avatarUrl: '🎣' };
+  if (!uid) return { displayName: '', avatarUrl: '🎣', preferredLang: '' };
   if (typeof allPlayersList !== 'undefined' && Array.isArray(allPlayersList)) {
     var p = allPlayersList.find(function (x) { return x.uid === uid; });
     if (p) {
       return {
         displayName: p.displayName || '',
-        avatarUrl: p.avatarUrl || '🎣'
+        avatarUrl: p.avatarUrl || '🎣',
+        preferredLang: p.preferredLang || ''
       };
     }
   }
-  return { displayName: '', avatarUrl: '🎣' };
+  return { displayName: '', avatarUrl: '🎣', preferredLang: '' };
 }
 
 async function renderAdminBannedUsersList(box) {
@@ -2164,7 +2172,7 @@ async function renderAdminBannedUsersList(box) {
             '<span style="width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;background:rgba(255,255,255,0.06);">' +
               renderAvatarHtml(info.avatarUrl, '🎣') +
             '</span>' +
-            '<strong>' + escapeHtml(info.displayName || t('user_default_player')) + '</strong>' +
+            '<strong>' + escapeHtml(info.displayName || t('user_default_player')) + renderPlayerLangFlag(info.preferredLang) + '</strong>' +
           '</span>' +
           (isExpired
             ? '<span class="chat-status-chip">' + escapeHtml(t('admin_ban_expired_tag')) + '</span>'
@@ -2271,10 +2279,10 @@ async function loadAdminChatReports() {
         '</div>' +
         '<div class="admin-report-uids">' +
           '<span>' + escapeHtml(t('admin_report_reported')) + ': ' +
-            (repInfo.displayName ? ('<strong>' + escapeHtml(repInfo.displayName) + '</strong> ') : '') +
+            (repInfo.displayName ? ('<strong>' + escapeHtml(repInfo.displayName) + renderPlayerLangFlag(repInfo.preferredLang) + '</strong> ') : '') +
             '<code>' + escapeHtml(r.reportedUid || '') + '</code></span> | ' +
           '<span>' + escapeHtml(t('admin_report_reporter')) + ': ' +
-            (reporterInfo.displayName ? ('<strong>' + escapeHtml(reporterInfo.displayName) + '</strong> ') : '') +
+            (reporterInfo.displayName ? ('<strong>' + escapeHtml(reporterInfo.displayName) + renderPlayerLangFlag(reporterInfo.preferredLang) + '</strong> ') : '') +
             '<code>' + escapeHtml(r.reporterUid || '') + '</code></span>' +
         '</div>' +
         (r.note ? '<div class="admin-report-note">"' + escapeHtml(r.note) + '"</div>' : '') +

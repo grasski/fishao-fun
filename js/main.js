@@ -877,6 +877,7 @@ window.fishaoApp = {
   updatePrivacyConsentStatusUI: updatePrivacyConsentStatusUI,
   logAnalyticsEvent: logAnalyticsEvent,
   selectPresetAvatar: selectPresetAvatar,
+  selectPreferredLang: selectPreferredLang,
   onAvatarUrlInput: onAvatarUrlInput,
   saveProfile: saveProfile,
   deleteAccount: deleteAccount,

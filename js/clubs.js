@@ -151,6 +151,11 @@ async function fetchAndSyncMemberStats(uid) {
       currentClubMembersMap[uid].caughtClubCount = clubC;
       if (uData.displayName) currentClubMembersMap[uid].displayName = uData.displayName;
       if (uData.avatarUrl) currentClubMembersMap[uid].avatarUrl = uData.avatarUrl;
+      if (uData.preferredLang) {
+        currentClubMembersMap[uid].preferredLang = uData.preferredLang;
+      } else {
+        delete currentClubMembersMap[uid].preferredLang;
+      }
     }
 
     // Update member chip badge in active grid
@@ -277,7 +282,7 @@ function renderClubMembers(membersMap, creatorId) {
     html += '<button type="button" class="club-member-chip' + (isCr ? ' creator' : '') + '" data-uid="' + escapeHtml(uid) + '" title="' + escapeHtml(t('club_member_view_profile')) + '">' +
       avatarHtml +
       '<div class="club-member-info">' +
-        '<div class="club-member-name">' + escapeHtml(dName) + (isMe ? ' <span style="font-size:11px;color:#a78bfa;">(' + escapeHtml(t('player_card_me_tag')) + ')</span>' : '') + '</div>' +
+        '<div class="club-member-name">' + escapeHtml(dName) + renderPlayerLangFlag(m.preferredLang) + (isMe ? ' <span style="font-size:11px;color:#a78bfa;">(' + escapeHtml(t('player_card_me_tag')) + ')</span>' : '') + '</div>' +
         '<div class="club-member-tag">' +
           roleBadge + countBadge +
         '</div>' +
