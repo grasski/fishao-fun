@@ -363,7 +363,7 @@ function renderCalendarView() {
       var catchBtn = ev.target && ev.target.closest ? ev.target.closest('.caught-btn[data-catch-id]') : null;
       if (catchBtn) {
         ev.stopPropagation();
-        toggleCaughtFish(Number(catchBtn.dataset.catchId));
+        cycleCaughtState(Number(catchBtn.dataset.catchId));
         return;
       }
       var card = ev.target && ev.target.closest ? ev.target.closest('.cal-fish-card[data-fish-id]') : null;
@@ -569,6 +569,7 @@ function renderCalendarView() {
     if (st.isBitingNow) cardClasses.push('is-biting-now');
     else if (st.inSeason) cardClasses.push('is-in-season');
     if (item.isCaught) cardClasses.push('is-caught');
+    if (typeof shinyFishIds !== 'undefined' && shinyFishIds.has(Number(f.id))) cardClasses.push('is-shiny');
 
     return '<article class="' + cardClasses.join(' ') + '" role="button" tabindex="0" data-fish-id="' + f.id + '">' +
       '<div class="cal-card-top">' +

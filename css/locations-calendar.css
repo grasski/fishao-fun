@@ -705,6 +705,9 @@
 .cal-fish-card.is-caught {
   box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.2);
 }
+.cal-fish-card.is-shiny {
+  box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.35);
+}
 
 .cal-card-top {
   display: flex;

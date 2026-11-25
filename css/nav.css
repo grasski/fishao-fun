@@ -257,7 +257,9 @@
 
 .collection-stats-group {
   display: inline-flex;
+  flex-wrap: wrap;
   gap: 6px;
+  row-gap: 4px;
   align-items: center;
 }
 

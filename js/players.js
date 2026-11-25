@@ -71,6 +71,7 @@ function computeLeaderboardBadgesMap() {
     rows.push({
       uid: p.uid,
       caughtCount: cCount,
+      shinyCount: isMe ? shinyFishIds.size : (typeof p.shinyCount === "number" ? p.shinyCount : 0),
       clubCount: clubC,
       backyardCount: bCount,
       createdAt: p.createdAt || "9999"
@@ -81,13 +82,14 @@ function computeLeaderboardBadgesMap() {
   var catchers = rows.filter(function (r) { return r.caughtCount > 0; });
   catchers.sort(function (a, b) {
     if (b.caughtCount !== a.caughtCount) return b.caughtCount - a.caughtCount;
+    if (b.shinyCount !== a.shinyCount) return b.shinyCount - a.shinyCount;
     if (b.clubCount !== a.clubCount) return b.clubCount - a.clubCount;
     return a.createdAt < b.createdAt ? -1 : (a.createdAt > b.createdAt ? 1 : 0);
   });
   for (var ci = 0; ci < Math.min(3, catchers.length); ci++) {
     var r = catchers[ci];
     if (!map[r.uid]) map[r.uid] = [];
-    map[r.uid].push({ type: "catcher", rank: ci + 1, count: r.caughtCount });
+    map[r.uid].push({ type: "catcher", rank: ci + 1, count: r.caughtCount, shiny: r.shinyCount });
   }
 
   // Top 3 backyard breeders (strictly > 0)
@@ -138,7 +140,7 @@ function renderPlayerBadgesHtml(role, badgesList, compact, autoBadges) {
         var classes = ["", "player-badge-gold", "player-badge-silver", "player-badge-bronze"];
         var rk = ab.rank;
         parts.push(
-          '<span class="player-badge-pill ' + classes[rk] + compactCls + '" title="' + escapeHtml(t('badge_top_catcher_' + rk + '_title', { count: ab.count })) + '">' +
+          '<span class="player-badge-pill ' + classes[rk] + compactCls + '" title="' + escapeHtml(t('badge_top_catcher_' + rk + '_title', { count: ab.count, shiny: (typeof ab.shiny === "number" ? ab.shiny : 0) })) + '">' +
             icons[rk] + ' ' + escapeHtml(t('badge_top_catcher_' + rk)) +
           '</span>'
         );
@@ -168,6 +170,7 @@ function savePlayersSessionCache(ts) {
         clubName: p.clubName,
         caughtCount: typeof p.caughtCount === "number" ? p.caughtCount : ((p.caughtFishIds && p.caughtFishIds.length) || 0),
         caughtClubCount: typeof p.caughtClubCount === "number" ? p.caughtClubCount : 0,
+        shinyCount: typeof p.shinyCount === "number" ? p.shinyCount : 0,
         backyardFishIds: Array.isArray(p.backyardFishIds) ? p.backyardFishIds : [],
         createdAt: p.createdAt || ""
       };
@@ -232,6 +235,7 @@ async function loadAllPlayers(force) {
         clubName: userProfile.clubName || "",
         caughtCount: localCounts.caughtCount,
         caughtClubCount: localCounts.caughtClubCount,
+        shinyCount: shinyFishIds.size,
         backyardFishIds: Array.from(backyardFishIds),
         createdAt: userProfile.createdAt || new Date().toISOString()
       }];
@@ -292,6 +296,7 @@ async function loadAllPlayers(force) {
           clubName: cName,
           caughtCount: rawCaught.length,
           caughtClubCount: clubC,
+          shinyCount: Array.isArray(d.shinyFishIds) ? d.shinyFishIds.length : 0,
           backyardFishIds: Array.isArray(d.backyardFishIds) ? d.backyardFishIds : [],
           createdAt: d.createdAt || ""
         });
@@ -769,6 +774,9 @@ function renderPlayersList() {
 
     if (sortPlayersBy === "caught") {
       if (cCountB !== cCountA) return cCountB - cCountA;
+      var shinyA = (a.uid === myUid) ? shinyFishIds.size : (typeof a.shinyCount === "number" ? a.shinyCount : 0);
+      var shinyB = (b.uid === myUid) ? shinyFishIds.size : (typeof b.shinyCount === "number" ? b.shinyCount : 0);
+      if (shinyB !== shinyA) return shinyB - shinyA;
       var clubA = typeof a.caughtClubCount === "number" ? a.caughtClubCount : 0;
       var clubB = typeof b.caughtClubCount === "number" ? b.caughtClubCount : 0;
       if (clubB !== clubA) return clubB - clubA;
@@ -850,6 +858,9 @@ function renderPlayersList() {
         if (p.caughtFishIds.indexOf(cf.id) !== -1) clubCatches++;
       });
     }
+    var shinyCatches = isMe
+      ? shinyFishIds.size
+      : (typeof p.shinyCount === "number" ? p.shinyCount : 0);
 
     // Backyard fish rich cards (strictly backyard species)
     var bFishes = (p.backyardFishIds || []).filter(isBackyardBreedable);
@@ -923,6 +934,10 @@ function renderPlayersList() {
           '<div class="player-card-stat-line">' +
             '<span class="player-card-stat-label">🏆 ' + escapeHtml(t('player_card_stat_club_fish')) + '</span>' +
             '<span class="player-card-stat-val" style="color: #34d399;">' + clubCatches + ' / ' + totalClub + '</span>' +
+          '</div>' +
+          '<div class="player-card-stat-line">' +
+            '<span class="player-card-stat-label">✨ ' + escapeHtml(t('player_card_stat_shiny')) + '</span>' +
+            '<span class="player-card-stat-val" style="color: #fbbf24;">' + shinyCatches + ' / ' + allFishes.length + '</span>' +
           '</div>' +
         '</div>' +
 
@@ -1436,6 +1451,7 @@ async function openPlayerModal(uid) {
           clubName: d.clubName || "",
           caughtCount: counts.caughtCount,
           caughtClubCount: counts.caughtClubCount,
+          shinyCount: Array.isArray(d.shinyFishIds) ? d.shinyFishIds.length : 0,
           backyardFishIds: Array.isArray(d.backyardFishIds) ? d.backyardFishIds : [],
           createdAt: d.createdAt || ""
         };
@@ -1479,6 +1495,10 @@ async function openPlayerModal(uid) {
   } else if (clubMem && clubMem.caughtClubCount !== undefined) {
     cClub = clubMem.caughtClubCount;
   }
+
+  var cShiny = isMe
+    ? shinyFishIds.size
+    : ((player && typeof player.shinyCount === "number") ? player.shinyCount : 0);
 
   // Backyard fish list (strictly valid backyard species)
   var bFishes = (isMe
@@ -1531,6 +1551,12 @@ async function openPlayerModal(uid) {
   var totalPct = Math.round((cCaught / allFishes.length) * 100);
   if (totalCountEl) totalCountEl.innerText = cCaught + " / " + allFishes.length + " (" + totalPct + "%)";
   if (totalFillEl) totalFillEl.style.width = Math.min(100, (cCaught / allFishes.length) * 100).toFixed(1) + "%";
+
+  var shinyCountEl = document.getElementById("playerModalShinyCount");
+  var shinyFillEl = document.getElementById("playerModalShinyFill");
+  var shinyTotal = allFishes.length || 1;
+  if (shinyCountEl) shinyCountEl.innerText = cShiny + " / " + allFishes.length;
+  if (shinyFillEl) shinyFillEl.style.width = Math.min(100, (cShiny / shinyTotal) * 100).toFixed(1) + "%";
 
   var joinedEl = document.getElementById("playerModalJoined");
   if (joinedEl) {

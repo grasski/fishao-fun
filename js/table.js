@@ -175,16 +175,34 @@ function countDistinctRecordedPrices() {
   return total;
 }
 
-function getCaughtBtnTitle(isCaught) {
+/**
+ * Catch state of a fish: 'none' | 'caught' | 'shiny'.
+ * A shiny is always also caught, so shinyFishIds is stored as a subset.
+ */
+function getFishCatchState(fishId) {
+  if (shinyFishIds.has(fishId)) return "shiny";
+  if (caughtFishIds.has(fishId)) return "caught";
+  return "none";
+}
+
+function getCaughtBtnTitle(state) {
   if (!currentUser) return t('auth_notice_collection');
-  return isCaught ? t('caught_btn_unmarked_title') : t('caught_btn_mark_title');
+  if (state === "shiny") return t('caught_btn_shiny_unmark_title');
+  if (state === "caught") return t('caught_btn_shiny_mark_title');
+  return t('caught_btn_mark_title');
+}
+
+function getCaughtBtnGlyph(state) {
+  if (state === "shiny") return "✨";
+  if (state === "caught") return "✓";
+  return "";
 }
 
 function renderCaughtBtn(fishId) {
-  var isCaught = caughtFishIds.has(fishId);
-  var title = getCaughtBtnTitle(isCaught);
-  return '<button type="button" class="caught-btn' + (isCaught ? ' caught' : '') + '" data-catch-id="' + fishId + '" title="' + escapeHtml(title) + '" aria-label="' + escapeHtml(title) + '">' +
-    (isCaught ? '✓' : '') + '</button>';
+  var state = getFishCatchState(fishId);
+  var title = getCaughtBtnTitle(state);
+  return '<button type="button" class="caught-btn' + (state === "none" ? '' : ' ' + state) + '" data-catch-id="' + fishId + '" data-catch-state="' + state + '" title="' + escapeHtml(title) + '" aria-label="' + escapeHtml(title) + '">' +
+    getCaughtBtnGlyph(state) + '</button>';
 }
 
 function updateModalCaughtBtn(fid) {
@@ -195,10 +213,27 @@ function updateModalCaughtBtn(fid) {
   btn.innerHTML = isCaught ? t('modal_btn_caught_yes') : t('modal_btn_caught_no');
 }
 
+function updateModalShinyBtn(fid) {
+  var btn = document.getElementById("modalBtnShiny");
+  if (!btn) return;
+  var isShiny = shinyFishIds.has(fid);
+  btn.className = "btn-caught-pill" + (isShiny ? " shiny" : "");
+  btn.innerHTML = isShiny ? t('modal_btn_shiny_yes') : t('modal_btn_shiny_no');
+}
+
 function toggleCaughtFromModal() {
   if (!selectedModalFishId) return;
   toggleCaughtFish(selectedModalFishId);
   updateModalCaughtBtn(selectedModalFishId);
+  updateModalShinyBtn(selectedModalFishId);
+}
+
+function toggleShinyFromModal() {
+  if (!selectedModalFishId) return;
+  var nextState = (getFishCatchState(selectedModalFishId) === "shiny") ? "caught" : "shiny";
+  setFishCatchState(selectedModalFishId, nextState);
+  updateModalCaughtBtn(selectedModalFishId);
+  updateModalShinyBtn(selectedModalFishId);
 }
 
 var _caughtSyncTimer = null;
@@ -207,34 +242,36 @@ var _caughtSyncDirty = false;
 var _pendingCaughtBaseArr = null;
 var _pendingCaughtUid = "";
 
-function updateCaughtRowInPlace(fishId, isCaught) {
-  var title = getCaughtBtnTitle(isCaught);
+function applyCaughtBtnState(btn, fishId) {
+  if (!btn) return;
+  var state = getFishCatchState(fishId);
+  var title = getCaughtBtnTitle(state);
+  btn.classList.toggle('caught', state === 'caught');
+  btn.classList.toggle('shiny', state === 'shiny');
+  btn.dataset.catchState = state;
+  btn.textContent = getCaughtBtnGlyph(state);
+  btn.title = title;
+  btn.setAttribute('aria-label', title);
+}
+
+function updateCaughtRowInPlace(fishId) {
+  var state = getFishCatchState(fishId);
   var tbody = document.getElementById("tableBody");
   if (tbody) {
     var tr = tbody.querySelector('tr[data-fish-id="' + fishId + '"]');
     if (tr) {
-      tr.classList.toggle('row-caught', isCaught);
-      var btn = tr.querySelector('.caught-btn[data-catch-id="' + fishId + '"]');
-      if (btn) {
-        btn.classList.toggle('caught', isCaught);
-        btn.textContent = isCaught ? '✓' : '';
-        btn.title = title;
-        btn.setAttribute('aria-label', title);
-      }
+      tr.classList.toggle('row-caught', state === 'caught');
+      tr.classList.toggle('row-shiny', state === 'shiny');
+      applyCaughtBtnState(tr.querySelector('.caught-btn[data-catch-id="' + fishId + '"]'), fishId);
     }
   }
   var calGrid = document.getElementById("calendarGrid");
   if (calGrid) {
     var card = calGrid.querySelector('.cal-fish-card[data-fish-id="' + fishId + '"]');
     if (card) {
-      card.classList.toggle('is-caught', isCaught);
-      var calBtn = card.querySelector('.caught-btn[data-catch-id="' + fishId + '"]');
-      if (calBtn) {
-        calBtn.classList.toggle('caught', isCaught);
-        calBtn.textContent = isCaught ? '✓' : '';
-        calBtn.title = title;
-        calBtn.setAttribute('aria-label', title);
-      }
+      card.classList.toggle('is-caught', state !== 'none');
+      card.classList.toggle('is-shiny', state === 'shiny');
+      applyCaughtBtnState(card.querySelector('.caught-btn[data-catch-id="' + fishId + '"]'), fishId);
     }
   }
 }
@@ -248,6 +285,7 @@ function syncOwnPlayerCacheCounts() {
     if (meInList) {
       meInList.caughtCount = caughtFishIds.size;
       meInList.caughtClubCount = clubCount;
+      meInList.shinyCount = shinyFishIds.size;
       if (typeof savePlayersSessionCache === "function" && typeof lastPlayersFetchTime !== "undefined") {
         savePlayersSessionCache(lastPlayersFetchTime);
       }
@@ -268,7 +306,7 @@ function refreshViewAfterCaughtChange(changedFishId) {
       updateCaughtStats();
     } else {
       updateCaughtStats({ skipSubViewRender: true });
-      if (changedFishId !== undefined) updateCaughtRowInPlace(changedFishId, caughtFishIds.has(changedFishId));
+      if (changedFishId !== undefined) updateCaughtRowInPlace(changedFishId);
     }
     return;
   }
@@ -276,17 +314,22 @@ function refreshViewAfterCaughtChange(changedFishId) {
     updateCaughtStats();
     return;
   }
+  if (currentView === 'players') {
+    updateCaughtStats({ skipSubViewRender: true });
+    if (typeof renderPlayersList === 'function') renderPlayersList();
+    return;
+  }
   if (isTable) {
     var uncaughtEl = document.getElementById("filterUncaughtCheckbox");
     var hasUncaughtFilter = !!(uncaughtEl && uncaughtEl.checked);
-    var hasCollectionFilter = (currentView === 'all' || currentView === 'market') && collectionFilterMode !== 'all';
+    var hasCollectionFilter = collectionFilterMode !== 'all';
     if (filterOnlyCaught || hasUncaughtFilter || hasCollectionFilter) {
       updateCaughtStats({ skipSubViewRender: true });
       applyFilters();
     } else {
       updateCaughtStats({ skipSubViewRender: true });
       if (changedFishId !== undefined) {
-        updateCaughtRowInPlace(changedFishId, caughtFishIds.has(changedFishId));
+        updateCaughtRowInPlace(changedFishId);
       } else {
         applyFilters();
       }
@@ -308,16 +351,18 @@ async function flushPendingCaughtSync() {
     while (_caughtSyncDirty && currentUser && db) {
       _caughtSyncDirty = false;
       var syncUid = currentUser.uid;
-      var snapshotArr = Array.from(caughtFishIds);
-      var rollbackArr = (_pendingCaughtUid === syncUid && Array.isArray(_pendingCaughtBaseArr))
-        ? _pendingCaughtBaseArr.slice()
+      var caughtSnapshotArr = Array.from(caughtFishIds);
+      var shinySnapshotArr = Array.from(shinyFishIds);
+      var rollbackBase = (_pendingCaughtUid === syncUid && _pendingCaughtBaseArr && !Array.isArray(_pendingCaughtBaseArr))
+        ? _pendingCaughtBaseArr
         : null;
 
       try {
         var fsModule = await getFirestoreModule();
         var userDocRef = fsModule.doc(db, "users", syncUid);
         await fsModule.updateDoc(userDocRef, {
-          caughtFishIds: snapshotArr
+          caughtFishIds: caughtSnapshotArr,
+          shinyFishIds: shinySnapshotArr
         });
 
         if (currentClubId && currentUser && currentUser.uid === syncUid) {
@@ -341,16 +386,21 @@ async function flushPendingCaughtSync() {
       } catch (err) {
         console.error("Failed to update caught fish:", err);
         _caughtSyncDirty = false;
-        if (currentUser && currentUser.uid === syncUid && rollbackArr) {
-          caughtFishIds = new Set(rollbackArr);
+        if (currentUser && currentUser.uid === syncUid && rollbackBase) {
+          if (Array.isArray(rollbackBase.caught)) caughtFishIds = new Set(rollbackBase.caught);
+          if (Array.isArray(rollbackBase.shiny)) shinyFishIds = new Set(rollbackBase.shiny);
           if (userProfile) {
-            userProfile.caughtFishIds = rollbackArr;
+            userProfile.caughtFishIds = Array.from(caughtFishIds);
+            userProfile.shinyFishIds = Array.from(shinyFishIds);
             if (typeof saveProfileToCache === 'function') {
               saveProfileToCache(syncUid, userProfile);
             }
           }
           syncOwnPlayerCacheCounts();
-          if (selectedModalFishId) updateModalCaughtBtn(selectedModalFishId);
+          if (selectedModalFishId) {
+            updateModalCaughtBtn(selectedModalFishId);
+            updateModalShinyBtn(selectedModalFishId);
+          }
           refreshViewAfterCaughtChange(undefined);
         }
         _pendingCaughtBaseArr = null;
@@ -379,25 +429,38 @@ if (typeof document !== 'undefined' && typeof window !== 'undefined') {
   });
 }
 
-function toggleCaughtFish(fishId) {
+/**
+ * Set an explicit catch state ('none' | 'caught' | 'shiny') for a fish and
+ * queue the debounced Firestore sync. Returns false when the user is a guest.
+ */
+function setFishCatchState(fishId, state) {
   if (!currentUser) {
     showAuthNotice(t('auth_notice_collection'));
-    return;
+    return false;
   }
 
-  if (!_pendingCaughtBaseArr || _pendingCaughtUid !== currentUser.uid) {
+  if (!_pendingCaughtBaseArr || Array.isArray(_pendingCaughtBaseArr) || _pendingCaughtUid !== currentUser.uid) {
     _pendingCaughtUid = currentUser.uid;
-    _pendingCaughtBaseArr = Array.from(caughtFishIds);
+    _pendingCaughtBaseArr = {
+      caught: Array.from(caughtFishIds),
+      shiny: Array.from(shinyFishIds)
+    };
   }
 
-  if (caughtFishIds.has(fishId)) {
+  if (state === "none") {
     caughtFishIds.delete(fishId);
+    shinyFishIds.delete(fishId);
+  } else if (state === "caught") {
+    caughtFishIds.add(fishId);
+    shinyFishIds.delete(fishId);
   } else {
     caughtFishIds.add(fishId);
+    shinyFishIds.add(fishId);
   }
 
   if (userProfile) {
     userProfile.caughtFishIds = Array.from(caughtFishIds);
+    userProfile.shinyFishIds = Array.from(shinyFishIds);
     if (typeof saveProfileToCache === 'function') {
       saveProfileToCache(currentUser.uid, userProfile);
     }
@@ -413,27 +476,50 @@ function toggleCaughtFish(fishId) {
       flushPendingCaughtSync();
     }, 300);
   }
+  return true;
+}
+
+/**
+ * Binary caught toggle (not caught -> caught, anything else -> not caught).
+ * Kept for the fish modal "Mark as caught" button and club milestone cards.
+ */
+function toggleCaughtFish(fishId) {
+  return setFishCatchState(fishId, getFishCatchState(fishId) === "none" ? "caught" : "none");
+}
+
+/**
+ * Three-state circle toggle: not caught -> caught -> caught shiny -> not caught.
+ */
+function cycleCaughtState(fishId) {
+  var state = getFishCatchState(fishId);
+  if (state === "none") return setFishCatchState(fishId, "caught");
+  if (state === "caught") return setFishCatchState(fishId, "shiny");
+  return setFishCatchState(fishId, "none");
 }
 
 function updateCaughtStats(opts) {
   var skipSubViewRender = !!(opts && opts.skipSubViewRender);
   var clubCount = 0;
   var allCount = 0;
+  var shinyCount = 0;
 
   clubFishes.forEach(function (f) {
     if (caughtFishIds.has(f.id)) clubCount++;
   });
   allFishes.forEach(function (f) {
     if (caughtFishIds.has(f.id)) allCount++;
+    if (shinyFishIds.has(f.id)) shinyCount++;
   });
 
   var clubCountEl = document.getElementById("caughtClubCount");
   var allCountEl = document.getElementById("caughtAllCount");
+  var shinyCountEl = document.getElementById("caughtShinyCount");
   var progressEl = document.getElementById("caughtProgressFill");
   var pctTextEl = document.getElementById("caughtPctText");
 
   if (clubCountEl) clubCountEl.innerText = clubCount;
   if (allCountEl) allCountEl.innerText = allCount;
+  if (shinyCountEl) shinyCountEl.innerText = shinyCount;
 
   var pct = allFishes.length > 0 ? (allCount / allFishes.length * 100) : 0;
   if (currentView === "club") {
@@ -617,7 +703,9 @@ function renderFishRowHtml(f, idx, ctx) {
     var unlock = getUnlockStatus(f, currentClubPoints);
     var rowClass = [];
     if (!unlock.isUnlocked) rowClass.push("row-locked");
-    if (caughtFishIds.has(f.id)) rowClass.push("row-caught");
+    var catchState = getFishCatchState(f.id);
+    if (catchState === "caught") rowClass.push("row-caught");
+    if (catchState === "shiny") rowClass.push("row-shiny");
     var areaName = rc.areaName;
 
     return '<tr class="' + rowClass.join(' ') + '" tabindex="0" data-fish-id="' + f.id + '" title="' + ctx.rowClickTitle + '">' +
@@ -643,7 +731,8 @@ function renderFishRowHtml(f, idx, ctx) {
       '</tr>';
   }
 
-  var rowCls = caughtFishIds.has(f.id) ? "row-caught" : "";
+  var catchState = getFishCatchState(f.id);
+  var rowCls = catchState === "shiny" ? "row-shiny" : (catchState === "caught" ? "row-caught" : "");
   var locLabels = rc.locLabels;
   var areaLabels = rc.areaLabels;
   var locHtml = locLabels.map(function (locName) {
@@ -697,7 +786,7 @@ function bindTableDelegation(tbody) {
     var catchBtn = ev.target && ev.target.closest ? ev.target.closest('.caught-btn[data-catch-id]') : null;
     if (catchBtn) {
       ev.stopPropagation();
-      toggleCaughtFish(Number(catchBtn.dataset.catchId));
+      cycleCaughtState(Number(catchBtn.dataset.catchId));
       return;
     }
     var tr = ev.target && ev.target.closest ? ev.target.closest('tr[data-fish-id]') : null;

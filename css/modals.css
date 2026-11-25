@@ -160,6 +160,11 @@ body.modal-open {
   border-color: #10b981;
   color: #34d399;
 }
+.btn-caught-pill.shiny {
+  background: rgba(251, 191, 36, 0.18);
+  border-color: #fbbf24;
+  color: #fbbf24;
+}
 
 .modal-details-grid {
   display: grid;

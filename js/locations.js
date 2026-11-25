@@ -324,9 +324,11 @@ function openLocationInFishdex(locKey, areaKey, timeMode, collMode) {
     var collAll = document.getElementById('collFilterAll');
     var collCaught = document.getElementById('collFilterCaught');
     var collMissing = document.getElementById('collFilterMissing');
+    var collMissingShiny = document.getElementById('collFilterMissingShiny');
     if (collAll) collAll.classList.toggle('active', collMode === 'all');
     if (collCaught) collCaught.classList.toggle('active', collMode === 'caught');
     if (collMissing) collMissing.classList.toggle('active', collMode === 'missing');
+    if (collMissingShiny) collMissingShiny.classList.toggle('active', collMode === 'missing_shiny');
   }
 
   if (typeof applyFilters === 'function') {

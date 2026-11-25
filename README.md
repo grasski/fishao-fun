@@ -10,7 +10,7 @@ Moderní webová aplikace a interaktivní encyklopedie pro hráče rybářské h
 - **Živý čas lovu**: Automatická detekce lokálního časového pásma uživatele s možností přepnutí na herní UTC čas a indikátorem „BERE TEĎ“.
 - **Pokročilé vyhledávání a filtry**: Rychlé filtrování podle názvu, prostředí, vzácnosti, minimálního levelu a velikostního rozpětí (vhodné pro plnění misí).
 - **Doporučení nejvýhodnější návnady & řazení dle šance**: Automatický výpočet konkurence ostatních ryb v dané lokaci/podoblasti se zohledněním vzácnosti (`1★–5★` a `rarity_factor`), procentuálního podílu při záběru přímo v tabulce, rychlého přepínače **🎯 Nejvyšší šance** a podrobného rozboru konkurentů v detailu ryby.
-- **Osobní sbírka úlovků**: Možnost označovat chycené ryby a sledovat procentuální postup ve sbírce.
+- **Osobní sbírka úlovků**: Možnost označovat chycené ryby a sledovat procentuální postup ve sbírce. U každé ryby lze navíc označit zářivou (shiny) variantu, filtrovat chybějící zářivé ryby a sledovat jejich počet.
 - **Klubový postup**: Nastavení bodů klubu s vizuálním odlišením odemčených ryb a odpočtem bodů do dalších milníků.
 - **Tržní ceny**: Evidence a přehled prodejních cen ryb na trhu včetně historie a statistik (v neděli zavřeno).
 - **Komunita & Ryby Za domem**: Přehled všech hráčů, jejich klubů a úlovků. Možnost nastavit své odchované ryby za domem a zpětné zjištění, kteří hráči mají danou rybu k dispozici.

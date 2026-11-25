@@ -1,4 +1,4 @@
-rules_version = '2';
+rules_version = '3';
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -189,6 +189,9 @@ service cloud.firestore {
                   && !request.resource.data.avatarUrl.matches('(?i)^\\s*(http:|javascript:|data:|vbscript:).*')))
           && request.resource.data.caughtFishIds is list
           && request.resource.data.caughtFishIds.size() <= 1000
+          && (!('shinyFishIds' in request.resource.data)
+              || (request.resource.data.shinyFishIds is list
+                  && request.resource.data.shinyFishIds.size() <= request.resource.data.caughtFishIds.size()))
           && (!('backyardFishIds' in request.resource.data)
               || (request.resource.data.backyardFishIds is list && request.resource.data.backyardFishIds.size() <= 300))
           && (!('badges' in request.resource.data)
@@ -203,7 +206,7 @@ service cloud.firestore {
         && request.auth.uid == userId
         && request.resource.data.keys().hasOnly([
              'displayName', 'role', 'clubId', 'clubName',
-             'caughtFishIds', 'backyardFishIds', 'createdAt', 'avatarUrl'
+             'caughtFishIds', 'shinyFishIds', 'backyardFishIds', 'createdAt', 'avatarUrl'
            ])
         && request.resource.data.role == 'member'
         && validPublicUserFields();
@@ -212,10 +215,10 @@ service cloud.firestore {
       allow update: if (isSignedIn()
         && request.auth.uid == userId
         && request.resource.data.diff(resource.data).addedKeys().hasOnly([
-             'displayName', 'clubId', 'clubName', 'caughtFishIds', 'backyardFishIds', 'avatarUrl'
+             'displayName', 'clubId', 'clubName', 'caughtFishIds', 'shinyFishIds', 'backyardFishIds', 'avatarUrl'
            ])
         && request.resource.data.diff(resource.data).changedKeys().hasOnly([
-             'displayName', 'clubId', 'clubName', 'caughtFishIds', 'backyardFishIds', 'avatarUrl'
+             'displayName', 'clubId', 'clubName', 'caughtFishIds', 'shinyFishIds', 'backyardFishIds', 'avatarUrl'
            ])
         && request.resource.data.diff(resource.data).removedKeys().hasOnly([
              'avatarUrl'

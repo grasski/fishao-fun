@@ -192,13 +192,15 @@ var filterTodayHighPrice = false;
 var filterOnlyCaught = false;
 var filterOnlyBackyard = false;
 var sortBestChanceOverride = false;
-var collectionFilterMode = "all"; // 'all' | 'caught' | 'missing'
+var collectionFilterMode = "all"; // 'all' | 'caught' | 'missing' | 'missing_shiny'
 var ratingFilterValues = []; // Selected star ratings (["1".."5"]); empty = all ratings
 
 // Authentication & User Profile State
 var currentUser = null;
 var userProfile = null;
 var caughtFishIds = new Set();
+// Shiny variants are always a subset of caughtFishIds (a shiny implies caught).
+var shinyFishIds = new Set();
 var backyardFishIds = new Set();
 var allPlayersList = [];
 var friendUids = new Set();

@@ -11,7 +11,8 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
    * Always verify modified or created JavaScript files with `node --check "<filepath>"` (also enforced in CI).
 3. **Firebase & Firestore Security Rules (`firestore.rules`):**
    * Firestore rules enforce strict key masking (`hasOnly` / `affectedKeys().hasOnly`). Never write undocumented fields to Firestore.
-   * `/users/{userId}` is public community profile data (readable by signed-in users, writable only by owner or admin). Allowed public keys: `displayName`, `role`, `clubId`, `clubName`, `caughtFishIds`, `backyardFishIds`, `createdAt`, `avatarUrl` (strictly `https://` URLs or emoji presets; `http:`, `javascript:`, `data:` and HTML metacharacters are rejected).
+   * `/users/{userId}` is public community profile data (readable by signed-in users, writable only by owner or admin). Allowed public keys: `displayName`, `role`, `clubId`, `clubName`, `caughtFishIds`, `shinyFishIds`, `backyardFishIds`, `createdAt`, `avatarUrl` (strictly `https://` URLs or emoji presets; `http:`, `javascript:`, `data:` and HTML metacharacters are rejected).
+   * `shinyFishIds` tracks shiny ("zářivá") variants of caught fish and must always be a subset of `caughtFishIds` (a shiny implies caught). The table circle toggle cycles `not caught → caught → caught shiny → not caught`; the fish detail modal keeps binary "Mark as caught" plus a separate "Mark as shiny" button that only moves between `shiny` and `caught`.
    * `/users/{userId}/private/settings` is owner/admin-only private data (`friendUids`, `reminders`, `lastLogin`, `updatedAt`). Never write private fields to `/users/{userId}`.
    * Never store user emails or personal Google data in Firestore (GDPR-free: only store nickname and avatar).
    * Always wrap Firestore operations in `try...catch` and maintain `localStorage` fallback.

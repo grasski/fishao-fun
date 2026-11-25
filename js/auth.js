@@ -81,6 +81,7 @@ function saveProfileToCache(uid, profile, privData) {
       clubId: profile.clubId || "",
       clubName: profile.clubName || "",
       caughtFishIds: Array.isArray(profile.caughtFishIds) ? profile.caughtFishIds : [],
+      shinyFishIds: Array.isArray(profile.shinyFishIds) ? profile.shinyFishIds : [],
       backyardFishIds: Array.isArray(profile.backyardFishIds) ? profile.backyardFishIds : [],
       friendUids: existingFriends
     };
@@ -106,6 +107,7 @@ function hydrateProfileFromCache(uid) {
     userProfile = cached;
     isAdmin = (cached.role === "admin");
     caughtFishIds = new Set(Array.isArray(cached.caughtFishIds) ? cached.caughtFishIds : []);
+    shinyFishIds = new Set(Array.isArray(cached.shinyFishIds) ? cached.shinyFishIds : []);
     backyardFishIds = new Set(Array.isArray(cached.backyardFishIds) ? cached.backyardFishIds : []);
     friendUids = new Set(Array.isArray(cached.friendUids) ? cached.friendUids : []);
     if (typeof syncGuideLevelsFromProfile === "function") {
@@ -385,6 +387,7 @@ async function _runInitFirebaseSync() {
         userProfile = null;
         isAdmin = false;
         caughtFishIds = new Set();
+        shinyFishIds = new Set();
         backyardFishIds = new Set();
         friendUids = new Set();
         if (typeof loadLocalReminders === 'function') {
@@ -705,6 +708,7 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
           badges: Array.isArray(userProfile.badges) ? userProfile.badges : [],
           clubId: userProfile.clubId || "",
           caughtFishIds: userProfile.caughtFishIds || [],
+          shinyFishIds: userProfile.shinyFishIds || [],
           backyardFishIds: userProfile.backyardFishIds || [],
           friendUids: userProfile.friendUids || []
         });
@@ -782,6 +786,7 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
             clubId: "",
             clubName: "",
             caughtFishIds: Array.from(caughtFishIds),
+            shinyFishIds: Array.from(shinyFishIds),
             backyardFishIds: Array.from(backyardFishIds),
             createdAt: new Date().toISOString()
           };
@@ -802,6 +807,7 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
       if (userProfile.caughtFishIds && Array.isArray(userProfile.caughtFishIds)) {
         caughtFishIds = new Set(userProfile.caughtFishIds);
       }
+      shinyFishIds = new Set(Array.isArray(userProfile.shinyFishIds) ? userProfile.shinyFishIds : []);
       if (userProfile.backyardFishIds && Array.isArray(userProfile.backyardFishIds)) {
         backyardFishIds = new Set(userProfile.backyardFishIds);
       }
@@ -827,6 +833,7 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
           badges: Array.isArray(userProfile.badges) ? userProfile.badges : [],
           clubId: userProfile.clubId || "",
           caughtFishIds: userProfile.caughtFishIds || [],
+          shinyFishIds: userProfile.shinyFishIds || [],
           backyardFishIds: userProfile.backyardFishIds || [],
           friendUids: Array.from(friendUids || [])
         });
@@ -1022,9 +1029,11 @@ function updateAuthUI() {
     var collAll = document.getElementById("collFilterAll");
     var collCaught = document.getElementById("collFilterCaught");
     var collMissing = document.getElementById("collFilterMissing");
+    var collMissingShiny = document.getElementById("collFilterMissingShiny");
     if (collAll) collAll.classList.add("active");
     if (collCaught) collCaught.classList.remove("active");
     if (collMissing) collMissing.classList.remove("active");
+    if (collMissingShiny) collMissingShiny.classList.remove("active");
 
     if (currentView === "club_manage") {
       if (gateClub) gateClub.style.display = "block";
@@ -1327,6 +1336,7 @@ async function deleteAccount() {
     }
 
     caughtFishIds.clear();
+    shinyFishIds.clear();
     backyardFishIds.clear();
     friendUids.clear();
     if (typeof userReminders !== 'undefined') userReminders = [];

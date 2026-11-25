@@ -100,6 +100,26 @@ function toggleOnlyBackyard() {
   applyFilters();
 }
 
+function syncMissingShinyUI() {
+  var cb = document.getElementById("filterMissingShinyCheckbox");
+  if (cb) cb.checked = (collectionFilterMode === "missing_shiny");
+  var groupBtn = document.getElementById("collFilterMissingShiny");
+  if (groupBtn) groupBtn.classList.toggle("active", collectionFilterMode === "missing_shiny");
+}
+
+function toggleMissingShiny(force) {
+  if (!currentUser) {
+    if (collectionFilterMode === "missing_shiny") collectionFilterMode = "all";
+    syncMissingShinyUI();
+    showAuthNotice(t('coll_gate_title'));
+    return;
+  }
+  var want = (typeof force === "boolean") ? force : (collectionFilterMode !== "missing_shiny");
+  collectionFilterMode = want ? "missing_shiny" : "all";
+  syncMissingShinyUI();
+  applyFilters();
+}
+
 function toggleNowActive() {
   filterNowActive = !filterNowActive;
   document.getElementById("btnNow").classList.toggle("active", filterNowActive);
@@ -135,7 +155,7 @@ function setCollectionFilter(mode, btn) {
     return;
   }
   collectionFilterMode = mode;
-  document.querySelectorAll("#bannerCollection .pill-btn").forEach(function (b) {
+  document.querySelectorAll("#bannerCollection .btn-group-pills .pill-btn").forEach(function (b) {
     b.classList.remove("active");
   });
   if (btn) btn.classList.add("active");
@@ -164,6 +184,9 @@ function applyFilters() {
   var hideLockedCheckbox = document.getElementById("hideLockedCheckbox");
   var hideLocked = hideLockedCheckbox ? hideLockedCheckbox.checked : false;
   var filterUncaught = document.getElementById("filterUncaughtCheckbox") ? document.getElementById("filterUncaughtCheckbox").checked : false;
+
+  // Keep the club-view toggle and the collection pill in sync with the global flag.
+  syncMissingShinyUI();
 
   var minEl = document.getElementById("minSizeInput");
   var maxEl = document.getElementById("maxSizeInput");
@@ -232,6 +255,7 @@ function applyFilters() {
 
     if (filterUncaught && caughtFishIds.has(f.id)) return false;
     if (filterOnlyCaught && !caughtFishIds.has(f.id)) return false;
+    if (collectionFilterMode === "missing_shiny" && shinyFishIds.has(f.id)) return false;
     if (filterOnlyBackyard && !backyardFishIds.has(f.id)) return false;
 
     if (currentView === "all" || currentView === "market") {
@@ -359,6 +383,9 @@ function applyFilters() {
   }
   if (filterOnlyBackyard) {
     filterNotes.push(t('filter_note_only_backyard'));
+  }
+  if (collectionFilterMode === "missing_shiny") {
+    filterNotes.push(t('filter_note_missing_shiny'));
   }
   if (location && currentView !== "club") {
     var locName = window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(location) : location;
@@ -492,9 +519,11 @@ function resetFilters() {
   var collAll = document.getElementById("collFilterAll");
   var collCaught = document.getElementById("collFilterCaught");
   var collMissing = document.getElementById("collFilterMissing");
+  var collMissingShiny = document.getElementById("collFilterMissingShiny");
   if (collAll) collAll.classList.add("active");
   if (collCaught) collCaught.classList.remove("active");
   if (collMissing) collMissing.classList.remove("active");
+  if (collMissingShiny) collMissingShiny.classList.remove("active");
 
   document.querySelectorAll(".pill-btn-size").forEach(function (p) { p.classList.remove("active"); });
 

@@ -133,16 +133,16 @@
   <!-- Modern Modular Stylesheets -->
   <link rel="stylesheet" href="css/base.css?v=3.2">
   <link rel="stylesheet" href="css/header.css?v=3.3">
-  <link rel="stylesheet" href="css/nav.css?v=3.4">
+  <link rel="stylesheet" href="css/nav.css?v=3.5">
   <link rel="stylesheet" href="css/filters.css?v=3.7">
-  <link rel="stylesheet" href="css/table.css?v=4.1">
+  <link rel="stylesheet" href="css/table.css?v=4.2">
   <link rel="stylesheet" href="css/clubs.css?v=3.3">
   <link rel="stylesheet" href="css/players.css?v=3.3">
-  <link rel="stylesheet" href="css/modals.css?v=4.0">
+  <link rel="stylesheet" href="css/modals.css?v=4.1">
   <link rel="stylesheet" href="css/chat.css?v=1.4">
-  <link rel="stylesheet" href="css/locations-calendar.css?v=1.2">
+  <link rel="stylesheet" href="css/locations-calendar.css?v=1.3">
   <link rel="stylesheet" href="css/guide.css?v=1.5">
-  <link rel="stylesheet" href="css/responsive.css?v=3.12">
+  <link rel="stylesheet" href="css/responsive.css?v=3.13">
 </head>
 
 <body>
@@ -365,6 +365,11 @@
           <input type="checkbox" id="filterUncaughtCheckbox" onchange="window.fishaoApp.applyFilters()">
           <span data-i18n="club_only_uncaught">Pouze nechycené</span>
         </label>
+        <label class="toggle-pill" id="lblFilterMissingShiny">
+          <input type="checkbox" id="filterMissingShinyCheckbox"
+            onchange="window.fishaoApp.toggleMissingShiny(this.checked)">
+          <span data-i18n="filter_btn_missing_shiny">✨ Chybějící zářivé</span>
+        </label>
       </div>
     </div>
 
@@ -379,6 +384,8 @@
                 style="color: #34d399;">0</strong> / 80</span>
             <span class="stat-chip"><span data-i18n="coll_total_label">Celkem:</span> <strong id="caughtAllCount"
                 style="color: #38bdf8;">0</strong> / 615</span>
+            <span class="stat-chip"><span data-i18n="coll_shiny_label">✨ Zářivé:</span> <strong id="caughtShinyCount"
+                style="color: #fbbf24;">0</strong> / 615</span>
             <span class="stat-chip pct" id="caughtPctText">0%</span>
           </div>
           <div class="caught-progress-track">
@@ -396,6 +403,10 @@
             <button type="button" class="pill-btn" id="collFilterMissing"
               onclick="window.fishaoApp.setCollectionFilter('missing', this)" data-i18n="coll_filter_missing">❓
               Chybějící</button>
+            <button type="button" class="pill-btn" id="collFilterMissingShiny"
+              onclick="window.fishaoApp.setCollectionFilter('missing_shiny', this)"
+              data-i18n="filter_btn_missing_shiny" data-i18n-title="filter_btn_missing_shiny_title"
+              title="Zobrazit pouze ryby, které ještě nemáš jako zářivé">✨ Chybějící zářivé</button>
           </div>
         </div>
       </div>
@@ -1222,6 +1233,9 @@
                 <button type="button" id="modalBtnCaught" class="btn-caught-pill" onclick="window.fishaoApp.toggleCaughtFromModal()">
                   ✓ Chyceno
                 </button>
+                <button type="button" id="modalBtnShiny" class="btn-caught-pill" onclick="window.fishaoApp.toggleShinyFromModal()">
+                  ✨ Zářivé
+                </button>
                 <button type="button" id="modalBtnBackyard" class="btn-backyard-pill"
                   onclick="window.fishaoApp.toggleBackyardFromModal()">
                   🏡 Za domem
@@ -1699,6 +1713,16 @@
               style="width: 0%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
           </div>
 
+          <!-- Shiny catches -->
+          <div class="player-stat-row">
+            <span class="player-stat-label">✨ <span data-i18n="player_modal_stat_shiny">Zářivé úlovky</span></span>
+            <strong id="playerModalShinyCount" style="color: #fbbf24;">0 / 615</strong>
+          </div>
+          <div class="caught-progress-track" style="margin-bottom: 12px; height: 7px;">
+            <div class="caught-progress-fill" id="playerModalShinyFill"
+              style="width: 0%; background: linear-gradient(90deg, #d97706, #fbbf24);"></div>
+          </div>
+
           <!-- Member since -->
           <div class="player-stat-meta" id="playerModalJoined"></div>
         </div>
@@ -2098,28 +2122,28 @@
   <!-- End Cloudflare Web Analytics -->
 
   <!-- Data scripts and localization (only base CS loaded upfront; other languages load on demand) -->
-  <script defer src="data/i18n/ui_cs.js?v=7.9"></script>
+  <script defer src="data/i18n/ui_cs.js?v=8.0"></script>
   <script defer src="data/i18n/taxonomies.js?v=4.0"></script>
   <script defer src="data/i18n/fish_names.js?v=3.5"></script>
-  <script defer src="data/i18n.js?v=4.9"></script>
+  <script defer src="data/i18n.js?v=5.0"></script>
   <script defer src="data/fishes.js?v=3.2"></script>
   <script defer src="data/estimated_prices.js?v=1.0"></script>
   <script defer src="firebase-config.js?v=3.2"></script>
   <!-- Modular FISHAO Application Logic -->
-  <script defer src="js/state.js?v=5.1"></script>
+  <script defer src="js/state.js?v=5.2"></script>
   <script defer src="js/firestore-tx.js?v=3.2"></script>
-  <script defer src="js/table.js?v=4.5"></script>
+  <script defer src="js/table.js?v=4.6"></script>
   <script defer src="js/clubs.js?v=4.0"></script>
-  <script defer src="js/market.js?v=4.20"></script>
-  <script defer src="js/filters.js?v=4.7"></script>
-  <script defer src="js/auth.js?v=4.10"></script>
-  <script defer src="js/players.js?v=4.3"></script>
+  <script defer src="js/market.js?v=4.21"></script>
+  <script defer src="js/filters.js?v=4.8"></script>
+  <script defer src="js/auth.js?v=4.11"></script>
+  <script defer src="js/players.js?v=4.4"></script>
   <script defer src="js/chat.js?v=2.6"></script>
-  <script defer src="js/locations.js?v=1.2"></script>
-  <script defer src="js/calendar.js?v=1.1"></script>
+  <script defer src="js/locations.js?v=1.3"></script>
+  <script defer src="js/calendar.js?v=1.2"></script>
   <script defer src="js/guide.js?v=1.7"></script>
   <script defer src="js/reminders.js?v=1.3"></script>
-  <script defer src="js/main.js?v=5.15"></script>
+  <script defer src="js/main.js?v=5.16"></script>
 
 </body>
 

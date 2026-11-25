@@ -798,6 +798,9 @@ function openPriceModal(fid, skipSync) {
   if (ratingBox) ratingBox.innerHTML = renderRatingBadge(f.rating);
 
   updateModalCaughtBtn(fid);
+  if (typeof updateModalShinyBtn === 'function') {
+    updateModalShinyBtn(fid);
+  }
   if (typeof updateModalBackyardBtn === 'function') {
     updateModalBackyardBtn(fid);
   }

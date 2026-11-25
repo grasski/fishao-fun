@@ -231,16 +231,17 @@
     width: 100%;
   }
 
-  /* Collection filter pills side-by-side on mobile */
+  /* Collection filter pills wrap 2x2 on mobile */
   #bannerCollection .btn-group-pills {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     width: 100%;
     gap: 6px;
   }
   #bannerCollection .btn-group-pills .pill-btn {
-    flex: 1 1 0;
+    flex: 1 1 calc(50% - 3px);
     min-width: 0;
     justify-content: center;
     text-align: center;

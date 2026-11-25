@@ -98,6 +98,11 @@ tr.row-caught {
   border-left: 3px solid #10b981;
 }
 
+/* Shiny caught fish row */
+tr.row-shiny {
+  border-left: 3px solid #fbbf24;
+}
+
 /* Caught toggle button */
 .caught-btn {
   width: 28px;
@@ -126,6 +131,17 @@ tr.row-caught {
   border: 2px solid #10b981;
   color: #fff;
   box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+.caught-btn.shiny {
+  background: #d97706;
+  border: 2px solid #fbbf24;
+  color: #fff;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.45);
+}
+.caught-btn.shiny:hover {
+  border-color: #fcd34d;
+  color: #fff;
+  background: #b45309;
 }
 
 .fish-img-box {
