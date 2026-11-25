@@ -429,6 +429,12 @@
   padding-top: 3px;
 }
 
+.pbfc-meta-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
 .pbfc-time {
   color: #cbd5e1;
   display: inline-flex;
@@ -710,8 +716,8 @@
 }
 
 .player-modal-backyard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 8px;
   max-height: 300px;
   overflow-y: auto;

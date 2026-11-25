@@ -386,8 +386,10 @@ function createRichBackyardFishCard(fObj, extraClass, isModal) {
       (isNow ? '<span class="pbfc-active-pill">⚡ ' + t('time_active_now_short') + '</span>' : '') +
     '</div>' +
     '<div class="pbfc-meta">' +
-      '<span class="pbfc-time" title="' + escapeHtml(timeInfo.sub || timeDisplay) + '">⏰ ' + escapeHtml(timeDisplay) + '</span>' +
-      seasonPill +
+      '<span class="pbfc-meta-left">' +
+        '<span class="pbfc-time" title="' + escapeHtml(timeInfo.sub || timeDisplay) + '">⏰ ' + escapeHtml(timeDisplay) + '</span>' +
+        seasonPill +
+      '</span>' +
       '<span class="pbfc-baits" title="' + escapeHtml(baitsTitle) + '">' + baitsHtml + '</span>' +
     '</div>' +
   '</div>';
