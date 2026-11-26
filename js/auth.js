@@ -128,6 +128,22 @@ async function savePrivateUserSettings(partialFields) {
   await fsModule.setDoc(privDocRef, payload, { merge: true });
 }
 
+function isSearchCrawlerAgent() {
+  try {
+    if (typeof navigator === "undefined") return false;
+    var ua = String(navigator.userAgent || "");
+    if (/bot\b|crawl|spider|slurp|mediapartners|inspectiontool|lighthouse|headlesschrome|bingpreview|facebookexternalhit|embedly|discordbot|twitterbot|whatsapp|telegrambot|linkedinbot|ahrefs|semrush|bytespider|petalbot|applebot|yandex|baiduspider|duckduckbot|gptbot|claudebot|oai-searchbot|perplexitybot/i.test(ua)) {
+      return true;
+    }
+    var isLocal = typeof window !== "undefined" && window.location &&
+      (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+    if (!isLocal && navigator.webdriver === true) {
+      return true;
+    }
+  } catch (e) { }
+  return false;
+}
+
 function initFirebaseSync() {
   if (_firebaseInitPromise) return _firebaseInitPromise;
   _firebaseInitPromise = _runInitFirebaseSync();
@@ -135,7 +151,7 @@ function initFirebaseSync() {
 }
 
 async function _runInitFirebaseSync() {
-  if (!isFirebaseConfigured) {
+  if (!isFirebaseConfigured || isSearchCrawlerAgent()) {
     updateAuthUI();
     checkCookieConsentBanner();
     return;

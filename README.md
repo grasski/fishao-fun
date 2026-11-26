@@ -1,6 +1,8 @@
-# 🐟 FISHAO – Encyklopedie a Klubové ryby
+# 🐟 FISHAO Tracker – Wiki, Encyklopedie ryb, Fish Market & Kluby
 
-Moderní webová aplikace a interaktivní encyklopedie pro hráče rybářské hry FISHAO. Poskytuje přehled všech ryb ve hře, klubových cílů, sledování osobních úlovků a tržních cen.
+🌐 **Živá aplikace:** [https://fishao-tracker.cz/](https://fishao-tracker.cz/) ([EN](https://fishao-tracker.cz/en/) • [PL](https://fishao-tracker.cz/pl/) • [NL](https://fishao-tracker.cz/nl/) • [RO](https://fishao-tracker.cz/ro/) • [TR](https://fishao-tracker.cz/tr/) • [Katalog 615 ryb](https://fishao-tracker.cz/ryby/))
+
+**FISHAO Tracker** je moderní webová aplikace a interaktivní wiki/encyklopedie pro hráče rybářské hry FISHAO. Poskytuje přehled všech 615 ryb ve hře, klubových cílů, sledování osobních úlovků (včetně zářivých/shiny variant), denně synchronizovaný Fish Market ceník a komunitní přehled ryb za domem.
 
 ---
 

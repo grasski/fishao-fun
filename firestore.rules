@@ -141,9 +141,8 @@ service cloud.firestore {
            ])
         && validClubCommon()
         && (
-          // 1. Admin or Club Creator can manage members, name, points, and unlocks
-          isAdmin()
-          || isClubCreator()
+          // 1. Club Creator can manage members, name, points, and unlocks (checked before isAdmin() to avoid extra /users read)
+          isClubCreator()
           // 2. Non-member joining: may only add own member entry (not as creator) & update memberCount
           || (!isClubMember()
               && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
@@ -173,10 +172,12 @@ service cloud.firestore {
                       && validMemberEntry(request.resource.data.members[request.auth.uid])
                       && request.resource.data.members[request.auth.uid].get('isCreator', false)
                          == resource.data.members[request.auth.uid].get('isCreator', false))))
+          // 5. Admin fallback (evaluated last so regular members never incur an extra /users/{uid} read)
+          || isAdmin()
         );
 
-      allow delete: if isAdmin()
-        || (isSignedIn() && isClubMember() && resource.data.members.size() <= 1);
+      allow delete: if (isSignedIn() && isClubMember() && resource.data.members.size() <= 1)
+        || isAdmin();
     }
 
     // Public community user profiles: GDPR-free (NO email, NO private settings)
