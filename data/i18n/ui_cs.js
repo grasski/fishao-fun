@@ -519,7 +519,7 @@
       "tz_utc_btn_title": "Herní čas FISHAO (UTC+0)",
       "players_btn_refresh_title": "Obnovit seznam hráčů z databáze",
       "profile_nick_placeholder": "Zadej svou přezdívku...",
-      "profile_lang_label": "Země / vlaječka (zobrazí se u tvé přezdívky):",
+      "profile_lang_label": "Země (zobrazí se u tvé přezdívky):",
       "profile_lang_none": "Nezobrazovat",
       "profile_country_search": "Hledat zemi...",
       "profile_country_empty": "Žádná země nenalezena",

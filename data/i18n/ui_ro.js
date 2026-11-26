@@ -519,7 +519,7 @@
       "tz_utc_btn_title": "Ora jocului FISHAO (UTC+0)",
       "players_btn_refresh_title": "Actualizează lista de jucători din baza de date",
       "profile_nick_placeholder": "Introdu porecla ta...",
-      "profile_lang_label": "Țară / steag (afișat lângă poreclă):",
+      "profile_lang_label": "Țară (afișată lângă poreclă):",
       "profile_lang_none": "Nu afișa",
       "profile_country_search": "Caută țară...",
       "profile_country_empty": "Nicio țară găsită",

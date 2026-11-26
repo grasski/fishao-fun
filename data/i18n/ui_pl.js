@@ -519,7 +519,7 @@
       "tz_utc_btn_title": "Czas gry FISHAO (UTC+0)",
       "players_btn_refresh_title": "Odśwież listę graczy z bazy danych",
       "profile_nick_placeholder": "Wpisz swój nick...",
-      "profile_lang_label": "Kraj / flaga (widoczna obok twojego nicku):",
+      "profile_lang_label": "Kraj (widoczny obok twojego nicku):",
       "profile_lang_none": "Nie pokazuj",
       "profile_country_search": "Szukaj kraju...",
       "profile_country_empty": "Nie znaleziono kraju",

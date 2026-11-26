@@ -515,7 +515,7 @@
       "tz_utc_btn_title": "FISHAO oyun saati (UTC+0)",
       "players_btn_refresh_title": "Oyuncu listesini veritabanından yenile",
       "profile_nick_placeholder": "Takma adınızı girin...",
-      "profile_lang_label": "Ülke / bayrak (takma adının yanında gösterilir):",
+      "profile_lang_label": "Ülke (takma adının yanında gösterilir):",
       "profile_lang_none": "Gösterme",
       "profile_country_search": "Ülke ara...",
       "profile_country_empty": "Ülke bulunamadı",

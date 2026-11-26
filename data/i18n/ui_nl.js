@@ -515,7 +515,7 @@
       "tz_utc_btn_title": "FISHAO speltijd (UTC+0)",
       "players_btn_refresh_title": "Spelerslijst vernieuwen uit database",
       "profile_nick_placeholder": "Voer je spelersnaam in...",
-      "profile_lang_label": "Land / vlag (naast je spelersnaam):",
+      "profile_lang_label": "Land (naast je spelersnaam):",
       "profile_lang_none": "Niet tonen",
       "profile_country_search": "Land zoeken...",
       "profile_country_empty": "Geen land gevonden",

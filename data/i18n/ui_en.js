@@ -515,7 +515,7 @@
       "tz_utc_btn_title": "FISHAO game time (UTC+0)",
       "players_btn_refresh_title": "Refresh player list from database",
       "profile_nick_placeholder": "Enter your nickname...",
-      "profile_lang_label": "Country / flag (shown next to your nickname):",
+      "profile_lang_label": "Country (shown next to your nickname):",
       "profile_lang_none": "Don't show",
       "profile_country_search": "Search country...",
       "profile_country_empty": "No country found",
