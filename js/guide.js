@@ -483,20 +483,36 @@ function parseUpgradeHours(timeHoursStr) {
   return 0;
 }
 
-function formatGuideInt(n) {
+function getGuideTranslate(optLang) {
+  if (optLang && typeof window !== 'undefined' && window.FISHAO_I18N && typeof window.FISHAO_I18N.tForLang === 'function') {
+    return function (key, params, fallback) {
+      return window.FISHAO_I18N.tForLang(optLang, key, params, fallback);
+    };
+  }
+  return t;
+}
+
+function getGuideLocale(optLang) {
+  if (optLang && typeof window !== 'undefined' && window.FISHAO_I18N && typeof window.FISHAO_I18N.getLocale === 'function') {
+    return window.FISHAO_I18N.getLocale(optLang);
+  }
+  return getLocale();
+}
+
+function formatGuideInt(n, optLang) {
   var val = Math.round(Number(n) || 0);
   try {
-    return val.toLocaleString(getLocale());
+    return val.toLocaleString(getGuideLocale(optLang));
   } catch (e) {
     return String(val);
   }
 }
 
-function formatGuideDecimal(num, maxDecimals) {
+function formatGuideDecimal(num, maxDecimals, optLang) {
   var dec = typeof maxDecimals === 'number' ? maxDecimals : 1;
   var rounded = Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
   try {
-    return rounded.toLocaleString(getLocale(), {
+    return rounded.toLocaleString(getGuideLocale(optLang), {
       minimumFractionDigits: 0,
       maximumFractionDigits: dec
     });
@@ -505,29 +521,30 @@ function formatGuideDecimal(num, maxDecimals) {
   }
 }
 
-function formatUpgradeDuration(hours, compact) {
+function formatUpgradeDuration(hours, compact, optLang) {
+  var tr = getGuideTranslate(optLang);
   var totalMins = Math.round((Number(hours) || 0) * 60);
   if (totalMins <= 0) {
-    return '0 ' + t('guide_unit_hour_short');
+    return '0 ' + tr('guide_unit_hour_short');
   }
   var wholeHours = Math.floor(totalMins / 60);
   var remMins = totalMins % 60;
   var primary = '';
 
   if (wholeHours === 0) {
-    primary = remMins + ' ' + t('guide_unit_min_short');
+    primary = remMins + ' ' + tr('guide_unit_min_short');
   } else if (remMins === 0) {
-    primary = formatGuideInt(wholeHours) + ' ' + t('guide_unit_hour_short');
+    primary = formatGuideInt(wholeHours, optLang) + ' ' + tr('guide_unit_hour_short');
   } else {
-    primary = formatGuideInt(wholeHours) + ' ' + t('guide_unit_hour_short') + ' ' + remMins + ' ' + t('guide_unit_min_short');
+    primary = formatGuideInt(wholeHours, optLang) + ' ' + tr('guide_unit_hour_short') + ' ' + remMins + ' ' + tr('guide_unit_min_short');
   }
 
   if (totalMins >= 24 * 60) {
     var exactDays = totalMins / (24 * 60);
     var isWholeDays = Math.abs(exactDays - Math.round(exactDays)) < 0.05;
-    var daysStr = isWholeDays ? formatGuideInt(Math.round(exactDays)) : formatGuideDecimal(exactDays, 1);
+    var daysStr = isWholeDays ? formatGuideInt(Math.round(exactDays), optLang) : formatGuideDecimal(exactDays, 1, optLang);
     var pluralDaysCount = isWholeDays ? Math.round(exactDays) : exactDays;
-    var daysWord = t('guide_days_count', { count: pluralDaysCount, days: daysStr });
+    var daysWord = tr('guide_days_count', { count: pluralDaysCount, days: daysStr });
     if (compact) {
       return primary + ' <span class="guide-duration-days">(' + escapeHtml(daysWord) + ')</span>';
     }
@@ -536,7 +553,8 @@ function formatUpgradeDuration(hours, compact) {
   return primary;
 }
 
-function formatPaybackDays(costFc, dailyFc) {
+function formatPaybackDays(costFc, dailyFc, optLang) {
+  var tr = getGuideTranslate(optLang);
   var cost = Number(costFc) || 0;
   var daily = Number(dailyFc) || 0;
   if (cost <= 0 || daily <= 0) {
@@ -550,14 +568,14 @@ function formatPaybackDays(costFc, dailyFc) {
   var exact = cost / daily;
   var ceilHarvests = Math.ceil(exact - 1e-9);
   var isWhole = Math.abs(exact - Math.round(exact)) < 0.01;
-  var daysFormatted = isWhole ? formatGuideInt(Math.round(exact)) : formatGuideDecimal(exact, 1);
+  var daysFormatted = isWhole ? formatGuideInt(Math.round(exact), optLang) : formatGuideDecimal(exact, 1, optLang);
   var pluralKeyCount = isWhole ? Math.round(exact) : exact;
 
   return {
     exactDays: exact,
     ceilHarvests: ceilHarvests,
-    exactText: t('guide_days_count', { count: pluralKeyCount, days: daysFormatted }),
-    harvestsText: t('guide_harvests_count', { count: ceilHarvests, n: formatGuideInt(ceilHarvests) })
+    exactText: tr('guide_days_count', { count: pluralKeyCount, days: daysFormatted }),
+    harvestsText: tr('guide_harvests_count', { count: ceilHarvests, n: formatGuideInt(ceilHarvests, optLang) })
   };
 }
 
@@ -2027,7 +2045,18 @@ function closeGuideShopItemModal() {
   setDynamicModalScrollLock(false);
 }
 
-var _lastGuideSnapshotState = { type: 'tree', dataUrl: '', blob: null, canvas: null };
+var _lastGuideSnapshotState = { type: 'tree', lang: '', dataUrl: '', blob: null, canvas: null };
+var _guideSnapshotRenderSeq = 0;
+
+function getGuideSnapshotLanguages() {
+  if (typeof window !== 'undefined' && window.FISHAO_I18N && typeof window.FISHAO_I18N.getLanguages === 'function') {
+    return window.FISHAO_I18N.getLanguages();
+  }
+  return [
+    { code: 'cs', label: 'Čeština', short: 'CZ', flag: '🇨🇿' },
+    { code: 'en', label: 'English', short: 'EN', flag: '🇬🇧' }
+  ];
+}
 
 function drawCanvasRoundRect(ctx, x, y, w, h, r) {
   var radius = Math.min(r, w / 2, h / 2);
@@ -2087,35 +2116,28 @@ function drawCanvasCoinText(ctx, x, y, text, textColor, fontSpec) {
   return 15 + ctx.measureText(text).width;
 }
 
-function renderGuideTableSnapshotCanvas(type) {
+function renderGuideTableSnapshotCanvas(type, optLang) {
   var resolvedType = (type === 'line') ? 'line' : 'tree';
-  var totals = computeGuideTotals(resolvedType);
-  var st = getGuideRangeState(resolvedType);
-  var rows = totals.rows;
-  var fromRow = rows[st.from - 1];
-  var toRow = rows[st.to - 1];
-  var isMaxFrom = (st.from === 20);
+  var lang = (optLang && typeof window !== 'undefined' && window.FISHAO_I18N && typeof window.FISHAO_I18N.normalizeLang === 'function')
+    ? window.FISHAO_I18N.normalizeLang(optLang)
+    : (optLang || getLang());
+  var tr = getGuideTranslate(lang);
+  var locale = getGuideLocale(lang);
 
-  var rangeCost = 0;
-  var rangeHours = 0;
-  for (var i = st.from; i < st.to; i++) {
-    rangeCost += rows[i].item.price;
-    rangeHours += rows[i].hours;
-  }
-  var pctOfTotal = totals.totalPrice > 0 ? Math.round((rangeCost / totals.totalPrice) * 100) : 0;
+  var totals = computeGuideTotals(resolvedType);
+  var rows = totals.rows;
+  var lastRow = rows[rows.length - 1];
 
   var W = 1160;
   var PAD = 28;
   var TABLE_W = W - PAD * 2;
   var Y_HDR = 24;
-  var HDR_H = 74;
-  var Y_CARDS = Y_HDR + HDR_H;
-  var CARDS_H = 82;
-  var Y_TABLE = Y_CARDS + CARDS_H + 16;
+  var HDR_H = 68;
+  var Y_TABLE = Y_HDR + HDR_H + 6;
   var TH_H = 40;
   var ROW_H = 44;
   var TABLE_H = TH_H + rows.length * ROW_H;
-  var FOOT_H = 38;
+  var FOOT_H = 40;
   var H = Y_TABLE + TABLE_H + FOOT_H;
 
   var dpr = 2;
@@ -2138,17 +2160,23 @@ function renderGuideTableSnapshotCanvas(type) {
   ctx.fillStyle = resolvedType === 'tree' ? '#10b981' : '#f59e0b';
   ctx.fillRect(0, 0, W, 4);
 
-  // Header left: title & subtitle
+  // Header left: title & static full-table overview subtitle
   ctx.textBaseline = 'alphabetic';
   ctx.fillStyle = '#f8fafc';
   ctx.font = '800 22px ' + fontFamily;
-  var titleStr = t(resolvedType === 'tree' ? 'guide_banner_title_tree' : 'guide_banner_title_line');
-  ctx.fillText(fitCanvasText(ctx, titleStr, 760), PAD, Y_HDR + 24);
+  var titleStr = tr(resolvedType === 'tree' ? 'guide_banner_title_tree' : 'guide_banner_title_line');
+  ctx.fillText(fitCanvasText(ctx, titleStr, 800), PAD, Y_HDR + 24);
 
   ctx.fillStyle = '#94a3b8';
-  ctx.font = '500 12.5px ' + fontFamily;
-  var descStr = t(resolvedType === 'tree' ? 'guide_calc_desc_tree' : 'guide_calc_desc_line');
-  ctx.fillText(fitCanvasText(ctx, descStr, 760), PAD, Y_HDR + 48);
+  ctx.font = '600 12.5px ' + fontFamily;
+  var subtitleStr = resolvedType === 'tree'
+    ? (tr('guide_stat_max_level') + ': Lvl 20  •  ' +
+        tr('guide_stat_max_yield') + ': ' + lastRow.item.fc + ' FC + ' + formatGuideInt(lastRow.item.fb, lang) + ' FB / ' + tr('guide_per_day_short') + '  •  ' +
+        tr('guide_stat_total_cost') + ': ' + formatGuideInt(totals.totalPrice, lang) + ' FC')
+    : (tr('guide_stat_max_level') + ': Lvl 20  •  ' +
+        tr('guide_stat_max_length') + ': ' + formatGuideInt(lastRow.item.length_cm, lang) + ' cm  •  ' +
+        tr('guide_stat_total_cost') + ': ' + formatGuideInt(totals.totalPrice, lang) + ' FC');
+  ctx.fillText(fitCanvasText(ctx, subtitleStr, 820), PAD, Y_HDR + 48);
 
   // Header right: site branding + current date
   ctx.textAlign = 'right';
@@ -2158,128 +2186,9 @@ function renderGuideTableSnapshotCanvas(type) {
   ctx.fillStyle = '#94a3b8';
   ctx.font = '600 11.5px ' + fontFamily;
   var dateLabel = '';
-  try { dateLabel = new Date().toLocaleDateString(getLocale()); } catch (e) { }
+  try { dateLabel = new Date().toLocaleDateString(locale); } catch (e) { }
   ctx.fillText(dateLabel, W - PAD, Y_HDR + 44);
   ctx.textAlign = 'left';
-
-  // Build 4 summary cards matching live calculator
-  var cards;
-  if (resolvedType === 'tree') {
-    var deltaFc = toRow.item.fc - fromRow.item.fc;
-    var deltaFb = toRow.item.fb - fromRow.item.fb;
-    var totalYieldPayback = formatPaybackDays(rangeCost, toRow.item.fc);
-    var deltaPayback = deltaFc > 0 ? formatPaybackDays(rangeCost, deltaFc) : null;
-    var roiValText = isMaxFrom ? t('guide_max_level_reached') : totalYieldPayback.exactText;
-    var roiSubText = isMaxFrom
-      ? (toRow.item.fc + ' FC + ' + formatGuideInt(toRow.item.fb) + ' FB / ' + t('guide_per_day_short'))
-      : (totalYieldPayback.harvestsText + (deltaPayback ? (' • +' + deltaFc + ' FC/d: ' + deltaPayback.exactText) : ''));
-
-    cards = [
-      {
-        label: t('guide_calc_cost_label', { from: st.from, to: st.to }),
-        val: formatGuideInt(rangeCost) + ' FC',
-        sub: t('guide_calc_cost_share', { pct: pctOfTotal, total: formatGuideInt(totals.totalPrice) }),
-        border: 'rgba(245, 158, 11, 0.45)',
-        valColor: '#fbbf24',
-        coin: true
-      },
-      {
-        label: t('guide_calc_time_label'),
-        val: formatUpgradeDuration(rangeHours, false),
-        sub: t('guide_calc_steps_count', { count: st.to - st.from }),
-        border: 'rgba(148, 163, 184, 0.3)',
-        valColor: '#f8fafc',
-        coin: false
-      },
-      {
-        label: t('guide_calc_new_yield', { to: st.to }),
-        val: toRow.item.fc + ' FC + ' + formatGuideInt(toRow.item.fb) + ' FB',
-        sub: '+' + deltaFc + ' FC / +' + formatGuideInt(deltaFb) + ' FB ' + t('guide_per_day_short'),
-        border: 'rgba(16, 185, 129, 0.45)',
-        valColor: '#34d399',
-        coin: false
-      },
-      {
-        label: t('guide_calc_roi_label'),
-        val: roiValText,
-        sub: roiSubText,
-        border: 'rgba(56, 189, 248, 0.45)',
-        valColor: '#38bdf8',
-        coin: false
-      }
-    ];
-  } else {
-    var deltaCm = toRow.item.length_cm - fromRow.item.length_cm;
-    var colorNames = String(toRow.item.colors || '').split(',').map(function (c) {
-      var k = c.trim().toLowerCase();
-      return k ? t('guide_color_' + k) : '';
-    }).filter(Boolean).join(', ');
-    cards = [
-      {
-        label: t('guide_calc_cost_label', { from: st.from, to: st.to }),
-        val: formatGuideInt(rangeCost) + ' FC',
-        sub: t('guide_calc_cost_share', { pct: pctOfTotal, total: formatGuideInt(totals.totalPrice) }),
-        border: 'rgba(245, 158, 11, 0.45)',
-        valColor: '#fbbf24',
-        coin: true
-      },
-      {
-        label: t('guide_calc_time_label'),
-        val: formatUpgradeDuration(rangeHours, false),
-        sub: t('guide_calc_steps_count', { count: st.to - st.from }),
-        border: 'rgba(148, 163, 184, 0.3)',
-        valColor: '#f8fafc',
-        coin: false
-      },
-      {
-        label: t('guide_calc_line_len', { to: st.to }),
-        val: formatGuideInt(toRow.item.length_cm) + ' cm',
-        sub: '+' + formatGuideInt(deltaCm) + ' cm ' + t('guide_calc_vs_lvl', { from: st.from }),
-        border: 'rgba(56, 189, 248, 0.45)',
-        valColor: '#38bdf8',
-        coin: false
-      },
-      {
-        label: t('guide_calc_line_colors', { to: st.to }),
-        val: colorNames,
-        sub: 'Lvl ' + st.from + ' → Lvl ' + st.to,
-        border: 'rgba(168, 85, 247, 0.4)',
-        valColor: '#e2e8f0',
-        coin: false
-      }
-    ];
-  }
-
-  var cardGap = 12;
-  var cardW = (TABLE_W - cardGap * 3) / 4;
-  for (var ci = 0; ci < cards.length; ci++) {
-    var card = cards[ci];
-    var cx = PAD + ci * (cardW + cardGap);
-    drawCanvasRoundRect(ctx, cx, Y_CARDS, cardW, CARDS_H, 10);
-    ctx.fillStyle = '#111a2e';
-    ctx.fill();
-    ctx.strokeStyle = card.border;
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '700 10.5px ' + fontFamily;
-    ctx.fillText(fitCanvasText(ctx, card.label.toUpperCase(), cardW - 24), cx + 12, Y_CARDS + 21);
-
-    ctx.font = '800 17px ' + fontFamily;
-    if (card.coin) {
-      drawCanvasCoinText(ctx, cx + 12, Y_CARDS + 43, fitCanvasText(ctx, card.val, cardW - 40), card.valColor, ctx.font);
-    } else {
-      ctx.fillStyle = card.valColor;
-      ctx.fillText(fitCanvasText(ctx, card.val, cardW - 24), cx + 12, Y_CARDS + 48);
-    }
-
-    ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = '#cbd5e1';
-    ctx.font = '500 11px ' + fontFamily;
-    ctx.fillText(fitCanvasText(ctx, card.sub, cardW - 24), cx + 12, Y_CARDS + 69);
-  }
 
   // Table Container
   drawCanvasRoundRect(ctx, PAD, Y_TABLE, TABLE_W, TABLE_H, 12);
@@ -2296,21 +2205,21 @@ function renderGuideTableSnapshotCanvas(type) {
   // Table Columns
   var cols = resolvedType === 'tree'
     ? [
-        { x: PAD, w: 135, label: t('guide_col_level') },
-        { x: PAD + 135, w: 135, label: t('guide_col_price_fc') },
-        { x: PAD + 270, w: 140, label: t('guide_col_cum_price') },
-        { x: PAD + 410, w: 125, label: t('guide_col_daily_fc') },
-        { x: PAD + 535, w: 120, label: t('guide_col_daily_fb') },
-        { x: PAD + 655, w: 205, label: t('guide_col_upgrade_time') },
-        { x: PAD + 860, w: 244, label: t('guide_col_payback') }
+        { x: PAD, w: 96, label: tr('guide_col_level') },
+        { x: PAD + 96, w: 144, label: tr('guide_col_price_fc') },
+        { x: PAD + 240, w: 144, label: tr('guide_col_cum_price') },
+        { x: PAD + 384, w: 128, label: tr('guide_col_daily_fc') },
+        { x: PAD + 512, w: 124, label: tr('guide_col_daily_fb') },
+        { x: PAD + 636, w: 214, label: tr('guide_col_upgrade_time') },
+        { x: PAD + 850, w: 254, label: tr('guide_col_payback') }
       ]
     : [
-        { x: PAD, w: 140, label: t('guide_col_level') },
-        { x: PAD + 140, w: 140, label: t('guide_col_price_fc') },
-        { x: PAD + 280, w: 145, label: t('guide_col_cum_price') },
-        { x: PAD + 425, w: 175, label: t('guide_col_max_length') },
-        { x: PAD + 600, w: 210, label: t('guide_col_upgrade_time') },
-        { x: PAD + 810, w: 294, label: t('guide_col_colors') }
+        { x: PAD, w: 96, label: tr('guide_col_level') },
+        { x: PAD + 96, w: 144, label: tr('guide_col_price_fc') },
+        { x: PAD + 240, w: 144, label: tr('guide_col_cum_price') },
+        { x: PAD + 384, w: 168, label: tr('guide_col_max_length') },
+        { x: PAD + 552, w: 202, label: tr('guide_col_upgrade_time') },
+        { x: PAD + 754, w: 350, label: tr('guide_col_colors') }
       ];
 
   // Table Header Bar
@@ -2337,7 +2246,7 @@ function renderGuideTableSnapshotCanvas(type) {
     golden: '#fbbf24'
   };
 
-  // Table Rows
+  // Table Rows (neutral reference table without personal calculator range)
   for (var ri = 0; ri < rows.length; ri++) {
     var row = rows[ri];
     var item = row.item;
@@ -2345,27 +2254,8 @@ function renderGuideTableSnapshotCanvas(type) {
     var ry = Y_TABLE + TH_H + ri * ROW_H;
     var midY = ry + ROW_H / 2;
 
-    var isCurrent = (item.level === st.from);
-    var isInRange = (item.level > st.from && item.level <= st.to);
-    var isTarget = (item.level === st.to);
-
-    if (isCurrent) {
-      ctx.fillStyle = 'rgba(16, 185, 129, 0.14)';
-      ctx.fillRect(PAD, ry, TABLE_W, ROW_H);
-      ctx.fillStyle = '#10b981';
-      ctx.fillRect(PAD, ry, 4, ROW_H);
-    } else if (isTarget) {
-      ctx.fillStyle = 'rgba(245, 158, 11, 0.17)';
-      ctx.fillRect(PAD, ry, TABLE_W, ROW_H);
-      ctx.fillStyle = '#f59e0b';
-      ctx.fillRect(PAD, ry, 4, ROW_H);
-    } else if (isInRange) {
-      ctx.fillStyle = 'rgba(245, 158, 11, 0.09)';
-      ctx.fillRect(PAD, ry, TABLE_W, ROW_H);
-      ctx.fillStyle = '#f59e0b';
-      ctx.fillRect(PAD, ry, 4, ROW_H);
-    } else if (ri % 2 === 1) {
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+    if (ri % 2 === 1) {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.025)';
       ctx.fillRect(PAD, ry, TABLE_W, ROW_H);
     }
 
@@ -2377,39 +2267,11 @@ function renderGuideTableSnapshotCanvas(type) {
       ctx.stroke();
     }
 
-    // Col 0: Level + tag
+    // Col 0: Level
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#f8fafc';
     ctx.font = '800 13px ' + fontFamily;
-    var lvlLabel = 'Lvl ' + item.level;
-    ctx.fillText(lvlLabel, cols[0].x + 12, midY);
-    if (isCurrent) {
-      drawCanvasPill(
-        ctx,
-        cols[0].x + 18 + ctx.measureText(lvlLabel).width,
-        midY - 9,
-        t('guide_tag_current').toUpperCase(),
-        'rgba(16, 185, 129, 0.22)',
-        'rgba(16, 185, 129, 0.5)',
-        '#34d399',
-        6,
-        18,
-        '800 9.5px ' + fontFamily
-      );
-    } else if (isTarget) {
-      drawCanvasPill(
-        ctx,
-        cols[0].x + 18 + ctx.measureText(lvlLabel).width,
-        midY - 9,
-        t('guide_tag_target').toUpperCase(),
-        'rgba(245, 158, 11, 0.22)',
-        'rgba(245, 158, 11, 0.5)',
-        '#fbbf24',
-        6,
-        18,
-        '800 9.5px ' + fontFamily
-      );
-    }
+    ctx.fillText('Lvl ' + item.level, cols[0].x + 12, midY);
 
     // Col 1: Price
     if (item.price === 0) {
@@ -2417,7 +2279,7 @@ function renderGuideTableSnapshotCanvas(type) {
         ctx,
         cols[1].x + 12,
         midY - 10,
-        fitCanvasText(ctx, t('guide_base_free'), cols[1].w - 28),
+        fitCanvasText(ctx, tr('guide_base_free'), cols[1].w - 28),
         'rgba(255, 255, 255, 0.06)',
         'rgba(255, 255, 255, 0.12)',
         '#94a3b8',
@@ -2426,11 +2288,11 @@ function renderGuideTableSnapshotCanvas(type) {
         '700 11px ' + fontFamily
       );
     } else {
-      drawCanvasCoinText(ctx, cols[1].x + 12, midY, formatGuideInt(item.price) + ' FC', '#fbbf24', '800 12.5px ' + fontFamily);
+      drawCanvasCoinText(ctx, cols[1].x + 12, midY, formatGuideInt(item.price, lang) + ' FC', '#fbbf24', '800 12.5px ' + fontFamily);
     }
 
     // Col 2: Cum price
-    drawCanvasCoinText(ctx, cols[2].x + 12, midY, formatGuideInt(row.cumPrice) + ' FC', '#cbd5e1', '700 12.5px ' + fontFamily);
+    drawCanvasCoinText(ctx, cols[2].x + 12, midY, formatGuideInt(row.cumPrice, lang) + ' FC', '#cbd5e1', '700 12.5px ' + fontFamily);
 
     if (resolvedType === 'tree') {
       // Col 3: FC / day + step bump
@@ -2454,7 +2316,7 @@ function renderGuideTableSnapshotCanvas(type) {
       ctx.fillStyle = '#34d399';
       ctx.font = '800 12.5px ' + fontFamily;
       ctx.textBaseline = 'middle';
-      ctx.fillText(formatGuideInt(item.fb) + ' FB', cols[4].x + 12, midY);
+      ctx.fillText(formatGuideInt(item.fb, lang) + ' FB', cols[4].x + 12, midY);
 
       // Col 5: Upgrade time
       if (item.level === 1) {
@@ -2464,10 +2326,10 @@ function renderGuideTableSnapshotCanvas(type) {
       } else {
         ctx.fillStyle = '#e2e8f0';
         ctx.font = '700 12px ' + fontFamily;
-        ctx.fillText(fitCanvasText(ctx, formatUpgradeDuration(row.hours, false), cols[5].w - 20), cols[5].x + 12, ry + 15);
+        ctx.fillText(fitCanvasText(ctx, formatUpgradeDuration(row.hours, false, lang), cols[5].w - 20), cols[5].x + 12, ry + 15);
         ctx.fillStyle = '#94a3b8';
         ctx.font = '500 10.5px ' + fontFamily;
-        ctx.fillText(fitCanvasText(ctx, t('guide_cum_short') + ': ' + formatUpgradeDuration(row.cumHours, false), cols[5].w - 20), cols[5].x + 12, ry + 31);
+        ctx.fillText(fitCanvasText(ctx, tr('guide_cum_short') + ': ' + formatUpgradeDuration(row.cumHours, false, lang), cols[5].w - 20), cols[5].x + 12, ry + 31);
       }
 
       // Col 6: Payback (ROI)
@@ -2476,28 +2338,28 @@ function renderGuideTableSnapshotCanvas(type) {
         ctx.font = '600 12.5px ' + fontFamily;
         ctx.fillText('—', cols[6].x + 12, midY);
       } else {
-        var singleRoi = formatPaybackDays(item.price, item.fc);
-        var cumRoi = formatPaybackDays(row.cumPrice, item.fc);
+        var singleRoi = formatPaybackDays(item.price, item.fc, lang);
+        var cumRoi = formatPaybackDays(row.cumPrice, item.fc, lang);
         ctx.fillStyle = '#38bdf8';
         ctx.font = '700 12px ' + fontFamily;
         ctx.fillText(fitCanvasText(ctx, singleRoi.exactText + ' (' + singleRoi.harvestsText + ')', cols[6].w - 20), cols[6].x + 12, ry + 15);
         ctx.fillStyle = '#94a3b8';
         ctx.font = '500 10.5px ' + fontFamily;
-        ctx.fillText(fitCanvasText(ctx, t('guide_roi_from_lvl1', { days: cumRoi.exactText }), cols[6].w - 20), cols[6].x + 12, ry + 31);
+        ctx.fillText(fitCanvasText(ctx, tr('guide_roi_from_lvl1', { days: cumRoi.exactText }), cols[6].w - 20), cols[6].x + 12, ry + 31);
       }
     } else {
       // Col 3: Max length
       ctx.fillStyle = '#38bdf8';
       ctx.font = '800 13px ' + fontFamily;
       ctx.textBaseline = 'middle';
-      var lenTxt = formatGuideInt(item.length_cm) + ' cm';
+      var lenTxt = formatGuideInt(item.length_cm, lang) + ' cm';
       ctx.fillText(lenTxt, cols[3].x + 12, midY);
       var lenDelta = prev ? (item.length_cm - prev.length_cm) : 0;
       if (lenDelta > 0) {
         var lenTw = ctx.measureText(lenTxt).width;
         ctx.fillStyle = '#94a3b8';
         ctx.font = '700 11px ' + fontFamily;
-        ctx.fillText('+' + formatGuideInt(lenDelta) + ' cm', cols[3].x + 18 + lenTw, midY);
+        ctx.fillText('+' + formatGuideInt(lenDelta, lang) + ' cm', cols[3].x + 18 + lenTw, midY);
       }
 
       // Col 4: Upgrade time
@@ -2508,10 +2370,10 @@ function renderGuideTableSnapshotCanvas(type) {
       } else {
         ctx.fillStyle = '#e2e8f0';
         ctx.font = '700 12px ' + fontFamily;
-        ctx.fillText(fitCanvasText(ctx, formatUpgradeDuration(row.hours, false), cols[4].w - 20), cols[4].x + 12, ry + 15);
+        ctx.fillText(fitCanvasText(ctx, formatUpgradeDuration(row.hours, false, lang), cols[4].w - 20), cols[4].x + 12, ry + 15);
         ctx.fillStyle = '#94a3b8';
         ctx.font = '500 10.5px ' + fontFamily;
-        ctx.fillText(fitCanvasText(ctx, t('guide_cum_short') + ': ' + formatUpgradeDuration(row.cumHours, false), cols[4].w - 20), cols[4].x + 12, ry + 31);
+        ctx.fillText(fitCanvasText(ctx, tr('guide_cum_short') + ': ' + formatUpgradeDuration(row.cumHours, false, lang), cols[4].w - 20), cols[4].x + 12, ry + 31);
       }
 
       // Col 5: Colors (dot + label chips)
@@ -2523,8 +2385,8 @@ function renderGuideTableSnapshotCanvas(type) {
       ctx.font = '700 11px ' + fontFamily;
       for (var cti = 0; cti < colorTokens.length; cti++) {
         var cCode = colorTokens[cti];
-        var cLabel = t('guide_color_' + cCode);
-        var chipW = 14 + ctx.measureText(cLabel).width + 10;
+        var cLabel = tr('guide_color_' + cCode);
+        var chipW = 13 + ctx.measureText(cLabel).width + 6;
         if (cxOff + chipW > maxRight && cti > 0) break;
         ctx.beginPath();
         ctx.arc(cxOff + 4.5, midY, 4.5, 0, Math.PI * 2);
@@ -2535,7 +2397,7 @@ function renderGuideTableSnapshotCanvas(type) {
         ctx.stroke();
         ctx.fillStyle = (cCode === 'golden') ? '#fcd34d' : ((cCode === 'blue') ? '#7dd3fc' : ((cCode === 'green') ? '#6ee7b7' : '#e2e8f0'));
         ctx.fillText(cLabel, cxOff + 13, midY + 0.5);
-        cxOff += chipW + 4;
+        cxOff += chipW + 6;
       }
     }
   }
@@ -2543,13 +2405,13 @@ function renderGuideTableSnapshotCanvas(type) {
   ctx.restore();
 
   // Footer summary
-  var footY = Y_TABLE + TABLE_H + 21;
+  var footY = Y_TABLE + TABLE_H + 22;
   ctx.textBaseline = 'middle';
   ctx.fillStyle = '#94a3b8';
   ctx.font = '600 11.5px ' + fontFamily;
   ctx.fillText(
-    t('guide_stat_total_cost') + ': ' + formatGuideInt(totals.totalPrice) + ' FC  •  ' +
-      t('guide_stat_total_time') + ': ' + formatUpgradeDuration(totals.totalHours, false),
+    tr('guide_stat_total_cost') + ': ' + formatGuideInt(totals.totalPrice, lang) + ' FC  •  ' +
+      tr('guide_stat_total_time') + ': ' + formatUpgradeDuration(totals.totalHours, false, lang),
     PAD,
     footY
   );
@@ -2574,27 +2436,73 @@ function ensureGuideSnapshotModalOverlay() {
     if (e.target === overlay) closeGuideSnapshotModal();
   };
   overlay.innerHTML =
-    '<div class="modal-box guide-snapshot-modal-box">' +
+    '<div class="modal-box guide-snapshot-modal-box is-picker" id="guideSnapshotModalBox">' +
       '<div class="modal-header">' +
         '<span class="modal-title" id="guideSnapshotModalTitle"></span>' +
         '<button type="button" class="modal-close" aria-label="Close" onclick="window.fishaoApp.closeGuideSnapshotModal()">×</button>' +
       '</div>' +
       '<div class="modal-body">' +
-        '<div class="guide-snapshot-preview-wrap">' +
-          '<img id="guideSnapshotPreviewImg" class="guide-snapshot-preview-img" alt="">' +
+        '<div id="guideSnapshotPickerStep" class="guide-snapshot-picker-step">' +
+          '<p class="guide-snapshot-picker-desc" id="guideSnapshotPickerDesc"></p>' +
+          '<div class="guide-snapshot-lang-grid" id="guideSnapshotLangGrid"></div>' +
         '</div>' +
-        '<div class="guide-snapshot-actions">' +
-          '<button type="button" id="guideSnapshotCopyBtn" class="pill-btn" onclick="window.fishaoApp.copyGuideSnapshotToClipboard()">' +
-            escapeHtml(t('guide_snapshot_copy_btn')) +
-          '</button>' +
-          '<button type="button" id="guideSnapshotDownloadBtn" class="pill-btn active" onclick="window.fishaoApp.downloadGuideSnapshotPng()">' +
-            escapeHtml(t('guide_snapshot_download_btn')) +
-          '</button>' +
+        '<div id="guideSnapshotPreviewStep" class="guide-snapshot-preview-step" style="display:none;">' +
+          '<div class="guide-snapshot-lang-bar">' +
+            '<span class="guide-snapshot-lang-bar-label" id="guideSnapshotLangBarLabel"></span>' +
+            '<div class="guide-snapshot-lang-pills" id="guideSnapshotLangPills"></div>' +
+          '</div>' +
+          '<div class="guide-snapshot-preview-wrap">' +
+            '<div id="guideSnapshotLoading" class="guide-snapshot-loading" style="display:none;"></div>' +
+            '<img id="guideSnapshotPreviewImg" class="guide-snapshot-preview-img" alt="">' +
+          '</div>' +
+          '<div class="guide-snapshot-actions">' +
+            '<button type="button" id="guideSnapshotCopyBtn" class="pill-btn" onclick="window.fishaoApp.copyGuideSnapshotToClipboard()">' +
+              escapeHtml(t('guide_snapshot_copy_btn')) +
+            '</button>' +
+            '<button type="button" id="guideSnapshotDownloadBtn" class="pill-btn active" onclick="window.fishaoApp.downloadGuideSnapshotPng()">' +
+              escapeHtml(t('guide_snapshot_download_btn')) +
+            '</button>' +
+          '</div>' +
         '</div>' +
       '</div>' +
     '</div>';
   document.body.appendChild(overlay);
   return overlay;
+}
+
+function renderGuideSnapshotLangSelectors(activeLang) {
+  var langs = getGuideSnapshotLanguages();
+  var currentUiLang = getLang();
+
+  var gridEl = document.getElementById('guideSnapshotLangGrid');
+  if (gridEl) {
+    gridEl.innerHTML = langs.map(function (item) {
+      var cls = 'guide-snapshot-lang-card' + (item.code === currentUiLang ? ' is-current' : '');
+      return '<button type="button" class="' + cls + '" data-lang="' + escapeHtml(item.code) + '" ' +
+        'onclick="window.fishaoApp.selectGuideSnapshotLang(\'' + escapeHtml(item.code) + '\')">' +
+        '<span class="guide-snapshot-lang-flag" aria-hidden="true">' + escapeHtml(item.flag || '') + '</span>' +
+        '<span class="guide-snapshot-lang-info">' +
+          '<span class="guide-snapshot-lang-name">' + escapeHtml(item.label || item.code.toUpperCase()) + '</span>' +
+          '<span class="guide-snapshot-lang-code">' + escapeHtml(item.short || item.code.toUpperCase()) + '</span>' +
+        '</span>' +
+      '</button>';
+    }).join('');
+  }
+
+  var pillsEl = document.getElementById('guideSnapshotLangPills');
+  if (pillsEl) {
+    pillsEl.innerHTML = langs.map(function (item) {
+      var isAct = item.code === activeLang;
+      var cls = 'pill-btn guide-snapshot-lang-pill' + (isAct ? ' active' : '');
+      return '<button type="button" class="' + cls + '" data-lang="' + escapeHtml(item.code) + '" ' +
+        'aria-pressed="' + (isAct ? 'true' : 'false') + '" ' +
+        'title="' + escapeHtml(item.label || item.code.toUpperCase()) + '" ' +
+        'onclick="window.fishaoApp.selectGuideSnapshotLang(\'' + escapeHtml(item.code) + '\')">' +
+        '<span aria-hidden="true">' + escapeHtml(item.flag || '') + '</span> ' +
+        escapeHtml(item.short || item.code.toUpperCase()) +
+      '</button>';
+    }).join('');
+  }
 }
 
 function openGuideSnapshotModal(optType) {
@@ -2603,9 +2511,113 @@ function openGuideSnapshotModal(optType) {
     ? optType
     : (currentGuideSubTab === 'line' ? 'line' : 'tree');
 
-  var canvas = renderGuideTableSnapshotCanvas(type);
+  _guideSnapshotRenderSeq++;
+  _lastGuideSnapshotState = { type: type, lang: '', dataUrl: '', blob: null, canvas: null };
+
+  var overlay = ensureGuideSnapshotModalOverlay();
+  var modalBox = document.getElementById('guideSnapshotModalBox');
+  var titleText = t(type === 'line' ? 'guide_snapshot_modal_title_line' : 'guide_snapshot_modal_title_tree');
+  var titleEl = document.getElementById('guideSnapshotModalTitle');
+  var pickerStep = document.getElementById('guideSnapshotPickerStep');
+  var previewStep = document.getElementById('guideSnapshotPreviewStep');
+  var pickerDescEl = document.getElementById('guideSnapshotPickerDesc');
+  var langBarLabelEl = document.getElementById('guideSnapshotLangBarLabel');
+  var imgEl = document.getElementById('guideSnapshotPreviewImg');
+  var loadingEl = document.getElementById('guideSnapshotLoading');
+  var copyBtn = document.getElementById('guideSnapshotCopyBtn');
+  var dlBtn = document.getElementById('guideSnapshotDownloadBtn');
+
+  if (modalBox) modalBox.classList.add('is-picker');
+  if (titleEl) titleEl.textContent = titleText;
+  if (pickerDescEl) pickerDescEl.textContent = t('guide_snapshot_pick_lang_desc');
+  if (langBarLabelEl) langBarLabelEl.textContent = t('guide_snapshot_lang_label');
+  if (pickerStep) pickerStep.style.display = '';
+  if (previewStep) previewStep.style.display = 'none';
+  if (loadingEl) loadingEl.style.display = 'none';
+  if (imgEl) {
+    imgEl.removeAttribute('src');
+    imgEl.style.display = '';
+    imgEl.alt = titleText;
+  }
+  if (copyBtn) {
+    copyBtn.textContent = t('guide_snapshot_copy_btn');
+    copyBtn.style.display = (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.write && typeof ClipboardItem === 'function') ? '' : 'none';
+    copyBtn.disabled = false;
+  }
+  if (dlBtn) {
+    dlBtn.textContent = t('guide_snapshot_download_btn');
+    dlBtn.disabled = false;
+  }
+
+  renderGuideSnapshotLangSelectors('');
+
+  overlay.classList.add('active');
+  setDynamicModalScrollLock(true);
+}
+
+async function selectGuideSnapshotLang(langCode) {
+  if (typeof document === 'undefined') return;
+  var overlay = document.getElementById('guideSnapshotModalOverlay');
+  if (!overlay || !overlay.classList.contains('active')) return;
+
+  var lang = (window.FISHAO_I18N && typeof window.FISHAO_I18N.normalizeLang === 'function')
+    ? window.FISHAO_I18N.normalizeLang(langCode)
+    : (langCode || getLang());
+  var type = _lastGuideSnapshotState.type === 'line' ? 'line' : 'tree';
+  var seq = ++_guideSnapshotRenderSeq;
+
+  var modalBox = document.getElementById('guideSnapshotModalBox');
+  var pickerStep = document.getElementById('guideSnapshotPickerStep');
+  var previewStep = document.getElementById('guideSnapshotPreviewStep');
+  var imgEl = document.getElementById('guideSnapshotPreviewImg');
+  var loadingEl = document.getElementById('guideSnapshotLoading');
+  var copyBtn = document.getElementById('guideSnapshotCopyBtn');
+  var dlBtn = document.getElementById('guideSnapshotDownloadBtn');
+
+  if (modalBox) modalBox.classList.remove('is-picker');
+  if (pickerStep) pickerStep.style.display = 'none';
+  if (previewStep) previewStep.style.display = '';
+  renderGuideSnapshotLangSelectors(lang);
+
+  var needsLoad = !!(window.FISHAO_I18N &&
+    typeof window.FISHAO_I18N.ensureLangChainLoaded === 'function' &&
+    typeof window.FISHAO_I18N.isLangLoaded === 'function' &&
+    !window.FISHAO_I18N.isLangLoaded(lang));
+
+  if (needsLoad) {
+    if (loadingEl) {
+      loadingEl.textContent = t('guide_snapshot_generating');
+      loadingEl.style.display = '';
+    }
+    if (imgEl) imgEl.style.display = 'none';
+    if (copyBtn) copyBtn.disabled = true;
+    if (dlBtn) dlBtn.disabled = true;
+
+    var loaded = false;
+    try {
+      loaded = await window.FISHAO_I18N.ensureLangChainLoaded(lang);
+    } catch (err) {
+      loaded = false;
+    }
+
+    if (seq !== _guideSnapshotRenderSeq || !overlay.classList.contains('active')) {
+      return;
+    }
+    if (!loaded && typeof showToast === 'function') {
+      showToast(t('guide_snapshot_lang_load_error'), 'error');
+    }
+  } else if (window.FISHAO_I18N && typeof window.FISHAO_I18N.ensureLangChainLoaded === 'function') {
+    try {
+      await window.FISHAO_I18N.ensureLangChainLoaded(lang);
+    } catch (err) { }
+    if (seq !== _guideSnapshotRenderSeq || !overlay.classList.contains('active')) {
+      return;
+    }
+  }
+
+  var canvas = renderGuideTableSnapshotCanvas(type, lang);
   var dataUrl = canvas.toDataURL('image/png');
-  _lastGuideSnapshotState = { type: type, dataUrl: dataUrl, blob: null, canvas: canvas };
+  _lastGuideSnapshotState = { type: type, lang: lang, dataUrl: dataUrl, blob: null, canvas: canvas };
   if (typeof canvas.toBlob === 'function') {
     canvas.toBlob(function (blob) {
       if (_lastGuideSnapshotState.canvas === canvas) {
@@ -2614,29 +2626,19 @@ function openGuideSnapshotModal(optType) {
     }, 'image/png');
   }
 
-  var overlay = ensureGuideSnapshotModalOverlay();
   var titleText = t(type === 'line' ? 'guide_snapshot_modal_title_line' : 'guide_snapshot_modal_title_tree');
-  var titleEl = document.getElementById('guideSnapshotModalTitle');
-  var imgEl = document.getElementById('guideSnapshotPreviewImg');
-  var copyBtn = document.getElementById('guideSnapshotCopyBtn');
-  var dlBtn = document.getElementById('guideSnapshotDownloadBtn');
-
-  if (titleEl) titleEl.textContent = titleText;
+  if (loadingEl) loadingEl.style.display = 'none';
   if (imgEl) {
     imgEl.src = dataUrl;
-    imgEl.alt = titleText;
+    imgEl.alt = titleText + ' (' + lang.toUpperCase() + ')';
+    imgEl.style.display = '';
   }
-  if (copyBtn) {
-    copyBtn.textContent = t('guide_snapshot_copy_btn');
-    copyBtn.style.display = (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.write && typeof ClipboardItem === 'function') ? '' : 'none';
-  }
-  if (dlBtn) dlBtn.textContent = t('guide_snapshot_download_btn');
-
-  overlay.classList.add('active');
-  setDynamicModalScrollLock(true);
+  if (copyBtn) copyBtn.disabled = false;
+  if (dlBtn) dlBtn.disabled = false;
 }
 
 function closeGuideSnapshotModal() {
+  _guideSnapshotRenderSeq++;
   var overlay = document.getElementById('guideSnapshotModalOverlay');
   if (overlay) overlay.classList.remove('active');
   setDynamicModalScrollLock(false);
@@ -2644,9 +2646,10 @@ function closeGuideSnapshotModal() {
 
 function downloadGuideSnapshotPng() {
   if (!_lastGuideSnapshotState.dataUrl || typeof document === 'undefined') return;
-  var fname = _lastGuideSnapshotState.type === 'line'
-    ? 'fishao-line-upgrades.png'
-    : 'fishao-tree-upgrades.png';
+  var langSuffix = _lastGuideSnapshotState.lang ? ('-' + _lastGuideSnapshotState.lang) : '';
+  var fname = (_lastGuideSnapshotState.type === 'line'
+    ? 'fishao-line-upgrades'
+    : 'fishao-tree-upgrades') + langSuffix + '.png';
   var a = document.createElement('a');
   a.href = _lastGuideSnapshotState.dataUrl;
   a.download = fname;

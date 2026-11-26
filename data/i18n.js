@@ -227,19 +227,13 @@
     },
 
     /**
-     * Translate a UI key.
-     *   t(key)                       plain lookup
-     *   t(key, { name: 'X' })        {placeholder} interpolation
-     *   t(key, 'Fallback text')      inline fallback when the key is unknown everywhere
-     *   t(key, params, 'Fallback')   both
-     * When params.count is a number, plural variants key_one / key_few / key_many /
-     * key_other (Intl.PluralRules categories) are preferred over the bare key.
+     * Translate a UI key in an explicit language without changing currentLang.
      */
-    t: function (key, params, fallback) {
+    tForLang: function (lang, key, params, fallback) {
       if (!key) return '';
       var actualParams = (params && typeof params === 'object') ? params : ((fallback && typeof fallback === 'object') ? fallback : null);
       var hasCount = actualParams && typeof actualParams.count === 'number' && isFinite(actualParams.count);
-      var chain = getChain();
+      var chain = getChain(lang);
       var val;
       for (var i = 0; i < chain.length && val === undefined; i++) {
         var dict = ui[chain[i]];
@@ -251,6 +245,19 @@
         else val = key;
       }
       return interpolate(val, actualParams);
+    },
+
+    /**
+     * Translate a UI key.
+     *   t(key)                       plain lookup
+     *   t(key, { name: 'X' })        {placeholder} interpolation
+     *   t(key, 'Fallback text')      inline fallback when the key is unknown everywhere
+     *   t(key, params, 'Fallback')   both
+     * When params.count is a number, plural variants key_one / key_few / key_many /
+     * key_other (Intl.PluralRules categories) are preferred over the bare key.
+     */
+    t: function (key, params, fallback) {
+      return FISHAO_I18N.tForLang(FISHAO_I18N.currentLang, key, params, fallback);
     },
 
     /** Returns true when a key exists in the active language itself (no fallback). */
@@ -448,6 +455,15 @@
         document.head.appendChild(script);
       });
       return FISHAO_I18N._langPromises[code];
+    },
+
+    ensureLangChainLoaded: function (lang) {
+      var chain = getChain(lang);
+      return Promise.all(chain.map(function (c) {
+        return FISHAO_I18N.ensureLangLoaded(c);
+      })).then(function (results) {
+        return results[0] !== false;
+      });
     }
   };
 

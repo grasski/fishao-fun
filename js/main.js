@@ -995,6 +995,7 @@ window.fishaoApp = {
   onGuideDecSortChange: typeof onGuideDecSortChange === 'function' ? onGuideDecSortChange : function () {},
   resetGuideDecFilters: typeof resetGuideDecFilters === 'function' ? resetGuideDecFilters : function () {},
   openGuideSnapshotModal: typeof openGuideSnapshotModal === 'function' ? openGuideSnapshotModal : function () {},
+  selectGuideSnapshotLang: typeof selectGuideSnapshotLang === 'function' ? selectGuideSnapshotLang : function () {},
   closeGuideSnapshotModal: typeof closeGuideSnapshotModal === 'function' ? closeGuideSnapshotModal : function () {},
   downloadGuideSnapshotPng: typeof downloadGuideSnapshotPng === 'function' ? downloadGuideSnapshotPng : function () {},
   copyGuideSnapshotToClipboard: typeof copyGuideSnapshotToClipboard === 'function' ? copyGuideSnapshotToClipboard : function () {},
