@@ -110,7 +110,9 @@
         if (PROMISE_FNS[prop]) {
           return function () { return wrapPromiseCall(value, target, arguments); };
         }
-        return value.bind(target);
+        // Return classes (e.g. Timestamp with static Timestamp.fromMillis) and
+        // standalone ES module helpers directly; .bind() would strip static methods.
+        return value;
       }
     });
   }
@@ -211,7 +213,12 @@
     var fs = await loadFirestoreModule();
     var batch = fs.writeBatch(db);
     var result = await fn(batch, fs);
-    await batch.commit();
+    try {
+      await batch.commit();
+    } catch (err) {
+      reportFirestoreAvailabilityError(err);
+      throw err;
+    }
     return result;
   }
 
