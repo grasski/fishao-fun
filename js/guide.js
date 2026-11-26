@@ -1912,7 +1912,7 @@ function ensureShopItemModalOverlay() {
   return overlay;
 }
 
-function openGuideShopItemModal(kind, id) {
+function openGuideShopItemModal(kind, id, skipSync) {
   var entry = findShopEntryByKindAndId(kind, id);
   if (!entry || typeof document === 'undefined') return;
 
@@ -1962,7 +1962,7 @@ function openGuideShopItemModal(kind, id) {
             ? window.FISHAO_I18N.getFishName(rewardFishId)
             : ('#' + rewardFishId);
           rewardParts.push('<button type="button" class="dec-reward-fish-btn" ' +
-            'onclick="window.fishaoApp.closeGuideShopItemModal(); window.fishaoApp.openPriceModal(' + rewardFishId + ')">' +
+            'onclick="window.fishaoApp.closeGuideShopItemModal(true); window.fishaoApp.openPriceModal(' + rewardFishId + ')">' +
             '<img src="/images/fish_' + rewardFishId + '.webp" alt="" onerror="this.style.display=\'none\';">' +
             '<span>' + escapeHtml(rewardFishName) + '</span>' +
           '</button>');
@@ -2026,6 +2026,10 @@ function openGuideShopItemModal(kind, id) {
   overlay.classList.add('active');
   if (document.documentElement) document.documentElement.classList.add('modal-open');
   if (document.body) document.body.classList.add('modal-open');
+
+  if (!skipSync && window.fishaoApp && typeof window.fishaoApp.syncUrlRoute === 'function') {
+    window.fishaoApp.syncUrlRoute(currentView, null, false, { kind: kind, id: item.id });
+  }
 }
 
 function setDynamicModalScrollLock(isOpen) {
@@ -2039,10 +2043,15 @@ function setDynamicModalScrollLock(isOpen) {
   }
 }
 
-function closeGuideShopItemModal() {
+function closeGuideShopItemModal(skipSync) {
   var overlay = document.getElementById('shopItemModalOverlay');
+  var wasActive = !!(overlay && overlay.classList.contains('active'));
   if (overlay) overlay.classList.remove('active');
   setDynamicModalScrollLock(false);
+
+  if (!skipSync && wasActive && window.fishaoApp && typeof window.fishaoApp.syncUrlRoute === 'function') {
+    window.fishaoApp.syncUrlRoute(currentView, null, true);
+  }
 }
 
 var _lastGuideSnapshotState = { type: 'tree', lang: '', dataUrl: '', blob: null, canvas: null };

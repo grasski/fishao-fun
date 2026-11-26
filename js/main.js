@@ -82,6 +82,7 @@ var isHandlingRoute = false;
 function getHashOrQueryRoute() {
   var tab = null;
   var fishId = null;
+  var shopItem = null;
 
   try {
     var params = new URLSearchParams(window.location.search);
@@ -100,9 +101,22 @@ function getHashOrQueryRoute() {
       }
     }
 
+    // 1b. Check for guide shop / decoration detail modal route: #shop-<kind>-<id> or #decoration-<id>
+    if (!fishId && hash) {
+      var shopMatch = /^shop-(bait|rod|float|resource)-(\d+)$/.exec(hash);
+      var decMatch = !shopMatch ? /^decoration-(\d+)$/.exec(hash) : null;
+      if (shopMatch) {
+        shopItem = { kind: shopMatch[1], id: parseInt(shopMatch[2], 10) };
+        tab = 'guide_shop';
+      } else if (decMatch) {
+        shopItem = { kind: 'decoration', id: parseInt(decMatch[1], 10) };
+        tab = 'guide_decorations';
+      }
+    }
+
     // 2. Check for tab route
     var rawTab = tabQuery || hash;
-    if (rawTab) {
+    if (!tab && rawTab) {
       if (rawTab === 'market' || rawTab === 'trh' || rawTab === 'targ') {
         tab = 'market';
       } else if (rawTab === 'club' || rawTab === 'klub' || rawTab === 'club_manage' || rawTab === 'club-manage') {
@@ -129,15 +143,19 @@ function getHashOrQueryRoute() {
     }
   } catch (e) { }
 
-  return { tab: tab, fishId: fishId };
+  return { tab: tab, fishId: fishId, shopItem: shopItem };
 }
 
-function syncUrlRoute(view, fishId, replace) {
+function syncUrlRoute(view, fishId, replace, shopItem) {
   if (isHandlingRoute) return;
   try {
     var targetHash = '';
     if (fishId) {
       targetHash = '#fish-' + fishId;
+    } else if (shopItem && shopItem.kind && shopItem.id) {
+      targetHash = (shopItem.kind === 'decoration')
+        ? ('#decoration-' + shopItem.id)
+        : ('#shop-' + shopItem.kind + '-' + shopItem.id);
     } else if (view && view !== 'all') {
       targetHash = '#' + view;
     }
@@ -157,11 +175,12 @@ function syncUrlRoute(view, fishId, replace) {
     var cleanSearch = urlObj.searchParams.toString();
     var newUrl = window.location.pathname + (cleanSearch ? ('?' + cleanSearch) : '') + targetHash;
 
+    var stateObj = { view: view, fishId: fishId || null, shopItem: shopItem || null };
     if (window.history) {
       if (replace && window.history.replaceState) {
-        window.history.replaceState({ view: view, fishId: fishId }, '', newUrl);
+        window.history.replaceState(stateObj, '', newUrl);
       } else if (window.history.pushState) {
-        window.history.pushState({ view: view, fishId: fishId }, '', newUrl);
+        window.history.pushState(stateObj, '', newUrl);
       }
     }
 
@@ -183,7 +202,7 @@ function handleRoute() {
     // 1. Switch tab if needed
     if (route.tab && route.tab !== currentView) {
       switchView(route.tab, true);
-    } else if (!route.tab && !route.fishId && currentView !== 'all') {
+    } else if (!route.tab && !route.fishId && !route.shopItem && currentView !== 'all') {
       switchView('all', true);
     }
 
@@ -198,6 +217,20 @@ function handleRoute() {
     } else if (isModalActive) {
       if (typeof closePriceModal === 'function') {
         closePriceModal(true);
+      }
+    }
+
+    // 3. Open or close guide shop / decoration detail modal
+    var shopModal = document.getElementById('shopItemModalOverlay');
+    var isShopModalActive = shopModal && shopModal.classList.contains('active');
+
+    if (route.shopItem) {
+      if (typeof openGuideShopItemModal === 'function') {
+        openGuideShopItemModal(route.shopItem.kind, route.shopItem.id, true);
+      }
+    } else if (isShopModalActive) {
+      if (typeof closeGuideShopItemModal === 'function') {
+        closeGuideShopItemModal(true);
       }
     }
   } catch (e) {
@@ -1127,6 +1160,8 @@ if (typeof window !== 'undefined') {
 
   if (initialRoute.fishId) {
     openPriceModal(initialRoute.fishId, true);
+  } else if (initialRoute.shopItem && typeof openGuideShopItemModal === 'function') {
+    openGuideShopItemModal(initialRoute.shopItem.kind, initialRoute.shopItem.id, true);
   }
 
   if (langPromise && !window.FISHAO_I18N.isLangLoaded(initialLang)) {
