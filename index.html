@@ -1543,31 +1543,29 @@
             <input type="text" id="inputProfileNickname" class="dash-input" maxlength="40"
               placeholder="Zadej svou přezdívku..." data-i18n-placeholder="profile_nick_placeholder" onkeydown="if(event.key==='Enter') window.fishaoApp.saveProfile()">
 
-            <!-- Optional preferred-language flag (opt-in) -->
+            <!-- Optional country flag (opt-in, independent of site language) -->
             <div class="profile-lang-block">
-              <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 6px;"
+              <label for="profileCountryTrigger" style="font-size: 12px; font-weight: 700; color: #cbd5e1; display: block; margin-bottom: 6px;"
                 data-i18n="profile_lang_label">
-                Preferovaný jazyk (zobrazí se u tvé přezdívky):
+                Země / vlaječka (zobrazí se u tvé přezdívky):
               </label>
-              <div class="profile-lang-grid" id="profileLangPicker" role="group">
-                <button type="button" class="profile-lang-btn toggle-pill" data-lang="cs" aria-pressed="false"
-                  title="Čeština" onclick="window.fishaoApp.selectPreferredLang('cs')">🇨🇿</button>
-                <button type="button" class="profile-lang-btn toggle-pill" data-lang="en" aria-pressed="false"
-                  title="English" onclick="window.fishaoApp.selectPreferredLang('en')">🇬🇧</button>
-                <button type="button" class="profile-lang-btn toggle-pill" data-lang="pl" aria-pressed="false"
-                  title="Polski" onclick="window.fishaoApp.selectPreferredLang('pl')">🇵🇱</button>
-                <button type="button" class="profile-lang-btn toggle-pill" data-lang="nl" aria-pressed="false"
-                  title="Nederlands" onclick="window.fishaoApp.selectPreferredLang('nl')">🇳🇱</button>
-                <button type="button" class="profile-lang-btn toggle-pill" data-lang="ro" aria-pressed="false"
-                  title="Română" onclick="window.fishaoApp.selectPreferredLang('ro')">🇷🇴</button>
-                <button type="button" class="profile-lang-btn toggle-pill" data-lang="tr" aria-pressed="false"
-                  title="Türkçe" onclick="window.fishaoApp.selectPreferredLang('tr')">🇹🇷</button>
-                <button type="button" class="profile-lang-btn profile-lang-none toggle-pill" data-lang="" aria-pressed="false"
-                  data-i18n-aria-label="profile_lang_none" data-i18n-title="profile_lang_none"
-                  onclick="window.fishaoApp.selectPreferredLang('')">🚫</button>
-              </div>
-              <div class="profile-lang-hint" data-i18n="profile_lang_hint">
-                Nepovinné. Ostatní uvidí vlaječku vedle tvého jména v komunitě.
+              <div class="profile-country-dropdown" id="profileCountryDropdown">
+                <button type="button" id="profileCountryTrigger" class="dash-input profile-country-trigger"
+                  aria-haspopup="listbox" aria-expanded="false" aria-controls="profileCountryList"
+                  onclick="window.fishaoApp.toggleProfileCountryDropdown()">
+                  <span id="profileCountryTriggerValue" class="profile-country-trigger-val"></span>
+                  <span class="profile-country-chevron" aria-hidden="true">▾</span>
+                </button>
+                <div id="profileCountryMenu" class="profile-country-menu" style="display: none;">
+                  <div class="profile-country-search-wrap">
+                    <input type="text" id="profileCountrySearch" class="dash-input profile-country-search"
+                      autocomplete="off" spellcheck="false"
+                      placeholder="Hledat zemi..." data-i18n-placeholder="profile_country_search"
+                      oninput="window.fishaoApp.onProfileCountrySearchInput(this.value)"
+                      onkeydown="window.fishaoApp.onProfileCountrySearchKeyDown(event)">
+                  </div>
+                  <div id="profileCountryList" class="profile-country-list" role="listbox"></div>
+                </div>
               </div>
             </div>
           </div>

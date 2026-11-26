@@ -664,15 +664,154 @@ function renderAvatarHtml(avatarVal, fallbackEmoji, imgCss) {
 }
 
 /**
- * Preferred-language flag helpers.
- * The stored field is optional and whitelisted; it never changes the viewer's UI language.
+ * Player country flag helpers (ISO 3166-1 alpha-2 + XK, independent of website UI language).
+ * Stored in `preferredLang` (and `participantInfo[uid].lang` in chats) for backward compatibility.
+ * Legacy language codes ('cs','en','pl','nl','ro','tr') map transparently to their country codes.
  */
-var FISHAO_PLAYER_LANGS = ['cs', 'en', 'pl', 'nl', 'ro', 'tr'];
+var FISHAO_COUNTRY_CODES = (
+  'AD,AE,AF,AG,AI,AL,AM,AO,AQ,AR,AS,AT,AU,AW,AX,AZ,' +
+  'BA,BB,BD,BE,BF,BG,BH,BI,BJ,BL,BM,BN,BO,BQ,BR,BS,BT,BV,BW,BY,BZ,' +
+  'CA,CC,CD,CF,CG,CH,CI,CK,CL,CM,CN,CO,CR,CU,CV,CW,CX,CY,CZ,' +
+  'DE,DJ,DK,DM,DO,DZ,' +
+  'EC,EE,EG,EH,ER,ES,ET,' +
+  'FI,FJ,FK,FM,FO,FR,' +
+  'GA,GB,GD,GE,GF,GG,GH,GI,GL,GM,GN,GP,GQ,GR,GS,GT,GU,GW,GY,' +
+  'HK,HM,HN,HR,HT,HU,' +
+  'ID,IE,IL,IM,IN,IO,IQ,IR,IS,IT,' +
+  'JE,JM,JO,JP,' +
+  'KE,KG,KH,KI,KM,KN,KP,KR,KW,KY,KZ,' +
+  'LA,LB,LC,LI,LK,LR,LS,LT,LU,LV,LY,' +
+  'MA,MC,MD,ME,MF,MG,MH,MK,ML,MM,MN,MO,MP,MQ,MR,MS,MT,MU,MV,MW,MX,MY,MZ,' +
+  'NA,NC,NE,NF,NG,NI,NL,NO,NP,NR,NU,NZ,' +
+  'OM,' +
+  'PA,PE,PF,PG,PH,PK,PL,PM,PN,PR,PS,PT,PW,PY,' +
+  'QA,' +
+  'RE,RO,RS,RU,RW,' +
+  'SA,SB,SC,SD,SE,SG,SH,SI,SJ,SK,SL,SM,SN,SO,SR,SS,ST,SV,SX,SY,SZ,' +
+  'TC,TD,TF,TG,TH,TJ,TK,TL,TM,TN,TO,TR,TT,TV,TW,TZ,' +
+  'UA,UG,UM,US,UY,UZ,' +
+  'VA,VC,VE,VG,VI,VN,VU,' +
+  'WF,WS,' +
+  'XK,' +
+  'YE,YT,' +
+  'ZA,ZM,ZW'
+).split(',');
+
+var FISHAO_COUNTRY_SET = Object.create(null);
+for (var _ci = 0; _ci < FISHAO_COUNTRY_CODES.length; _ci++) {
+  FISHAO_COUNTRY_SET[FISHAO_COUNTRY_CODES[_ci]] = true;
+}
+
+var FISHAO_LEGACY_LANG_TO_COUNTRY = {
+  cs: 'CZ',
+  en: 'GB',
+  pl: 'PL',
+  nl: 'NL',
+  ro: 'RO',
+  tr: 'TR'
+};
+
+var _regionDisplayNamesCache = Object.create(null);
+var _countryEntriesCache = Object.create(null);
 
 function normalizePlayerLang(code) {
   if (typeof code !== 'string') return "";
-  var c = code.toLowerCase().split(/[-_]/)[0];
-  return FISHAO_PLAYER_LANGS.indexOf(c) !== -1 ? c : "";
+  var trimmed = code.trim();
+  if (!trimmed) return "";
+  var lower = trimmed.toLowerCase();
+  if (FISHAO_LEGACY_LANG_TO_COUNTRY[lower]) {
+    return FISHAO_LEGACY_LANG_TO_COUNTRY[lower];
+  }
+  var upper = trimmed.toUpperCase();
+  if (/^[A-Z]{2}$/.test(upper) && FISHAO_COUNTRY_SET[upper]) {
+    return upper;
+  }
+  var parts = trimmed.split(/[-_]/);
+  if (parts.length > 1) {
+    var reg = parts[parts.length - 1].toUpperCase();
+    if (/^[A-Z]{2}$/.test(reg) && FISHAO_COUNTRY_SET[reg]) {
+      return reg;
+    }
+  }
+  return "";
+}
+
+var normalizePlayerCountry = normalizePlayerLang;
+
+function countryCodeToEmoji(code) {
+  var cc = normalizePlayerLang(code);
+  if (!cc || typeof String.fromCodePoint !== 'function') return cc || "";
+  return String.fromCodePoint(0x1F1E6 + cc.charCodeAt(0) - 65, 0x1F1E6 + cc.charCodeAt(1) - 65);
+}
+
+function getCountryFlagUrl(code, width) {
+  var cc = normalizePlayerLang(code);
+  if (!cc) return "";
+  var w = width || 20;
+  return 'https://flagcdn.com/w' + w + '/' + cc.toLowerCase() + '.png';
+}
+
+function _getRegionDisplayNames(locale) {
+  if (typeof Intl === 'undefined' || typeof Intl.DisplayNames !== 'function') return null;
+  if (_regionDisplayNamesCache[locale] !== undefined) return _regionDisplayNamesCache[locale];
+  try {
+    _regionDisplayNamesCache[locale] = new Intl.DisplayNames([locale], { type: 'region' });
+  } catch (e) {
+    _regionDisplayNamesCache[locale] = null;
+  }
+  return _regionDisplayNamesCache[locale];
+}
+
+function getCountryName(code, localeOverride) {
+  var cc = normalizePlayerLang(code);
+  if (!cc) return "";
+  var loc = localeOverride || (typeof getLocale === 'function' ? getLocale() : 'cs-CZ');
+  var dn = _getRegionDisplayNames(loc);
+  if (dn) {
+    try {
+      var name = dn.of(cc);
+      if (name && name !== cc) return name;
+    } catch (e) {}
+  }
+  if (loc !== 'en-US') {
+    var dnEn = _getRegionDisplayNames('en-US');
+    if (dnEn) {
+      try {
+        var enName = dnEn.of(cc);
+        if (enName && enName !== cc) return enName;
+      } catch (e) {}
+    }
+  }
+  return cc;
+}
+
+function getAllCountryEntries(localeOverride) {
+  var loc = localeOverride || (typeof getLocale === 'function' ? getLocale() : 'cs-CZ');
+  if (_countryEntriesCache[loc]) return _countryEntriesCache[loc];
+  var list = [];
+  for (var i = 0; i < FISHAO_COUNTRY_CODES.length; i++) {
+    var cc = FISHAO_COUNTRY_CODES[i];
+    var label = getCountryName(cc, loc);
+    var enLabel = (loc === 'en-US') ? label : getCountryName(cc, 'en-US');
+    var searchBase = label + ' ' + enLabel + ' ' + cc;
+    var searchKey = (typeof normStr === 'function') ? normStr(searchBase) : searchBase.toLowerCase();
+    list.push({
+      code: cc,
+      label: label,
+      enLabel: enLabel,
+      emoji: countryCodeToEmoji(cc),
+      searchKey: searchKey
+    });
+  }
+  list.sort(function (a, b) {
+    try {
+      return a.label.localeCompare(b.label, loc, { sensitivity: 'base' });
+    } catch (e) {
+      return a.label < b.label ? -1 : (a.label > b.label ? 1 : 0);
+    }
+  });
+  _countryEntriesCache[loc] = list;
+  return list;
 }
 
 function getPlayerLang(obj) {
@@ -681,24 +820,32 @@ function getPlayerLang(obj) {
 }
 
 function getPlayerLangMeta(code) {
-  var c = normalizePlayerLang(code);
-  if (!c) return null;
-  var i18n = (typeof window !== "undefined") ? window.FISHAO_I18N : null;
-  var meta = (i18n && i18n.languages) ? i18n.languages[c] : null;
-  return meta || { code: c, label: c.toUpperCase(), flag: c.toUpperCase() };
+  var cc = normalizePlayerLang(code);
+  if (!cc) return null;
+  return {
+    code: cc,
+    label: getCountryName(cc),
+    flag: countryCodeToEmoji(cc),
+    flagUrl: getCountryFlagUrl(cc, 20),
+    flagUrl2x: getCountryFlagUrl(cc, 40)
+  };
 }
 
 function getPlayerLangLabel(code) {
   var meta = getPlayerLangMeta(code);
-  return meta ? (meta.label || meta.code.toUpperCase()) : "";
+  return meta ? (meta.label || meta.code) : "";
 }
 
 function renderPlayerLangFlag(code) {
   var meta = getPlayerLangMeta(code);
   if (!meta) return "";
-  var label = escapeHtml(meta.label || meta.code.toUpperCase());
+  var label = escapeHtml(meta.label || meta.code);
+  var fb = escapeHtml(meta.flag || meta.code);
   return '<span class="player-lang-flag" title="' + label + '" aria-label="' + label + '">' +
-    escapeHtml(meta.flag || meta.code.toUpperCase()) + '</span>';
+    '<img class="player-flag-img" src="' + meta.flagUrl + '" srcset="' + meta.flagUrl2x + ' 2x" ' +
+    'width="18" height="13" alt="' + label + '" loading="lazy" decoding="async" referrerpolicy="no-referrer" ' +
+    'data-fb="' + fb + '" onerror="this.replaceWith(document.createTextNode(this.dataset.fb||\'\'))">' +
+    '</span>';
 }
 
 

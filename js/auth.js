@@ -1079,22 +1079,157 @@ function updateAuthUI() {
   }
 }
 
+var _profileCountryDropdownOpen = false;
+var _profileCountryQuery = "";
+
+function isProfileCountryDropdownOpen() {
+  return _profileCountryDropdownOpen === true;
+}
+
+function closeProfileCountryDropdown() {
+  _profileCountryDropdownOpen = false;
+  var menu = document.getElementById("profileCountryMenu");
+  var trigger = document.getElementById("profileCountryTrigger");
+  if (menu) menu.style.display = "none";
+  if (trigger) trigger.setAttribute("aria-expanded", "false");
+}
+
+function renderProfileCountryList(query) {
+  var listEl = document.getElementById("profileCountryList");
+  if (!listEl) return;
+
+  var q = typeof query === "string" ? query : _profileCountryQuery;
+  var normQ = (typeof normStr === "function") ? normStr(q.trim()) : q.trim().toLowerCase();
+  var entries = (typeof getAllCountryEntries === "function") ? getAllCountryEntries() : [];
+  var noneLabel = t('profile_lang_none');
+  var normNone = (typeof normStr === "function") ? normStr(noneLabel) : noneLabel.toLowerCase();
+
+  var html = [];
+  if (!normQ || normNone.indexOf(normQ) !== -1) {
+    var noneActive = !selectedProfileLang;
+    html.push(
+      '<button type="button" class="profile-country-option profile-country-option-none' + (noneActive ? ' active' : '') + '" ' +
+      'role="option" aria-selected="' + (noneActive ? 'true' : 'false') + '" data-country="" ' +
+      'onclick="window.fishaoApp.selectPreferredLang(\'\')">' +
+      '<span class="profile-country-none-icon" aria-hidden="true">🚫</span>' +
+      '<span class="profile-country-name">' + escapeHtml(noneLabel) + '</span>' +
+      '</button>'
+    );
+  }
+
+  var matched = 0;
+  for (var i = 0; i < entries.length; i++) {
+    var item = entries[i];
+    if (normQ && item.searchKey.indexOf(normQ) === -1) continue;
+    matched++;
+    var isActive = selectedProfileLang === item.code;
+    var flagHtml = renderPlayerLangFlag(item.code);
+    html.push(
+      '<button type="button" class="profile-country-option' + (isActive ? ' active' : '') + '" ' +
+      'role="option" aria-selected="' + (isActive ? 'true' : 'false') + '" data-country="' + item.code + '" ' +
+      'onclick="window.fishaoApp.selectPreferredLang(\'' + item.code + '\')">' +
+      flagHtml +
+      '<span class="profile-country-name">' + escapeHtml(item.label) + '</span>' +
+      '<span class="profile-country-code">' + item.code + '</span>' +
+      '</button>'
+    );
+  }
+
+  if (!html.length || (normQ && matched === 0 && html.length === 0)) {
+    html.push('<div class="profile-country-empty">' + escapeHtml(t('profile_country_empty')) + '</div>');
+  }
+
+  listEl.innerHTML = html.join('');
+}
+
+function toggleProfileCountryDropdown(forceState) {
+  var nextOpen = (typeof forceState === "boolean") ? forceState : !_profileCountryDropdownOpen;
+  if (!nextOpen) {
+    closeProfileCountryDropdown();
+    return;
+  }
+  _profileCountryDropdownOpen = true;
+  _profileCountryQuery = "";
+  var menu = document.getElementById("profileCountryMenu");
+  var trigger = document.getElementById("profileCountryTrigger");
+  var searchInput = document.getElementById("profileCountrySearch");
+  if (searchInput) searchInput.value = "";
+  renderProfileCountryList("");
+  if (menu) menu.style.display = "block";
+  if (trigger) trigger.setAttribute("aria-expanded", "true");
+  if (searchInput) {
+    setTimeout(function () { searchInput.focus(); }, 10);
+  }
+  var listEl = document.getElementById("profileCountryList");
+  if (listEl) {
+    var activeOpt = listEl.querySelector(".profile-country-option.active");
+    if (activeOpt && typeof activeOpt.scrollIntoView === "function") {
+      activeOpt.scrollIntoView({ block: "nearest" });
+    } else {
+      listEl.scrollTop = 0;
+    }
+  }
+}
+
+function onProfileCountrySearchInput(val) {
+  _profileCountryQuery = String(val || "");
+  renderProfileCountryList(_profileCountryQuery);
+}
+
+function onProfileCountrySearchKeyDown(e) {
+  if (!e) return;
+  if (e.key === "Escape") {
+    e.preventDefault();
+    e.stopPropagation();
+    closeProfileCountryDropdown();
+    var trigger = document.getElementById("profileCountryTrigger");
+    if (trigger) trigger.focus();
+    return;
+  }
+  if (e.key === "Enter") {
+    e.preventDefault();
+    var listEl = document.getElementById("profileCountryList");
+    if (!listEl) return;
+    var firstOpt = listEl.querySelector(".profile-country-option");
+    if (firstOpt) {
+      selectPreferredLang(firstOpt.getAttribute("data-country") || "");
+    }
+    return;
+  }
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    e.preventDefault();
+    var listEl2 = document.getElementById("profileCountryList");
+    if (!listEl2) return;
+    var opts = listEl2.querySelectorAll(".profile-country-option");
+    if (!opts.length) return;
+    var target = (e.key === "ArrowDown") ? opts[0] : opts[opts.length - 1];
+    if (target) target.focus();
+  }
+}
+
 function syncProfileLangPicker() {
-  var btns = document.querySelectorAll("#profileLangPicker .profile-lang-btn");
-  btns.forEach(function (b) {
-    var isActive = (b.getAttribute("data-lang") || "") === selectedProfileLang;
-    b.classList.toggle("active", isActive);
-    b.setAttribute("aria-pressed", isActive ? "true" : "false");
-  });
+  var valEl = document.getElementById("profileCountryTriggerValue");
+  if (valEl) {
+    if (selectedProfileLang) {
+      var label = getPlayerLangLabel(selectedProfileLang);
+      valEl.innerHTML = renderPlayerLangFlag(selectedProfileLang) +
+        '<span class="profile-country-trigger-label">' + escapeHtml(label) + '</span>' +
+        '<span class="profile-country-code">' + escapeHtml(selectedProfileLang) + '</span>';
+    } else {
+      valEl.innerHTML = '<span class="profile-country-none-icon" aria-hidden="true">🚫</span>' +
+        '<span class="profile-country-trigger-label profile-country-trigger-placeholder">' +
+        escapeHtml(t('profile_lang_none')) + '</span>';
+    }
+  }
+  if (_profileCountryDropdownOpen) {
+    renderProfileCountryList(_profileCountryQuery);
+  }
 }
 
 function selectPreferredLang(code) {
-  var lang = normalizePlayerLang(code);
-  selectedProfileLang = lang;
+  selectedProfileLang = normalizePlayerLang(code);
   syncProfileLangPicker();
-  if (lang && window.FISHAO_I18N && window.FISHAO_I18N.currentLang !== lang && typeof setLanguage === "function") {
-    setLanguage(lang);
-  }
+  closeProfileCountryDropdown();
 }
 
 function openProfileModal(scrollToAdmin) {
@@ -1159,6 +1294,7 @@ function openProfileModal(scrollToAdmin) {
 }
 
 function closeProfileModal() {
+  closeProfileCountryDropdown();
   var overlay = document.getElementById("profileModalOverlay");
   if (overlay) overlay.classList.remove("active");
 }

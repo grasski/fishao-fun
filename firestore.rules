@@ -93,7 +93,8 @@ service cloud.firestore {
         return m is map
           && (!('displayName' in m) || (m.displayName is string && m.displayName.size() <= 40))
           && (!('preferredLang' in m) || (m.preferredLang is string
-              && m.preferredLang in ['cs', 'en', 'pl', 'nl', 'ro', 'tr']))
+              && (m.preferredLang in ['cs', 'en', 'pl', 'nl', 'ro', 'tr']
+                  || m.preferredLang.matches('^[A-Z]{2}$'))))
           && (!('avatarUrl' in m) || (m.avatarUrl is string
               && m.avatarUrl.size() <= 500
               && !m.avatarUrl.matches('.*[<>\"\'`].*')
@@ -187,7 +188,8 @@ service cloud.firestore {
           && request.resource.data.displayName.size() <= 40
           && (!('preferredLang' in request.resource.data)
               || (request.resource.data.preferredLang is string
-                  && request.resource.data.preferredLang in ['cs', 'en', 'pl', 'nl', 'ro', 'tr']))
+                  && (request.resource.data.preferredLang in ['cs', 'en', 'pl', 'nl', 'ro', 'tr']
+                      || request.resource.data.preferredLang.matches('^[A-Z]{2}$'))))
           && (!('avatarUrl' in request.resource.data)
               || (request.resource.data.avatarUrl is string
                   && request.resource.data.avatarUrl.size() <= 500
@@ -286,7 +288,9 @@ service cloud.firestore {
         && !info.avatarUrl.matches('(?s).*[<>\"\'`].*')
         && !info.avatarUrl.matches('(?is)^\\s*(http:|javascript:|data:|vbscript:).*')
         && (!('lang' in info)
-            || (info.lang is string && info.lang in ['cs', 'en', 'pl', 'nl', 'ro', 'tr']))
+            || (info.lang is string
+                && (info.lang in ['cs', 'en', 'pl', 'nl', 'ro', 'tr']
+                    || info.lang.matches('^[A-Z]{2}$'))))
         && (!('deleted' in info)
             || (info.deleted is bool
                 && (!info.deleted || !exists(/databases/$(database)/documents/users/$(request.auth.uid)))));

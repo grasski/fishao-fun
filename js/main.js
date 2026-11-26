@@ -535,6 +535,7 @@ function setLanguage(lang, opts) {
   if (typeof renderPlayersActiveFiltersBar === 'function') renderPlayersActiveFiltersBar();
   if (typeof renderPlayersList === 'function' && currentView === 'players') renderPlayersList();
   if (typeof renderBackyardProfilePicker === 'function') renderBackyardProfilePicker();
+  if (typeof syncProfileLangPicker === 'function') syncProfileLangPicker();
   if (typeof updateCalendarTabPill === 'function') updateCalendarTabPill();
   if ((currentView === 'guide_tree' || currentView === 'guide_line' || currentView === 'guide_shop' || currentView === 'guide_decorations') && typeof renderGuideView === 'function') {
     renderGuideView(currentView === 'guide_line' ? 'line' : (currentView === 'guide_shop' ? 'shop' : (currentView === 'guide_decorations' ? 'decorations' : 'tree')));
@@ -811,6 +812,10 @@ function onModalOverlayClick(e, id) {
 
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') {
+    if (typeof isProfileCountryDropdownOpen === 'function' && isProfileCountryDropdownOpen()) {
+      closeProfileCountryDropdown();
+      return;
+    }
     if (typeof closeAllBaitDropdowns === 'function') closeAllBaitDropdowns();
     var topModal = getTopActiveModal();
     if (topModal && topModal.id) {
@@ -827,6 +832,12 @@ document.addEventListener('click', function (e) {
   if (drop && drop.style.display !== "none") {
     if (!drop.contains(e.target) && e.target !== input) {
       drop.style.display = "none";
+    }
+  }
+  if (typeof isProfileCountryDropdownOpen === 'function' && isProfileCountryDropdownOpen()) {
+    var cDrop = document.getElementById("profileCountryDropdown");
+    if (cDrop && !cDrop.contains(e.target)) {
+      closeProfileCountryDropdown();
     }
   }
 });
@@ -878,6 +889,9 @@ window.fishaoApp = {
   logAnalyticsEvent: logAnalyticsEvent,
   selectPresetAvatar: selectPresetAvatar,
   selectPreferredLang: selectPreferredLang,
+  toggleProfileCountryDropdown: toggleProfileCountryDropdown,
+  onProfileCountrySearchInput: onProfileCountrySearchInput,
+  onProfileCountrySearchKeyDown: onProfileCountrySearchKeyDown,
   onAvatarUrlInput: onAvatarUrlInput,
   saveProfile: saveProfile,
   deleteAccount: deleteAccount,

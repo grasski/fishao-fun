@@ -252,11 +252,34 @@
 
 .player-lang-flag,
 .user-lang-flag {
+  display: inline-flex;
+  align-items: center;
   font-size: .95em;
   line-height: 1;
   vertical-align: middle;
   user-select: none;
   cursor: default;
+}
+
+.player-lang-flag {
+  margin-left: 5px;
+}
+
+.user-lang-flag .player-lang-flag,
+.profile-country-trigger .player-lang-flag,
+.profile-country-option .player-lang-flag {
+  margin-left: 0;
+}
+
+.player-flag-img {
+  display: inline-block;
+  width: 18px;
+  height: 13px;
+  object-fit: cover;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.16);
+  vertical-align: middle;
+  flex-shrink: 0;
 }
 
 .edit-nick-btn {
