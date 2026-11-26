@@ -521,6 +521,29 @@
   .scroll-top-fab.above-cookie.above-import-fab {
     bottom: 162px;
   }
+
+  /* Community Players Pagination on Mobile */
+  .players-pagination-controls,
+  .players-pagination-pages {
+    gap: 4px;
+  }
+  .players-pagination .pagination-btn-label {
+    display: none;
+  }
+  .players-pagination .pill-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 7px;
+    font-size: 12px;
+  }
+  .players-pagination .pagination-edge-btn {
+    padding: 0 7px;
+    font-size: 13px;
+  }
+  .players-pagination .pagination-ellipsis {
+    min-width: 18px;
+    height: 32px;
+  }
 }
 
 /* Narrow Phones (<= 520px) */
@@ -573,6 +596,17 @@
   .modal-fish-img-container {
     width: 150px;
     height: 86px;
+  }
+  .players-pagination .pill-btn,
+  .players-pagination .pagination-edge-btn {
+    min-width: 28px;
+    height: 30px;
+    padding: 0 5px;
+    font-size: 11.5px;
+  }
+  .players-pagination .pagination-ellipsis {
+    min-width: 14px;
+    height: 30px;
   }
 }
 

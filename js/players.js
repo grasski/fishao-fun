@@ -388,12 +388,142 @@ function refreshPlayersList() {
 }
 
 function setPlayerPage(page) {
-  playerCurrentPage = page;
+  var nextPage = parseInt(page, 10);
+  if (!isFinite(nextPage) || nextPage < 1 || nextPage === playerCurrentPage) return;
+  playerCurrentPage = nextPage;
   renderPlayersList();
   var sec = document.getElementById("sectionPlayers");
   if (sec) {
     sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+}
+
+/**
+ * Build compact pagination sequence with edge pages, neighbors, and ellipsis
+ * (never replaces a single page gap with an ellipsis).
+ */
+function buildPaginationItems(current, total) {
+  if (total <= 7) {
+    var all = [];
+    for (var i = 1; i <= total; i++) all.push(i);
+    return all;
+  }
+
+  var items = [1];
+  var start = Math.max(2, current - 1);
+  var end = Math.min(total - 1, current + 1);
+
+  if (current <= 3) {
+    start = 2;
+    end = 4;
+  } else if (current >= total - 2) {
+    start = total - 3;
+    end = total - 1;
+  }
+
+  if (start === 3) {
+    start = 2;
+  }
+  if (end === total - 2) {
+    end = total - 1;
+  }
+
+  if (start > 2) {
+    items.push('ellipsis');
+  }
+
+  for (var p = start; p <= end; p++) {
+    items.push(p);
+  }
+
+  if (end < total - 1) {
+    items.push('ellipsis');
+  }
+
+  items.push(total);
+  return items;
+}
+
+function renderPlayersPagination(paginationEl, currentPage, totalPages) {
+  if (!paginationEl) return;
+
+  if (totalPages <= 1) {
+    paginationEl.style.display = "none";
+    paginationEl.innerHTML = "";
+    return;
+  }
+
+  if (!paginationEl.dataset.boundPaginationActions) {
+    paginationEl.dataset.boundPaginationActions = "1";
+    paginationEl.addEventListener("click", function (ev) {
+      var btn = ev.target && ev.target.closest ? ev.target.closest("button[data-page]") : null;
+      if (!btn || btn.disabled) return;
+      var targetPage = parseInt(btn.dataset.page, 10);
+      if (isFinite(targetPage)) {
+        setPlayerPage(targetPage);
+      }
+    });
+  }
+
+  var isFirst = currentPage <= 1;
+  var isLast = currentPage >= totalPages;
+  var firstLabel = escapeHtml(t('pagination_first'));
+  var prevLabel = escapeHtml(t('pagination_prev'));
+  var nextLabel = escapeHtml(t('pagination_next'));
+  var lastLabel = escapeHtml(t('pagination_last'));
+
+  var items = buildPaginationItems(currentPage, totalPages);
+  var pagesHtml = '';
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    if (item === 'ellipsis') {
+      pagesHtml += '<span class="pagination-ellipsis" aria-hidden="true">&hellip;</span>';
+    } else {
+      var isActive = item === currentPage;
+      var pageTitle = escapeHtml(t('pagination_page_n', { page: item }));
+      pagesHtml += '<button type="button" class="pill-btn pagination-page-btn' + (isActive ? ' active' : '') + '"' +
+        ' data-page="' + item + '"' +
+        (isActive ? ' aria-current="page"' : '') +
+        ' aria-label="' + pageTitle + '" title="' + pageTitle + '">' +
+        item +
+      '</button>';
+    }
+  }
+
+  var firstBtn = '<button type="button" class="pill-btn pagination-nav-btn pagination-edge-btn"' +
+    (isFirst ? ' disabled' : '') +
+    ' data-page="1" aria-label="' + firstLabel + '" title="' + firstLabel + '">&laquo;</button>';
+
+  var prevBtn = '<button type="button" class="pill-btn pagination-nav-btn"' +
+    (isFirst ? ' disabled' : '') +
+    ' data-page="' + Math.max(1, currentPage - 1) + '" aria-label="' + prevLabel + '" title="' + prevLabel + '">' +
+    '<span aria-hidden="true">&lsaquo;</span><span class="pagination-btn-label">' + prevLabel + '</span>' +
+  '</button>';
+
+  var nextBtn = '<button type="button" class="pill-btn pagination-nav-btn"' +
+    (isLast ? ' disabled' : '') +
+    ' data-page="' + Math.min(totalPages, currentPage + 1) + '" aria-label="' + nextLabel + '" title="' + nextLabel + '">' +
+    '<span class="pagination-btn-label">' + nextLabel + '</span><span aria-hidden="true">&rsaquo;</span>' +
+  '</button>';
+
+  var lastBtn = '<button type="button" class="pill-btn pagination-nav-btn pagination-edge-btn"' +
+    (isLast ? ' disabled' : '') +
+    ' data-page="' + totalPages + '" aria-label="' + lastLabel + '" title="' + lastLabel + '">&raquo;</button>';
+
+  var infoHtml = '<div class="players-pagination-info">' +
+    escapeHtml(t('pagination_page_of', { current: currentPage, total: totalPages })) +
+  '</div>';
+
+  paginationEl.style.display = "flex";
+  paginationEl.innerHTML =
+    '<div class="players-pagination-controls">' +
+      firstBtn +
+      prevBtn +
+      '<div class="players-pagination-pages">' + pagesHtml + '</div>' +
+      nextBtn +
+      lastBtn +
+    '</div>' +
+    infoHtml;
 }
 
 /**
@@ -1076,26 +1206,7 @@ function renderPlayersList() {
 
   grid.innerHTML = html;
 
-  if (paginationEl) {
-    if (totalPages > 1) {
-      paginationEl.style.display = "flex";
-      paginationEl.style.justifyContent = "center";
-      paginationEl.style.alignItems = "center";
-      paginationEl.style.gap = "12px";
-
-      var prevDisabled = (playerCurrentPage <= 1) ? ' disabled style="opacity: 0.4; cursor: not-allowed;"' : '';
-      var nextDisabled = (playerCurrentPage >= totalPages) ? ' disabled style="opacity: 0.4; cursor: not-allowed;"' : '';
-
-      var prevBtn = '<button type="button" class="pill-btn"' + prevDisabled + ' onclick="window.fishaoApp.setPlayerPage(' + (playerCurrentPage - 1) + ')">◀ ' + t('pagination_prev') + '</button>';
-      var pageText = '<span style="font-size: 13px; color: var(--text-muted); font-weight: 600;">' + t('pagination_page_of', { current: playerCurrentPage, total: totalPages }) + '</span>';
-      var nextBtn = '<button type="button" class="pill-btn"' + nextDisabled + ' onclick="window.fishaoApp.setPlayerPage(' + (playerCurrentPage + 1) + ')">' + t('pagination_next') + ' ▶</button>';
-
-      paginationEl.innerHTML = prevBtn + pageText + nextBtn;
-    } else {
-      paginationEl.style.display = "none";
-      paginationEl.innerHTML = "";
-    }
-  }
+  renderPlayersPagination(paginationEl, playerCurrentPage, totalPages);
 }
 
 /**
