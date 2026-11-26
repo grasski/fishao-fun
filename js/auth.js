@@ -154,6 +154,9 @@ async function _runInitFirebaseSync() {
   if (!isFirebaseConfigured || isSearchCrawlerAgent()) {
     updateAuthUI();
     checkCookieConsentBanner();
+    if (!isSearchCrawlerAgent() && typeof checkRemindersOnStartup === 'function') {
+      checkRemindersOnStartup(false);
+    }
     return;
   }
 
@@ -402,6 +405,9 @@ async function _runInitFirebaseSync() {
         } catch (e) { }
         if (isInitialGuest) {
           updateAuthUI();
+          if (typeof checkRemindersOnStartup === 'function') {
+            checkRemindersOnStartup(false);
+          }
           return;
         }
         userProfile = null;
@@ -410,6 +416,9 @@ async function _runInitFirebaseSync() {
         shinyFishIds = new Set();
         backyardFishIds = new Set();
         friendUids = new Set();
+        if (typeof resetRemindersStartupState === 'function') {
+          resetRemindersStartupState();
+        }
         if (typeof loadLocalReminders === 'function') {
           userReminders = loadLocalReminders();
         }
@@ -504,6 +513,9 @@ async function _runInitFirebaseSync() {
     console.error("Firebase initialization failed:", err);
     updateAuthUI();
     checkCookieConsentBanner();
+    if (!safeStorageGet(PROFILE_CACHE_KEY) && typeof checkRemindersOnStartup === 'function') {
+      checkRemindersOnStartup(false);
+    }
   }
 }
 
@@ -714,6 +726,7 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
     }
 
     var handledFirstSnapshot = false;
+    var handledServerRemindersSync = false;
     var isBootstrappingNewUser = false;
     var userDocExists = false;
     var lastAppliedProfileSig = "";
@@ -738,6 +751,7 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
 
     userPrivateUnsubscribe = fsModule.onSnapshot(privDocRef, async function (privSnap) {
       var privData = privSnap.exists() ? (privSnap.data() || {}) : {};
+      var isFromCache = !!(privSnap.metadata && privSnap.metadata.fromCache);
       var privChanged = false;
 
       if (Array.isArray(privData.friendUids)) {
@@ -745,8 +759,17 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
         if (userProfile) userProfile.friendUids = privData.friendUids;
         privChanged = true;
       }
-      if (Array.isArray(privData.reminders) && typeof syncRemindersFromProfile === "function") {
-        syncRemindersFromProfile({ reminders: privData.reminders });
+      if (typeof syncRemindersFromProfile === "function") {
+        if (Array.isArray(privData.reminders)) {
+          var shouldCheckRemindersStartup = !isFromCache && !handledServerRemindersSync;
+          if (!isFromCache) handledServerRemindersSync = true;
+          syncRemindersFromProfile({ reminders: privData.reminders }, {
+            checkStartup: shouldCheckRemindersStartup
+          });
+        } else if (!isFromCache && !handledServerRemindersSync && !isBootstrappingNewUser) {
+          handledServerRemindersSync = true;
+          syncRemindersFromProfile(privData, { checkStartup: true });
+        }
       }
       if (typeof syncGuideLevelsFromProfile === "function") {
         syncGuideLevelsFromProfile(privData);

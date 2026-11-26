@@ -1182,11 +1182,12 @@ if (typeof window !== 'undefined') {
   if (typeof checkChatIntroOnStartup === 'function') {
     checkChatIntroOnStartup();
   }
-  if (typeof checkRemindersOnStartup === 'function') {
+
+  if (typeof initFirebaseSync === 'function') {
+    initFirebaseSync();
+  } else if (typeof checkRemindersOnStartup === 'function') {
     checkRemindersOnStartup(false);
   }
-
-  initFirebaseSync();
 })();
 
 // Register Service Worker for offline/long-term image caching and prune stale hashed assets

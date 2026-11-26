@@ -14,6 +14,8 @@ var REMINDERS_TODAY_NOTIFIED_KEY = 'fishao_reminders_today_notified_date';
 var userReminders = [];
 var editingReminderId = null;
 var remindersStartupChecked = false;
+var _remindersStartupTimer = null;
+var _remindersViewedManually = false;
 
 function loadLocalReminders() {
   try {
@@ -80,14 +82,16 @@ async function persistReminders() {
   }
 }
 
-function syncRemindersFromProfile(profile) {
+function syncRemindersFromProfile(profile, options) {
+  options = options || {};
+  var shouldCheckStartup = options.checkStartup !== false;
   if (profile && Array.isArray(profile.reminders)) {
     userReminders = sanitizeRemindersList(profile.reminders);
     saveLocalReminders(userReminders);
   } else {
     var local = loadLocalReminders();
     userReminders = local;
-    if (local.length > 0 && typeof currentUser !== 'undefined' && currentUser && typeof db !== 'undefined' && db) {
+    if (local.length > 0 && !options.skipMigrate && typeof currentUser !== 'undefined' && currentUser && typeof db !== 'undefined' && db) {
       // Migrate guest local reminders to user's Firestore profile on first sync
       persistReminders();
     }
@@ -99,9 +103,20 @@ function syncRemindersFromProfile(profile) {
   }
   var alertModal = document.getElementById('remindersAlertModalOverlay');
   if (alertModal && alertModal.classList.contains('active')) {
-    renderRemindersAlertModal();
+    if (getDueReminders().length === 0 && getTodayUpcomingReminders().length === 0) {
+      alertModal.classList.remove('active');
+    } else {
+      renderRemindersAlertModal();
+    }
   }
-  checkRemindersOnStartup(true);
+  if (shouldCheckStartup) {
+    checkRemindersOnStartup(true);
+  } else {
+    var curState = getStartupReminderNotificationState();
+    if (!curState.shouldNotifyDue && !curState.shouldNotifyToday) {
+      cancelPendingRemindersStartupAlert();
+    }
+  }
 }
 
 function getReminderDayKey(dateInput) {
@@ -227,7 +242,24 @@ function formatReminderCountdown(isoString) {
   return t('reminders_in_time', { time: spanText });
 }
 
-function checkRemindersOnStartup(fromAuthLoad) {
+function cancelPendingRemindersStartupAlert() {
+  if (_remindersStartupTimer) {
+    clearTimeout(_remindersStartupTimer);
+    _remindersStartupTimer = null;
+  }
+}
+
+function resetRemindersStartupState() {
+  cancelPendingRemindersStartupAlert();
+  remindersStartupChecked = false;
+  _remindersViewedManually = false;
+  var alertModal = document.getElementById('remindersAlertModalOverlay');
+  if (alertModal && alertModal.classList.contains('active')) {
+    alertModal.classList.remove('active');
+  }
+}
+
+function getStartupReminderNotificationState() {
   var dismissedSession = false;
   try {
     dismissedSession = sessionStorage.getItem(REMINDERS_SESSION_DISMISS_KEY) === '1';
@@ -241,30 +273,55 @@ function checkRemindersOnStartup(fromAuthLoad) {
     todayNotified = localStorage.getItem(REMINDERS_TODAY_NOTIFIED_KEY) || '';
   } catch (e) { }
 
-  var shouldNotifyDue = due.length > 0 && !dismissedSession;
-  var shouldNotifyToday = todayUpcoming.length > 0 && todayNotified !== todayKey;
+  return {
+    due: due,
+    todayUpcoming: todayUpcoming,
+    todayKey: todayKey,
+    shouldNotifyDue: due.length > 0 && !dismissedSession,
+    shouldNotifyToday: todayUpcoming.length > 0 && todayNotified !== todayKey
+  };
+}
 
-  if (shouldNotifyDue || shouldNotifyToday) {
+function checkRemindersOnStartup(fromAuthLoad) {
+  if (_remindersViewedManually) {
+    remindersStartupChecked = true;
+    cancelPendingRemindersStartupAlert();
+    return;
+  }
+
+  var state = getStartupReminderNotificationState();
+
+  if (state.shouldNotifyDue || state.shouldNotifyToday) {
     if (!remindersStartupChecked || fromAuthLoad) {
       remindersStartupChecked = true;
-      setTimeout(function () {
+      cancelPendingRemindersStartupAlert();
+      _remindersStartupTimer = setTimeout(function () {
+        _remindersStartupTimer = null;
+        if (_remindersViewedManually) return;
         var alreadyOpen = document.querySelector('.modal-overlay.active');
-        if (!alreadyOpen) {
-          if (shouldNotifyToday) {
-            try {
-              localStorage.setItem(REMINDERS_TODAY_NOTIFIED_KEY, todayKey);
-            } catch (e) { }
-          }
-          openRemindersAlertModal();
+        if (alreadyOpen) return;
+
+        var fresh = getStartupReminderNotificationState();
+        if (!fresh.shouldNotifyDue && !fresh.shouldNotifyToday) return;
+
+        if (fresh.shouldNotifyToday) {
+          try {
+            localStorage.setItem(REMINDERS_TODAY_NOTIFIED_KEY, fresh.todayKey);
+          } catch (e) { }
         }
+        openRemindersAlertModal();
       }, 500);
     }
   } else {
+    cancelPendingRemindersStartupAlert();
     remindersStartupChecked = true;
   }
 }
 
 function openRemindersModal() {
+  _remindersViewedManually = true;
+  remindersStartupChecked = true;
+  cancelPendingRemindersStartupAlert();
   resetReminderForm();
   renderRemindersModal();
   var modal = document.getElementById('remindersModalOverlay');
@@ -280,6 +337,9 @@ function closeRemindersModal() {
 }
 
 function openRemindersAlertModal() {
+  if (getDueReminders().length === 0 && getTodayUpcomingReminders().length === 0) {
+    return;
+  }
   renderRemindersAlertModal();
   var modal = document.getElementById('remindersAlertModalOverlay');
   if (modal) modal.classList.add('active');
