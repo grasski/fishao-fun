@@ -437,7 +437,6 @@
       "profile_catalog_filter_placeholder": "Search catalog...",
       "profile_chip_remove_title": "Remove",
       "user_default_fisher": "Angler",
-      "player_card_me_tag": "You",
       "profile_backyard_count_label": "{count} / 83 fish",
       "player_modal_edit_profile": "Edit my profile (nickname / avatar)",
       "profile_edit_tooltip": "Edit player profile",

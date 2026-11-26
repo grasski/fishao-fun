@@ -441,7 +441,6 @@
       "profile_catalog_filter_placeholder": "Caută în catalog...",
       "profile_chip_remove_title": "Elimină",
       "user_default_fisher": "Pescar",
-      "player_card_me_tag": "Tu",
       "profile_backyard_count_label": "{count} / 83 pești",
       "player_modal_edit_profile": "Editează profilul meu (poreclă / avatar)",
       "profile_edit_tooltip": "Editează profilul jucătorului",

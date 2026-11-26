@@ -930,7 +930,6 @@ function renderPlayersList() {
             '<div class="player-card-name-row">' +
               '<span class="player-card-name">' + escapeHtml(p.displayName) + '</span>' +
               renderPlayerLangFlag(p.preferredLang) +
-              (isMe ? '<span class="player-card-me-tag">(' + escapeHtml(t('player_card_me_tag')) + ')</span>' : '') +
               roleBadge +
             '</div>' +
             '<div class="player-card-club-row">' + clubInfo + '</div>' +
@@ -1585,7 +1584,7 @@ async function openPlayerModal(uid) {
 
   var nameEl = document.getElementById("playerModalName");
   if (nameEl) {
-    nameEl.innerText = dName + (isMe ? (" (" + t('player_card_me_tag') + ")") : "");
+    nameEl.innerText = dName;
     nameEl.dataset.currentUid = uid;
   }
   var langFlagEl = document.getElementById("playerModalLangFlag");

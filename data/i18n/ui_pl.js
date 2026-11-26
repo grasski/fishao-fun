@@ -441,7 +441,6 @@
       "profile_catalog_filter_placeholder": "Szukaj w katalogu...",
       "profile_chip_remove_title": "Usuń",
       "user_default_fisher": "Wędkarz",
-      "player_card_me_tag": "Ty",
       "profile_backyard_count_label": "{count} / 83 ryb",
       "player_modal_edit_profile": "Edytuj mój profil (nick / awatar)",
       "profile_edit_tooltip": "Edytuj profil gracza",

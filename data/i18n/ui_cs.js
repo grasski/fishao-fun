@@ -441,7 +441,6 @@
       "profile_catalog_filter_placeholder": "Hledat v katalogu...",
       "profile_chip_remove_title": "Odebrat",
       "user_default_fisher": "Rybář",
-      "player_card_me_tag": "Ty",
       "profile_backyard_count_label": "{count} / 83 ryb",
       "player_modal_edit_profile": "Upravit můj profil (přezdívka / avatar)",
       "profile_edit_tooltip": "Upravit hráčský profil",

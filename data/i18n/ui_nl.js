@@ -437,7 +437,6 @@
       "profile_catalog_filter_placeholder": "Zoek in catalogus...",
       "profile_chip_remove_title": "Verwijderen",
       "user_default_fisher": "Visser",
-      "player_card_me_tag": "Jij",
       "profile_backyard_count_label": "{count} / 83 vissen",
       "player_modal_edit_profile": "Mijn profiel bewerken (naam / avatar)",
       "profile_edit_tooltip": "Spelersprofiel bewerken",

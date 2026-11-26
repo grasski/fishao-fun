@@ -282,7 +282,7 @@ function renderClubMembers(membersMap, creatorId) {
     html += '<button type="button" class="club-member-chip' + (isCr ? ' creator' : '') + '" data-uid="' + escapeHtml(uid) + '" title="' + escapeHtml(t('club_member_view_profile')) + '">' +
       avatarHtml +
       '<div class="club-member-info">' +
-        '<div class="club-member-name">' + escapeHtml(dName) + renderPlayerLangFlag(m.preferredLang) + (isMe ? ' <span style="font-size:11px;color:#a78bfa;">(' + escapeHtml(t('player_card_me_tag')) + ')</span>' : '') + '</div>' +
+        '<div class="club-member-name">' + escapeHtml(dName) + renderPlayerLangFlag(m.preferredLang) + '</div>' +
         '<div class="club-member-tag">' +
           roleBadge + countBadge +
         '</div>' +

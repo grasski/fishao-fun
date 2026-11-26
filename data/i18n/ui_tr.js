@@ -437,7 +437,6 @@
       "profile_catalog_filter_placeholder": "Katalogda ara...",
       "profile_chip_remove_title": "Kaldır",
       "user_default_fisher": "Balıkçı",
-      "player_card_me_tag": "Sen",
       "profile_backyard_count_label": "{count} / 83 balık",
       "player_modal_edit_profile": "Profilimi düzenle (takma ad / avatar)",
       "profile_edit_tooltip": "Oyuncu profilini düzenle",
