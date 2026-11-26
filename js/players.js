@@ -28,6 +28,12 @@ var PLAYERS_PER_PAGE = 24;
 var _playerProfileCache = new Map();
 var PLAYER_MODAL_CACHE_TTL_MS = 2 * 60 * 1000;
 
+// Cache for backyard (Za domem) fish owners fetched via a targeted Firestore query,
+// so opening a fish detail modal never triggers a full /users collection scan.
+var _backyardOwnersCache = new Map(); // fishId -> { ts, owners }
+var BACKYARD_OWNERS_CACHE_TTL_MS = 15 * 60 * 1000; // 15min
+var _backyardOwnersInFlight = new Set(); // fishIds currently being fetched
+
 function computePlayerCatchCounts(caughtIdsArr) {
   var arr = Array.isArray(caughtIdsArr) ? caughtIdsArr : [];
   var clubFishIdsSet = new Set(clubFishes.map(function (f) { return f.id; }));
@@ -1187,11 +1193,57 @@ function renderModalBackyardOwners(fishId) {
   box.style.display = "block";
 
   if (allPlayersList.length === 0 && currentUser && db) {
+    var cachedOwners = _backyardOwnersCache.get(fishId);
+    if (cachedOwners && (Date.now() - cachedOwners.ts) < BACKYARD_OWNERS_CACHE_TTL_MS) {
+      // Serve from the targeted-query cache without touching /users.
+      renderBackyardOwnersFromList(cachedOwners.owners, fishId);
+      return;
+    }
+
+    if (_backyardOwnersInFlight.has(fishId)) {
+      // A fetch is already running for this fish; show a spinner until it resolves.
+      box.innerHTML = '<div class="modal-backyard-owners-title">🏡 ' + t('modal_backyard_owners_title') + '</div>' +
+        '<div style="font-size: 11.5px; color: var(--text-muted);">⏳ ' + t('loading_short') + '</div>';
+      return;
+    }
+
     box.innerHTML = '<div class="modal-backyard-owners-title">🏡 ' + t('modal_backyard_owners_title') + '</div>' +
       '<div style="font-size: 11.5px; color: var(--text-muted);">⏳ ' + t('loading_short') + '</div>';
-    if (!_playersLoadPromise) {
-      loadAllPlayers(false);
-    }
+
+    _backyardOwnersInFlight.add(fishId);
+    (async function () {
+      try {
+        var fsModule = await getFirestoreModule();
+        var usersCol = fsModule.collection(db, "users");
+        var q = fsModule.query(usersCol, fsModule.where("backyardFishIds", "array-contains", String(fishId)));
+        var snap = await fsModule.getDocs(q);
+        var owners = [];
+        snap.forEach(function (doc) {
+          var d = doc.data() || {};
+          owners.push({
+            uid: doc.id,
+            displayName: d.displayName || t('user_default_player'),
+            avatarUrl: d.avatarUrl || "🎣",
+            preferredLang: d.preferredLang || "",
+            backyardFishIds: Array.isArray(d.backyardFishIds) ? d.backyardFishIds : [],
+            clubName: d.clubName || ""
+          });
+        });
+        _backyardOwnersCache.set(fishId, { ts: Date.now(), owners: owners });
+        // Only render if this fish is still the one shown in the modal.
+        if (selectedModalFishId === fishId) {
+          renderBackyardOwnersFromList(owners, fishId);
+        }
+      } catch (err) {
+        console.warn("Failed to load backyard owners:", err);
+        if (selectedModalFishId === fishId) {
+          box.innerHTML = '<div class="modal-backyard-owners-title">🏡 ' + t('modal_backyard_owners_title') + '</div>' +
+            '<div style="font-size: 11.5px; color: var(--text-muted);">' + t('modal_backyard_owners_none') + '</div>';
+        }
+      } finally {
+        _backyardOwnersInFlight.delete(fishId);
+      }
+    })();
     return;
   }
 
@@ -1199,12 +1251,21 @@ function renderModalBackyardOwners(fishId) {
     return p.backyardFishIds && p.backyardFishIds.indexOf(fishId) !== -1;
   });
 
+  renderBackyardOwnersFromList(owners, fishId);
+}
+
+function renderBackyardOwnersFromList(owners, fishId) {
+  var box = document.getElementById("modalBackyardOwnersBox");
+  if (!box) return;
+
+  owners = Array.isArray(owners) ? owners.slice() : [];
+
   // Sort owners: friends first, then current user, then alphabetical
   owners.sort(function (a, b) {
     var isFriendA = friendUids.has(a.uid) ? 1 : 0;
     var isFriendB = friendUids.has(b.uid) ? 1 : 0;
     if (isFriendB !== isFriendA) return isFriendB - isFriendA;
-    return a.displayName.localeCompare(b.displayName);
+    return String(a.displayName || "").localeCompare(String(b.displayName || ""));
   });
 
   if (owners.length === 0) {
