@@ -201,7 +201,7 @@ body::before {
 .heavy-load-banner {
   position: sticky;
   top: 0;
-  z-index: 10060;
+  z-index: 980;
   display: none;
   background: linear-gradient(135deg, #7c2d12 0%, #991b1b 100%);
   border: 1px solid rgba(251, 191, 36, 0.45);

@@ -629,6 +629,9 @@ function showHeavyLoadBanner() {
     _heavyLoadBannerActive = true;
     el.style.display = "block";
     el.classList.add("active");
+    if (typeof window !== "undefined" && typeof window.__fishaoPositionUpdateBanner === "function") {
+      window.__fishaoPositionUpdateBanner();
+    }
   };
 
   if (document.readyState === "loading") {
@@ -647,6 +650,9 @@ function dismissHeavyLoadBanner() {
   if (el) {
     el.classList.remove("active");
     el.style.display = "none";
+  }
+  if (typeof window !== "undefined" && typeof window.__fishaoPositionUpdateBanner === "function") {
+    window.__fishaoPositionUpdateBanner();
   }
 }
 

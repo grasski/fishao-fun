@@ -1279,12 +1279,26 @@ if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
     });
   }
 
+  function positionUpdateBanner() {
+    var banner = document.getElementById('appUpdateBanner');
+    if (!banner) return;
+    var heavy = document.getElementById('heavyLoadBanner');
+    if (heavy && heavy.classList.contains('active') && heavy.offsetHeight > 0) {
+      var rect = heavy.getBoundingClientRect();
+      if (rect.bottom > 0) {
+        banner.style.top = (Math.round(rect.bottom) + 10) + 'px';
+        return;
+      }
+    }
+    banner.style.top = 'max(12px,env(safe-area-inset-top))';
+  }
+
   function showUpdateBanner() {
     if (isBannerDismissed || document.getElementById('appUpdateBanner')) return;
     var banner = document.createElement('div');
     banner.id = 'appUpdateBanner';
     banner.setAttribute('role', 'status');
-    banner.style.cssText = 'position:fixed;top:max(12px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:10005;background:#1e293b;color:#f8fafc;border:1px solid #38bdf8;border-radius:12px;padding:10px 14px;box-shadow:0 10px 28px rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;width:calc(100vw - 24px);max-width:390px;box-sizing:border-box;';
+    banner.style.cssText = 'position:fixed;top:max(12px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:10080;background:#1e293b;color:#f8fafc;border:1px solid #38bdf8;border-radius:12px;padding:10px 14px;box-shadow:0 10px 28px rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;width:calc(100vw - 24px);max-width:390px;box-sizing:border-box;transition:top 0.2s ease;';
     var msg = document.createElement('span');
     msg.style.cssText = 'flex:1;line-height:1.35;';
     msg.textContent = '🔄 ' + (typeof t === 'function' && t('app_update_available') !== 'app_update_available' ? t('app_update_available') : 'Je dostupná nová verze webu.');
@@ -1310,10 +1324,13 @@ if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
     banner.appendChild(btn);
     banner.appendChild(closeBtn);
     document.body.appendChild(banner);
+    positionUpdateBanner();
   }
 
   window.__fishaoShowUpdateBanner = showUpdateBanner;
+  window.__fishaoPositionUpdateBanner = positionUpdateBanner;
   window.__fishaoCheckAppVersion = checkAppVersion;
+  window.addEventListener('resize', positionUpdateBanner);
 
   // Check shortly after boot in case mobile/SW/HTTP cache served an older HTML shell
   setTimeout(function () {
