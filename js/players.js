@@ -30,9 +30,67 @@ var PLAYER_MODAL_CACHE_TTL_MS = 2 * 60 * 1000;
 
 // Cache for backyard (Za domem) fish owners fetched via a targeted Firestore query,
 // so opening a fish detail modal never triggers a full /users collection scan.
-var _backyardOwnersCache = new Map(); // fishId -> { ts, owners }
+var _backyardOwnersCache = new Map(); // numericFishId -> { ts, owners }
 var BACKYARD_OWNERS_CACHE_TTL_MS = 15 * 60 * 1000; // 15min
-var _backyardOwnersInFlight = new Set(); // fishIds currently being fetched
+var _backyardOwnersInFlight = new Set(); // numericFishIds currently being fetched
+
+function clearBackyardOwnersCache() {
+  _backyardOwnersCache.clear();
+  _backyardOwnersInFlight.clear();
+}
+
+function syncCurrentUserInBackyardOwnersCache(fishId, isNowBred) {
+  if (!currentUser) return;
+  var numericFishId = Number(fishId);
+  if (!isFinite(numericFishId)) return;
+  var entry = _backyardOwnersCache.get(numericFishId);
+  if (!entry || !Array.isArray(entry.owners)) return;
+
+  var uid = currentUser.uid;
+  var nextOwners = entry.owners.filter(function (p) { return p && p.uid !== uid; });
+  if (isNowBred) {
+    nextOwners.push({
+      uid: uid,
+      displayName: (userProfile && userProfile.displayName) || t('user_default_player'),
+      avatarUrl: (userProfile && userProfile.avatarUrl) || "🎣",
+      preferredLang: (userProfile && userProfile.preferredLang) || "",
+      backyardFishIds: Array.from(backyardFishIds),
+      clubName: (userProfile && userProfile.clubName) || ""
+    });
+  }
+  _backyardOwnersCache.set(numericFishId, { ts: entry.ts, owners: nextOwners });
+}
+
+function updateUserInBackyardOwnersCache(uid, patch) {
+  if (!uid || !patch || typeof patch !== "object") return;
+  _backyardOwnersCache.forEach(function (entry) {
+    if (!entry || !Array.isArray(entry.owners)) return;
+    for (var i = 0; i < entry.owners.length; i++) {
+      var o = entry.owners[i];
+      if (!o || o.uid !== uid) continue;
+      if (patch.displayName !== undefined) o.displayName = patch.displayName;
+      if (patch.avatarUrl !== undefined) o.avatarUrl = patch.avatarUrl;
+      if (patch.preferredLang !== undefined) o.preferredLang = patch.preferredLang;
+    }
+  });
+}
+
+function restorePlayersFromLocalCache(now) {
+  if (allPlayersList.length > 0) return true;
+  var tsNow = typeof now === "number" ? now : Date.now();
+  try {
+    var cachedStr = safeStorageGet(PLAYERS_CACHE_KEY);
+    if (cachedStr) {
+      var cachedObj = JSON.parse(cachedStr);
+      if (cachedObj && cachedObj.timestamp && (tsNow - cachedObj.timestamp < PLAYERS_CACHE_TTL_MS) && Array.isArray(cachedObj.list) && cachedObj.list.length > 0) {
+        allPlayersList = cachedObj.list;
+        lastPlayersFetchTime = cachedObj.timestamp;
+        return true;
+      }
+    }
+  } catch (e) {}
+  return false;
+}
 
 function computePlayerCatchCounts(caughtIdsArr) {
   var arr = Array.isArray(caughtIdsArr) ? caughtIdsArr : [];
@@ -202,20 +260,10 @@ async function loadAllPlayers(force) {
   }
 
   // If in-memory is empty (e.g. after F5), try restoring from localStorage (0 reads)
-  if (!force && allPlayersList.length === 0) {
-    try {
-      var cachedStr = safeStorageGet(PLAYERS_CACHE_KEY);
-      if (cachedStr) {
-        var cachedObj = JSON.parse(cachedStr);
-        if (cachedObj && cachedObj.timestamp && (now - cachedObj.timestamp < PLAYERS_CACHE_TTL_MS) && Array.isArray(cachedObj.list) && cachedObj.list.length > 0) {
-          allPlayersList = cachedObj.list;
-          lastPlayersFetchTime = cachedObj.timestamp;
-          populatePlayerFishFilterDropdown();
-          renderPlayersList();
-          return;
-        }
-      }
-    } catch (e) {}
+  if (!force && allPlayersList.length === 0 && restorePlayersFromLocalCache(now)) {
+    populatePlayerFishFilterDropdown();
+    renderPlayersList();
+    return;
   }
 
   if (!force && _playersLoadPromise) {
@@ -1080,12 +1128,13 @@ async function toggleBackyardFish(fishId) {
     }
   }
 
-  // Update in allPlayersList & compact cache
+  // Update in allPlayersList, compact cache, and per-fish backyard owners cache
   var meInList = allPlayersList.find(function (p) { return p.uid === currentUser.uid; });
   if (meInList) {
     meInList.backyardFishIds = Array.from(backyardFishIds);
     savePlayersSessionCache(lastPlayersFetchTime);
   }
+  syncCurrentUserInBackyardOwnersCache(fishId, !isBred);
 
   // Sync to Firestore with rollback on error
   if (currentUser && db) {
@@ -1112,6 +1161,7 @@ async function toggleBackyardFish(fishId) {
         meInList.backyardFishIds = Array.from(backyardFishIds);
         savePlayersSessionCache(lastPlayersFetchTime);
       }
+      syncCurrentUserInBackyardOwnersCache(fishId, isBred);
       updateModalBackyardBtn(fishId);
       renderModalBackyardOwners(fishId);
       renderBackyardProfilePicker();
@@ -1183,8 +1233,9 @@ function renderModalBackyardOwners(fishId) {
   var box = document.getElementById("modalBackyardOwnersBox");
   if (!box) return;
 
+  var numericFishId = Number(fishId);
   // Only show this box for actual backyard-breedable fish
-  if (!isBackyardBreedable(fishId)) {
+  if (!isFinite(numericFishId) || !isBackyardBreedable(numericFishId)) {
     box.style.display = "none";
     return;
   }
@@ -1192,65 +1243,69 @@ function renderModalBackyardOwners(fishId) {
   box.style.display = "block";
 
   if (allPlayersList.length === 0 && currentUser && db) {
-    var cachedOwners = _backyardOwnersCache.get(fishId);
-    if (cachedOwners && (Date.now() - cachedOwners.ts) < BACKYARD_OWNERS_CACHE_TTL_MS) {
-      // Serve from the targeted-query cache without touching /users.
-      renderBackyardOwnersFromList(cachedOwners.owners, fishId);
-      return;
-    }
+    // Reuse fresh localStorage directory cache if available (0 Firestore reads)
+    if (!restorePlayersFromLocalCache(Date.now())) {
+      var cachedOwners = _backyardOwnersCache.get(numericFishId);
+      if (cachedOwners && (Date.now() - cachedOwners.ts) < BACKYARD_OWNERS_CACHE_TTL_MS) {
+        // Serve from the targeted-query cache without touching /users.
+        renderBackyardOwnersFromList(cachedOwners.owners, numericFishId);
+        return;
+      }
 
-    if (_backyardOwnersInFlight.has(fishId)) {
-      // A fetch is already running for this fish; show a spinner until it resolves.
+      if (_backyardOwnersInFlight.has(numericFishId)) {
+        // A fetch is already running for this fish; show a spinner until it resolves.
+        box.innerHTML = '<div class="modal-backyard-owners-title">🏡 ' + t('modal_backyard_owners_title') + '</div>' +
+          '<div style="font-size: 11.5px; color: var(--text-muted);">⏳ ' + t('loading_short') + '</div>';
+        return;
+      }
+
       box.innerHTML = '<div class="modal-backyard-owners-title">🏡 ' + t('modal_backyard_owners_title') + '</div>' +
         '<div style="font-size: 11.5px; color: var(--text-muted);">⏳ ' + t('loading_short') + '</div>';
+
+      _backyardOwnersInFlight.add(numericFishId);
+      (async function () {
+        try {
+          var fsModule = await getFirestoreModule();
+          var usersCol = fsModule.collection(db, "users");
+          var q = fsModule.query(usersCol, fsModule.where("backyardFishIds", "array-contains", numericFishId));
+          var snap = await fsModule.getDocs(q);
+          if (!currentUser) return;
+          var owners = [];
+          snap.forEach(function (doc) {
+            var d = doc.data() || {};
+            owners.push({
+              uid: doc.id,
+              displayName: d.displayName || t('user_default_player'),
+              avatarUrl: d.avatarUrl || "🎣",
+              preferredLang: d.preferredLang || "",
+              backyardFishIds: Array.isArray(d.backyardFishIds) ? d.backyardFishIds : [],
+              clubName: d.clubName || ""
+            });
+          });
+          _backyardOwnersCache.set(numericFishId, { ts: Date.now(), owners: owners });
+          // Only render if this fish is still the one shown in the modal.
+          if (Number(selectedModalFishId) === numericFishId) {
+            renderBackyardOwnersFromList(owners, numericFishId);
+          }
+        } catch (err) {
+          console.warn("Failed to load backyard owners:", err);
+          if (Number(selectedModalFishId) === numericFishId) {
+            box.innerHTML = '<div class="modal-backyard-owners-title">🏡 ' + t('modal_backyard_owners_title') + '</div>' +
+              '<div style="font-size: 11.5px; color: var(--text-muted);">' + t('modal_backyard_owners_none') + '</div>';
+          }
+        } finally {
+          _backyardOwnersInFlight.delete(numericFishId);
+        }
+      })();
       return;
     }
-
-    box.innerHTML = '<div class="modal-backyard-owners-title">🏡 ' + t('modal_backyard_owners_title') + '</div>' +
-      '<div style="font-size: 11.5px; color: var(--text-muted);">⏳ ' + t('loading_short') + '</div>';
-
-    _backyardOwnersInFlight.add(fishId);
-    (async function () {
-      try {
-        var fsModule = await getFirestoreModule();
-        var usersCol = fsModule.collection(db, "users");
-        var q = fsModule.query(usersCol, fsModule.where("backyardFishIds", "array-contains", String(fishId)));
-        var snap = await fsModule.getDocs(q);
-        var owners = [];
-        snap.forEach(function (doc) {
-          var d = doc.data() || {};
-          owners.push({
-            uid: doc.id,
-            displayName: d.displayName || t('user_default_player'),
-            avatarUrl: d.avatarUrl || "🎣",
-            preferredLang: d.preferredLang || "",
-            backyardFishIds: Array.isArray(d.backyardFishIds) ? d.backyardFishIds : [],
-            clubName: d.clubName || ""
-          });
-        });
-        _backyardOwnersCache.set(fishId, { ts: Date.now(), owners: owners });
-        // Only render if this fish is still the one shown in the modal.
-        if (selectedModalFishId === fishId) {
-          renderBackyardOwnersFromList(owners, fishId);
-        }
-      } catch (err) {
-        console.warn("Failed to load backyard owners:", err);
-        if (selectedModalFishId === fishId) {
-          box.innerHTML = '<div class="modal-backyard-owners-title">🏡 ' + t('modal_backyard_owners_title') + '</div>' +
-            '<div style="font-size: 11.5px; color: var(--text-muted);">' + t('modal_backyard_owners_none') + '</div>';
-        }
-      } finally {
-        _backyardOwnersInFlight.delete(fishId);
-      }
-    })();
-    return;
   }
 
   var owners = allPlayersList.filter(function (p) {
-    return p.backyardFishIds && p.backyardFishIds.indexOf(fishId) !== -1;
+    return p.backyardFishIds && p.backyardFishIds.indexOf(numericFishId) !== -1;
   });
 
-  renderBackyardOwnersFromList(owners, fishId);
+  renderBackyardOwnersFromList(owners, numericFishId);
 }
 
 function renderBackyardOwnersFromList(owners, fishId) {

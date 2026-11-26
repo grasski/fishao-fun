@@ -376,6 +376,9 @@ async function _runInitFirebaseSync() {
         if (typeof unbindChatListeners === 'function') {
           unbindChatListeners();
         }
+        if (typeof clearBackyardOwnersCache === 'function') {
+          clearBackyardOwnersCache();
+        }
         clearProfileCache();
         try {
           localStorage.removeItem('fishao_backyard_fish_ids');
@@ -1251,6 +1254,13 @@ async function saveProfile() {
         }
       }
     }
+    if (typeof updateUserInBackyardOwnersCache === "function") {
+      updateUserInBackyardOwnersCache(currentUser.uid, {
+        displayName: newNick,
+        avatarUrl: finalAvatar,
+        preferredLang: finalLang || ""
+      });
+    }
 
     if (currentClubId) {
       try {
@@ -1370,9 +1380,12 @@ async function deleteAccount() {
       sessionStorage.removeItem('fishao_players_cache_v1');
     } catch (e) { }
 
-    // 5. Remove from in-memory allPlayersList
+    // 5. Remove from in-memory allPlayersList & per-fish backyard owners cache
     if (typeof allPlayersList !== 'undefined' && Array.isArray(allPlayersList)) {
       allPlayersList = allPlayersList.filter(function (p) { return p.uid !== uid; });
+    }
+    if (typeof clearBackyardOwnersCache === 'function') {
+      clearBackyardOwnersCache();
     }
 
     caughtFishIds.clear();
