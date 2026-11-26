@@ -539,9 +539,11 @@ function isFirestoreQuotaError(err) {
 var _firestoreDegradedUntil = 0;
 var FIRESTORE_DEGRADED_WINDOW_MS = 2 * 60 * 1000;
 
-function markFirestoreDegraded() {
+function markFirestoreDegraded(showBannerNow) {
   _firestoreDegradedUntil = Date.now() + FIRESTORE_DEGRADED_WINDOW_MS;
-  showHeavyLoadBanner();
+  if (showBannerNow) {
+    showHeavyLoadBanner();
+  }
 }
 
 function isFirestoreDegraded() {
@@ -597,8 +599,14 @@ function installFirestoreAvailabilityWatcher() {
           var arg = arguments[i];
           var text = typeof arg === "string" ? arg : (arg && (arg.message || arg.code));
           if (!text) continue;
-          if (isAppCheckThrottleMessage(text) || isFirestoreTransportBlockMessage(text)) {
-            markFirestoreDegraded();
+          if (isFirestoreTransportBlockMessage(text)) {
+            markFirestoreDegraded(true);
+            break;
+          }
+          if (isAppCheckThrottleMessage(text)) {
+            // Only mark degraded; surface the banner only if an actual Firestore
+            // operation fails (avoids false banners while App Check enforcement is off).
+            markFirestoreDegraded(false);
             break;
           }
         }
