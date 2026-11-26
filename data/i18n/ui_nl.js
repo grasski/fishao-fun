@@ -1000,7 +1000,7 @@
       "guide_dec_col_reward": "Setbeloning",
       "guide_dec_sort_collection": "Op set / collectie",
       "heavy_load_banner_title": "De site is momenteel zwaar belast",
-      "heavy_load_banner_text": "We konden de gegevens nu niet laden omdat de site zwaar belast is. Probeer het later opnieuw.",
+      "heavy_load_banner_text": "Niet alle gegevens worden mogelijk goed geladen of opgeslagen vanwege hoge belasting. Probeer het later opnieuw.",
       "heavy_load_banner_retry": "Opnieuw proberen",
       "heavy_load_banner_close": "Melding sluiten"
   };

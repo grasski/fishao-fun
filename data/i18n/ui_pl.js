@@ -1012,7 +1012,7 @@
       "guide_dec_col_reward": "Nagroda za zestaw",
       "guide_dec_sort_collection": "Według zestawu / kolekcji",
       "heavy_load_banner_title": "Strona jest teraz przeciążona",
-      "heavy_load_banner_text": "Nie udało się teraz wczytać danych, ponieważ strona jest przeciążona. Wróć tu później.",
+      "heavy_load_banner_text": "Nie wszystkie dane mogą się teraz poprawnie wczytać lub zapisać z powodu dużego obciążenia. Spróbuj ponownie później.",
       "heavy_load_banner_retry": "Spróbuj ponownie",
       "heavy_load_banner_close": "Zamknij powiadomienie"
   };

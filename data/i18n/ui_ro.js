@@ -1012,7 +1012,7 @@
       "guide_dec_col_reward": "Recompensă set",
       "guide_dec_sort_collection": "După set / colecție",
       "heavy_load_banner_title": "Site-ul este momentan supraîncărcat",
-      "heavy_load_banner_text": "Nu am putut încărca datele acum, deoarece site-ul este supraîncărcat. Te rugăm să revii mai târziu.",
+      "heavy_load_banner_text": "Este posibil ca nu toate datele să se încarce sau să se salveze corect acum din cauza încărcării mari. Te rugăm să încerci din nou mai târziu.",
       "heavy_load_banner_retry": "Încearcă din nou",
       "heavy_load_banner_close": "Închide notificarea"
   };

@@ -1000,7 +1000,7 @@
       "guide_dec_col_reward": "Set Ödülü",
       "guide_dec_sort_collection": "Sete / koleksiyona göre",
       "heavy_load_banner_title": "Site şu anda aşırı yük altında",
-      "heavy_load_banner_text": "Site aşırı yük altında olduğu için verileri şu anda yükleyemedik. Lütfen daha sonra tekrar gelin.",
+      "heavy_load_banner_text": "Yoğunluk nedeniyle tüm veriler şu anda düzgün yüklenmeyebilir veya kaydedilmeyebilir. Lütfen daha sonra tekrar deneyin.",
       "heavy_load_banner_retry": "Tekrar dene",
       "heavy_load_banner_close": "Bildirimi kapat"
   };
