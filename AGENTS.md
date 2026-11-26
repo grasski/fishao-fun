@@ -68,6 +68,7 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
    * Logged-in players can specify which fish they breed in their backyard pond (`backyardFishIds`). Strictly limited to the 83 species that have location `Za domem` in the game.
    * The community tab allows browsing all registered players, their catch progress, club affiliation, and bred fish.
    * In the fish detail modal, players can see who currently has that fish bred ("Kdo má tuto rybu za domem").
+* **Backyard owners lookup must never trigger a full `/users` scan.** `renderModalBackyardOwners` (js/players.js) uses a targeted `where("backyardFishIds", "array-contains", fishId)` query with a 15-minute per-fish cache (`_backyardOwnersCache`) when the in-memory player directory is empty. Do not reintroduce `loadAllPlayers(false)` on the fish-modal path.
    * Friends system (`friendUids`): players can add friends (⭐), filter exclusively by friends, and have friends pinned at the top of the community list and reverse lookups.
 
 9. **Private 1-on-1 Player Chat & Moderation (`js/chat.js`, `css/chat.css`, `scripts/cleanup-chat.mjs`):**
