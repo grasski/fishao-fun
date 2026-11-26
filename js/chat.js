@@ -297,10 +297,17 @@ function isChatUnread(chat, myUid) {
   if (chat.status === 'pending' && chat.requestedBy !== myUid) {
     return true;
   }
-  if (chat.status === 'accepted' && chat.lastMessageAt && chat.lastSenderUid && chat.lastSenderUid !== myUid) {
-    var msgMs = chatTsToMs(chat.lastMessageAt);
+  if (chat.status === 'accepted') {
     var readMs = (chat.lastReadAt && chat.lastReadAt[myUid]) ? chatTsToMs(chat.lastReadAt[myUid]) : 0;
-    return msgMs > readMs;
+    if (chat.lastMessageAt && chat.lastSenderUid && chat.lastSenderUid !== myUid) {
+      var msgMs = chatTsToMs(chat.lastMessageAt);
+      return msgMs > readMs;
+    }
+    // Outgoing request was accepted by peer (no messages exchanged yet)
+    if (!chat.lastMessageAt && chat.requestedBy === myUid) {
+      var updatedMs = chatTsToMs(chat.updatedAt);
+      return updatedMs > readMs;
+    }
   }
   return false;
 }
@@ -341,6 +348,9 @@ function updateChatHeaderBadge() {
   if (!currentUser || !isFirebaseConfigured) {
     btn.style.display = 'none';
     if (badge) badge.style.display = 'none';
+    if (typeof updateBrowserActivityIndicator === 'function') {
+      updateBrowserActivityIndicator();
+    }
     return;
   }
 
@@ -354,6 +364,9 @@ function updateChatHeaderBadge() {
     } else {
       badge.style.display = 'none';
     }
+  }
+  if (typeof updateBrowserActivityIndicator === 'function') {
+    updateBrowserActivityIndicator();
   }
 }
 
@@ -975,12 +988,12 @@ function selectChatThread(chatId) {
 
 async function markChatAsRead(chatObj) {
   if (!chatObj || !currentUser || !db || chatObj.status !== 'accepted') return;
-  var msgMs = chatTsToMs(chatObj.lastMessageAt);
-  if (!msgMs) return;
-  if (_lastMarkedReadMsgMs[chatObj.id] && _lastMarkedReadMsgMs[chatObj.id] >= msgMs) {
+  var activityMs = chatTsToMs(chatObj.lastMessageAt) || chatTsToMs(chatObj.updatedAt);
+  if (!activityMs) return;
+  if (_lastMarkedReadMsgMs[chatObj.id] && _lastMarkedReadMsgMs[chatObj.id] >= activityMs) {
     return;
   }
-  _lastMarkedReadMsgMs[chatObj.id] = msgMs;
+  _lastMarkedReadMsgMs[chatObj.id] = activityMs;
 
   try {
     var fsModule = await getFirestoreModule();

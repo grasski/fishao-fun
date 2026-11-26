@@ -439,6 +439,221 @@ function switchView(view, skipSync) {
   updateScrollTopButton();
 }
 
+var _baseDocumentTitle = (typeof document !== 'undefined' && document.title)
+  ? document.title.replace(/^\(\d+\+?\)\s+/, '')
+  : 'FISHAO Tracker';
+var _browserActivityCount = 0;
+var _browserOrigFaviconLinks = null;
+var _browserFaviconBaseImg = null;
+var _browserFaviconBaseLoading = false;
+var _browserFaviconBaseFailed = false;
+var _browserFaviconCache = Object.create(null);
+var _browserAppliedFaviconKey = '';
+
+function setBaseDocumentTitle(title) {
+  if (typeof title !== 'string' || !title) return;
+  _baseDocumentTitle = title.replace(/^\(\d+\+?\)\s+/, '');
+  applyBrowserTabTitle(_browserActivityCount);
+}
+
+function getBrowserActivityCount() {
+  var unreadChat = (typeof getUnreadChatCount === 'function') ? getUnreadChatCount() : 0;
+  var dueReminders = (typeof getDueReminders === 'function') ? getDueReminders().length : 0;
+  return Math.max(0, (unreadChat || 0) + (dueReminders || 0));
+}
+
+function applyBrowserTabTitle(count) {
+  if (typeof document === 'undefined') return;
+  var base = _baseDocumentTitle || 'FISHAO Tracker';
+  var nextTitle = count > 0
+    ? ('(' + (count > 99 ? '99+' : String(count)) + ') ' + base)
+    : base;
+  if (document.title !== nextTitle) {
+    document.title = nextTitle;
+  }
+}
+
+function captureOriginalFaviconLinks() {
+  if (_browserOrigFaviconLinks !== null || typeof document === 'undefined' || !document.head) return;
+  var nodes = document.head.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]');
+  _browserOrigFaviconLinks = [];
+  for (var i = 0; i < nodes.length; i++) {
+    var el = nodes[i];
+    if (el.getAttribute('data-fishao-badge-icon') === '1') continue;
+    _browserOrigFaviconLinks.push({
+      rel: el.getAttribute('rel') || 'icon',
+      type: el.getAttribute('type') || '',
+      sizes: el.getAttribute('sizes') || '',
+      href: el.getAttribute('href') || ''
+    });
+  }
+}
+
+function getPreferredFaviconHref() {
+  captureOriginalFaviconLinks();
+  var list = _browserOrigFaviconLinks || [];
+  var best = '';
+  for (var i = 0; i < list.length; i++) {
+    if (list[i].type === 'image/png' && list[i].sizes === '96x96' && list[i].href) return list[i].href;
+  }
+  for (var j = 0; j < list.length; j++) {
+    if (list[j].type === 'image/png' && list[j].href) return list[j].href;
+  }
+  for (var k = 0; k < list.length; k++) {
+    if (list[k].href) { best = list[k].href; break; }
+  }
+  return best || '/favicon-96x96.png';
+}
+
+function renderBadgedFaviconDataUrl(label, baseImg) {
+  if (typeof document === 'undefined') return '';
+  try {
+    var size = 64;
+    var canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return '';
+
+    if (baseImg && baseImg.naturalWidth > 0) {
+      ctx.drawImage(baseImg, 0, 0, size, size);
+    } else {
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, 28, 0, Math.PI * 2);
+      ctx.fillStyle = '#1e3a5f';
+      ctx.fill();
+    }
+
+    var cx = 44;
+    var cy = 20;
+    var r = 19;
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = '#ef4444';
+    ctx.fill();
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#ffffff';
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = (label.length > 1 ? '800 21px ' : '800 27px ') + 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, cx, cy + 1);
+
+    return canvas.toDataURL('image/png');
+  } catch (e) {
+    return '';
+  }
+}
+
+function setDocumentFaviconToDataUrl(dataUrl) {
+  if (typeof document === 'undefined' || !document.head || !dataUrl) return;
+  captureOriginalFaviconLinks();
+  var existing = document.head.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]');
+  for (var i = 0; i < existing.length; i++) {
+    existing[i].parentNode.removeChild(existing[i]);
+  }
+  var link = document.createElement('link');
+  link.rel = 'icon';
+  link.type = 'image/png';
+  link.setAttribute('data-fishao-badge-icon', '1');
+  link.href = dataUrl;
+  document.head.appendChild(link);
+}
+
+function restoreOriginalFaviconLinks() {
+  if (typeof document === 'undefined' || !document.head || !_browserOrigFaviconLinks) return;
+  var existing = document.head.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]');
+  for (var i = 0; i < existing.length; i++) {
+    existing[i].parentNode.removeChild(existing[i]);
+  }
+  for (var j = 0; j < _browserOrigFaviconLinks.length; j++) {
+    var spec = _browserOrigFaviconLinks[j];
+    var link = document.createElement('link');
+    link.rel = spec.rel || 'icon';
+    if (spec.type) link.type = spec.type;
+    if (spec.sizes) link.sizes = spec.sizes;
+    if (spec.href) link.href = spec.href;
+    document.head.appendChild(link);
+  }
+}
+
+function updateBrowserFaviconBadge(count) {
+  if (typeof document === 'undefined' || !document.head) return;
+  if (count <= 0) {
+    if (_browserAppliedFaviconKey !== '') {
+      _browserAppliedFaviconKey = '';
+      restoreOriginalFaviconLinks();
+    }
+    return;
+  }
+
+  var label = count > 9 ? '9+' : String(count);
+  if (_browserAppliedFaviconKey === label) return;
+
+  if (_browserFaviconCache[label]) {
+    _browserAppliedFaviconKey = label;
+    setDocumentFaviconToDataUrl(_browserFaviconCache[label]);
+    return;
+  }
+
+  var paintAndApply = function (img) {
+    if (_browserActivityCount <= 0) return;
+    var curLabel = _browserActivityCount > 9 ? '9+' : String(_browserActivityCount);
+    if (_browserAppliedFaviconKey === curLabel) return;
+    var url = _browserFaviconCache[curLabel] || renderBadgedFaviconDataUrl(curLabel, img);
+    if (!url) return;
+    _browserFaviconCache[curLabel] = url;
+    _browserAppliedFaviconKey = curLabel;
+    setDocumentFaviconToDataUrl(url);
+  };
+
+  if (_browserFaviconBaseImg || _browserFaviconBaseFailed || typeof Image === 'undefined') {
+    paintAndApply(_browserFaviconBaseImg);
+    return;
+  }
+
+  if (_browserFaviconBaseLoading) return;
+  _browserFaviconBaseLoading = true;
+  captureOriginalFaviconLinks();
+
+  var img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = function () {
+    _browserFaviconBaseLoading = false;
+    _browserFaviconBaseImg = img;
+    paintAndApply(img);
+  };
+  img.onerror = function () {
+    _browserFaviconBaseLoading = false;
+    _browserFaviconBaseFailed = true;
+    paintAndApply(null);
+  };
+  img.src = getPreferredFaviconHref();
+}
+
+function updateBrowserActivityIndicator() {
+  var count = getBrowserActivityCount();
+  _browserActivityCount = count;
+
+  applyBrowserTabTitle(count);
+  updateBrowserFaviconBadge(count);
+
+  try {
+    if (typeof navigator !== 'undefined') {
+      if (count > 0 && typeof navigator.setAppBadge === 'function') {
+        var p1 = navigator.setAppBadge(count);
+        if (p1 && typeof p1.catch === 'function') p1.catch(function () { });
+      } else if (count === 0 && typeof navigator.clearAppBadge === 'function') {
+        var p2 = navigator.clearAppBadge();
+        if (p2 && typeof p2.catch === 'function') p2.catch(function () { });
+      }
+    }
+  } catch (e) { }
+}
+
 function updateStaticTranslations() {
   var lang = getLang();
   document.documentElement.lang = lang;
@@ -456,7 +671,7 @@ function updateStaticTranslations() {
   try {
     var pageTitle = t("seo_page_title");
     if (pageTitle && pageTitle !== "seo_page_title") {
-      document.title = pageTitle;
+      setBaseDocumentTitle(pageTitle);
     }
     var metaDescEl = document.getElementById("metaDescription");
     var pageDesc = t("seo_meta_desc");

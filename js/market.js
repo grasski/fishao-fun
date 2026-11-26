@@ -761,7 +761,12 @@ function openPriceModal(fid, skipSync) {
     }
   }
   try {
-    document.title = fishName + t('seo_fish_title_suffix');
+    var fishTitle = fishName + t('seo_fish_title_suffix');
+    if (typeof setBaseDocumentTitle === "function") {
+      setBaseDocumentTitle(fishTitle);
+    } else {
+      document.title = fishTitle;
+    }
   } catch (e) { }
 
   if (!skipSync && window.fishaoApp && typeof window.fishaoApp.syncUrlRoute === "function") {
@@ -957,7 +962,11 @@ function closePriceModal(skipSync) {
   try {
     var defTitle = t("seo_page_title");
     if (defTitle && defTitle !== "seo_page_title") {
-      document.title = defTitle;
+      if (typeof setBaseDocumentTitle === "function") {
+        setBaseDocumentTitle(defTitle);
+      } else {
+        document.title = defTitle;
+      }
     }
   } catch (e) { }
 

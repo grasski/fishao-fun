@@ -177,6 +177,9 @@ function updateRemindersBellBadge() {
     btn.classList.toggle('has-due', dueCount > 0);
     btn.classList.toggle('has-today', dueCount === 0 && todayCount > 0);
   }
+  if (typeof updateBrowserActivityIndicator === 'function') {
+    updateBrowserActivityIndicator();
+  }
 }
 
 function isReminderUtcMode() {
