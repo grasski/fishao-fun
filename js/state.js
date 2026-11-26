@@ -508,6 +508,140 @@ function getFirestoreModule() {
   return import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
 }
 
+/**
+ * Firestore quota / heavy-load handling.
+ * When a read fails with "resource-exhausted" (the free daily quota has been
+ * used up), we show a global banner instead of silently rendering empty data.
+ */
+var _heavyLoadBannerActive = false;
+var _heavyLoadBannerPending = false;
+
+function isFirestoreQuotaError(err) {
+  if (!err) return false;
+  var code = String(err.code || "").toLowerCase();
+  var msg = String(err.message || err || "").toLowerCase();
+  if (code === "resource-exhausted" || code === "8") return true;
+  return msg.indexOf("resource-exhausted") !== -1 ||
+    msg.indexOf("resource_exhausted") !== -1 ||
+    msg.indexOf("resource exhausted") !== -1 ||
+    msg.indexOf("quota exceeded") !== -1 ||
+    msg.indexOf("quota has been exceeded") !== -1 ||
+    msg.indexOf("exceeded the daily") !== -1;
+}
+
+/**
+ * Availability degradation tracking.
+ * App Check (reCAPTCHA Enterprise) throttling (429) or blocked Firestore
+ * transport requests make Firestore reject otherwise-valid reads with
+ * "permission-denied". We remember that state briefly so those follow-up
+ * errors are surfaced as a heavy-load banner instead of being swallowed.
+ */
+var _firestoreDegradedUntil = 0;
+var FIRESTORE_DEGRADED_WINDOW_MS = 2 * 60 * 1000;
+
+function markFirestoreDegraded() {
+  _firestoreDegradedUntil = Date.now() + FIRESTORE_DEGRADED_WINDOW_MS;
+  showHeavyLoadBanner();
+}
+
+function isFirestoreDegraded() {
+  return _firestoreDegradedUntil > Date.now();
+}
+
+function isFirestoreAvailabilityError(err) {
+  if (isFirestoreQuotaError(err)) return true;
+  if (!err) return false;
+  var code = String(err.code || "").toLowerCase();
+  var msg = String(err.message || err || "").toLowerCase();
+  if (code === "permission-denied" || code === "7" ||
+      msg.indexOf("permission-denied") !== -1) {
+    return isFirestoreDegraded();
+  }
+  return false;
+}
+
+function isAppCheckThrottleMessage(text) {
+  var msg = String(text || "").toLowerCase();
+  if (!msg) return false;
+  if (msg.indexOf("requests throttled due to 429") !== -1) return true;
+  var mentionsAppCheck = msg.indexOf("appcheck") !== -1 || msg.indexOf("app check") !== -1;
+  return mentionsAppCheck && (
+    msg.indexOf("throttl") !== -1 ||
+    msg.indexOf("429") !== -1 ||
+    msg.indexOf("quota") !== -1
+  );
+}
+
+function isFirestoreTransportBlockMessage(text) {
+  var msg = String(text || "").toLowerCase();
+  if (!msg || msg.indexOf("firestore.googleapis.com") === -1) return false;
+  return msg.indexOf("access control") !== -1 ||
+    msg.indexOf("failed to fetch") !== -1 ||
+    msg.indexOf("networkerror") !== -1 ||
+    msg.indexOf("load failed") !== -1;
+}
+
+/**
+ * The Firebase SDK only reports App Check / transport outages through its
+ * console logger, so we watch those messages and mark the backend degraded.
+ */
+function installFirestoreAvailabilityWatcher() {
+  if (typeof console === "undefined" || console.__fishaoAvailabilityWatcher) return;
+  console.__fishaoAvailabilityWatcher = true;
+  ["warn", "error"].forEach(function (level) {
+    var original = console[level];
+    if (typeof original !== "function") return;
+    console[level] = function () {
+      try {
+        for (var i = 0; i < arguments.length; i++) {
+          var arg = arguments[i];
+          var text = typeof arg === "string" ? arg : (arg && (arg.message || arg.code));
+          if (!text) continue;
+          if (isAppCheckThrottleMessage(text) || isFirestoreTransportBlockMessage(text)) {
+            markFirestoreDegraded();
+            break;
+          }
+        }
+      } catch (e) { /* logging must never break */ }
+      return original.apply(console, arguments);
+    };
+  });
+}
+
+installFirestoreAvailabilityWatcher();
+
+function showHeavyLoadBanner() {
+  if (_heavyLoadBannerActive || _heavyLoadBannerPending) return;
+  if (typeof document === "undefined") return;
+
+  var applyBanner = function () {
+    _heavyLoadBannerPending = false;
+    var el = document.getElementById("heavyLoadBanner");
+    if (!el || _heavyLoadBannerActive) return;
+    _heavyLoadBannerActive = true;
+    el.style.display = "block";
+    el.classList.add("active");
+  };
+
+  if (document.readyState === "loading") {
+    _heavyLoadBannerPending = true;
+    document.addEventListener("DOMContentLoaded", applyBanner, { once: true });
+    return;
+  }
+  applyBanner();
+}
+
+function dismissHeavyLoadBanner() {
+  _heavyLoadBannerActive = false;
+  _heavyLoadBannerPending = false;
+  if (typeof document === "undefined") return;
+  var el = document.getElementById("heavyLoadBanner");
+  if (el) {
+    el.classList.remove("active");
+    el.style.display = "none";
+  }
+}
+
 function renderAvatarHtml(avatarVal, fallbackEmoji, imgCss) {
   var fb = fallbackEmoji || "🎣";
   var val = (avatarVal || fb).trim();

@@ -131,7 +131,7 @@
   <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
 
   <!-- Modern Modular Stylesheets -->
-  <link rel="stylesheet" href="css/base.css?v=3.2">
+  <link rel="stylesheet" href="css/base.css?v=3.3">
   <link rel="stylesheet" href="css/header.css?v=3.3">
   <link rel="stylesheet" href="css/nav.css?v=3.5">
   <link rel="stylesheet" href="css/filters.css?v=3.7">
@@ -142,10 +142,25 @@
   <link rel="stylesheet" href="css/chat.css?v=1.4">
   <link rel="stylesheet" href="css/locations-calendar.css?v=1.3">
   <link rel="stylesheet" href="css/guide.css?v=1.5">
-  <link rel="stylesheet" href="css/responsive.css?v=3.13">
+  <link rel="stylesheet" href="css/responsive.css?v=3.14">
 </head>
 
 <body>
+
+  <!-- Global heavy-load / Firestore quota notice (shown automatically on resource-exhausted) -->
+  <div id="heavyLoadBanner" class="heavy-load-banner" role="alert" aria-live="assertive" style="display: none;">
+    <div class="heavy-load-inner">
+      <span class="heavy-load-icon" aria-hidden="true">⚠️</span>
+      <div class="heavy-load-text">
+        <strong class="heavy-load-title" data-i18n="heavy_load_banner_title">Server je momentálně přetížený</strong>
+        <span class="heavy-load-desc" data-i18n="heavy_load_banner_text">Data se teď nepodařilo načíst, protože je web přetížený. Zkuste to prosím později.</span>
+      </div>
+      <button type="button" class="heavy-load-retry" onclick="location.reload()" data-i18n="heavy_load_banner_retry">Zkusit znovu</button>
+      <button type="button" class="heavy-load-close" onclick="window.fishaoApp.dismissHeavyLoadBanner()"
+        aria-label="Zavřít upozornění" data-i18n-aria-label="heavy_load_banner_close"
+        data-i18n-title="heavy_load_banner_close" title="Zavřít upozornění">✕</button>
+    </div>
+  </div>
 
   <div class="container">
     <!-- Header -->
@@ -2154,16 +2169,16 @@
   <!-- End Cloudflare Web Analytics -->
 
   <!-- Data scripts and localization (only base CS loaded upfront; other languages load on demand) -->
-  <script defer src="data/i18n/ui_cs.js?v=8.0"></script>
+  <script defer src="data/i18n/ui_cs.js?v=8.1"></script>
   <script defer src="data/i18n/taxonomies.js?v=4.0"></script>
   <script defer src="data/i18n/fish_names.js?v=3.5"></script>
-  <script defer src="data/i18n.js?v=5.0"></script>
+  <script defer src="data/i18n.js?v=5.1"></script>
   <script defer src="data/fishes.js?v=3.2"></script>
   <script defer src="data/estimated_prices.js?v=1.0"></script>
   <script defer src="firebase-config.js?v=3.2"></script>
   <!-- Modular FISHAO Application Logic -->
-  <script defer src="js/state.js?v=5.2"></script>
-  <script defer src="js/firestore-tx.js?v=3.2"></script>
+  <script defer src="js/state.js?v=5.4"></script>
+  <script defer src="js/firestore-tx.js?v=3.4"></script>
   <script defer src="js/table.js?v=4.6"></script>
   <script defer src="js/clubs.js?v=4.0"></script>
   <script defer src="js/market.js?v=4.21"></script>
@@ -2175,7 +2190,7 @@
   <script defer src="js/calendar.js?v=1.2"></script>
   <script defer src="js/guide.js?v=1.7"></script>
   <script defer src="js/reminders.js?v=1.3"></script>
-  <script defer src="js/main.js?v=5.16"></script>
+  <script defer src="js/main.js?v=5.17"></script>
 
 </body>
 

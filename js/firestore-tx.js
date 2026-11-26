@@ -17,11 +17,110 @@
   "use strict";
 
   var FIRESTORE_MODULE_URL = "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  var rawModulePromise = null;
   var firestoreModulePromise = null;
+
+  // Firestore exports that return a Promise and whose rejection must be
+  // checked for quota ("resource-exhausted") and availability errors.
+  var PROMISE_FNS = {
+    getDoc: true,
+    getDocs: true,
+    getDocFromCache: true,
+    getDocsFromCache: true,
+    getDocFromServer: true,
+    getDocsFromServer: true,
+    runTransaction: true,
+    setDoc: true,
+    updateDoc: true,
+    deleteDoc: true,
+    addDoc: true
+  };
+
+  function reportFirestoreAvailabilityError(err) {
+    try {
+      if (typeof window === "undefined") return;
+      var matcher = (typeof window.isFirestoreAvailabilityError === "function")
+        ? window.isFirestoreAvailabilityError
+        : window.isFirestoreQuotaError;
+      if (typeof matcher === "function" && matcher(err) &&
+          typeof window.showHeavyLoadBanner === "function") {
+        window.showHeavyLoadBanner();
+      }
+    } catch (e) { /* never let the banner break data loading */ }
+  }
+
+  function wrapPromiseCall(original, thisArg, args) {
+    var result;
+    try {
+      result = original.apply(thisArg, args);
+    } catch (err) {
+      reportFirestoreAvailabilityError(err);
+      throw err;
+    }
+    if (result && typeof result.then === "function") {
+      return result.then(function (value) { return value; }, function (err) {
+        reportFirestoreAvailabilityError(err);
+        throw err;
+      });
+    }
+    return result;
+  }
+
+  function wrapSnapshotCall(original, thisArg, args) {
+    var nextArgs = Array.prototype.slice.call(args);
+
+    // onSnapshot(ref, { next, error, complete })
+    if (nextArgs[1] && typeof nextArgs[1] === "object" && typeof nextArgs[1].next === "function") {
+      var observer = nextArgs[1];
+      nextArgs[1] = {
+        next: function (snap) { return observer.next.call(observer, snap); },
+        error: function (err) {
+          reportFirestoreAvailabilityError(err);
+          if (typeof observer.error === "function") return observer.error.call(observer, err);
+        },
+        complete: function () {
+          if (typeof observer.complete === "function") return observer.complete.call(observer);
+        }
+      };
+    } else if (typeof nextArgs[2] === "function") {
+      // onSnapshot(ref, next, error, complete)
+      var originalError = nextArgs[2];
+      nextArgs[2] = function (err) {
+        reportFirestoreAvailabilityError(err);
+        return originalError.apply(this, arguments);
+      };
+    }
+
+    return original.apply(thisArg, nextArgs);
+  }
+
+  /**
+   * Wraps the Firestore module so quota / availability errors surface to the
+   * UI banner. A Proxy keeps the module fully transparent for every consumer.
+   */
+  function wrapFirestoreModule(mod) {
+    if (!mod || typeof Proxy === "undefined") return mod;
+    return new Proxy(mod, {
+      get: function (target, prop, receiver) {
+        var value = Reflect.get(target, prop, receiver);
+        if (typeof value !== "function") return value;
+        if (prop === "onSnapshot") {
+          return function () { return wrapSnapshotCall(value, target, arguments); };
+        }
+        if (PROMISE_FNS[prop]) {
+          return function () { return wrapPromiseCall(value, target, arguments); };
+        }
+        return value.bind(target);
+      }
+    });
+  }
 
   function loadFirestoreModule() {
     if (!firestoreModulePromise) {
-      firestoreModulePromise = import(FIRESTORE_MODULE_URL);
+      if (!rawModulePromise) {
+        rawModulePromise = import(FIRESTORE_MODULE_URL);
+      }
+      firestoreModulePromise = rawModulePromise.then(wrapFirestoreModule);
     }
     return firestoreModulePromise;
   }

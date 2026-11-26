@@ -1011,7 +1011,11 @@
       "guide_dec_no_collection": "Fără set",
       "guide_dec_col_collection": "Set / Colecție",
       "guide_dec_col_reward": "Recompensă set",
-      "guide_dec_sort_collection": "După set / colecție"
+      "guide_dec_sort_collection": "După set / colecție",
+      "heavy_load_banner_title": "Site-ul este momentan supraîncărcat",
+      "heavy_load_banner_text": "Nu am putut încărca datele acum, deoarece site-ul este supraîncărcat. Te rugăm să revii mai târziu.",
+      "heavy_load_banner_retry": "Încearcă din nou",
+      "heavy_load_banner_close": "Închide notificarea"
   };
 
   if (typeof window !== 'undefined') {

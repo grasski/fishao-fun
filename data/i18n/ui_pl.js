@@ -1011,7 +1011,11 @@
       "guide_dec_no_collection": "Bez zestawu",
       "guide_dec_col_collection": "Zestaw / Kolekcja",
       "guide_dec_col_reward": "Nagroda za zestaw",
-      "guide_dec_sort_collection": "Według zestawu / kolekcji"
+      "guide_dec_sort_collection": "Według zestawu / kolekcji",
+      "heavy_load_banner_title": "Strona jest teraz przeciążona",
+      "heavy_load_banner_text": "Nie udało się teraz wczytać danych, ponieważ strona jest przeciążona. Wróć tu później.",
+      "heavy_load_banner_retry": "Spróbuj ponownie",
+      "heavy_load_banner_close": "Zamknij powiadomienie"
   };
 
   if (typeof window !== 'undefined') {

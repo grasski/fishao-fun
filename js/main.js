@@ -885,6 +885,7 @@ window.fishaoApp = {
   toggleManualImportFlag: toggleManualImportFlag,
   resolveConfirmModal: resolveConfirmModal,
   showToast: showToast,
+  dismissHeavyLoadBanner: dismissHeavyLoadBanner,
   toggleCaughtFish: toggleCaughtFish,
   cycleCaughtState: cycleCaughtState,
   toggleMissingShiny: toggleMissingShiny,

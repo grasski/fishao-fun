@@ -999,7 +999,11 @@
       "guide_dec_no_collection": "Setsiz",
       "guide_dec_col_collection": "Set / Koleksiyon",
       "guide_dec_col_reward": "Set Ödülü",
-      "guide_dec_sort_collection": "Sete / koleksiyona göre"
+      "guide_dec_sort_collection": "Sete / koleksiyona göre",
+      "heavy_load_banner_title": "Site şu anda aşırı yük altında",
+      "heavy_load_banner_text": "Site aşırı yük altında olduğu için verileri şu anda yükleyemedik. Lütfen daha sonra tekrar gelin.",
+      "heavy_load_banner_retry": "Tekrar dene",
+      "heavy_load_banner_close": "Bildirimi kapat"
   };
 
   if (typeof window !== 'undefined') {

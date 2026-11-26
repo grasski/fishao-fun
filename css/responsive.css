@@ -697,6 +697,25 @@
   }
 }
 
+/* Global heavy-load banner: compact layout on small screens */
+@media (max-width: 640px) {
+  .heavy-load-banner {
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+  .heavy-load-inner {
+    flex-wrap: wrap;
+    gap: 8px 10px;
+  }
+  .heavy-load-text {
+    flex: 1 1 calc(100% - 70px);
+    font-size: 12.5px;
+  }
+  .heavy-load-retry {
+    padding: 5px 12px;
+  }
+}
+
 /* Accessibility: honor user reduced-motion preference */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

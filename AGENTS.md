@@ -7,7 +7,7 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
    * Do NOT read `data/raw/lang_cz.json`, `data/raw/lang_en.json`, `data/raw/lang_pl.json`, `data/fishes.js`, or `data/raw/fish.json` from beginning to end.
    * Full data schemas, object shapes, and Firestore collections are documented in [.agents/skills/fishao/SKILL.md](.agents/skills/fishao/SKILL.md).
 2. **Vanilla JavaScript & GitHub Pages Build:**
-   * Files load natively by the browser in local dev without a required local bundler, while `.github/workflows/deploy-pages.yml` builds `_site/` via `scripts/build_dist.py` (CSS/JS concatenation, optional `esbuild` minification, and hashed `dist/app.*.min.css`, `dist/app.*.min.js`, `dist/ui_en.*.min.js`, `dist/ui_pl.*.min.js` bundles).
+   * Files load natively by the browser in local dev without a required local bundler, while `.github/workflows/deploy-pages.yml` builds `_site/` via `scripts/build_dist.py` (CSS/JS concatenation, optional `esbuild` minification, and hashed `dist/app.*.min.css`, `dist/app.*.min.js`, and one `dist/ui_<lang>.*.min.js` bundle per supported language: `en`, `pl`, `nl`, `ro`, `tr`).
    * Always verify modified or created JavaScript files with `node --check "<filepath>"` (also enforced in CI).
 3. **Firebase & Firestore Security Rules (`firestore.rules`):**
    * Firestore rules enforce strict key masking (`hasOnly` / `affectedKeys().hasOnly`). Never write undocumented fields to Firestore.
@@ -27,16 +27,19 @@ Welcome! This is the official developer and agent guide for the **FISHAO (fishao
    * **Manual Price Entry & Bulk Import Feature Flag (`/fishao_market/config`):** Because prices are synced daily automatically, manual price entry (`#priceAddFormBox`, `#priceAddLoginNotice` in the fish detail modal) and bulk import (`#marketImportActionBarRight`, `#marketFloatingImportBtn`) are hidden by default (`manualImportEnabled: false`) and the summary doc is loaded via `localStorage` TTL + `/fishao_market/sync_status` rather than a permanent `onSnapshot` listener. When `manualImportEnabled === true`, `js/auth.js` attaches `onSnapshot` on `/fishao_market/prices_summary`. Admins can toggle this flag from the Profile modal (`#profileAdminSection` -> `toggleManualImportFlag()`) or directly in Firebase Console.
    * **Per-day cleanup (`scripts/delete-market-day.mjs` + `.github/workflows/delete-market-day.yml`):** Manual-only workflow that clears every price recorded for a single date (`--date=YYYY-MM-DD`, defaults to today UTC). It deletes `fishao_market_daily/{YYYY-MM}.days[date]` and, in the same transaction, decrements/removes the matching `prices_summary_0..3` buckets, recomputing each affected `l` from the remaining monthly archives (same semantics as `deletePriceEntry` in `js/market.js`). It never writes without `--yes` (`--dry-run` previews), resets `/fishao_market/sync_status` when the cleared date was the last synced day (unless `--keep-sync-status`), and can emit a JSON backup of the removed data (`--backup-out=FILE`).
 5. **Multilingual Localization & Modular i18n (`data/i18n/`):**
-   * Supported languages: Czech (`cs`, default), English (`en`), and Polish (`pl`).
-   * Fallback chain is configured per language in `data/i18n.js` (`LANGUAGES` registry): `pl -> en -> cs` and `en -> cs`. Missing Polish fish names or UI strings automatically fall back to English, then Czech.
+   * Supported languages: Czech (`cs`, default), English (`en`), Polish (`pl`), Dutch (`nl`), Romanian (`ro`), and Turkish (`tr`).
+   * Fallback chain is configured per language in `data/i18n.js` (`LANGUAGES` registry): `pl -> en -> cs`, `en -> cs`, and `nl`/`ro`/`tr -> en -> cs`. Missing translations automatically fall back through that chain.
    * Dictionaries are separated into modular files:
      - `data/i18n/ui_cs.js`: Czech UI strings (`FISHAO_I18N_UI_CS`).
      - `data/i18n/ui_en.js`: English UI strings (`FISHAO_I18N_UI_EN`).
      - `data/i18n/ui_pl.js`: Polish UI strings (`FISHAO_I18N_UI_PL`).
+     - `data/i18n/ui_nl.js`: Dutch UI strings (`FISHAO_I18N_UI_NL`).
+     - `data/i18n/ui_ro.js`: Romanian UI strings (`FISHAO_I18N_UI_RO`).
+     - `data/i18n/ui_tr.js`: Turkish UI strings (`FISHAO_I18N_UI_TR`).
      - `data/i18n/taxonomies.js`: Baits, waters, locations, timezone city, and Palm Island fruit translations (`FISHAO_I18N_TAXONOMIES`).
-     - `data/i18n/fish_names.js`: 615 fish translations (`FISHAO_I18N_FISH_NAMES`), auto-generated from `data/raw/lang_cz.json`, `data/raw/lang_en.json`, and `data/raw/lang_pl.json` by `scripts/build_i18n.py`.
+     - `data/i18n/fish_names.js`: 615 fish translations (`FISHAO_I18N_FISH_NAMES`), auto-generated from `data/raw/lang_cz.json`, `data/raw/lang_en.json`, and `data/raw/lang_pl.json` by `scripts/build_i18n.py` (other languages fall back to English, then Czech).
      - `data/i18n.js`: Core engine, `LANGUAGES` registry, `Intl.PluralRules` support, and helpers (`t()`, `getFishName()`, `getAltFishName()`, `getLocationName()`, `getBaitName()`, `getWaterName()`, `getCityName()`, `getFruitName()`, `formatDayMonth()`, `formatDate()`, `norm()`).
-   * Add all new text keys to `ui_cs.js`, `ui_en.js`, and `ui_pl.js`.
+   * Add all new text keys to `ui_cs.js`, `ui_en.js`, `ui_pl.js`, `ui_nl.js`, `ui_ro.js`, and `ui_tr.js`.
    * Use HTML attributes `data-i18n`, `data-i18n-placeholder`, `data-i18n-title`, and `data-i18n-aria-label` for static elements.
 6. **Modular Stylesheets (`css/`):**
    * Styles are organized into modular files under `css/`:

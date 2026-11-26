@@ -999,7 +999,11 @@
       "guide_dec_no_collection": "Geen set",
       "guide_dec_col_collection": "Set / Collectie",
       "guide_dec_col_reward": "Setbeloning",
-      "guide_dec_sort_collection": "Op set / collectie"
+      "guide_dec_sort_collection": "Op set / collectie",
+      "heavy_load_banner_title": "De site is momenteel zwaar belast",
+      "heavy_load_banner_text": "We konden de gegevens nu niet laden omdat de site zwaar belast is. Probeer het later opnieuw.",
+      "heavy_load_banner_retry": "Opnieuw proberen",
+      "heavy_load_banner_close": "Melding sluiten"
   };
 
   if (typeof window !== 'undefined') {

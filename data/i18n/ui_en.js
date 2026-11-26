@@ -999,7 +999,11 @@
       "guide_dec_no_collection": "No set",
       "guide_dec_col_collection": "Set / Collection",
       "guide_dec_col_reward": "Set Reward",
-      "guide_dec_sort_collection": "Set / Collection"
+      "guide_dec_sort_collection": "Set / Collection",
+      "heavy_load_banner_title": "The site is under heavy load",
+      "heavy_load_banner_text": "We couldn't load the data right now because the site is under heavy load. Please come back later.",
+      "heavy_load_banner_retry": "Try again",
+      "heavy_load_banner_close": "Dismiss notice"
   };
 
   if (typeof window !== 'undefined') {

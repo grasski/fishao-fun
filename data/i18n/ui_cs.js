@@ -1011,7 +1011,11 @@
       "guide_dec_no_collection": "Bez setu",
       "guide_dec_col_collection": "Set / Kolekce",
       "guide_dec_col_reward": "Odměna za set",
-      "guide_dec_sort_collection": "Podle setu / kolekce"
+      "guide_dec_sort_collection": "Podle setu / kolekce",
+      "heavy_load_banner_title": "Server je momentálně přetížený",
+      "heavy_load_banner_text": "Data se teď nepodařilo načíst, protože je web přetížený. Zkuste to prosím později.",
+      "heavy_load_banner_retry": "Zkusit znovu",
+      "heavy_load_banner_close": "Zavřít upozornění"
   };
 
   if (typeof window !== 'undefined') {
