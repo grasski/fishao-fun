@@ -162,7 +162,7 @@ async function fetchFishPrice(fishId) {
         signal: controller.signal,
         headers: {
           'Accept': 'application/json',
-          'User-Agent': 'fishao-fun-market-sync/1.0'
+          'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Mobile/15E148 Safari/604.1'
         }
       });
 
