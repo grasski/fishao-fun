@@ -37,7 +37,16 @@ service cloud.firestore {
         || (isAdmin()
         && docId == 'config'
         && request.resource.data.keys().hasOnly(['manualImportEnabled', 'lastUpdated'])
-        && request.resource.data.manualImportEnabled is bool);
+        && request.resource.data.manualImportEnabled is bool)
+        || (isAdmin()
+        && docId == 'sync_status'
+        && request.resource.data.keys().hasOnly([
+             'lastSuccessDate', 'lastSuccessAt', 'summaryMode', 'shardCount',
+             'pricesFetched', 'addedCount', 'duplicateCount',
+             'summaryBytes', 'maxShardBytes', 'summaryLimitPct', 'summaryUniquePrices'
+           ])
+        && request.resource.data.lastSuccessDate is string
+        && request.resource.data.lastSuccessAt is string);
 
       allow update: if (isSignedIn()
         && isMarketSummaryDoc(docId)
@@ -49,7 +58,16 @@ service cloud.firestore {
         || (isAdmin()
         && docId == 'config'
         && request.resource.data.keys().hasOnly(['manualImportEnabled', 'lastUpdated'])
-        && request.resource.data.manualImportEnabled is bool);
+        && request.resource.data.manualImportEnabled is bool)
+        || (isAdmin()
+        && docId == 'sync_status'
+        && request.resource.data.keys().hasOnly([
+             'lastSuccessDate', 'lastSuccessAt', 'summaryMode', 'shardCount',
+             'pricesFetched', 'addedCount', 'duplicateCount',
+             'summaryBytes', 'maxShardBytes', 'summaryLimitPct', 'summaryUniquePrices'
+           ])
+        && request.resource.data.lastSuccessDate is string
+        && request.resource.data.lastSuccessAt is string);
 
       allow delete: if isAdmin();
     }

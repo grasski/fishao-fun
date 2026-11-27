@@ -2438,6 +2438,334 @@ async function toggleManualImportFlag() {
 }
 
 /**
+ * Parses uploaded market price JSON in any supported shape:
+ *   1. Flat map:        { "14": 160, "15": 442, ... }
+ *   2. Object values:   { "14": { "price": 160 }, ... } or { "prices": { ... } }
+ *   3. SvelteKit data:  /wiki/market/__data.json (devalue node with `prices`)
+ * Returns a Map<string, number> keyed by fishId string, or null on invalid structure.
+ */
+function parseAdminMarketJsonPayload(payload) {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return null;
+  }
+
+  var result = new Map();
+
+  // Shape 3: SvelteKit /wiki/market/__data.json
+  if (Array.isArray(payload.nodes)) {
+    var nodes = payload.nodes;
+    var extractNode = function (node) {
+      if (!node || node.type !== "data" || !Array.isArray(node.data)) return false;
+      var data = node.data;
+      var root = data[0];
+      if (!root || typeof root !== "object" || typeof root.prices !== "number") return false;
+      if (root.prices < 0 || root.prices >= data.length) return false;
+      var pricesMap = data[root.prices];
+      if (!pricesMap || typeof pricesMap !== "object" || Array.isArray(pricesMap)) return false;
+      Object.keys(pricesMap).forEach(function (rawId) {
+        var idNum = Number(rawId);
+        if (!Number.isInteger(idNum) || idNum <= 0) return;
+        var entryIdx = pricesMap[rawId];
+        if (typeof entryIdx !== "number" || entryIdx < 0 || entryIdx >= data.length) return;
+        var entry = data[entryIdx];
+        if (!entry || typeof entry !== "object" || typeof entry.price !== "number") return;
+        if (entry.price < 0 || entry.price >= data.length) return;
+        var rawPrice = data[entry.price];
+        if (rawPrice === null || rawPrice === undefined) return;
+        var price = Number(rawPrice);
+        if (isFinite(price) && price > 0) {
+          result.set(String(idNum), Math.round(price));
+        }
+      });
+      return true;
+    };
+    if (!extractNode(nodes[2])) {
+      for (var ni = 0; ni < nodes.length; ni++) {
+        if (ni === 2) continue;
+        if (extractNode(nodes[ni])) break;
+      }
+    }
+    return result.size > 0 ? result : null;
+  }
+
+  // Shape 1 & 2: flat map or { prices: { ... } }
+  var sourceMap = (payload.prices && typeof payload.prices === "object" && !Array.isArray(payload.prices))
+    ? payload.prices
+    : payload;
+
+  Object.keys(sourceMap).forEach(function (rawId) {
+    var idNum = Number(rawId);
+    if (!Number.isInteger(idNum) || idNum <= 0) return;
+    var val = sourceMap[rawId];
+    var rawPrice = (val && typeof val === "object" && !Array.isArray(val)) ? val.price : val;
+    if (rawPrice === null || rawPrice === undefined || rawPrice === "") return;
+    var price = Number(rawPrice);
+    if (isFinite(price) && price > 0) {
+      result.set(String(idNum), Math.round(price));
+    }
+  });
+
+  return result.size > 0 ? result : null;
+}
+
+function setAdminJsonImportStatus(msg, tone) {
+  var el = document.getElementById("adminJsonImportStatus");
+  if (!el) return;
+  if (!msg) {
+    el.style.display = "none";
+    el.textContent = "";
+    return;
+  }
+  el.style.display = "block";
+  if (tone === "error") {
+    el.style.background = "rgba(239, 68, 68, 0.16)";
+    el.style.border = "1px solid rgba(239, 68, 68, 0.35)";
+    el.style.color = "#fca5a5";
+  } else if (tone === "warn") {
+    el.style.background = "rgba(245, 158, 11, 0.16)";
+    el.style.border = "1px solid rgba(245, 158, 11, 0.35)";
+    el.style.color = "#fcd34d";
+  } else if (tone === "success") {
+    el.style.background = "rgba(16, 185, 129, 0.16)";
+    el.style.border = "1px solid rgba(16, 185, 129, 0.35)";
+    el.style.color = "#6ee7b7";
+  } else {
+    el.style.background = "rgba(56, 189, 248, 0.12)";
+    el.style.border = "1px solid rgba(56, 189, 248, 0.3)";
+    el.style.color = "#bae6fd";
+  }
+  el.textContent = msg;
+}
+
+function triggerAdminJsonImport() {
+  if (!isAdmin || !currentUser || !userProfile || userProfile.role !== "admin") {
+    return;
+  }
+  var fileInput = document.getElementById("adminJsonImportFile");
+  if (!fileInput) return;
+  fileInput.value = "";
+  fileInput.click();
+}
+
+async function onAdminJsonFileSelected(inputEl) {
+  if (!isAdmin || !currentUser || !userProfile || userProfile.role !== "admin") {
+    return;
+  }
+  var file = inputEl && inputEl.files && inputEl.files[0];
+  if (!file) return;
+
+  var dateInput = document.getElementById("adminJsonImportDate");
+  var nameMatch = String(file.name || "").match(/(?:^|[^\d])(20\d{2}-\d{2}-\d{2})(?:[^\d]|$)/);
+  var dateVal = (nameMatch && nameMatch[1])
+    ? nameMatch[1]
+    : ((dateInput && dateInput.value) ? dateInput.value : getTodayISO());
+  if (dateInput && dateVal) {
+    dateInput.value = dateVal;
+  }
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateVal) || isDateSunday(dateVal)) {
+    setAdminJsonImportStatus(t('bulk_sunday_blocked'), "error");
+    showToast(t('bulk_sunday_blocked'), "error");
+    return;
+  }
+
+  var hasShards = !!(firebaseSummaryShardRefs && firebaseSummaryShardRefs.length === MARKET_SUMMARY_SHARD_COUNT);
+  if (!isFirebaseConfigured || !db || !hasShards || !window.FISHAO_FS_TX) {
+    var notReadyMsg = t('admin_json_import_error', { msg: "Firestore not ready" });
+    setAdminJsonImportStatus(notReadyMsg, "error");
+    showToast(notReadyMsg, "error");
+    return;
+  }
+
+  var btn = document.getElementById("btnAdminImportMarketJson");
+  var oldBtnHtml = btn ? btn.innerHTML : "";
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '⏳ ' + escapeHtml(t('admin_json_import_progress'));
+  }
+  setAdminJsonImportStatus('⏳ ' + t('admin_json_import_progress'), "info");
+
+  try {
+    var rawText = await file.text();
+    var parsedJson;
+    try {
+      parsedJson = JSON.parse(rawText);
+    } catch (parseErr) {
+      throw new Error(t('admin_json_import_invalid'));
+    }
+
+    var parsedPrices = parseAdminMarketJsonPayload(parsedJson);
+    if (!parsedPrices || parsedPrices.size === 0) {
+      throw new Error(t('admin_json_import_invalid'));
+    }
+
+    var validFishIds = new Set();
+    for (var i = 0; i < allFishes.length; i++) {
+      validFishIds.add(String(allFishes[i].id));
+    }
+
+    var entriesToImport = [];
+    var unknownCount = 0;
+    parsedPrices.forEach(function (priceNum, fidStr) {
+      if (validFishIds.has(fidStr)) {
+        entriesToImport.push({ fidStr: fidStr, price: priceNum });
+      } else {
+        unknownCount++;
+      }
+    });
+
+    if (entriesToImport.length === 0) {
+      throw new Error(t('admin_json_import_invalid'));
+    }
+
+    var monthId = dateVal.slice(0, 7);
+    var todayISO = getTodayISO();
+
+    var txResult = await window.FISHAO_FS_TX.runTx(db, async function (tx, fs) {
+      var dailyRef = fs.doc(db, "fishao_market_daily", monthId);
+      var readPromises = firebaseSummaryShardRefs.map(function (ref) {
+        return tx.get(ref);
+      });
+      readPromises.push(tx.get(dailyRef));
+
+      var snaps = await Promise.all(readPromises);
+      var dailySnap = snaps[MARKET_SUMMARY_SHARD_COUNT];
+
+      var shardMaps = [];
+      for (var si = 0; si < MARKET_SUMMARY_SHARD_COUNT; si++) {
+        var shData = snaps[si].exists() ? snaps[si].data() : {};
+        shardMaps.push(clonePriceSummary(shData && shData.prices ? shData.prices : {}));
+      }
+
+      var dailyData = dailySnap.exists() ? dailySnap.data() : {};
+      var days = (dailyData && dailyData.days && typeof dailyData.days === "object")
+        ? Object.assign({}, dailyData.days)
+        : {};
+      var dayBucket = (days[dateVal] && typeof days[dateVal] === "object")
+        ? Object.assign({}, days[dateVal])
+        : {};
+
+      var added = 0;
+      var duplicates = 0;
+      var dirtyShards = [false, false, false, false];
+
+      for (var ei = 0; ei < entriesToImport.length; ei++) {
+        var item = entriesToImport[ei];
+        var dayList = toDayEntryList(dayBucket[item.fidStr]);
+        if (dayList.indexOf(item.price) !== -1) {
+          duplicates++;
+          continue;
+        }
+        var sIdx = getMarketSummaryShardIndex(item.fidStr);
+        dayList.push(item.price);
+        dayBucket[item.fidStr] = encodeDayEntryList(dayList);
+        applyPriceToSummaryMap(shardMaps[sIdx], item.fidStr, dateVal, item.price, todayISO);
+        dirtyShards[sIdx] = true;
+        added++;
+      }
+
+      if (added === 0) {
+        return {
+          shardMaps: shardMaps,
+          days: days,
+          added: 0,
+          duplicates: duplicates,
+          lastUpdated: false
+        };
+      }
+
+      var nowIso = new Date().toISOString();
+      days[dateVal] = dayBucket;
+      for (var wi = 0; wi < MARKET_SUMMARY_SHARD_COUNT; wi++) {
+        if (dirtyShards[wi] || !snaps[wi].exists()) {
+          tx.set(firebaseSummaryShardRefs[wi], {
+            prices: shardMaps[wi],
+            lastUpdated: nowIso
+          });
+        }
+      }
+      tx.set(dailyRef, { days: days, lastUpdated: nowIso });
+
+      return {
+        shardMaps: shardMaps,
+        days: days,
+        added: added,
+        duplicates: duplicates,
+        lastUpdated: nowIso
+      };
+    });
+
+    if (txResult && txResult.days) {
+      dailyMonthsCache.set(monthId, txResult.days);
+    }
+    if (txResult && Array.isArray(txResult.shardMaps)) {
+      for (var mi = 0; mi < txResult.shardMaps.length; mi++) {
+        mergeSummaryShard(mi, txResult.shardMaps[mi], mi === txResult.shardMaps.length - 1 ? txResult.lastUpdated : false);
+      }
+    }
+
+    var syncStatusWarn = false;
+    if (txResult && txResult.added > 0 && txResult.lastUpdated) {
+      try {
+        var fsMod = await getFirestoreModule();
+        var syncStatusRef = fsMod.doc(db, "fishao_market", "sync_status");
+        var prevStatusSnap = await fsMod.getDoc(syncStatusRef);
+        var prevDate = (prevStatusSnap.exists() && prevStatusSnap.data() && typeof prevStatusSnap.data().lastSuccessDate === "string")
+          ? prevStatusSnap.data().lastSuccessDate
+          : "";
+        await fsMod.setDoc(syncStatusRef, {
+          lastSuccessDate: (prevDate && prevDate > dateVal) ? prevDate : dateVal,
+          lastSuccessAt: txResult.lastUpdated,
+          summaryMode: 'sharded_compact_v2',
+          shardCount: MARKET_SUMMARY_SHARD_COUNT,
+          pricesFetched: entriesToImport.length,
+          addedCount: txResult.added,
+          duplicateCount: txResult.duplicates
+        });
+      } catch (syncErr) {
+        syncStatusWarn = true;
+        console.warn("Imported prices, but could not update fishao_market/sync_status (deploy firestore.rules):", syncErr);
+      }
+    }
+
+    applyFilters();
+    if (typeof updateMarketTabStatus === "function") updateMarketTabStatus();
+    if (selectedModalFishId && typeof renderModalHistory === "function") {
+      renderModalHistory(selectedModalFishId);
+    }
+
+    var dupPart = (txResult && txResult.duplicates > 0)
+      ? t('bulk_result_duplicates', { duplicates: txResult.duplicates })
+      : "";
+    var skipPart = unknownCount > 0
+      ? t('bulk_result_skipped', { skipped: unknownCount })
+      : "";
+    var successText = t('admin_json_import_success', {
+      date: dateVal,
+      added: (txResult && txResult.added) || 0,
+      duplicatesPart: dupPart,
+      skippedPart: skipPart
+    });
+    if (syncStatusWarn) {
+      successText += " " + t('admin_json_import_sync_warn');
+    }
+    setAdminJsonImportStatus(successText, syncStatusWarn ? "warn" : "success");
+    showToast(successText, syncStatusWarn ? "info" : "success");
+  } catch (err) {
+    console.error("Admin JSON market import failed:", err);
+    var errText = t('admin_json_import_error', { msg: err && err.message ? err.message : String(err) });
+    setAdminJsonImportStatus(errText, "error");
+    showToast(errText, "error");
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = oldBtnHtml;
+    }
+    if (inputEl) inputEl.value = "";
+  }
+}
+
+/**
  * Updates visibility of the floating Bulk Import button in the Fish Market view
  * when the user scrolls past the top Market action bar.
  */

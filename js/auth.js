@@ -1296,6 +1296,15 @@ function openProfileModal(scrollToAdmin) {
   if (adminSection) {
     adminSection.style.display = isProfileAdmin ? "block" : "none";
   }
+  if (isProfileAdmin) {
+    var adminJsonDateEl = document.getElementById("adminJsonImportDate");
+    if (adminJsonDateEl && !adminJsonDateEl.value && typeof getTodayISO === "function") {
+      adminJsonDateEl.value = getTodayISO();
+    }
+    if (typeof setAdminJsonImportStatus === "function") {
+      setAdminJsonImportStatus("", "");
+    }
+  }
   if (typeof syncManualImportVisibility === "function") {
     syncManualImportVisibility();
   }

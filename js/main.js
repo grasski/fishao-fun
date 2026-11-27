@@ -1145,6 +1145,8 @@ window.fishaoApp = {
   deleteAccount: deleteAccount,
   exportFirestoreBackup: exportFirestoreBackup,
   toggleManualImportFlag: toggleManualImportFlag,
+  triggerAdminJsonImport: triggerAdminJsonImport,
+  onAdminJsonFileSelected: onAdminJsonFileSelected,
   resolveConfirmModal: resolveConfirmModal,
   showToast: showToast,
   dismissHeavyLoadBanner: dismissHeavyLoadBanner,

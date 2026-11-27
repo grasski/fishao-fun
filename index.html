@@ -1632,6 +1632,27 @@
           <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(56, 189, 248, 0.2);">
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
               <div style="flex: 1; min-width: 200px;">
+                <div style="font-size: 12.5px; font-weight: 700; color: #e2e8f0; display: flex; align-items: center; gap: 6px;">
+                  <span>📤</span> <span data-i18n="admin_json_import_title">Import denních cen ze souboru JSON</span>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" data-i18n="admin_json_import_desc">
+                  Nahraje ceny z JSON souboru ({ "id": cena } nebo __data.json) přímo do Firestore. Datum se automaticky rozpozná i z názvu souboru.
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <input type="date" id="adminJsonImportDate" class="dash-input" style="width: 145px; height: 32px; font-size: 12px; padding: 0 8px;" aria-label="Datum importu">
+                <input type="file" id="adminJsonImportFile" accept=".json,application/json" style="display: none;" onchange="window.fishaoApp.onAdminJsonFileSelected(this)">
+                <button type="button" id="btnAdminImportMarketJson" class="pill-btn primary" onclick="window.fishaoApp.triggerAdminJsonImport()" style="height: 32px; padding: 0 14px; font-size: 12px; font-weight: 700;">
+                  📤 <span data-i18n="admin_json_import_btn">Nahrát JSON</span>
+                </button>
+              </div>
+            </div>
+            <div id="adminJsonImportStatus" style="display: none; margin-top: 8px; padding: 8px 10px; border-radius: 8px; font-size: 11.5px; line-height: 1.4;"></div>
+          </div>
+
+          <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(56, 189, 248, 0.2);">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+              <div style="flex: 1; min-width: 200px;">
                 <div style="font-size: 12.5px; font-weight: 700; color: #e2e8f0; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                   <span>🚩</span> <span data-i18n="admin_reports_title">Moderace chatu &amp; Nahlášení</span>
                   <span id="adminSectionReportCountBadge" class="admin-reports-count-badge" style="display: none;"></span>
