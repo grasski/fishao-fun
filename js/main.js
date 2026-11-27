@@ -239,6 +239,78 @@ function handleRoute() {
   }
 }
 
+function syncMobileNavTrigger() {
+  var navBar = document.getElementById("mainNavBar");
+  var tabsWrap = document.getElementById("mainNavTabs");
+  if (!navBar || !tabsWrap) return;
+
+  var activeTab = tabsWrap.querySelector(".nav-tab.active");
+  if (!activeTab) return;
+
+  var themes = ["blue", "yellow", "purple", "teal", "gold", "green", "cyan", "orange"];
+  var theme = "blue";
+  for (var i = 0; i < themes.length; i++) {
+    if (activeTab.classList.contains(themes[i])) {
+      theme = themes[i];
+      break;
+    }
+  }
+  navBar.setAttribute("data-active-theme", theme);
+
+  tabsWrap.querySelectorAll(".nav-tab").forEach(function (btn) {
+    if (btn === activeTab) btn.setAttribute("aria-current", "page");
+    else btn.removeAttribute("aria-current");
+  });
+
+  var iconEl = document.getElementById("mobileNavCurrentIcon");
+  var titleEl = document.getElementById("mobileNavCurrentTitle");
+  var pillEl = document.getElementById("mobileNavCurrentPill");
+  var srcIcon = activeTab.querySelector(".tab-icon");
+  var srcTitle = activeTab.querySelector(".tab-title");
+  var srcPill = activeTab.querySelector(".tab-pill");
+
+  if (iconEl && srcIcon) iconEl.textContent = srcIcon.textContent.trim();
+  if (titleEl && srcTitle) titleEl.textContent = srcTitle.textContent.trim();
+  if (pillEl) {
+    var pillText = srcPill ? srcPill.textContent.trim() : "";
+    if (pillText) {
+      pillEl.textContent = pillText;
+      pillEl.classList.remove("is-empty");
+      pillEl.classList.toggle("pill-closed", !!(srcPill && srcPill.classList.contains("pill-closed")));
+    } else {
+      pillEl.textContent = "";
+      pillEl.classList.add("is-empty");
+      pillEl.classList.remove("pill-closed");
+    }
+  }
+
+  var isOpen = navBar.classList.contains("mobile-open");
+  var labelEl = document.getElementById("mobileNavHamburgerLabel");
+  if (labelEl) {
+    var lblKey = isOpen ? "nav_menu_close" : "nav_menu_btn";
+    var lblText = t(lblKey);
+    labelEl.setAttribute("data-i18n", lblKey);
+    if (lblText && lblText !== lblKey) labelEl.textContent = lblText;
+  }
+}
+
+function toggleMobileNav(forceOpen) {
+  var navBar = document.getElementById("mainNavBar");
+  var trigger = document.getElementById("mobileNavTrigger");
+  if (!navBar) return;
+  var nextOpen = (typeof forceOpen === "boolean") ? forceOpen : !navBar.classList.contains("mobile-open");
+  navBar.classList.toggle("mobile-open", nextOpen);
+  if (trigger) trigger.setAttribute("aria-expanded", nextOpen ? "true" : "false");
+  syncMobileNavTrigger();
+}
+
+function closeMobileNav() {
+  var navBar = document.getElementById("mainNavBar");
+  if (navBar && navBar.classList.contains("mobile-open")) {
+    toggleMobileNav(false);
+  }
+}
+
 function switchView(view, skipSync) {
   var prevView = currentView;
   var isInClub = !!(currentUser && currentClubId);
@@ -275,6 +347,8 @@ function switchView(view, skipSync) {
   if (tabClubManageEl) tabClubManageEl.classList.toggle("active", isClubView);
   if (tabPlayersEl) tabPlayersEl.classList.toggle("active", view === "players");
   if (tabGuideEl) tabGuideEl.classList.toggle("active", isGuideView);
+  syncMobileNavTrigger();
+  closeMobileNav();
 
   var subTabMap = {
     "all": "subTabAll",
@@ -717,6 +791,7 @@ function updateStaticTranslations() {
   });
 
   updateMarketTabStatus();
+  syncMobileNavTrigger();
 }
 
 function setLanguage(lang, opts) {
@@ -1063,6 +1138,13 @@ function onModalOverlayClick(e, id) {
 
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') {
+    var navBar = document.getElementById("mainNavBar");
+    if (navBar && navBar.classList.contains("mobile-open")) {
+      closeMobileNav();
+      var trigger = document.getElementById("mobileNavTrigger");
+      if (trigger && typeof trigger.focus === 'function') trigger.focus();
+      return;
+    }
     if (typeof isProfileCountryDropdownOpen === 'function' && isProfileCountryDropdownOpen()) {
       closeProfileCountryDropdown();
       return;
@@ -1091,11 +1173,17 @@ document.addEventListener('click', function (e) {
       closeProfileCountryDropdown();
     }
   }
+  var navBar = document.getElementById("mainNavBar");
+  if (navBar && navBar.classList.contains("mobile-open") && !navBar.contains(e.target)) {
+    closeMobileNav();
+  }
 });
 
 // Export to global window object
 window.fishaoApp = {
   switchView: switchView,
+  toggleMobileNav: toggleMobileNav,
+  closeMobileNav: closeMobileNav,
   setTimezone: setTimezone,
   applyFilters: applyFilters,
   resetFilters: resetFilters,

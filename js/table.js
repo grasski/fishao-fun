@@ -570,6 +570,7 @@ function updateMarketTabStatus() {
       pill.removeAttribute("title");
     }
   }
+  if (typeof syncMobileNavTrigger === 'function') syncMobileNavTrigger();
 
   var bannerSunday = document.getElementById("bannerMarketSunday");
   if (bannerSunday) {

@@ -955,6 +955,18 @@ function updateAuthUI() {
     if (collBannerGuest.style.display !== wantGuestDisp) collBannerGuest.style.display = wantGuestDisp;
   }
 
+  var btnOnlyCaught = document.getElementById("btnOnlyCaught");
+  if (btnOnlyCaught) {
+    var wantCaughtBtnDisp = currentUser ? "" : "none";
+    if (btnOnlyCaught.style.display !== wantCaughtBtnDisp) {
+      btnOnlyCaught.style.display = wantCaughtBtnDisp;
+    }
+    if (!currentUser) {
+      filterOnlyCaught = false;
+      btnOnlyCaught.classList.remove("active");
+    }
+  }
+
   var btnOnlyBackyard = document.getElementById("btnOnlyBackyard");
   if (btnOnlyBackyard) {
     var wantBackyardBtnDisp = currentUser ? "" : "none";
@@ -989,6 +1001,7 @@ function updateAuthUI() {
     if (adminBadge) adminBadge.style.display = "none";
     if (collBannerAuth) collBannerAuth.style.display = "none";
     if (collBannerGuest) collBannerGuest.style.display = "none";
+    if (btnOnlyCaught) btnOnlyCaught.style.display = "none";
     if (btnOnlyBackyard) btnOnlyBackyard.style.display = "none";
     return;
   }

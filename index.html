@@ -133,8 +133,8 @@
   <!-- Modern Modular Stylesheets -->
   <link rel="stylesheet" href="css/base.css?v=3.3">
   <link rel="stylesheet" href="css/header.css?v=3.3">
-  <link rel="stylesheet" href="css/nav.css?v=3.5">
-  <link rel="stylesheet" href="css/filters.css?v=3.10">
+  <link rel="stylesheet" href="css/nav.css?v=3.6">
+  <link rel="stylesheet" href="css/filters.css?v=3.11">
   <link rel="stylesheet" href="css/table.css?v=4.2">
   <link rel="stylesheet" href="css/clubs.css?v=3.3">
   <link rel="stylesheet" href="css/players.css?v=3.3">
@@ -142,7 +142,7 @@
   <link rel="stylesheet" href="css/chat.css?v=1.4">
   <link rel="stylesheet" href="css/locations-calendar.css?v=1.3">
   <link rel="stylesheet" href="css/guide.css?v=1.5">
-  <link rel="stylesheet" href="css/responsive.css?v=3.14">
+  <link rel="stylesheet" href="css/responsive.css?v=3.15">
 </head>
 
 <body>
@@ -265,32 +265,55 @@
       </div>
     </header>
 
-    <!-- Main Navigation Bar (4 Primary Pillars) -->
-    <nav class="main-nav-bar" id="mainNavBar">
-      <button type="button" class="nav-tab blue active" id="tabAll" onclick="window.fishaoApp.switchView('all')">
-        <span class="tab-icon">🌐</span>
-        <span class="tab-title" data-i18n="nav_all">Fishdex</span>
-        <span class="tab-pill" data-i18n="nav_all_pill">615 ryb</span>
+    <!-- Main Navigation Bar (Primary Pillars + Mobile Hamburger Menu) -->
+    <nav class="main-nav-bar" id="mainNavBar" data-active-theme="blue" aria-label="Hlavní navigace" data-i18n-aria-label="nav_main_aria">
+      <button type="button" class="mobile-nav-trigger" id="mobileNavTrigger"
+        onclick="window.fishaoApp.toggleMobileNav()" aria-expanded="false" aria-controls="mainNavTabs">
+        <span class="mobile-nav-current">
+          <span class="mobile-nav-current-icon" id="mobileNavCurrentIcon" aria-hidden="true">🌐</span>
+          <span class="mobile-nav-current-text">
+            <span class="mobile-nav-current-label" data-i18n="nav_current_section">Hlavní menu</span>
+            <span class="mobile-nav-current-title-row">
+              <span class="mobile-nav-current-title" id="mobileNavCurrentTitle">Fishdex</span>
+              <span class="tab-pill mobile-nav-current-pill" id="mobileNavCurrentPill">615 ryb</span>
+            </span>
+          </span>
+        </span>
+        <span class="mobile-nav-hamburger" aria-hidden="true">
+          <span class="mobile-nav-hamburger-label" id="mobileNavHamburgerLabel" data-i18n="nav_menu_btn">Menu</span>
+          <span class="hamburger-lines">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </span>
       </button>
-      <button type="button" class="nav-tab yellow" id="tabMarket" onclick="window.fishaoApp.switchView('market')">
-        <span class="tab-icon">💵</span>
-        <span class="tab-title" data-i18n="nav_market">Fish Market</span>
-        <span class="tab-pill" id="tabMarketPill" data-i18n="nav_market_pill">Výkup</span>
-      </button>
-      <button type="button" class="nav-tab purple" id="tabClubManage" onclick="window.fishaoApp.switchView('club_manage')">
-        <span class="tab-icon">🏰</span>
-        <span class="tab-title" data-i18n="nav_manage">Můj Klub &amp; Milníky</span>
-        <span class="tab-pill" id="navClubPtsBadge">Zamčeno 🔒</span>
-      </button>
-      <button type="button" class="nav-tab teal" id="tabPlayers" onclick="window.fishaoApp.switchView('players')">
-        <span class="tab-icon">👥</span>
-        <span class="tab-title" data-i18n="nav_players">Hráči &amp; Dvorek</span>
-        <span class="tab-pill" id="tabPlayersPill" data-i18n="nav_players_pill">Komunita</span>
-      </button>
-      <button type="button" class="nav-tab gold" id="tabGuide" onclick="window.fishaoApp.switchView('guide_tree')">
-        <span class="tab-icon">📖</span>
-        <span class="tab-title" data-i18n="nav_guide">Průvodce</span>
-      </button>
+      <div class="main-nav-tabs" id="mainNavTabs">
+        <button type="button" class="nav-tab blue active" id="tabAll" aria-current="page" onclick="window.fishaoApp.switchView('all')">
+          <span class="tab-icon">🌐</span>
+          <span class="tab-title" data-i18n="nav_all">Fishdex</span>
+          <span class="tab-pill" data-i18n="nav_all_pill">615 ryb</span>
+        </button>
+        <button type="button" class="nav-tab yellow" id="tabMarket" onclick="window.fishaoApp.switchView('market')">
+          <span class="tab-icon">💵</span>
+          <span class="tab-title" data-i18n="nav_market">Fish Market</span>
+          <span class="tab-pill" id="tabMarketPill" data-i18n="nav_market_pill">Výkup</span>
+        </button>
+        <button type="button" class="nav-tab purple" id="tabClubManage" onclick="window.fishaoApp.switchView('club_manage')">
+          <span class="tab-icon">🏰</span>
+          <span class="tab-title" data-i18n="nav_manage">Můj Klub &amp; Milníky</span>
+          <span class="tab-pill" id="navClubPtsBadge">Zamčeno 🔒</span>
+        </button>
+        <button type="button" class="nav-tab teal" id="tabPlayers" onclick="window.fishaoApp.switchView('players')">
+          <span class="tab-icon">👥</span>
+          <span class="tab-title" data-i18n="nav_players">Hráči &amp; Dvorek</span>
+          <span class="tab-pill" id="tabPlayersPill" data-i18n="nav_players_pill">Komunita</span>
+        </button>
+        <button type="button" class="nav-tab gold" id="tabGuide" onclick="window.fishaoApp.switchView('guide_tree')">
+          <span class="tab-icon">📖</span>
+          <span class="tab-title" data-i18n="nav_guide">Průvodce</span>
+        </button>
+      </div>
     </nav>
 
     <!-- Sub-Navigation Bar: Encyclopedia Views -->
@@ -1148,6 +1171,7 @@
               </span>
             </label>
             <button type="button" class="pill-btn" id="btnOnlyCaught" onclick="window.fishaoApp.toggleOnlyCaught()"
+              style="display: none;"
               data-i18n="filter_btn_only_caught" data-i18n-title="filter_btn_only_caught_title"
               title="Zobrazit pouze ryby, které už máš chycené">✅ Pouze chycené</button>
             <button type="button" class="pill-btn" id="btnOnlyBackyard" onclick="window.fishaoApp.toggleOnlyBackyard()"

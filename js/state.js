@@ -867,6 +867,7 @@ function updateNavClubBadge() {
   } else {
     navClubPtsBadge.innerText = t('badge_no_club');
   }
+  if (typeof syncMobileNavTrigger === 'function') syncMobileNavTrigger();
 }
 
 function getLocalizedTzCity() {

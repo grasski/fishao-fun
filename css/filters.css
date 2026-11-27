@@ -557,6 +557,11 @@ select.filter-control option {
   font-size: 11px;
 }
 
+/* Fishdex already has "Only caught" in the Collection bar (#collFilterCaught) */
+#filterCard:not(.market-mode) #btnOnlyCaught {
+  display: none !important;
+}
+
 /* Market tab: keep only search, sort, reset, top prices, and only caught */
 #filterCard.market-mode #locationFilterGroup,
 #filterCard.market-mode #areaFilterGroup,

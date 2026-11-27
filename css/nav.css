@@ -3,29 +3,42 @@
    =================================================================== */
 
 .main-nav-bar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  background: linear-gradient(180deg, #131d33 0%, #0d1424 100%);
+  padding: 5px;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.mobile-nav-trigger {
+  display: none;
+}
+
+.main-nav-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: 14px;
-  background: #0d1424;
-  padding: 2px;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  overflow: hidden;
+  gap: 6px;
+  width: 100%;
 }
 
 .nav-tab {
   /* Never shrink a tab below its content – the bar wraps to a new row instead */
+  position: relative;
   flex: 1 0 auto;
   min-width: 130px;
   max-width: 100%;
   overflow: hidden;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.02);
   border: 1px solid transparent;
-  color: var(--text-muted);
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 11px 15px;
+  border-radius: 11px;
+  font-size: 13.5px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
@@ -37,11 +50,28 @@
 }
 .nav-tab:hover {
   color: #fff;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.nav-tab:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.65);
+}
+
+.nav-tab.active::after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: currentColor;
+  opacity: 0.95;
 }
 
 .tab-icon {
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1;
   flex-shrink: 0;
 }
@@ -54,80 +84,80 @@
 
 .tab-pill {
   flex-shrink: 0;
-  padding: 2px 7px;
+  padding: 2px 8px;
   border-radius: 999px;
   font-size: 11px;
   font-weight: 800;
-  background: rgba(255, 255, 255, 0.07);
-  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--text-secondary);
   transition: all 0.2s;
 }
 
 /* Active tab color states */
 .nav-tab.blue.active {
-  background: linear-gradient(135deg, rgba(2, 132, 199, 0.25), rgba(2, 132, 199, 0.08));
-  color: #38bdf8;
-  border-color: #0284c7;
-  box-shadow: 0 4px 15px rgba(2, 132, 199, 0.2);
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.36), rgba(2, 132, 199, 0.14));
+  color: #7dd3fc;
+  border-color: rgba(56, 189, 248, 0.85);
+  box-shadow: 0 4px 18px rgba(2, 132, 199, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 .nav-tab.blue.active .tab-pill {
-  background: rgba(2, 132, 199, 0.35);
-  color: #e0f2fe;
+  background: rgba(2, 132, 199, 0.45);
+  color: #f0f9ff;
 }
 
 .nav-tab.gold.active {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(245, 158, 11, 0.08));
-  color: #fbbf24;
-  border-color: #f59e0b;
-  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.36), rgba(245, 158, 11, 0.14));
+  color: #fcd34d;
+  border-color: rgba(251, 191, 36, 0.85);
+  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 .nav-tab.gold.active .tab-pill {
-  background: rgba(245, 158, 11, 0.35);
-  color: #fef3c7;
+  background: rgba(245, 158, 11, 0.45);
+  color: #fffbeb;
 }
 
 .nav-tab.purple.active {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(139, 92, 246, 0.08));
-  color: #c084fc;
-  border-color: #8b5cf6;
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.36), rgba(139, 92, 246, 0.14));
+  color: #d8b4fe;
+  border-color: rgba(167, 139, 250, 0.85);
+  box-shadow: 0 4px 18px rgba(139, 92, 246, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 .nav-tab.purple.active .tab-pill {
-  background: rgba(139, 92, 246, 0.35);
-  color: #ede9fe;
+  background: rgba(139, 92, 246, 0.45);
+  color: #f5f3ff;
 }
 
 .nav-tab.green.active {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.08));
-  color: #34d399;
-  border-color: #10b981;
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.36), rgba(16, 185, 129, 0.14));
+  color: #6ee7b7;
+  border-color: rgba(52, 211, 153, 0.85);
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 .nav-tab.green.active .tab-pill {
-  background: rgba(16, 185, 129, 0.35);
-  color: #d1fae5;
+  background: rgba(16, 185, 129, 0.45);
+  color: #ecfdf5;
 }
 
 .nav-tab.yellow.active {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(34, 197, 94, 0.08));
-  color: #4ade80;
-  border-color: #22c55e;
-  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.2);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.36), rgba(34, 197, 94, 0.14));
+  color: #86efac;
+  border-color: rgba(74, 222, 128, 0.85);
+  box-shadow: 0 4px 18px rgba(34, 197, 94, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 .nav-tab.yellow.active .tab-pill {
-  background: rgba(34, 197, 94, 0.35);
-  color: #dcfce7;
+  background: rgba(34, 197, 94, 0.45);
+  color: #f0fdf4;
 }
 
 .nav-tab.teal.active {
-  background: linear-gradient(135deg, rgba(20, 184, 166, 0.25), rgba(20, 184, 166, 0.08));
-  color: #2dd4bf;
-  border-color: #14b8a6;
-  box-shadow: 0 4px 15px rgba(20, 184, 166, 0.2);
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.36), rgba(20, 184, 166, 0.14));
+  color: #5eead4;
+  border-color: rgba(45, 212, 191, 0.85);
+  box-shadow: 0 4px 18px rgba(20, 184, 166, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 .nav-tab.teal.active .tab-pill {
-  background: rgba(20, 184, 166, 0.35);
-  color: #ccfbf1;
+  background: rgba(20, 184, 166, 0.45);
+  color: #f0fdfa;
 }
 
 /* ===================================================================
