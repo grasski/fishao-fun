@@ -151,7 +151,7 @@ function extractMarketPrice(payload) {
 }
 
 async function fetchFishPrice(fishId) {
-  const url = `${BASE_URL}/${fishId}/__data.json`;
+  const url = `${BASE_URL}/${fishId}/__data.json?x-sveltekit-invalidated=001`;
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     const controller = new AbortController();
