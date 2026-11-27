@@ -297,9 +297,9 @@ function openLocationInFishdex(locKey, areaKey, timeMode, collMode) {
     switchView('all');
   }
 
-  var locSelect = document.getElementById('locationFilter');
-  if (locSelect) {
-    locSelect.value = locKey || '';
+  locationFilterValues = locKey ? [locKey] : [];
+  if (typeof MULTI_SELECT !== 'undefined' && MULTI_SELECT.location) {
+    MULTI_SELECT.location.setValues(locationFilterValues);
   }
 
   if (typeof updateAreaFilterOptions === 'function') {

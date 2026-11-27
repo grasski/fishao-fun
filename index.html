@@ -562,7 +562,7 @@
 
         <div class="filter-group sm">
           <span class="filter-label" data-i18n="filter_rating_label">Rating</span>
-          <div id="playerRatingFilterMount" class="rating-filter-mount"></div>
+          <div id="playerRatingFilterMount" class="filter-mount"></div>
         </div>
 
         <div class="filter-group">
@@ -1013,11 +1013,8 @@
           </div>
 
           <div class="filter-group" id="locationFilterGroup">
-            <label class="filter-label" for="locationFilter" data-i18n="filter_loc_label">Hlavní lokace</label>
-            <select id="locationFilter" class="filter-control"
-              onchange="window.fishaoApp.onLocationFilterChange()">
-              <option value="">Všechny lokace</option>
-            </select>
+            <span class="filter-label" data-i18n="filter_loc_label">Hlavní lokace</span>
+            <div id="locationFilterMount" class="filter-mount"></div>
           </div>
 
           <div class="filter-group" id="areaFilterGroup">
@@ -1046,7 +1043,7 @@
 
           <div class="filter-group sm">
             <span class="filter-label" data-i18n="filter_rating_label">Rating</span>
-            <div id="ratingFilterMount" class="rating-filter-mount"></div>
+            <div id="ratingFilterMount" class="filter-mount"></div>
           </div>
 
           <div class="filter-group">

@@ -926,7 +926,6 @@ function renderTableBody(data) {
   }
 
   var searchInput = document.getElementById("search");
-  var locEl = document.getElementById("locationFilter");
   var areaEl = document.getElementById("areaFilter");
   var hideLockedEl = document.getElementById("hideLockedCheckbox");
   var nowCtx = (typeof createTimeNowContext === "function") ? createTimeNowContext(now) : null;
@@ -947,7 +946,7 @@ function renderTableBody(data) {
       highPct: (typeof getTodayHighPricePct === "function") ? getTodayHighPricePct() : 90
     },
     baitFilterCtx: {
-      locFilter: (currentView === 'club') ? 'location_112' : ((locEl && locEl.value) || ''),
+      locFilter: (currentView === 'club') ? 'location_112' : ((typeof locationFilterValues !== 'undefined' && locationFilterValues.length === 1) ? locationFilterValues[0] : ''),
       areaFilter: (areaEl && areaEl.value) || '',
       timeMode: filterNowActive ? 'now' : 'overlap',
       hideLocked: (currentView === 'club' && hideLockedEl && hideLockedEl.checked),

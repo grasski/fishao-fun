@@ -176,7 +176,8 @@ function applyFilters() {
   var q = searchEl ? searchEl.value.trim() : "";
   var bait = document.getElementById("baitFilter").value;
   var ratingValues = ratingFilterValues;
-  var location = document.getElementById("locationFilter").value;
+  var selectedLocations = locationFilterValues;
+  var location = selectedLocations.length === 1 ? selectedLocations[0] : "";
   var areaEl = document.getElementById("areaFilter");
   var area = areaEl ? areaEl.value : "";
   var timeVal = document.getElementById("timeFilter").value;
@@ -227,9 +228,13 @@ function applyFilters() {
 
     if (ratingValues.length && !matchesFishRatingFilter(f, ratingValues)) return false;
 
-    if (location && currentView !== "club" &&
-        !((f.locations && f.locations.includes(location)) ||
-          (f.places && f.places.includes(location)))) return false;
+    if (selectedLocations.length && currentView !== "club") {
+      var matchesAnyLoc = selectedLocations.some(function (loc) {
+        return (f.locations && f.locations.includes(loc)) ||
+               (f.places && f.places.includes(loc));
+      });
+      if (!matchesAnyLoc) return false;
+    }
     if (area === AREA_FILTER_ANY) {
       // "Anywhere": keep only fish with no specific area in the selected location.
       if (getFishPlacesForLocation(f, location).indexOf(null) === -1) return false;
@@ -387,9 +392,11 @@ function applyFilters() {
   if (collectionFilterMode === "missing_shiny") {
     filterNotes.push(t('filter_note_missing_shiny'));
   }
-  if (location && currentView !== "club") {
-    var locName = window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(location) : location;
-    filterNotes.push(t('filter_note_location', { name: locName }));
+  if (selectedLocations.length && currentView !== "club") {
+    var locNames = selectedLocations.map(function (loc) {
+      return window.FISHAO_I18N ? window.FISHAO_I18N.getLocationName(loc) : loc;
+    }).join(', ');
+    filterNotes.push(t('filter_note_location', { name: locNames }));
   }
   if (area) {
     var areaName = area === AREA_FILTER_ANY
@@ -463,8 +470,8 @@ function resetFilters() {
   syncBaitSelectIcon('baitFilter', 'baitFilterIcon');
   ratingFilterValues = [];
   if (typeof MULTI_SELECT !== 'undefined' && MULTI_SELECT.rating) MULTI_SELECT.rating.reset();
-  var loc = document.getElementById("locationFilter");
-  if (loc) loc.value = "";
+  locationFilterValues = [];
+  if (typeof MULTI_SELECT !== 'undefined' && MULTI_SELECT.location) MULTI_SELECT.location.reset();
   var areaSelect = document.getElementById("areaFilter");
   if (areaSelect) areaSelect.value = "";
   updateAreaFilterOptions();
@@ -541,9 +548,8 @@ function initLocationOptions() {
       f.locations.forEach(function (l) { if (l) locSet.add(l); });
     }
   });
-  var select = document.getElementById("locationFilter");
-  if (!select) return;
-  var currentVal = select.value;
+  var mount = document.getElementById("locationFilterMount");
+  if (!mount) return;
   var curLang = getLang();
   var sortedLocs = Array.from(locSet).map(function (l) {
     return {
@@ -553,11 +559,26 @@ function initLocationOptions() {
   }).sort(function (a, b) {
     return a.label.localeCompare(b.label, curLang);
   });
-  select.innerHTML = '<option value="">' + t('opt_loc_all', { count: sortedLocs.length }) + '</option>' +
-    sortedLocs.map(function (l) {
-      return '<option value="' + l.value + '">' + l.label + '</option>';
-    }).join('');
-  select.value = currentVal;
+  if (typeof MULTI_SELECT !== 'undefined' && MULTI_SELECT.location) {
+    MULTI_SELECT.location.setOptions(sortedLocs);
+    MULTI_SELECT.location.setValues(locationFilterValues);
+    return;
+  }
+  if (typeof createMultiSelect !== 'function') return;
+  MULTI_SELECT.location = createMultiSelect({
+    id: 'location',
+    mountEl: mount,
+    options: sortedLocs,
+    selected: locationFilterValues,
+    allLabelKey: 'opt_loc_all',
+    ariaLabelKey: 'filter_loc_label',
+    summaryMode: 'count',
+    countLabelKey: 'filter_multi_count',
+    onChange: function (values) {
+      locationFilterValues = values;
+      onLocationFilterChange();
+    }
+  });
 }
 
 function onLocationFilterChange() {
@@ -577,8 +598,9 @@ function updateAreaFilterOptions() {
   // Club fishes all share the parent location "Klubový revír", so their areas
   // are derived from the club dataset instead of the hidden location filter.
   var isClubView = currentView === "club";
-  var locationEl = document.getElementById("locationFilter");
-  var location = locationEl ? locationEl.value : "";
+  var location = (typeof locationFilterValues !== 'undefined' && locationFilterValues.length === 1)
+    ? locationFilterValues[0]
+    : "";
   var areas = isClubView
     ? getClubAreas()
     : (location ? getFishAreasForLocation(location) : []);

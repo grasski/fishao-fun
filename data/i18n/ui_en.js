@@ -274,6 +274,7 @@
       "opt_area_any": "Anywhere",
       "opt_bait_all": "All baits",
       "opt_loc_all": "All locations ({count})",
+      "filter_multi_count": "{count} selected",
       "opt_rating_all": "All ratings",
       "opt_sort_avg_asc": "Avg length (smallest)",
       "opt_sort_avg_desc": "Avg length (largest)",

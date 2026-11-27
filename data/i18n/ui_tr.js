@@ -274,6 +274,7 @@
       "opt_area_any": "Her yerde",
       "opt_bait_all": "Tüm yemler",
       "opt_loc_all": "Tüm bölgeler ({count})",
+      "filter_multi_count": "{count} seçili",
       "opt_rating_all": "Tüm dereceler",
       "opt_sort_avg_asc": "Ort. boy (en küçük)",
       "opt_sort_avg_desc": "Ort. boy (en büyük)",

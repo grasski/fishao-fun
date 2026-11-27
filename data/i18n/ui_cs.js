@@ -274,6 +274,7 @@
       "opt_area_any": "Kdekoli",
       "opt_bait_all": "Všechny návnady",
       "opt_loc_all": "Všechny lokace ({count})",
+      "filter_multi_count": "{count} vybráno",
       "opt_rating_all": "Všechny",
       "opt_sort_avg_asc": "Průměrná délka (od nejmenší)",
       "opt_sort_avg_desc": "Průměrná délka (od největší)",

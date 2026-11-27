@@ -274,6 +274,7 @@
       "opt_area_any": "Oriunde",
       "opt_bait_all": "Toate momelile",
       "opt_loc_all": "Toate locațiile ({count})",
+      "filter_multi_count": "{count} selectate",
       "opt_rating_all": "Toate ratingurile",
       "opt_sort_avg_asc": "Lungime medie (cea mai mică)",
       "opt_sort_avg_desc": "Lungime medie (cea mai mare)",

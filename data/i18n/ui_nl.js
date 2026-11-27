@@ -274,6 +274,7 @@
       "opt_area_any": "Overal",
       "opt_bait_all": "Alle soorten aas",
       "opt_loc_all": "Alle locaties ({count})",
+      "filter_multi_count": "{count} geselecteerd",
       "opt_rating_all": "Alle ratings",
       "opt_sort_avg_asc": "Gem. lengte (kleinste)",
       "opt_sort_avg_desc": "Gem. lengte (grootste)",

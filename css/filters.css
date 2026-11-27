@@ -201,9 +201,14 @@
   display: block;
 }
 
-/* Multi-select variant of the bait dropdown (rating filters) */
-.rating-filter-mount {
+/* Multi-select variant of the bait dropdown */
+.filter-mount {
   width: 100%;
+}
+
+.filter-mount .bait-custom-menu {
+  max-height: 280px;
+  overflow-y: auto;
 }
 
 .multi-select .multiselect-option {

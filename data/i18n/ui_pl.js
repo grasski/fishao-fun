@@ -274,6 +274,7 @@
       "opt_area_any": "Gdziekolwiek",
       "opt_bait_all": "Wszystkie przynęty",
       "opt_loc_all": "Wszystkie lokalizacje ({count})",
+      "filter_multi_count": "Wybrano: {count}",
       "opt_rating_all": "Wszystkie oceny",
       "opt_sort_avg_asc": "Średnia długość (najmniejsze)",
       "opt_sort_avg_desc": "Średnia długość (największe)",

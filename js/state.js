@@ -194,6 +194,7 @@ var filterOnlyBackyard = false;
 var sortBestChanceOverride = false;
 var collectionFilterMode = "all"; // 'all' | 'caught' | 'missing' | 'missing_shiny'
 var ratingFilterValues = []; // Selected star ratings (["1".."5"]); empty = all ratings
+var locationFilterValues = []; // Selected location keys; empty = all locations
 
 // Authentication & User Profile State
 var currentUser = null;
@@ -1190,6 +1191,30 @@ function createMultiSelect(cfg) {
   var menuSig = '';
   var allLabelKey = cfg.allLabelKey || 'opt_rating_all';
   var summaryMax = typeof cfg.summaryMax === 'number' ? cfg.summaryMax : 4;
+  var summaryMode = cfg.summaryMode || 'stars';
+  var countLabelKey = cfg.countLabelKey || 'filter_multi_count';
+
+  function sortValues(values) {
+    if (typeof cfg.sortValues === 'function') return cfg.sortValues(values);
+    if (summaryMode === 'count') {
+      var order = options.map(function (opt) { return String(opt.value); });
+      return values.slice().sort(function (a, b) {
+        return order.indexOf(String(a)) - order.indexOf(String(b));
+      });
+    }
+    return sortMultiSelectValuesDesc(values);
+  }
+
+  function getOptionLabel(val) {
+    if (!val) return t(allLabelKey);
+    if (summaryMode === 'count') {
+      for (var i = 0; i < options.length; i++) {
+        if (String(options[i].value) === String(val)) return options[i].label;
+      }
+      return String(val);
+    }
+    return getMultiSelectLabel(val, allLabelKey);
+  }
 
   function normalizeValues(values) {
     if (!values) return [];
@@ -1200,7 +1225,7 @@ function createMultiSelect(cfg) {
       var s = String(v);
       if (v !== '' && allowed.indexOf(s) !== -1 && out.indexOf(s) === -1) out.push(s);
     });
-    return sortMultiSelectValuesDesc(out);
+    return sortValues(out);
   }
 
   mount.innerHTML = '';
@@ -1264,7 +1289,7 @@ function createMultiSelect(cfg) {
       var idx = selected.indexOf(nextVal);
       if (idx === -1) selected.push(nextVal);
       else selected.splice(idx, 1);
-      selected = sortMultiSelectValuesDesc(selected);
+      selected = sortValues(selected);
     }
     refresh();
     if (shouldFocus) {
@@ -1275,9 +1300,9 @@ function createMultiSelect(cfg) {
   });
 
   function fullSummaryText() {
-    if (!selected.length) return t(allLabelKey);
-    return sortMultiSelectValuesDesc(selected).map(function (v) {
-      return getMultiSelectLabel(v, allLabelKey);
+    if (!selected.length) return t(allLabelKey, { count: options.length });
+    return sortValues(selected).map(function (v) {
+      return getOptionLabel(v);
     }).join(', ');
   }
 
@@ -1294,9 +1319,16 @@ function createMultiSelect(cfg) {
     var labelEl = trigger.querySelector('.bait-trigger-label');
     if (!labelEl) return;
 
-    var values = sortMultiSelectValuesDesc(selected);
+    var values = sortValues(selected);
     if (!values.length) {
-      labelEl.textContent = t(allLabelKey);
+      labelEl.textContent = t(allLabelKey, { count: options.length });
+      return;
+    }
+
+    if (summaryMode === 'count') {
+      labelEl.textContent = values.length === 1
+        ? getOptionLabel(values[0])
+        : t(countLabelKey, { count: values.length });
       return;
     }
 
@@ -1348,7 +1380,7 @@ function createMultiSelect(cfg) {
       (selected.length ? '' : ' active') + '" data-value="" aria-selected="' +
       (selected.length ? 'false' : 'true') + '">' +
         '<span class="ms-check" aria-hidden="true">✓</span>' +
-        '<span class="ms-option-label">' + escapeHtml(t(allLabelKey)) + '</span>' +
+        '<span class="ms-option-label">' + escapeHtml(t(allLabelKey, { count: options.length })) + '</span>' +
       '</button>';
     options.forEach(function (opt) {
       var val = String(opt.value);
@@ -1907,10 +1939,12 @@ function renderFishBaitsCell(fish, filterCtx) {
     timeMode = filterCtx.timeMode;
     hideLocked = filterCtx.hideLocked;
   } else {
-    var locEl = document.getElementById('locationFilter');
     var areaEl = document.getElementById('areaFilter');
     var hideLockedEl = document.getElementById('hideLockedCheckbox');
-    locFilter = (currentView === 'club') ? 'location_112' : ((locEl && locEl.value) || '');
+    var singleLoc = (typeof locationFilterValues !== 'undefined' && locationFilterValues.length === 1)
+      ? locationFilterValues[0]
+      : '';
+    locFilter = (currentView === 'club') ? 'location_112' : singleLoc;
     areaFilter = (areaEl && areaEl.value) || '';
     timeMode = filterNowActive ? 'now' : 'overlap';
     hideLocked = (currentView === 'club' && hideLockedEl && hideLockedEl.checked);
