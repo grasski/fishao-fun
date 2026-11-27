@@ -6,6 +6,7 @@
  */
 
 var _filterDebounceTimer = null;
+var _playerLevelDebounceTimer = null;
 
 function scheduleApplyFilters(delayMs) {
   if (_filterDebounceTimer) {
@@ -480,6 +481,14 @@ function resetFilters() {
   if (typeof MULTI_SELECT !== 'undefined' && MULTI_SELECT.rating) MULTI_SELECT.rating.reset();
   locationFilterValues = [];
   if (typeof MULTI_SELECT !== 'undefined' && MULTI_SELECT.location) MULTI_SELECT.location.reset();
+  if (_playerLevelDebounceTimer) {
+    clearTimeout(_playerLevelDebounceTimer);
+    _playerLevelDebounceTimer = null;
+  }
+  var levelEl = document.getElementById("playerLevelInput");
+  if (levelEl) levelEl.value = "";
+  var levelGroupEl = document.getElementById("playerLevelGroup");
+  if (levelGroupEl) levelGroupEl.classList.remove("is-active");
   var areaSelect = document.getElementById("areaFilter");
   if (areaSelect) areaSelect.value = "";
   updateAreaFilterOptions();
@@ -592,6 +601,41 @@ function initLocationOptions() {
 function onLocationFilterChange() {
   updateAreaFilterOptions();
   applyFilters();
+}
+
+function onPlayerLevelInput() {
+  var inputEl = document.getElementById("playerLevelInput");
+  var groupEl = document.getElementById("playerLevelGroup");
+  var raw = inputEl ? String(inputEl.value).trim() : "";
+  var parsed = raw === "" ? NaN : parseInt(raw, 10);
+  if (groupEl) {
+    groupEl.classList.toggle("is-active", isFinite(parsed) && parsed >= 1);
+  }
+  if (_playerLevelDebounceTimer) {
+    clearTimeout(_playerLevelDebounceTimer);
+    _playerLevelDebounceTimer = null;
+  }
+  if (raw === "" || !isFinite(parsed)) {
+    return;
+  }
+  _playerLevelDebounceTimer = setTimeout(function () {
+    _playerLevelDebounceTimer = null;
+    var curRaw = inputEl ? String(inputEl.value).trim() : "";
+    var curVal = curRaw === "" ? NaN : parseInt(curRaw, 10);
+    if (!isFinite(curVal)) return;
+    var clamped = Math.max(1, Math.min(999, curVal));
+    if (clamped !== curVal && inputEl) {
+      inputEl.value = String(clamped);
+    }
+    var locs = (typeof getLocationsForPlayerLevel === "function")
+      ? getLocationsForPlayerLevel(clamped, typeof userProfile !== "undefined" ? userProfile : null)
+      : [];
+    locationFilterValues = locs.slice();
+    if (typeof MULTI_SELECT !== "undefined" && MULTI_SELECT.location) {
+      MULTI_SELECT.location.setValues(locationFilterValues);
+    }
+    onLocationFilterChange();
+  }, 200);
 }
 
 function getPalmZoneLetter(place) {

@@ -1097,6 +1097,7 @@ window.fishaoApp = {
   applyFilters: applyFilters,
   resetFilters: resetFilters,
   onLocationFilterChange: onLocationFilterChange,
+  onPlayerLevelInput: onPlayerLevelInput,
   updateAreaFilterOptions: updateAreaFilterOptions,
   setSizeFilter: setSizeFilter,
   onRangeSizeInput: onRangeSizeInput,

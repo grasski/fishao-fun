@@ -64,7 +64,14 @@ var LOCATION_UNLOCK_INFO = {
   location_9: { type: 'level', level: 80, sortOrder: 9 },
   location_12: { type: 'level', level: 100, sortOrder: 10 },
   location_10: { type: 'level', level: 120, sortOrder: 11 },
-  location_11: { type: 'fc', fc: 50, days: 30, sortOrder: 12 }
+  location_11: { type: 'fc', fc: 50, days: 30, sortOrder: 12 },
+  location_101: { type: 'fc', fc: 3 },
+  location_104: { type: 'level', level: 20 },
+  location_108: { type: 'backyard', count: 50 },
+  location_110: { type: 'free' },
+  location_112: { type: 'club' },
+  location_113: { type: 'level', level: 20 },
+  location_300: { type: 'home' }
 };
 
 function getLocationNumericId(locKey) {
@@ -88,6 +95,15 @@ function getLocationUnlockBadgeData(locKey) {
       cls: 'unlock-free',
       text: '🔓 ' + freeText,
       title: freeText
+    };
+  }
+  if (u.type === 'home') {
+    var homeText = t('loc_unlock_home');
+    return {
+      type: 'home',
+      cls: 'unlock-free',
+      text: '🏡 ' + homeText,
+      title: homeText
     };
   }
   if (u.type === 'level') {
@@ -116,8 +132,13 @@ function getLocationUnlockBadgeData(locKey) {
     };
   }
   if (u.type === 'fc') {
-    var fcText = t('loc_unlock_fc_days', { fc: u.fc, days: u.days });
-    var fcTitle = t('loc_unlock_fc_days_title', { fc: u.fc, days: u.days });
+    var hasDays = typeof u.days === 'number';
+    var fcText = hasDays
+      ? t('loc_unlock_fc_days', { fc: u.fc, days: u.days })
+      : t('loc_unlock_fc', { fc: u.fc });
+    var fcTitle = hasDays
+      ? t('loc_unlock_fc_days_title', { fc: u.fc, days: u.days })
+      : t('loc_unlock_fc_title', { fc: u.fc });
     return {
       type: 'fc',
       cls: 'unlock-fc',
@@ -125,7 +146,75 @@ function getLocationUnlockBadgeData(locKey) {
       title: fcTitle
     };
   }
+  if (u.type === 'club') {
+    var clubText = t('loc_unlock_club');
+    var clubTitle = t('loc_unlock_club_title');
+    return {
+      type: 'club',
+      cls: 'unlock-club',
+      text: '🏰 ' + clubText,
+      title: clubTitle
+    };
+  }
+  if (u.type === 'backyard') {
+    var byText = t('loc_unlock_backyard', { count: u.count });
+    var byTitle = t('loc_unlock_backyard_title', { count: u.count });
+    return {
+      type: 'backyard',
+      cls: 'unlock-backyard',
+      text: '🏡 ' + byText,
+      title: byTitle
+    };
+  }
   return null;
+}
+
+/**
+ * Returns canonical location_* keys available for a given player level and profile state.
+ * Used by the Level input to pre-check available locations in MULTI_SELECT.location.
+ */
+function getLocationsForPlayerLevel(level, profile) {
+  var lvl = Number(level);
+  if (!isFinite(lvl) || lvl < 1) return [];
+
+  var isLoggedIn = Boolean(typeof currentUser !== 'undefined' && currentUser);
+  var hasClub = isLoggedIn && Boolean(
+    (profile && profile.clubId) ||
+    (typeof currentClubId !== 'undefined' && currentClubId)
+  );
+  var backyardCount = isLoggedIn
+    ? (typeof backyardFishIds !== 'undefined' && backyardFishIds && typeof backyardFishIds.size === 'number'
+      ? backyardFishIds.size
+      : (profile && Array.isArray(profile.backyardFishIds) ? profile.backyardFishIds.length : 0))
+    : 0;
+  var hasCaughtFish = function (fishId) {
+    if (!isLoggedIn) return false;
+    if (typeof caughtFishIds !== 'undefined' && caughtFishIds && typeof caughtFishIds.has === 'function') {
+      return caughtFishIds.has(fishId);
+    }
+    return Boolean(profile && Array.isArray(profile.caughtFishIds) && profile.caughtFishIds.indexOf(fishId) !== -1);
+  };
+
+  var availableLocSet = Object.create(null);
+  if (typeof allFishes !== 'undefined' && Array.isArray(allFishes)) {
+    allFishes.forEach(function (f) {
+      if (f.locations && Array.isArray(f.locations)) {
+        f.locations.forEach(function (l) { if (l) availableLocSet[l] = true; });
+      }
+    });
+  }
+
+  return Object.keys(LOCATION_UNLOCK_INFO).filter(function (locKey) {
+    if (!availableLocSet[locKey]) return false;
+    var u = LOCATION_UNLOCK_INFO[locKey];
+    if (!u) return false;
+    if (u.type === 'free' || u.type === 'home') return true;
+    if (u.type === 'level') return lvl >= u.level;
+    if (u.type === 'club') return hasClub;
+    if (u.type === 'backyard') return backyardCount >= (u.count || 0);
+    if (u.type === 'fish') return hasCaughtFish(u.fishId);
+    return false;
+  });
 }
 
 function getLocationCategoryInfo(locKey) {

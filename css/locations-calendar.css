@@ -406,6 +406,16 @@
   border-color: rgba(250, 204, 21, 0.42);
   color: #fde047;
 }
+.loc-unlock-badge.unlock-club {
+  background: rgba(59, 130, 246, 0.16);
+  border-color: rgba(96, 165, 250, 0.42);
+  color: #93c5fd;
+}
+.loc-unlock-badge.unlock-backyard {
+  background: rgba(20, 184, 166, 0.16);
+  border-color: rgba(45, 212, 191, 0.42);
+  color: #5eead4;
+}
 
 .loc-complete-badge {
   font-size: 11px;

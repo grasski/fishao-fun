@@ -428,6 +428,63 @@ select.filter-control option {
   color: #fff;
   border-bottom-color: rgba(255, 255, 255, 0.55);
 }
+.player-level-group {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  background: #151e30;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.player-level-group:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.player-level-group.is-active {
+  background: #0284c7;
+  border-color: #38bdf8;
+}
+.player-level-label {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 9px 0 11px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  user-select: none;
+}
+.player-level-group:hover .player-level-label {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.06);
+}
+.player-level-group.is-active .player-level-label {
+  color: #fff;
+}
+.player-level-group.is-active .player-level-wrap {
+  border-left-color: rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.2);
+}
+.player-level-wrap {
+  padding: 0 9px 0 8px;
+}
+.player-level-group.is-active .player-level-input {
+  color: #fff;
+  border-bottom-color: rgba(255, 255, 255, 0.55);
+}
+.player-level-input {
+  width: 36px;
+}
+.player-level-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+.player-level-group.is-active .player-level-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
 
 /* Clean pill buttons */
 .pill-btn {

@@ -1134,6 +1134,19 @@
                 <span class="pct-input-unit">%</span>
               </label>
             </div>
+            <label class="player-level-group" id="playerLevelGroup" for="playerLevelInput"
+              data-i18n-title="filter_level_title"
+              title="Předvybere dostupné lokace podle úrovně hráče">
+              <span class="player-level-label" data-i18n="filter_level_label">⭐ Lvl</span>
+              <span class="pct-input-wrap player-level-wrap">
+                <input type="number" id="playerLevelInput" class="pct-input player-level-input"
+                  min="1" max="999" step="1" placeholder="—"
+                  data-i18n-placeholder="filter_level_placeholder"
+                  data-i18n-aria-label="filter_level_aria"
+                  aria-label="Úroveň hráče"
+                  oninput="window.fishaoApp.onPlayerLevelInput()">
+              </span>
+            </label>
             <button type="button" class="pill-btn" id="btnOnlyCaught" onclick="window.fishaoApp.toggleOnlyCaught()"
               data-i18n="filter_btn_only_caught" data-i18n-title="filter_btn_only_caught_title"
               title="Zobrazit pouze ryby, které už máš chycené">✅ Pouze chycené</button>
