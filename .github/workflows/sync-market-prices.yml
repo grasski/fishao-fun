@@ -32,17 +32,16 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Cache firebase-admin
-        id: cache-firebase-admin
-        if: ${{ !inputs.dry_run }}
+      - name: Cache sync dependencies (firebase-admin, impit)
+        id: cache-sync-deps
         uses: actions/cache@v6
         with:
           path: node_modules
-          key: ${{ runner.os }}-firebase-admin-13
+          key: ${{ runner.os }}-sync-market-firebase-13-impit-0.14
 
-      - name: Install firebase-admin
-        if: ${{ !inputs.dry_run && steps.cache-firebase-admin.outputs.cache-hit != 'true' }}
-        run: npm install --no-save --no-audit --no-fund firebase-admin@^13.0.0
+      - name: Install sync dependencies
+        if: steps.cache-sync-deps.outputs.cache-hit != 'true'
+        run: npm install --no-save --no-audit --no-fund firebase-admin@^13.0.0 impit@^0.14.9
 
       - name: Sync market prices to Firestore
         env:
