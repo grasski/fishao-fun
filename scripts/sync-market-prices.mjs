@@ -12,18 +12,17 @@
  * Environment:
  *   FIREBASE_SERVICE_ACCOUNT  JSON string of a Firebase service account key
  *                             (required unless --dry-run is passed).
+ *   SCRAPE_API_TOKEN          Optional Scrape.do API token to route the fetch
+ *                             through api.scrape.do (&super=true).
  *   FORCE_SYNC=1              Allow running on Sunday (UTC) or re-syncing on
  *                             the same day if needed.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { Impit } from 'impit';
-
-const impit = new Impit({ browser: 'chrome' });
 
 const MARKET_URL = 'https://www.fishao.net/wiki/market/__data.json?x-sveltekit-invalidated=001';
-const REQUEST_TIMEOUT_MS = 15000;
+const REQUEST_TIMEOUT_MS = 45000;
 const MAX_RETRIES = 2;
 const SUMMARY_SHARD_COUNT = 4;
 const FIRESTORE_DOC_LIMIT_BYTES = 1024 * 1024;
@@ -171,17 +170,25 @@ function extractAllMarketPrices(payload) {
 }
 
 async function fetchAllMarketPrices() {
+  const proxyToken = process.env.SCRAPE_API_TOKEN;
+  const targetUrl = proxyToken
+    ? `https://api.scrape.do/?token=${encodeURIComponent(proxyToken)}&url=${encodeURIComponent(MARKET_URL)}&super=true`
+    : MARKET_URL;
+
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
     try {
-      const res = await fetch(MARKET_URL, {
+      const res = await fetch(targetUrl, {
         signal: controller.signal,
-        headers: {
-          'Accept': 'application/json',
-          'Referer': 'https://www.fishao.net/wiki/market'
-        }
+        headers: proxyToken
+          ? { 'Accept': 'application/json' }
+          : {
+            'Accept': 'application/json',
+            'Referer': 'https://www.fishao.net/wiki/market',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36'
+          }
       });
 
       if (res.status === 403 || res.status === 429) {
