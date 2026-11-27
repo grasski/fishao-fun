@@ -23,6 +23,7 @@ const BASE_URL = 'https://www.fishao.net/wiki/fish';
 const CONCURRENCY = 12;
 const REQUEST_TIMEOUT_MS = 10000;
 const MAX_RETRIES = 2;
+const BLOCK_ABORT_THRESHOLD = 3;
 const SUMMARY_SHARD_COUNT = 4;
 const FIRESTORE_DOC_LIMIT_BYTES = 1024 * 1024;
 const SUMMARY_WARN_THRESHOLD_BYTES = 700 * 1024;
@@ -169,6 +170,17 @@ async function fetchFishPrice(fishId) {
       if (res.status === 404) {
         return { id: fishId, status: 'not_found', price: null };
       }
+      if (res.status === 403 || res.status === 429) {
+        const cfRay = res.headers.get('cf-ray') || '';
+        return {
+          id: fishId,
+          status: 'blocked',
+          httpStatus: res.status,
+          cfRay,
+          price: null,
+          error: `HTTP ${res.status}${cfRay ? ` (cf-ray: ${cfRay})` : ''}`
+        };
+      }
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}`);
       }
@@ -189,12 +201,13 @@ async function fetchFishPrice(fishId) {
   }
 }
 
-async function mapWithConcurrency(items, concurrency, worker) {
-  const results = new Array(items.length);
+async function mapWithConcurrency(items, concurrency, worker, shouldStop = null) {
+  const results = [];
   let nextIndex = 0;
 
   async function runWorker() {
     while (nextIndex < items.length) {
+      if (shouldStop && shouldStop()) break;
       const current = nextIndex++;
       results[current] = await worker(items[current]);
     }
@@ -205,7 +218,7 @@ async function mapWithConcurrency(items, concurrency, worker) {
     () => runWorker()
   );
   await Promise.all(workers);
-  return results;
+  return results.filter(Boolean);
 }
 
 function loadFishIds() {
@@ -528,21 +541,79 @@ async function main() {
     fishIds = fishIds.slice(0, args.limit);
   }
 
-  console.log(`[${todayISO}] Fetching market prices for ${fishIds.length} fish...`);
-  const results = await mapWithConcurrency(fishIds, CONCURRENCY, fetchFishPrice);
+  if (fishIds.length === 0) {
+    throw new Error('No fish IDs found in data/raw/fish.json.');
+  }
+
+  console.log(`[${todayISO}] Probing endpoint with fish #${fishIds[0]} before fetching ${fishIds.length} fish...`);
+  const probeResult = await fetchFishPrice(fishIds[0]);
+  if (probeResult.status === 'blocked') {
+    const msg =
+      `Blocked by remote host on preflight probe (#${probeResult.id}: ${probeResult.error}). ` +
+      'Aborting immediately without retrying.';
+    console.error(msg);
+    writeStepSummary([
+      `## Fish Market Sync (${todayISO}) — Blocked`,
+      '',
+      `🚫 **Aborted immediately after 1 request:** remote server returned \`${probeResult.error}\`.`,
+      '',
+      '_Stopped early (fail-fast) so we do not flood the remote host with retries._'
+    ]);
+    throw new Error(msg);
+  }
+
+  let blockedCount = 0;
+  let abortedByBlock = false;
+  const restResults = await mapWithConcurrency(
+    fishIds.slice(1),
+    CONCURRENCY,
+    async (id) => {
+      const res = await fetchFishPrice(id);
+      if (res.status === 'blocked') {
+        blockedCount++;
+        if (blockedCount >= BLOCK_ABORT_THRESHOLD) {
+          abortedByBlock = true;
+        }
+      }
+      return res;
+    },
+    () => abortedByBlock
+  );
+  const results = [probeResult, ...restResults];
 
   const ok = results.filter((r) => r.status === 'ok');
   const notFound = results.filter((r) => r.status === 'not_found');
   const noPrice = results.filter((r) => r.status === 'no_price');
+  const blocked = results.filter((r) => r.status === 'blocked');
   const errors = results.filter((r) => r.status === 'error');
 
   console.log(
     `Fetched: ${ok.length} prices, ${notFound.length} not found, ` +
-    `${noPrice.length} without price, ${errors.length} errors.`
+    `${noPrice.length} without price, ${blocked.length} blocked, ${errors.length} errors ` +
+    `(checked ${results.length}/${fishIds.length}).`
   );
 
+  if (blocked.length > 0) {
+    console.warn('Sample blocked responses:', blocked.slice(0, 5));
+  }
   if (errors.length > 0) {
     console.warn('Sample errors:', errors.slice(0, 5));
+  }
+
+  if (abortedByBlock) {
+    const sampleErr = blocked[0]?.error || 'HTTP 403/429';
+    const msg =
+      `Aborted early after ${blocked.length} blocked responses (${sampleErr}); ` +
+      `checked ${results.length}/${fishIds.length} fish.`;
+    console.error(msg);
+    writeStepSummary([
+      `## Fish Market Sync (${todayISO}) — Blocked`,
+      '',
+      `🚫 **Aborted early (fail-fast):** ${blocked.length} blocked responses (\`${sampleErr}\`) after checking ${results.length}/${fishIds.length} fish.`,
+      '',
+      '_Firestore was not modified to avoid partial daily sync._'
+    ]);
+    throw new Error(msg);
   }
 
   if (args.dryRun) {
