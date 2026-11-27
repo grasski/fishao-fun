@@ -1,8 +1,8 @@
 /**
  * FISHAO - Daily Fish Market Price Sync (scripts/sync-market-prices.mjs)
  * ----------------------------------------------------------------------
- * Fetches daily Fish Market prices from https://www.fishao.net/wiki/fish/<id>/__data.json
- * for all fish IDs in fish.json and merges daily market prices into:
+ * Fetches daily Fish Market prices for all fish in a single request from
+ * https://www.fishao.net/wiki/market/__data.json and merges them into:
  *   - `fishao_market/prices_summary_0..3` (4-sharded compact unique-price summary)
  *   - `fishao_market_daily/{YYYY-MM}` (monthly daily archive, immune to 1 MiB limit)
  *
@@ -19,11 +19,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const BASE_URL = 'https://www.fishao.net/wiki/fish';
-const CONCURRENCY = 12;
-const REQUEST_TIMEOUT_MS = 10000;
+const MARKET_URL = 'https://www.fishao.net/wiki/market/__data.json?x-sveltekit-invalidated=001';
+const REQUEST_TIMEOUT_MS = 15000;
 const MAX_RETRIES = 2;
-const BLOCK_ABORT_THRESHOLD = 3;
 const SUMMARY_SHARD_COUNT = 4;
 const FIRESTORE_DOC_LIMIT_BYTES = 1024 * 1024;
 const SUMMARY_WARN_THRESHOLD_BYTES = 700 * 1024;
@@ -117,67 +115,79 @@ function parseArgs(argv) {
 }
 
 /**
- * Extracts market price from a SvelteKit `devalue` node.
+ * Extracts a Map<fishId, price> from a SvelteKit `devalue` node returned by
+ * `/wiki/market/__data.json`.
  */
-function extractPriceFromNode(node) {
+function extractMarketPricesFromNode(node) {
   if (!node || node.type !== 'data' || !Array.isArray(node.data)) return null;
 
   const data = node.data;
   const root = data[0];
-  if (!root || typeof root !== 'object' || root.market === undefined) return null;
+  if (!root || typeof root !== 'object' || typeof root.prices !== 'number') return null;
+  if (root.prices < 0 || root.prices >= data.length) return null;
 
-  const market = data[root.market];
-  if (!market || typeof market !== 'object' || market.price === undefined) return null;
+  const pricesMap = data[root.prices];
+  if (!pricesMap || typeof pricesMap !== 'object' || Array.isArray(pricesMap)) return null;
 
-  const price = Number(data[market.price]);
-  return Number.isFinite(price) && price > 0 ? price : null;
+  const pricesById = new Map();
+  for (const [rawId, entryIdx] of Object.entries(pricesMap)) {
+    const fishId = Number(rawId);
+    if (!Number.isInteger(fishId) || fishId <= 0) continue;
+    if (typeof entryIdx !== 'number' || entryIdx < 0 || entryIdx >= data.length) continue;
+
+    const entry = data[entryIdx];
+    if (!entry || typeof entry !== 'object' || typeof entry.price !== 'number') continue;
+    if (entry.price < 0 || entry.price >= data.length) continue;
+
+    const rawPrice = data[entry.price];
+    if (rawPrice === null || rawPrice === undefined) continue;
+    const price = Number(rawPrice);
+    if (Number.isFinite(price) && price > 0) {
+      pricesById.set(fishId, price);
+    }
+  }
+  return pricesById;
 }
 
 /**
- * Resolves SvelteKit `devalue` pointers from `/wiki/fish/<id>/__data.json`
- * to extract the numeric market price, or returns null if unavailable.
+ * Resolves SvelteKit `devalue` pointers from `/wiki/market/__data.json`
+ * to extract all numeric market prices, or returns null if the expected node is missing.
  */
-function extractMarketPrice(payload) {
+function extractAllMarketPrices(payload) {
   const nodes = Array.isArray(payload?.nodes) ? payload.nodes : [];
   if (nodes[2]) {
-    const p = extractPriceFromNode(nodes[2]);
-    if (p !== null) return p;
+    const map = extractMarketPricesFromNode(nodes[2]);
+    if (map !== null) return map;
   }
   for (let i = 0; i < nodes.length; i++) {
     if (i === 2) continue;
-    const p = extractPriceFromNode(nodes[i]);
-    if (p !== null) return p;
+    const map = extractMarketPricesFromNode(nodes[i]);
+    if (map !== null) return map;
   }
   return null;
 }
 
-async function fetchFishPrice(fishId) {
-  const url = `${BASE_URL}/${fishId}/__data.json?x-sveltekit-invalidated=001`;
-
+async function fetchAllMarketPrices() {
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
     try {
-      const res = await fetch(url, {
+      const res = await fetch(MARKET_URL, {
         signal: controller.signal,
         headers: {
           'Accept': 'application/json',
-          'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Mobile/15E148 Safari/604.1'
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
         }
       });
 
-      if (res.status === 404) {
-        return { id: fishId, status: 'not_found', price: null };
-      }
       if (res.status === 403 || res.status === 429) {
         const cfRay = res.headers.get('cf-ray') || '';
         return {
-          id: fishId,
           status: 'blocked',
           httpStatus: res.status,
           cfRay,
-          price: null,
+          pricesById: null,
           error: `HTTP ${res.status}${cfRay ? ` (cf-ray: ${cfRay})` : ''}`
         };
       }
@@ -186,39 +196,24 @@ async function fetchFishPrice(fishId) {
       }
 
       const payload = await res.json();
-      const price = extractMarketPrice(payload);
-      return price !== null
-        ? { id: fishId, status: 'ok', price }
-        : { id: fishId, status: 'no_price', price: null };
+      const pricesById = extractAllMarketPrices(payload);
+      if (pricesById === null) {
+        return {
+          status: 'error',
+          pricesById: null,
+          error: 'Unexpected payload structure (missing prices node)'
+        };
+      }
+      return { status: 'ok', pricesById };
     } catch (err) {
       if (attempt === MAX_RETRIES) {
-        return { id: fishId, status: 'error', price: null, error: err.message };
+        return { status: 'error', pricesById: null, error: err.message };
       }
-      await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
+      await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
     } finally {
       clearTimeout(timer);
     }
   }
-}
-
-async function mapWithConcurrency(items, concurrency, worker, shouldStop = null) {
-  const results = [];
-  let nextIndex = 0;
-
-  async function runWorker() {
-    while (nextIndex < items.length) {
-      if (shouldStop && shouldStop()) break;
-      const current = nextIndex++;
-      results[current] = await worker(items[current]);
-    }
-  }
-
-  const workers = Array.from(
-    { length: Math.min(concurrency, items.length) },
-    () => runWorker()
-  );
-  await Promise.all(workers);
-  return results.filter(Boolean);
 }
 
 function loadFishIds() {
@@ -536,84 +531,67 @@ async function main() {
     }
   }
 
-  let fishIds = loadFishIds();
-  if (args.limit > 0) {
-    fishIds = fishIds.slice(0, args.limit);
-  }
+  const allLocalIds = loadFishIds();
+  const fishIds = args.limit > 0 ? allLocalIds.slice(0, args.limit) : allLocalIds;
 
   if (fishIds.length === 0) {
     throw new Error('No fish IDs found in data/raw/fish.json.');
   }
 
-  console.log(`[${todayISO}] Probing endpoint with fish #${fishIds[0]} before fetching ${fishIds.length} fish...`);
-  const probeResult = await fetchFishPrice(fishIds[0]);
-  if (probeResult.status === 'blocked') {
+  console.log(`[${todayISO}] Fetching all market prices from ${MARKET_URL}...`);
+  const fetchResult = await fetchAllMarketPrices();
+
+  if (fetchResult.status === 'blocked') {
     const msg =
-      `Blocked by remote host on preflight probe (#${probeResult.id}: ${probeResult.error}). ` +
+      `Blocked by remote host (${fetchResult.error}). ` +
       'Aborting immediately without retrying.';
     console.error(msg);
     writeStepSummary([
       `## Fish Market Sync (${todayISO}) — Blocked`,
       '',
-      `🚫 **Aborted immediately after 1 request:** remote server returned \`${probeResult.error}\`.`,
+      `🚫 **Aborted immediately after 1 request:** remote server returned \`${fetchResult.error}\`.`,
       '',
       '_Stopped early (fail-fast) so we do not flood the remote host with retries._'
     ]);
     throw new Error(msg);
   }
 
-  let blockedCount = 0;
-  let abortedByBlock = false;
-  const restResults = await mapWithConcurrency(
-    fishIds.slice(1),
-    CONCURRENCY,
-    async (id) => {
-      const res = await fetchFishPrice(id);
-      if (res.status === 'blocked') {
-        blockedCount++;
-        if (blockedCount >= BLOCK_ABORT_THRESHOLD) {
-          abortedByBlock = true;
-        }
-      }
-      return res;
-    },
-    () => abortedByBlock
-  );
-  const results = [probeResult, ...restResults];
+  if (fetchResult.status !== 'ok' || !fetchResult.pricesById) {
+    const errMsg = fetchResult.error || 'Unknown fetch error';
+    writeStepSummary([
+      `## Fish Market Sync (${todayISO}) — Failed`,
+      '',
+      `❌ Failed to fetch market prices: \`${errMsg}\`. Firestore write aborted.`
+    ]);
+    throw new Error(`Failed to fetch market prices: ${errMsg}`);
+  }
 
-  const ok = results.filter((r) => r.status === 'ok');
-  const notFound = results.filter((r) => r.status === 'not_found');
-  const noPrice = results.filter((r) => r.status === 'no_price');
-  const blocked = results.filter((r) => r.status === 'blocked');
-  const errors = results.filter((r) => r.status === 'error');
+  const pricesById = fetchResult.pricesById;
+  const ok = [];
+  const noPrice = [];
+
+  for (const id of fishIds) {
+    const price = pricesById.get(id);
+    if (price !== undefined) {
+      ok.push({ id, price });
+    } else {
+      noPrice.push(id);
+    }
+  }
+
+  const localIdSet = new Set(allLocalIds);
+  const unknownIds = [];
+  for (const id of pricesById.keys()) {
+    if (!localIdSet.has(id)) unknownIds.push(id);
+  }
 
   console.log(
-    `Fetched: ${ok.length} prices, ${notFound.length} not found, ` +
-    `${noPrice.length} without price, ${blocked.length} blocked, ${errors.length} errors ` +
-    `(checked ${results.length}/${fishIds.length}).`
+    `Fetched: ${ok.length} prices, ${noPrice.length} without price ` +
+    `(checked ${fishIds.length} local fish; remote returned ${pricesById.size} total` +
+    `${unknownIds.length > 0 ? `, ${unknownIds.length} unknown IDs` : ''}).`
   );
-
-  if (blocked.length > 0) {
-    console.warn('Sample blocked responses:', blocked.slice(0, 5));
-  }
-  if (errors.length > 0) {
-    console.warn('Sample errors:', errors.slice(0, 5));
-  }
-
-  if (abortedByBlock) {
-    const sampleErr = blocked[0]?.error || 'HTTP 403/429';
-    const msg =
-      `Aborted early after ${blocked.length} blocked responses (${sampleErr}); ` +
-      `checked ${results.length}/${fishIds.length} fish.`;
-    console.error(msg);
-    writeStepSummary([
-      `## Fish Market Sync (${todayISO}) — Blocked`,
-      '',
-      `🚫 **Aborted early (fail-fast):** ${blocked.length} blocked responses (\`${sampleErr}\`) after checking ${results.length}/${fishIds.length} fish.`,
-      '',
-      '_Firestore was not modified to avoid partial daily sync._'
-    ]);
-    throw new Error(msg);
+  if (unknownIds.length > 0) {
+    console.log('Unknown fish IDs in market feed:', unknownIds.slice(0, 20));
   }
 
   if (args.dryRun) {
@@ -626,9 +604,7 @@ async function main() {
       '| :--- | ---: |',
       `| Fish IDs checked | ${fishIds.length} |`,
       `| Prices fetched | ${ok.length} |`,
-      `| Not found (404) | ${notFound.length} |`,
       `| Without market price | ${noPrice.length} |`,
-      `| Errors | ${errors.length} |`,
       '',
       '_Dry-run mode: Firestore was not modified._'
     ]);
@@ -639,7 +615,7 @@ async function main() {
     writeStepSummary([
       `## Fish Market Sync (${todayISO}) — Failed`,
       '',
-      `❌ No prices were fetched (${errors.length} errors). Firestore write aborted.`
+      '❌ No prices matched local fish IDs. Firestore write aborted.'
     ]);
     throw new Error('No prices were fetched; aborting Firestore write.');
   }
@@ -676,9 +652,7 @@ async function main() {
     '| :--- | ---: |',
     `| Fish IDs checked | ${fishIds.length} |`,
     `| Prices fetched | ${ok.length} |`,
-    `| Not found (404) | ${notFound.length} |`,
     `| Without market price | ${noPrice.length} |`,
-    `| Errors | ${errors.length} |`,
     `| **New prices added** | **${addedCount}** |`,
     `| Same-day duplicates skipped | ${duplicateCount} |`,
     `| Unique prices in summary | ${summaryMetrics.uniquePrices} (${summaryMetrics.fishCount} fish) |`,
@@ -697,10 +671,6 @@ async function main() {
   if (addedSample.length > 0) {
     const preview = addedSample.map((e) => `#${e.id}: ${e.price} FB`).join(', ');
     summaryLines.push('', `**Sample new prices:** ${preview}${addedCount > addedSample.length ? ', …' : ''}`);
-  }
-  if (errors.length > 0) {
-    const errPreview = errors.slice(0, 5).map((e) => `#${e.id} (${e.error})`).join(', ');
-    summaryLines.push('', `⚠️ **Sample errors:** ${errPreview}`);
   }
 
   writeStepSummary(summaryLines);
