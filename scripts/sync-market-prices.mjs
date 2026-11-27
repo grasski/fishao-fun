@@ -18,6 +18,9 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { Impit } from 'impit';
+
+const impit = new Impit({ browser: 'chrome' });
 
 const MARKET_URL = 'https://www.fishao.net/wiki/market/__data.json?x-sveltekit-invalidated=001';
 const REQUEST_TIMEOUT_MS = 15000;
@@ -177,7 +180,7 @@ async function fetchAllMarketPrices() {
         signal: controller.signal,
         headers: {
           'Accept': 'application/json',
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+          'Referer': 'https://www.fishao.net/wiki/market'
         }
       });
 
