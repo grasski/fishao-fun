@@ -497,7 +497,7 @@ function resetFilters() {
 
   var sortEl = document.getElementById("sortBy");
   if (sortEl) {
-    sortEl.value = (currentView === "market") ? "price_desc" : "name_asc";
+    sortEl.value = "name_asc";
   }
 
   var minEl = document.getElementById("minSizeInput");
@@ -742,12 +742,12 @@ function updateSortByOptions() {
 
   if (currentView === "market") {
     select.innerHTML =
-      '<option value="price_desc">' + t('opt_sort_price_desc') + '</option>' +
-      '<option value="price_asc">' + t('opt_sort_price_asc') + '</option>' +
       '<option value="name_asc">' + t('opt_sort_name_asc') + '</option>' +
-      '<option value="name_desc">' + t('opt_sort_name_desc') + '</option>';
-    var allowed = ["price_desc", "price_asc", "name_asc", "name_desc"];
-    select.value = allowed.indexOf(curVal) !== -1 ? curVal : "price_desc";
+      '<option value="name_desc">' + t('opt_sort_name_desc') + '</option>' +
+      '<option value="price_desc">' + t('opt_sort_price_desc') + '</option>' +
+      '<option value="price_asc">' + t('opt_sort_price_asc') + '</option>';
+    var allowed = ["name_asc", "name_desc", "price_desc", "price_asc"];
+    select.value = allowed.indexOf(curVal) !== -1 ? curVal : "name_asc";
     return;
   }
 

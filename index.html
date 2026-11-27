@@ -134,7 +134,7 @@
   <link rel="stylesheet" href="css/base.css?v=3.3">
   <link rel="stylesheet" href="css/header.css?v=3.3">
   <link rel="stylesheet" href="css/nav.css?v=3.5">
-  <link rel="stylesheet" href="css/filters.css?v=3.7">
+  <link rel="stylesheet" href="css/filters.css?v=3.10">
   <link rel="stylesheet" href="css/table.css?v=4.2">
   <link rel="stylesheet" href="css/clubs.css?v=3.3">
   <link rel="stylesheet" href="css/players.css?v=3.3">
@@ -1024,7 +1024,7 @@
             </select>
           </div>
 
-          <div class="filter-group">
+          <div class="filter-group" id="baitFilterGroup">
             <label class="filter-label" for="baitFilter" data-i18n="filter_bait_label">Návnada</label>
             <div class="bait-select-wrapper">
               <img id="baitFilterIcon" class="bait-select-icon" alt="" style="display: none;">
@@ -1041,12 +1041,12 @@
             </div>
           </div>
 
-          <div class="filter-group sm">
+          <div class="filter-group sm" id="ratingFilterGroup">
             <span class="filter-label" data-i18n="filter_rating_label">Rating</span>
             <div id="ratingFilterMount" class="filter-mount"></div>
           </div>
 
-          <div class="filter-group">
+          <div class="filter-group" id="timeFilterGroup">
             <label class="filter-label" for="timeFilter" data-i18n="filter_time_label">Čas a aktivita</label>
             <select id="timeFilter" class="filter-control" onchange="window.fishaoApp.applyFilters()">
               <option value="">Celý den i noc</option>
@@ -1061,7 +1061,7 @@
             </select>
           </div>
 
-          <div class="filter-group">
+          <div class="filter-group" id="sortByGroup">
             <label class="filter-label" for="sortBy" data-i18n="filter_sort_label">Řadit podle</label>
             <select id="sortBy" class="filter-control" onchange="window.fishaoApp.onSortByChange()">
               <option value="name_asc" selected>Název (A - Z)</option>

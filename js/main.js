@@ -417,7 +417,10 @@ function switchView(view, skipSync) {
   }
 
   if (secTable) secTable.style.display = "block";
-  if (filterCard) filterCard.style.display = "flex";
+  if (filterCard) {
+    filterCard.style.display = "flex";
+    filterCard.classList.toggle("market-mode", view === "market");
+  }
 
   var locationFilterGroup = document.getElementById("locationFilterGroup");
   var missionSizeRow = document.getElementById("missionSizeRow");

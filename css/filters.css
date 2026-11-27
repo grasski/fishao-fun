@@ -557,3 +557,58 @@ select.filter-control option {
   font-size: 11px;
 }
 
+/* Market tab: keep only search, sort, reset, top prices, and only caught */
+#filterCard.market-mode #locationFilterGroup,
+#filterCard.market-mode #areaFilterGroup,
+#filterCard.market-mode #baitFilterGroup,
+#filterCard.market-mode #ratingFilterGroup,
+#filterCard.market-mode #timeFilterGroup,
+#filterCard.market-mode .size-filter-cluster,
+#filterCard.market-mode #btnNow,
+#filterCard.market-mode #btnBestChance,
+#filterCard.market-mode #playerLevelGroup,
+#filterCard.market-mode #btnOnlyBackyard {
+  display: none !important;
+}
+
+@media (min-width: 641px) {
+  #filterCard.market-mode {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  #filterCard.market-mode .filter-row-main,
+  #filterCard.market-mode #missionSizeRow,
+  #filterCard.market-mode .quick-status-toggles {
+    display: contents !important;
+  }
+  #filterCard.market-mode .search-group {
+    order: 1;
+    flex: 1 1 220px;
+  }
+  #filterCard.market-mode #todayHighPriceGroup {
+    order: 2;
+    height: 38px;
+    flex: 0 0 auto;
+  }
+  #filterCard.market-mode #btnOnlyCaught {
+    order: 3;
+    height: 38px;
+    padding: 0 13px;
+    flex: 0 0 auto;
+  }
+  #filterCard.market-mode #sortByGroup {
+    order: 4;
+    flex: 0 1 200px;
+  }
+  #filterCard.market-mode .filter-group-reset {
+    order: 5;
+  }
+  #filterCard.market-mode .search-input,
+  #filterCard.market-mode #sortBy {
+    height: 38px;
+    box-sizing: border-box;
+  }
+}
+
