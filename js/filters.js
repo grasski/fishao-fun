@@ -294,12 +294,22 @@ function applyFilters() {
       var topSpot = (rec && rec.spots && rec.spots.length) ? rec.spots[0] : null;
       var topBait = (topSpot && topSpot.bestBait) ? topSpot.bestBait : null;
       var data = {
-        chancePct: topBait ? topBait.chancePct : 0,
-        competitorCount: topBait ? topBait.competitorCount : 999,
-        competitorWeight: topBait ? topBait.competitorWeight : 999
+        topBait: topBait,
+        chancePct: topBait ? topBait.chancePct : 0
       };
       chanceMap.set(f.id, data);
       return data;
+    };
+
+    var compareTopBait = function (ca, cb) {
+      if (!ca.topBait && !cb.topBait) return 0;
+      if (!ca.topBait) return 1;
+      if (!cb.topBait) return -1;
+      if (typeof compareBaitScores === "function") {
+        return compareBaitScores(ca.topBait, cb.topBait);
+      }
+      return (ca.topBait.competitorWeight - cb.topBait.competitorWeight) ||
+        (ca.topBait.competitorCount - cb.topBait.competitorCount);
     };
 
     if (sortBy === "chance_desc") {
@@ -307,8 +317,7 @@ function applyFilters() {
         var ca = getChanceData(a);
         var cb = getChanceData(b);
         return (cb.chancePct - ca.chancePct) ||
-          (ca.competitorCount - cb.competitorCount) ||
-          (ca.competitorWeight - cb.competitorWeight) ||
+          compareTopBait(ca, cb) ||
           (b.rating - a.rating) ||
           (b.id - a.id);
       });
@@ -317,8 +326,7 @@ function applyFilters() {
         var ca = getChanceData(a);
         var cb = getChanceData(b);
         return (ca.chancePct - cb.chancePct) ||
-          (cb.competitorCount - ca.competitorCount) ||
-          (cb.competitorWeight - ca.competitorWeight) ||
+          compareTopBait(cb, ca) ||
           (a.rating - b.rating) ||
           (a.id - b.id);
       });

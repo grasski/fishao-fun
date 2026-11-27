@@ -1726,6 +1726,8 @@ function formatCompetitorCountLabel(count) {
 }
 
 function compareBaitScores(a, b) {
+  var sameDiff = (a.sameRatingCount || 0) - (b.sameRatingCount || 0);
+  if (sameDiff !== 0) return sameDiff;
   var weightDiff = a.competitorWeight - b.competitorWeight;
   if (Math.abs(weightDiff) > 1e-6) return weightDiff;
   return (a.competitorCount - b.competitorCount) ||
@@ -1733,9 +1735,11 @@ function compareBaitScores(a, b) {
 }
 
 function isBaitScoreTied(a, b) {
-  return a && b &&
+  return Boolean(a && b &&
+    (a.sameRatingCount || 0) === (b.sameRatingCount || 0) &&
     a.competitorCount === b.competitorCount &&
-    Math.abs(a.competitorWeight - b.competitorWeight) < 1e-6;
+    a.commonCount === b.commonCount &&
+    Math.abs(a.competitorWeight - b.competitorWeight) < 1e-6);
 }
 
 /**
@@ -1821,6 +1825,8 @@ function computeFishBaitRecommendations(fish, options) {
 
       var baitResults = targetBaits.map(function (baitCode) {
         var competitors = [];
+        var sameRatingCount = 0;
+        var sameRatingWeight = 0;
         var commonCount = 0;
         var midCount = 0;
         var rareCount = 0;
@@ -1829,25 +1835,35 @@ function computeFishBaitRecommendations(fish, options) {
           var cand = spotFishes[si];
           if (cand._baitsSet ? cand._baitsSet.has(baitCode) : (Array.isArray(cand.baits) && cand.baits.indexOf(baitCode) !== -1)) {
             competitors.push(cand);
+            var candWeight = getFishSpawnWeight(cand);
+            if (cand.rating === fish.rating) {
+              sameRatingCount++;
+              sameRatingWeight += candWeight;
+            }
             if (cand.rating <= 2) commonCount++;
             else if (cand.rating === 3) midCount++;
             else rareCount++;
-            competitorWeight += getFishSpawnWeight(cand);
+            competitorWeight += candWeight;
           }
         }
 
         var competitorCount = competitors.length;
-        var rawChance = (targetWeight + competitorWeight) > 0
-          ? (targetWeight / (targetWeight + competitorWeight)) * 100
-          : 100;
+        var sameShare = (targetWeight + sameRatingWeight) > 0
+          ? (targetWeight / (targetWeight + sameRatingWeight))
+          : 1;
+        var overallShare = (targetWeight + competitorWeight) > 0
+          ? (targetWeight / (targetWeight + competitorWeight))
+          : 1;
+        var rawChance = (0.35 * sameShare + 0.65 * overallShare) * 100;
         var chancePct = competitorCount === 0
           ? 100
-          : (rawChance >= 10 ? Math.round(rawChance) : Math.max(0.5, Math.round(rawChance * 10) / 10));
+          : Math.min(99, rawChance >= 10 ? Math.round(rawChance) : Math.max(0.5, Math.round(rawChance * 10) / 10));
 
         return {
           bait: baitCode,
           competitors: competitors,
           _competitorsSorted: false,
+          sameRatingCount: sameRatingCount,
           competitorCount: competitorCount,
           commonCount: commonCount,
           midCount: midCount,
@@ -1903,6 +1919,7 @@ function computeFishBaitRecommendations(fish, options) {
       locLabel: spots[0].locLabel,
       areaLabel: spots[0].areaLabel,
       bait: topSpotBest.bait,
+      sameRatingCount: topSpotBest.sameRatingCount,
       competitorCount: topSpotBest.competitorCount,
       commonCount: topSpotBest.commonCount,
       midCount: topSpotBest.midCount,
@@ -1972,6 +1989,7 @@ function renderFishBaitsCell(fish, filterCtx) {
             bait: baitCode,
             locLabel: spot.locLabel,
             areaLabel: spot.areaLabel,
+            sameRatingCount: bItem.sameRatingCount,
             competitorCount: bItem.competitorCount,
             commonCount: bItem.commonCount,
             competitorWeight: bItem.competitorWeight,
