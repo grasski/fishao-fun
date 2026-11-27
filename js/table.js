@@ -699,6 +699,12 @@ function renderFishRowHtml(f, idx, ctx) {
       escapeHtml(t('fruit_recipe_badge_title', { recipe: fruitRecipeText })) + '">🍹</span>';
   }
 
+  var fossilBadgeHtml = "";
+  if (f.fossil_collection) {
+    fossilBadgeHtml = '<span class="badge-fossil-tag" title="' +
+      escapeHtml(t('fossil_requirement_badge_title')) + '">🦴</span>';
+  }
+
   if (ctx.isClubView) {
     var unlock = getUnlockStatus(f, currentClubPoints);
     var rowClass = [];
@@ -750,6 +756,7 @@ function renderFishRowHtml(f, idx, ctx) {
     '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName +
     (f.is_club ? '<span class="badge-club-tag">' + ctx.clubTagText + '</span>' : '') +
     fruitBadgeHtml +
+    fossilBadgeHtml +
     '</div>' + altMatchHtml + '</td>' +
     '<td>' + renderRatingBadge(f.rating) + '</td>' +
     '<td>' + renderPriceCell(f.id, ctx.priceCtx) + '</td>' +

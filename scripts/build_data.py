@@ -30,6 +30,9 @@ fishes = fish_raw.get("data", fish_raw)
 with open(LANG_JSON, "r", encoding="utf-8") as f:
     cz = json.load(f)
 
+with open(os.path.join(os.path.dirname(LANG_JSON), "lang_en.json"), "r", encoding="utf-8") as f:
+    en_lang = json.load(f)
+
 # Supplementary per-fish data from fish-extra.json, joined by Czech fish name.
 # `fruitCombos` values (ordered Czech fruit names, e.g. "Kokos, Kokos,
 # Pomeranč") are converted to ordered fruit IDs (fruit_1..fruit_9 in
@@ -206,6 +209,14 @@ for f in fishes:
             raise SystemExit(f"ERROR: fish {fid} ({name}) has fruit_combinations_done but no recipe in fish-extra.json")
         fish_entry['fruit_recipe'] = recipe
         matched_fruit_names.add(name)
+    cc = req.get('collections_complete')
+    if cc:
+        if not isinstance(cc, list) or len(cc) != 1 or not cz.get(f"collection_title_{cc[0]}"):
+            raise SystemExit(f"ERROR: fish {fid} ({name}) has invalid collections_complete {cc}")
+        # Only real fossil collections ("<fish> fossils"); other collection
+        # requirements (decoration sets, e.g. Balloon set) are not shown.
+        if en_lang.get(f"collection_title_{cc[0]}") == f"{en_lang.get(f'fish_{fid}')} fossils":
+            fish_entry['fossil_collection'] = int(cc[0])
     if is_night_time_window(times):
         fish_entry['is_night'] = True
     if club_info:

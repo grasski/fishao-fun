@@ -270,6 +270,30 @@ body.modal-open {
   font-weight: 700;
 }
 
+/* FOSSIL COLLECTION PIECES (fish detail modal) */
+.fossil-pieces {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  vertical-align: middle;
+}
+.fossil-piece {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  background: rgba(168, 162, 158, 0.14);
+  border: 1px solid rgba(168, 162, 158, 0.45);
+  color: #d6d3d1;
+}
+
 .modal-market-divider {
   font-size: 13px;
   font-weight: 800;

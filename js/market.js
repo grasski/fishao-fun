@@ -924,6 +924,21 @@ function openPriceModal(fid, skipSync) {
     }
   }
 
+  // Fossil collection requirement (collections_complete -> 5 pieces A-E)
+  var fossilBox = document.getElementById("modalFishFossilBox");
+  var fossilPiecesEl = document.getElementById("modalFishFossilPieces");
+  if (fossilBox && fossilPiecesEl) {
+    if (f.fossil_collection) {
+      fossilBox.style.display = "block";
+      fossilPiecesEl.innerHTML = '<span class="fossil-pieces">' +
+        ["A", "B", "C", "D", "E"].map(function (letter) {
+          return '<span class="fossil-piece" title="' + escapeHtml(t('fossil_piece_title', { letter: letter })) + '">' + letter + '</span>';
+        }).join('') + '</span>';
+    } else {
+      fossilBox.style.display = "none";
+    }
+  }
+
   var initialPriceDate = getTodayISO();
   var elNewDate = document.getElementById("newPriceDate");
   if (elNewDate) elNewDate.value = initialPriceDate;
