@@ -502,23 +502,6 @@ function renderLocationsView() {
         '</div></div>';
     }
 
-    // Activity chips
-    var activityChips = '<button type="button" class="loc-stat-chip biting' + (loc.bitingFishes.length === 0 ? ' muted' : '') + '" ' +
-      'onclick="window.fishaoApp.openLocationInFishdex(\'' + safeLocKey + '\', \'\', \'now\', \'all\')">' +
-      escapeHtml(t('loc_chip_biting_now', { count: loc.bitingFishes.length })) + '</button>';
-
-    if (isLoggedIn && loc.missingBitingFishes.length > 0) {
-      activityChips += '<button type="button" class="loc-stat-chip missing-now" ' +
-        'onclick="window.fishaoApp.openLocationInFishdex(\'' + safeLocKey + '\', \'\', \'now\', \'missing\')">' +
-        escapeHtml(t('loc_chip_missing_now', { count: loc.missingBitingFishes.length })) + '</button>';
-    }
-
-    if (loc.seasonalCount > 0) {
-      activityChips += '<button type="button" class="loc-stat-chip seasonal" ' +
-        'onclick="window.fishaoApp.openLocationInCalendar(\'' + safeLocKey + '\')">' +
-        escapeHtml(t('loc_chip_seasonal', { count: loc.seasonalCount })) + '</button>';
-    }
-
     // Action buttons
     var actionsHtml = '<button type="button" class="pill-btn primary" onclick="window.fishaoApp.openLocationInFishdex(\'' + safeLocKey + '\', \'\', \'\', \'all\')">' +
       escapeHtml(t('loc_btn_show_all', { count: loc.total })) + '</button>';
@@ -531,6 +514,16 @@ function renderLocationsView() {
     if (isLoggedIn && loc.missingCount > 0) {
       actionsHtml += '<button type="button" class="pill-btn amber" onclick="window.fishaoApp.openLocationInFishdex(\'' + safeLocKey + '\', \'\', \'\', \'missing\')">' +
         escapeHtml(t('loc_btn_show_missing', { count: loc.missingCount })) + '</button>';
+    }
+
+    if (isLoggedIn && loc.missingBitingFishes.length > 0) {
+      actionsHtml += '<button type="button" class="pill-btn amber" onclick="window.fishaoApp.openLocationInFishdex(\'' + safeLocKey + '\', \'\', \'now\', \'missing\')">' +
+        escapeHtml(t('loc_btn_missing_now', { count: loc.missingBitingFishes.length })) + '</button>';
+    }
+
+    if (loc.seasonalCount > 0) {
+      actionsHtml += '<button type="button" class="pill-btn" onclick="window.fishaoApp.openLocationInCalendar(\'' + safeLocKey + '\')">' +
+        escapeHtml(t('loc_btn_seasonal', { count: loc.seasonalCount })) + '</button>';
     }
 
     var thumbHtml;
@@ -585,7 +578,6 @@ function renderLocationsView() {
           '<div class="caught-progress-fill' + (loc.isComplete ? ' complete' : '') + '" style="width: ' + loc.pct + '%;"></div>' +
         '</div>' +
       '</div>' +
-      '<div class="loc-chips-row">' + activityChips + '</div>' +
       areasHtml +
       previewHtml +
       '<div class="loc-card-actions">' + actionsHtml + '</div>' +

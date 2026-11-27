@@ -445,47 +445,6 @@
   height: 8px;
 }
 
-.loc-chips-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.loc-stat-chip {
-  border-radius: 8px;
-  padding: 4px 9px;
-  font-size: 11.5px;
-  font-weight: 700;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-.loc-stat-chip:hover {
-  transform: translateY(-1px);
-}
-.loc-stat-chip.biting {
-  background: rgba(16, 185, 129, 0.12);
-  border-color: rgba(16, 185, 129, 0.35);
-  color: #34d399;
-}
-.loc-stat-chip.biting.muted {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: var(--border);
-  color: var(--text-muted);
-}
-.loc-stat-chip.missing-now {
-  background: rgba(245, 158, 11, 0.15);
-  border-color: rgba(245, 158, 11, 0.45);
-  color: #fbbf24;
-}
-.loc-stat-chip.seasonal {
-  background: rgba(249, 115, 22, 0.14);
-  border-color: rgba(249, 115, 22, 0.38);
-  color: #fb923c;
-}
-
 .loc-areas-box {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border);
