@@ -2705,25 +2705,30 @@ async function onAdminJsonFileSelected(inputEl) {
     }
 
     var syncStatusWarn = false;
-    if (txResult && txResult.added > 0 && txResult.lastUpdated) {
+    var syncStatusErrMsg = "";
+    if (txResult) {
       try {
         var fsMod = await getFirestoreModule();
         var syncStatusRef = fsMod.doc(db, "fishao_market", "sync_status");
         var prevStatusSnap = await fsMod.getDoc(syncStatusRef);
-        var prevDate = (prevStatusSnap.exists() && prevStatusSnap.data() && typeof prevStatusSnap.data().lastSuccessDate === "string")
-          ? prevStatusSnap.data().lastSuccessDate
-          : "";
-        await fsMod.setDoc(syncStatusRef, {
-          lastSuccessDate: (prevDate && prevDate > dateVal) ? prevDate : dateVal,
-          lastSuccessAt: txResult.lastUpdated,
-          summaryMode: 'sharded_compact_v2',
-          shardCount: MARKET_SUMMARY_SHARD_COUNT,
-          pricesFetched: entriesToImport.length,
-          addedCount: txResult.added,
-          duplicateCount: txResult.duplicates
-        });
+        var prevData = prevStatusSnap.exists() ? (prevStatusSnap.data() || {}) : {};
+        var prevDate = typeof prevData.lastSuccessDate === "string" ? prevData.lastSuccessDate : "";
+        var shouldUpdateSyncStatus = (txResult.added > 0 && txResult.lastUpdated) || (!prevDate || prevDate < dateVal);
+        if (shouldUpdateSyncStatus) {
+          var syncIso = txResult.lastUpdated || new Date().toISOString();
+          await fsMod.setDoc(syncStatusRef, {
+            lastSuccessDate: (prevDate && prevDate > dateVal) ? prevDate : dateVal,
+            lastSuccessAt: syncIso,
+            summaryMode: 'sharded_compact_v2',
+            shardCount: MARKET_SUMMARY_SHARD_COUNT,
+            pricesFetched: entriesToImport.length,
+            addedCount: txResult.added > 0 ? txResult.added : entriesToImport.length,
+            duplicateCount: txResult.added > 0 ? txResult.duplicates : 0
+          });
+        }
       } catch (syncErr) {
         syncStatusWarn = true;
+        syncStatusErrMsg = (syncErr && (syncErr.code || syncErr.message)) ? String(syncErr.code || syncErr.message) : "";
         console.warn("Imported prices, but could not update fishao_market/sync_status (deploy firestore.rules):", syncErr);
       }
     }
@@ -2747,7 +2752,7 @@ async function onAdminJsonFileSelected(inputEl) {
       skippedPart: skipPart
     });
     if (syncStatusWarn) {
-      successText += " " + t('admin_json_import_sync_warn');
+      successText += " " + t('admin_json_import_sync_warn') + (syncStatusErrMsg ? (" [" + syncStatusErrMsg + "]") : "");
     }
     setAdminJsonImportStatus(successText, syncStatusWarn ? "warn" : "success");
     showToast(successText, syncStatusWarn ? "info" : "success");
