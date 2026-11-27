@@ -1495,16 +1495,34 @@ async function deleteAccount() {
   if (!ok) return;
 
   try {
+    var userToDelete = currentUser;
     var authModule = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
-    var lastSignInMs = (currentUser.metadata && currentUser.metadata.lastSignInTime)
-      ? Date.parse(currentUser.metadata.lastSignInTime)
+    var buildReauthProvider = function () {
+      var p = new authModule.GoogleAuthProvider();
+      if (userToDelete && userToDelete.email) {
+        p.setCustomParameters({ login_hint: userToDelete.email });
+      }
+      return p;
+    };
+    var deleteAuthUser = async function (u) {
+      if (typeof authModule.deleteUser === 'function') {
+        await authModule.deleteUser(u);
+      } else if (u && typeof u.delete === 'function') {
+        await u.delete();
+      } else {
+        throw new Error("Auth deleteUser API is unavailable");
+      }
+    };
+
+    var lastSignInMs = (userToDelete.metadata && userToDelete.metadata.lastSignInTime)
+      ? Date.parse(userToDelete.metadata.lastSignInTime)
       : 0;
-    if (!lastSignInMs || (Date.now() - lastSignInMs) > 4 * 60 * 1000) {
+    // Use a conservative 3-minute window to account for client/server clock skew
+    if (!lastSignInMs || (Date.now() - lastSignInMs) > 3 * 60 * 1000) {
       if (typeof authModule.reauthenticateWithPopup === "function") {
         showToast(t('auth_reauth_required'), "info");
         try {
-          var provider = new authModule.GoogleAuthProvider();
-          await authModule.reauthenticateWithPopup(currentUser, provider);
+          await authModule.reauthenticateWithPopup(userToDelete, buildReauthProvider());
         } catch (reauthErr) {
           if (reauthErr && (reauthErr.code === "auth/popup-closed-by-user" || reauthErr.code === "auth/cancelled-popup-request")) {
             return;
@@ -1516,7 +1534,7 @@ async function deleteAccount() {
     }
 
     var fsModule = await getFirestoreModule();
-    var uid = currentUser.uid;
+    var uid = userToDelete.uid;
     var clubIdToLeave = (userProfile && userProfile.clubId) || currentClubId;
 
     // 1. Immediately detach club & user real-time listeners and clear local state
@@ -1596,14 +1614,23 @@ async function deleteAccount() {
     currentClubName = "";
     isAdmin = false;
 
-    // 6. Delete Firebase Auth user if supported, or sign out
+    // 6. Delete Firebase Auth user (with automatic reauth retry on requires-recent-login), fallback to signOut
     try {
-      if (typeof currentUser.delete === 'function') {
-        await currentUser.delete();
-      }
+      await deleteAuthUser(userToDelete);
     } catch (authErr) {
-      console.warn("Auth user deletion failed, signing out instead:", authErr);
-      await signOut();
+      if (authErr && authErr.code === "auth/requires-recent-login" && typeof authModule.reauthenticateWithPopup === "function") {
+        try {
+          showToast(t('auth_reauth_required'), "info");
+          await authModule.reauthenticateWithPopup(userToDelete, buildReauthProvider());
+          await deleteAuthUser(userToDelete);
+        } catch (retryErr) {
+          console.warn("Auth user deletion failed after reauth retry, signing out instead:", retryErr);
+          await signOut();
+        }
+      } else {
+        console.warn("Auth user deletion failed, signing out instead:", authErr);
+        await signOut();
+      }
     }
 
     closeProfileModal();
@@ -1670,12 +1697,47 @@ async function exportFirestoreBackup() {
       clubsList.push(Object.assign({ id: doc.id }, doc.data()));
     });
 
-    // 3. Fetch Users (/users)
+    // 3. Fetch Users (/users) and their private settings (/users/{uid}/private/settings)
     var usersSnap = await firestoreModule.getDocs(firestoreModule.collection(db, "users"));
     var usersList = [];
     usersSnap.forEach(function (doc) {
       usersList.push(Object.assign({ id: doc.id }, doc.data()));
     });
+
+    var usersPrivateMap = {};
+    var PRIV_BATCH_SIZE = 20;
+    for (var ui = 0; ui < usersList.length; ui += PRIV_BATCH_SIZE) {
+      var userBatch = usersList.slice(ui, ui + PRIV_BATCH_SIZE);
+      await Promise.all(userBatch.map(async function (u) {
+        try {
+          var pSnap = await firestoreModule.getDoc(firestoreModule.doc(db, "users", u.id, "private", "settings"));
+          if (pSnap.exists()) {
+            usersPrivateMap[u.id] = pSnap.data();
+          }
+        } catch (e) { }
+      }));
+    }
+
+    // 4. Fetch Moderation Collections (/chat_reports, /chat_bans) - private /chats are intentionally excluded
+    var readOptCollection = async function (colName) {
+      try {
+        var colSnap = await firestoreModule.getDocs(firestoreModule.collection(db, colName));
+        var items = [];
+        colSnap.forEach(function (d) {
+          items.push(Object.assign({ id: d.id }, d.data()));
+        });
+        return items;
+      } catch (e) {
+        console.warn("Backup skipped collection " + colName + ":", e);
+        return [];
+      }
+    };
+    var moderationCols = await Promise.all([
+      readOptCollection("chat_reports"),
+      readOptCollection("chat_bans")
+    ]);
+    var chatReportsList = moderationCols[0];
+    var chatBansList = moderationCols[1];
 
     var summaryFishCount = shardDocs.reduce(function (acc, s) {
       return acc + ((s && s.prices) ? Object.keys(s.prices).length : 0);
@@ -1684,13 +1746,16 @@ async function exportFirestoreBackup() {
     // Compile backup payload
     var backupData = {
       app: "FISHAO Tracker",
-      version: "2.1",
+      version: "2.2",
       exportedAt: new Date().toISOString(),
       stats: {
         usersCount: usersList.length,
+        usersPrivateCount: Object.keys(usersPrivateMap).length,
         clubsCount: clubsList.length,
         marketSummaryFishCount: summaryFishCount,
-        dailyMonthsCount: Object.keys(dailyArchive).length
+        dailyMonthsCount: Object.keys(dailyArchive).length,
+        chatReportsCount: chatReportsList.length,
+        chatBansCount: chatBansList.length
       },
       collections: {
         fishao_market: {
@@ -1703,7 +1768,10 @@ async function exportFirestoreBackup() {
         },
         fishao_market_daily: dailyArchive,
         clubs: clubsList,
-        users: usersList
+        users: usersList,
+        users_private: usersPrivateMap,
+        chat_reports: chatReportsList,
+        chat_bans: chatBansList
       }
     };
 
