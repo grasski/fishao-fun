@@ -323,6 +323,10 @@ function switchView(view, skipSync) {
     else if (typeof currentGuideSubTab === "string" && currentGuideSubTab === "decorations") view = "guide_decorations";
     else view = "guide_tree";
   }
+  var isTableTarget = (view === "all" || view === "market" || view === "club");
+  if (!isTableTarget && typeof basketPickMode !== "undefined" && basketPickMode && typeof setBasketPickMode === "function") {
+    setBasketPickMode(false);
+  }
   currentView = view;
 
   if (!skipSync) {
@@ -861,6 +865,7 @@ function setLanguage(lang, opts) {
   renderClubSpecialFishes();
   renderClubMembers(currentClubMembersMap, currentClubCreatorId);
   if (typeof updateBasketUI === 'function') updateBasketUI();
+  if (typeof refreshOpenBasketModal === 'function') refreshOpenBasketModal();
   applyFilters();
 
   if (typeof populatePlayerFishFilterDropdown === 'function') populatePlayerFishFilterDropdown();
@@ -942,6 +947,7 @@ function closeAllModals() {
   if (typeof closeGuideShopItemModal === 'function') closeGuideShopItemModal();
   if (typeof closeGuideSnapshotModal === 'function') closeGuideSnapshotModal();
   if (typeof closeTableSnapshotModal === 'function') closeTableSnapshotModal();
+  if (typeof closeBasketModal === 'function') closeBasketModal();
   resolveConfirmModal(false);
 }
 
@@ -960,6 +966,7 @@ function closeModalById(id) {
   else if (id === 'shopItemModalOverlay' && typeof closeGuideShopItemModal === 'function') closeGuideShopItemModal();
   else if (id === 'guideSnapshotModalOverlay' && typeof closeGuideSnapshotModal === 'function') closeGuideSnapshotModal();
   else if (id === 'tableSnapshotModalOverlay' && typeof closeTableSnapshotModal === 'function') closeTableSnapshotModal();
+  else if (id === 'basketModalOverlay' && typeof closeBasketModal === 'function') closeBasketModal();
   else if (id === 'confirmModalOverlay') resolveConfirmModal(false);
 }
 
@@ -1096,7 +1103,7 @@ function onModalOverlayClick(e, id) {
   });
 
   function canScrollInModal(startEl, deltaY) {
-    var el = startEl;
+    var el = (startEl && startEl.nodeType === 1) ? startEl : (startEl && startEl.parentElement);
     while (el && el !== document.body && el !== document.documentElement) {
       if (el.classList && el.classList.contains('modal-overlay')) return false;
       var style = window.getComputedStyle(el);
@@ -1119,6 +1126,10 @@ function onModalOverlayClick(e, id) {
 
   document.addEventListener('touchmove', function (e) {
     if (!_isLocked) return;
+    if (!getTopActiveModal()) {
+      syncModalBodyLock();
+      return;
+    }
     var target = e.target;
     if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT')) {
       return;
@@ -1131,16 +1142,48 @@ function onModalOverlayClick(e, id) {
 
   document.addEventListener('wheel', function (e) {
     if (!_isLocked) return;
+    if (!getTopActiveModal()) {
+      syncModalBodyLock();
+      return;
+    }
     if (!canScrollInModal(e.target, -e.deltaY)) {
       e.preventDefault();
     }
   }, { passive: false });
 
   if (typeof MutationObserver === 'function') {
+    var observedOverlays = typeof WeakSet === 'function' ? new WeakSet() : null;
     var obs = new MutationObserver(syncModalBodyLock);
-    document.querySelectorAll('.modal-overlay').forEach(function (el) {
+    var observeOverlay = function (el) {
+      if (!el || el.nodeType !== 1 || !el.classList || !el.classList.contains('modal-overlay')) return;
+      if (observedOverlays) {
+        if (observedOverlays.has(el)) return;
+        observedOverlays.add(el);
+      }
       obs.observe(el, { attributes: true, attributeFilter: ['class'] });
-    });
+    };
+    document.querySelectorAll('.modal-overlay').forEach(observeOverlay);
+
+    if (document.body) {
+      var bodyObs = new MutationObserver(function (mutations) {
+        var addedOverlay = false;
+        for (var i = 0; i < mutations.length; i++) {
+          var added = mutations[i].addedNodes;
+          for (var j = 0; j < added.length; j++) {
+            var node = added[j];
+            if (node && node.nodeType === 1 && node.classList && node.classList.contains('modal-overlay')) {
+              observeOverlay(node);
+              addedOverlay = true;
+            }
+          }
+        }
+        if (addedOverlay) syncModalBodyLock();
+      });
+      bodyObs.observe(document.body, { childList: true });
+    }
+  }
+  if (typeof window !== 'undefined') {
+    window.syncModalBodyLock = syncModalBodyLock;
   }
   syncModalBodyLock();
 })();
@@ -1162,6 +1205,8 @@ document.addEventListener('keydown', function (e) {
     var topModal = getTopActiveModal();
     if (topModal && topModal.id) {
       closeModalById(topModal.id);
+    } else if (typeof basketPickMode !== 'undefined' && basketPickMode && typeof setBasketPickMode === 'function') {
+      setBasketPickMode(false);
     } else {
       closeAllModals();
     }
@@ -1211,6 +1256,16 @@ window.fishaoApp = {
   toggleOnlyClubUnlocked: typeof toggleOnlyClubUnlocked === 'function' ? toggleOnlyClubUnlocked : function () {},
   toggleOnlyBasket: typeof toggleOnlyBasket === 'function' ? toggleOnlyBasket : function () {},
   onBasketFabClick: typeof onBasketFabClick === 'function' ? onBasketFabClick : function () {},
+  openBasketModal: typeof openBasketModal === 'function' ? openBasketModal : function () {},
+  closeBasketModal: typeof closeBasketModal === 'function' ? closeBasketModal : function () {},
+  setBasketPickMode: typeof setBasketPickMode === 'function' ? setBasketPickMode : function () {},
+  startBasketTablePickMode: typeof startBasketTablePickMode === 'function' ? startBasketTablePickMode : function () {},
+  toggleBasketModalFilter: typeof toggleBasketModalFilter === 'function' ? toggleBasketModalFilter : function () {},
+  onBasketModalSortChange: typeof onBasketModalSortChange === 'function' ? onBasketModalSortChange : function () {},
+  onBasketModalSearchInput: typeof onBasketModalSearchInput === 'function' ? onBasketModalSearchInput : function () {},
+  selectBasketSearchFish: typeof selectBasketSearchFish === 'function' ? selectBasketSearchFish : function () {},
+  openBasketInMainTable: typeof openBasketInMainTable === 'function' ? openBasketInMainTable : function () {},
+  removeCaughtFromBasket: typeof removeCaughtFromBasket === 'function' ? removeCaughtFromBasket : function () {},
   toggleBasketFish: typeof toggleBasketFish === 'function' ? toggleBasketFish : function () {},
   toggleBasketFromModal: typeof toggleBasketFromModal === 'function' ? toggleBasketFromModal : function () {},
   clearFishBasket: typeof clearFishBasket === 'function' ? clearFishBasket : function () {},

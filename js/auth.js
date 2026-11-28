@@ -59,6 +59,9 @@ function scheduleViewRefresh(opts) {
     if ((flags.filters || flags.marketTab || flags.modal) && typeof refreshOpenTableSnapshot === "function") {
       refreshOpenTableSnapshot();
     }
+    if ((flags.auth || flags.stats || flags.filters || flags.marketTab || flags.modal) && typeof refreshOpenBasketModal === "function") {
+      refreshOpenBasketModal();
+    }
   });
 }
 

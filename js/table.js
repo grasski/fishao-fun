@@ -294,6 +294,9 @@ function syncOwnPlayerCacheCounts() {
 }
 
 function refreshViewAfterCaughtChange(changedFishId) {
+  if (typeof refreshOpenBasketModal === 'function') {
+    refreshOpenBasketModal();
+  }
   var isTable = (typeof isTableViewActive === "function") ? isTableViewActive() : (currentView === 'all' || currentView === 'market' || currentView === 'club');
   if (currentView === 'club_manage') {
     updateCaughtStats({ skipSubViewRender: true });
@@ -615,7 +618,6 @@ function renderTableHead() {
   var thead = document.getElementById("tableHead");
   if (!thead) return;
   var caughtCol = '<th style="width: 44px; text-align: center;" title="' + t('col_caught_title') + '">✓</th>';
-  var basketCol = '<th style="width: 40px; text-align: center;" title="' + escapeHtml(t('col_basket_title')) + '">🧺</th>';
   var isSunday = isMarketClosedToday();
   var priceColHtml = '<th title="' + t('col_price_title') + '">' + t('col_price') + (isSunday ? ' <span class="th-sunday-closed-pill" title="' + t('market_closed_sunday_tooltip') + '">🔒 ' + t('market_closed_tag') + '</span>' : '') + '</th>';
 
@@ -624,7 +626,6 @@ function renderTableHead() {
       '<tr>' +
       '<th style="width: 48px;">#</th>' +
       caughtCol +
-      basketCol +
       '<th style="width: 108px;">' + t('col_appearance') + '</th>' +
       '<th>' + t('col_area') + '</th>' +
       '<th>' + t('col_fish') + '</th>' +
@@ -640,7 +641,6 @@ function renderTableHead() {
       '<tr>' +
       '<th style="width: 48px;">#</th>' +
       caughtCol +
-      basketCol +
       '<th style="width: 108px;">' + t('col_appearance') + '</th>' +
       '<th>' + t('col_fish') + '</th>' +
       '<th>' + t('col_rarity') + '</th>' +
@@ -710,7 +710,9 @@ function renderFishRowHtml(f, idx, ctx) {
   }
 
   var inBasket = typeof basketFishIds !== 'undefined' && basketFishIds.has(f.id);
-  var basketBtnHtml = (typeof renderBasketBtn === 'function') ? renderBasketBtn(f.id) : '';
+  var basketTagHtml = inBasket
+    ? '<span class="badge-basket-tag" title="' + escapeHtml(t('modal_btn_basket_yes')) + '">🪣</span>'
+    : '';
 
   if (ctx.isClubView) {
     var unlock = getUnlockStatus(f, currentClubPoints);
@@ -725,12 +727,11 @@ function renderFishRowHtml(f, idx, ctx) {
     return '<tr class="' + rowClass.join(' ') + '" tabindex="0" data-fish-id="' + f.id + '" title="' + ctx.rowClickTitle + '">' +
       '<td style="color: var(--text-muted); font-weight: 600;">' + f.order + '</td>' +
       '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
-      '<td style="text-align: center;">' + basketBtnHtml + '</td>' +
       '<td><div class="fish-img-box"><img src="/images/fish_' + f.id + '.webp" alt="' + safeFishName + '" class="fish-img" width="92" height="52" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
       '<td class="loc-box">' +
       (areaName ? '<span class="loc-tag">' + escapeHtml(areaName) + '</span>' : '<span class="loc-unspecified">' + ctx.unspecText + '</span>') +
       '</td>' +
-      '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName + '</div>' + altMatchHtml + '</td>' +
+      '<td><div class="fish-name-cell-line">' + safeFishName + basketTagHtml + '</div>' + altMatchHtml + '</td>' +
       '<td>' + renderRatingBadge(f.rating) + '</td>' +
       '<td>' + renderPriceCell(f.id, ctx.priceCtx) + '</td>' +
       '<td>' + (typeof renderFishBaitsCell === 'function' ? renderFishBaitsCell(f, ctx.baitFilterCtx) : f.baits.map(function (b) {
@@ -765,12 +766,12 @@ function renderFishRowHtml(f, idx, ctx) {
   return '<tr class="' + rowCls + '" tabindex="0" data-fish-id="' + f.id + '" title="' + ctx.rowClickTitle + '">' +
     '<td style="color: var(--text-muted); font-weight: 600;">' + (idx + 1) + '</td>' +
     '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
-    '<td style="text-align: center;">' + basketBtnHtml + '</td>' +
     '<td><div class="fish-img-box"><img src="/images/fish_' + f.id + '.webp" alt="' + safeFishName + '" class="fish-img" width="92" height="52" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
-    '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName +
+    '<td><div class="fish-name-cell-line">' + safeFishName +
     (f.is_club ? '<span class="badge-club-tag">' + ctx.clubTagText + '</span>' : '') +
     fruitBadgeHtml +
     fossilBadgeHtml +
+    basketTagHtml +
     '</div>' + altMatchHtml + '</td>' +
     '<td>' + renderRatingBadge(f.rating) + '</td>' +
     '<td>' + renderPriceCell(f.id, ctx.priceCtx) + '</td>' +
@@ -810,27 +811,29 @@ function bindTableDelegation(tbody) {
       cycleCaughtState(Number(catchBtn.dataset.catchId));
       return;
     }
-    var basketBtn = ev.target && ev.target.closest ? ev.target.closest('.basket-btn[data-basket-id]') : null;
-    if (basketBtn) {
-      ev.stopPropagation();
-      if (typeof toggleBasketFish === 'function') {
-        toggleBasketFish(Number(basketBtn.dataset.basketId));
-      }
-      return;
-    }
     var tr = ev.target && ev.target.closest ? ev.target.closest('tr[data-fish-id]') : null;
     if (tr) {
-      openPriceModal(Number(tr.dataset.fishId));
+      var fid = Number(tr.dataset.fishId);
+      if (typeof basketPickMode !== 'undefined' && basketPickMode && typeof toggleBasketFish === 'function') {
+        toggleBasketFish(fid);
+        return;
+      }
+      openPriceModal(fid);
     }
   });
 
   tbody.addEventListener('keydown', function (ev) {
     if (ev.key !== 'Enter' && ev.key !== ' ') return;
-    if (ev.target && ev.target.closest && (ev.target.closest('.caught-btn') || ev.target.closest('.basket-btn'))) return;
+    if (ev.target && ev.target.closest && ev.target.closest('.caught-btn')) return;
     var tr = ev.target && ev.target.closest ? ev.target.closest('tr[data-fish-id]') : null;
     if (tr && ev.target === tr) {
       ev.preventDefault();
-      openPriceModal(Number(tr.dataset.fishId));
+      var fid = Number(tr.dataset.fishId);
+      if (typeof basketPickMode !== 'undefined' && basketPickMode && typeof toggleBasketFish === 'function') {
+        toggleBasketFish(fid);
+        return;
+      }
+      openPriceModal(fid);
     }
   });
 }
@@ -947,7 +950,7 @@ function renderTableBody(data) {
   }
 
   if (data.length === 0) {
-    var colCount = currentView === "club" ? 12 : 11;
+    var colCount = currentView === "club" ? 11 : 10;
     var emptyKey = (typeof filterOnlyBasket !== 'undefined' && filterOnlyBasket && typeof basketFishIds !== 'undefined' && basketFishIds.size === 0)
       ? 'basket_empty_table_state'
       : 'table_empty_state';

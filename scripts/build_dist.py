@@ -375,7 +375,6 @@ def render_static_table_head(ui_dicts: dict, lang: str) -> str:
         "<tr>"
         '<th style="width: 48px;">#</th>'
         f'<th style="width: 44px; text-align: center;" title="{esc(t("col_caught_title"))}">✓</th>'
-        f'<th style="width: 40px; text-align: center;" title="{esc(t("col_basket_title"))}">🧺</th>'
         f'<th style="width: 108px;">{esc(t("col_appearance"))}</th>'
         f'<th>{esc(t("col_fish"))}</th>'
         f'<th>{esc(t("col_rarity"))}</th>'
@@ -400,7 +399,6 @@ def render_static_fish_rows(fishes: list, fish_names: dict, taxonomies: dict, es
 
     row_click_title = esc(t("price_cell_detail_title"))
     caught_title = esc(t("auth_notice_collection"))
-    basket_title = esc(t("basket_btn_add_title"))
     club_tag_text = esc(t("badge_club_fish"))
     unspec_text = esc(t("loc_unspecified"))
     add_btn_text = esc(t("price_add_btn"))
@@ -474,7 +472,6 @@ def render_static_fish_rows(fishes: list, fish_names: dict, taxonomies: dict, es
             f'<tr tabindex="0" data-fish-id="{fid}" title="{row_click_title}">'
             f'<td style="color: var(--text-muted); font-weight: 600;">{idx + 1}</td>'
             f'<td style="text-align: center;"><button type="button" class="caught-btn" data-catch-id="{fid}" title="{caught_title}" aria-label="{caught_title}"></button></td>'
-            f'<td style="text-align: center;"><button type="button" class="basket-btn" data-basket-id="{fid}" aria-pressed="false" title="{basket_title}" aria-label="{basket_title}"><span aria-hidden="true">+</span></button></td>'
             f'<td><div class="fish-img-box"><img src="/images/fish_{fid}.webp" alt="{safe_name}" class="fish-img" width="92" height="52" {img_loading}></div></td>'
             f'<td><div style="font-weight: 700; font-size: 15px; color: #fff;">{safe_name}{club_badge}</div></td>'
             f"<td>{rating_html}</td>"

@@ -135,14 +135,14 @@
   <link rel="stylesheet" href="css/header.css?v=3.3">
   <link rel="stylesheet" href="css/nav.css?v=3.6">
   <link rel="stylesheet" href="css/filters.css?v=3.11">
-  <link rel="stylesheet" href="css/table.css?v=4.5">
+  <link rel="stylesheet" href="css/table.css?v=4.9">
   <link rel="stylesheet" href="css/clubs.css?v=3.3">
   <link rel="stylesheet" href="css/players.css?v=3.4">
   <link rel="stylesheet" href="css/modals.css?v=4.1">
   <link rel="stylesheet" href="css/chat.css?v=1.4">
   <link rel="stylesheet" href="css/locations-calendar.css?v=1.3">
   <link rel="stylesheet" href="css/guide.css?v=1.5">
-  <link rel="stylesheet" href="css/responsive.css?v=3.17">
+  <link rel="stylesheet" href="css/responsive.css?v=3.19">
 </head>
 
 <body>
@@ -1195,7 +1195,7 @@
           <span id="counter" class="counter-text">Zobrazeno 0 ryb</span>
           <button type="button" id="btnAddFilteredToBasket" class="pill-btn basket-add-filtered-btn"
             style="display: none;" onclick="window.fishaoApp.addFilteredFishesToBasket()">
-            🧺 + Přidat do košíku
+            🪣 + Do plánu lovu
           </button>
           <span id="activeFilterDesc" class="active-filter-tags"></span>
         </div>
@@ -1303,7 +1303,7 @@
                 </button>
                 <button type="button" id="modalBtnBasket" class="btn-basket-pill"
                   onclick="window.fishaoApp.toggleBasketFromModal()">
-                  🧺 Do košíku
+                  🪣 Do plánu lovu
                 </button>
               </div>
             </div>
@@ -2037,19 +2037,24 @@
     </svg>
   </button>
 
-  <!-- Floating Action Button: Fish Basket ("Košík ryb") -->
+  <!-- Floating Action Button: Fishing Plan ("Plán lovu") -->
   <button type="button" id="basketFab" class="basket-fab"
     onclick="window.fishaoApp.onBasketFabClick()"
-    title="Zobrazit pouze ryby přidané do tvého košíku" aria-label="Zobrazit pouze ryby přidané do tvého košíku"
+    title="Otevřít můj plán lovu" aria-label="Otevřít můj plán lovu"
     data-i18n-title="filter_btn_basket_title" data-i18n-aria-label="filter_btn_basket_title"
     style="display: none;">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M5 10h14l-1.5 9a2 2 0 0 1-2 1.7H8.5a2 2 0 0 1-2-1.7L5 10z" />
-      <path d="M8.5 10L12 4l3.5 6" />
-      <path d="M10 14v3" />
-      <path d="M14 14v3" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M5 10c0-3.9 3.1-7 7-7s7 3.1 7 7" />
+      <ellipse cx="12" cy="10" rx="7" ry="2.2" />
+      <path d="M5.5 10.6L7.3 19.2A2 2 0 0 0 9.3 20.8h5.4a2 2 0 0 0 2-1.6l1.8-8.6" />
     </svg>
     <span id="basketFabBadge" class="fab-count-badge" style="display: none;">0</span>
+    <span id="basketFabEditBadge" class="fab-edit-badge" style="display: none;" aria-hidden="true">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 20h9" />
+        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+      </svg>
+    </span>
   </button>
 
   <!-- Floating Action Button: Fish Table Localized Snapshot -->
@@ -2268,30 +2273,30 @@
   <!-- End Cloudflare Web Analytics -->
 
   <!-- Data scripts and localization (only base CS loaded upfront; other languages load on demand) -->
-  <script defer src="data/i18n/ui_cs.js?v=8.3"></script>
+  <script defer src="data/i18n/ui_cs.js?v=8.5"></script>
   <script defer src="data/i18n/taxonomies.js?v=4.0"></script>
   <script defer src="data/i18n/fish_names.js?v=3.5"></script>
-  <script defer src="data/i18n.js?v=5.1"></script>
+  <script defer src="data/i18n.js?v=5.3"></script>
   <script defer src="data/fishes.js?v=3.2"></script>
   <script defer src="data/estimated_prices.js?v=1.0"></script>
   <script defer src="firebase-config.js?v=3.2"></script>
   <!-- Modular FISHAO Application Logic -->
   <script defer src="js/state.js?v=5.5"></script>
   <script defer src="js/firestore-tx.js?v=3.4"></script>
-  <script defer src="js/table.js?v=4.7"></script>
-  <script defer src="js/basket.js?v=1.1"></script>
-  <script defer src="js/table-snapshot.js?v=1.4"></script>
+  <script defer src="js/table.js?v=4.9"></script>
+  <script defer src="js/basket.js?v=1.7"></script>
+  <script defer src="js/table-snapshot.js?v=1.5"></script>
   <script defer src="js/clubs.js?v=4.0"></script>
   <script defer src="js/market.js?v=4.22"></script>
   <script defer src="js/filters.js?v=4.9"></script>
-  <script defer src="js/auth.js?v=4.12"></script>
+  <script defer src="js/auth.js?v=4.13"></script>
   <script defer src="js/players.js?v=4.5"></script>
   <script defer src="js/chat.js?v=2.6"></script>
   <script defer src="js/locations.js?v=1.3"></script>
   <script defer src="js/calendar.js?v=1.2"></script>
   <script defer src="js/guide.js?v=1.7"></script>
   <script defer src="js/reminders.js?v=1.3"></script>
-  <script defer src="js/main.js?v=5.20"></script>
+  <script defer src="js/main.js?v=5.22"></script>
 
 </body>
 

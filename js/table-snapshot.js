@@ -232,7 +232,7 @@ function buildLocalizedFilterSummary(meta, view, lang) {
   if (!meta) return '';
   var parts = [];
   if (meta.onlyBasket) {
-    parts.push('🧺 ' + tsTranslate(lang, 'filter_btn_basket'));
+    parts.push('🪣 ' + tsTranslate(lang, 'filter_btn_basket'));
   }
   if (meta.playerBackyardName) {
     parts.push('🏡 ' + meta.playerBackyardName);
