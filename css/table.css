@@ -144,6 +144,167 @@ tr.row-shiny {
   background: #b45309;
 }
 
+/* Fish Basket ("Košík ryb") row toggle & highlight */
+tr.row-in-basket {
+  background: rgba(56, 189, 248, 0.06);
+}
+tr.row-in-basket:nth-child(even) {
+  background: rgba(56, 189, 248, 0.085);
+}
+
+.basket-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: transparent;
+  border: 1.5px dashed rgba(148, 163, 184, 0.38);
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.16s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.basket-btn:hover {
+  border-color: #38bdf8;
+  border-style: solid;
+  color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.14);
+}
+
+.basket-btn.in-basket {
+  background: rgba(14, 165, 233, 0.22);
+  border: 1.5px solid #38bdf8;
+  color: #e0f2fe;
+  font-size: 13px;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.28);
+}
+
+.basket-btn.in-basket:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #f87171;
+}
+
+.basket-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  margin-left: 4px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 800;
+  background: rgba(56, 189, 248, 0.24);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  line-height: 1;
+}
+
+.pill-btn.active .basket-count-badge {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.counter-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.basket-add-filtered-btn {
+  height: 26px;
+  padding: 0 10px;
+  font-size: 11.5px;
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.basket-add-filtered-btn:hover {
+  background: rgba(56, 189, 248, 0.22);
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+/* Active Basket / Custom Player Backyard Context Bar */
+.fish-selection-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 11px 15px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.14), rgba(15, 23, 42, 0.92));
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+}
+
+.fish-selection-bar.is-player-backyard {
+  border-color: rgba(20, 184, 166, 0.42);
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.16), rgba(15, 23, 42, 0.92));
+}
+
+.fsb-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1 1 260px;
+}
+
+.fsb-icon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.fsb-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.fsb-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.fish-selection-bar.is-player-backyard .fsb-title {
+  color: #5eead4;
+}
+
+.fsb-hint {
+  font-size: 11.5px;
+  color: #94a3b8;
+  line-height: 1.35;
+}
+
+.fsb-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.fsb-actions .pill-btn {
+  height: 30px;
+  padding: 0 11px;
+  font-size: 11.5px;
+}
+
 .fish-img-box {
   width: 92px;
   height: 52px;

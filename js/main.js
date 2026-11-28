@@ -517,6 +517,7 @@ function switchView(view, skipSync) {
   updateSortByOptions();
   resetFilters();
   updateCaughtStats();
+  if (typeof updateBasketUI === 'function') updateBasketUI();
   updateScrollTopButton();
 }
 
@@ -859,6 +860,7 @@ function setLanguage(lang, opts) {
   renderClubMilestones();
   renderClubSpecialFishes();
   renderClubMembers(currentClubMembersMap, currentClubCreatorId);
+  if (typeof updateBasketUI === 'function') updateBasketUI();
   applyFilters();
 
   if (typeof populatePlayerFishFilterDropdown === 'function') populatePlayerFishFilterDropdown();
@@ -1206,6 +1208,18 @@ window.fishaoApp = {
   onTodayHighPricePctInput: onTodayHighPricePctInput,
   toggleOnlyCaught: toggleOnlyCaught,
   toggleOnlyBackyard: toggleOnlyBackyard,
+  toggleOnlyClubUnlocked: typeof toggleOnlyClubUnlocked === 'function' ? toggleOnlyClubUnlocked : function () {},
+  toggleOnlyBasket: typeof toggleOnlyBasket === 'function' ? toggleOnlyBasket : function () {},
+  toggleBasketFish: typeof toggleBasketFish === 'function' ? toggleBasketFish : function () {},
+  toggleBasketFromModal: typeof toggleBasketFromModal === 'function' ? toggleBasketFromModal : function () {},
+  clearFishBasket: typeof clearFishBasket === 'function' ? clearFishBasket : function () {},
+  addOwnBackyardToBasket: typeof addOwnBackyardToBasket === 'function' ? addOwnBackyardToBasket : function () {},
+  addUnlockedClubToBasket: typeof addUnlockedClubToBasket === 'function' ? addUnlockedClubToBasket : function () {},
+  addFilteredFishesToBasket: typeof addFilteredFishesToBasket === 'function' ? addFilteredFishesToBasket : function () {},
+  openPlayerBackyardInFishdex: typeof openPlayerBackyardInFishdex === 'function' ? openPlayerBackyardInFishdex : function () {},
+  addPlayerBackyardToBasket: typeof addPlayerBackyardToBasket === 'function' ? addPlayerBackyardToBasket : function () {},
+  clearPlayerBackyardFilter: typeof clearPlayerBackyardFilter === 'function' ? clearPlayerBackyardFilter : function () {},
+  togglePlayerBackyardMissingQuick: typeof togglePlayerBackyardMissingQuick === 'function' ? togglePlayerBackyardMissingQuick : function () {},
   openPriceModal: openPriceModal,
   togglePriceChartVisibility: togglePriceChartVisibility,
   closePriceModal: closePriceModal,

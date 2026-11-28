@@ -135,9 +135,9 @@
   <link rel="stylesheet" href="css/header.css?v=3.3">
   <link rel="stylesheet" href="css/nav.css?v=3.6">
   <link rel="stylesheet" href="css/filters.css?v=3.11">
-  <link rel="stylesheet" href="css/table.css?v=4.3">
+  <link rel="stylesheet" href="css/table.css?v=4.4">
   <link rel="stylesheet" href="css/clubs.css?v=3.3">
-  <link rel="stylesheet" href="css/players.css?v=3.3">
+  <link rel="stylesheet" href="css/players.css?v=3.4">
   <link rel="stylesheet" href="css/modals.css?v=4.1">
   <link rel="stylesheet" href="css/chat.css?v=1.4">
   <link rel="stylesheet" href="css/locations-calendar.css?v=1.3">
@@ -409,6 +409,13 @@
             onchange="window.fishaoApp.toggleMissingShiny(this.checked)">
           <span data-i18n="filter_btn_missing_shiny">✨ Chybějící zářivé</span>
         </label>
+        <button type="button" class="pill-btn" id="btnClubOnlyBasket"
+          onclick="window.fishaoApp.toggleOnlyBasket()"
+          data-i18n-title="filter_btn_basket_title"
+          title="Zobrazit pouze ryby přidané do tvého košíku">
+          🧺 <span data-i18n="filter_btn_basket">Košík</span>
+          <span id="clubBasketCountBadge" class="basket-count-badge" style="display: none;">0</span>
+        </button>
       </div>
     </div>
 
@@ -1178,14 +1185,31 @@
               style="display: none;"
               data-i18n="filter_btn_only_backyard" data-i18n-title="filter_btn_only_backyard_title"
               title="Zobrazit pouze ryby, které máš nasazené za domem">🏡 Mám za domem</button>
+            <button type="button" class="pill-btn" id="btnOnlyClubUnlocked" onclick="window.fishaoApp.toggleOnlyClubUnlocked()"
+              style="display: none;"
+              data-i18n="filter_btn_only_club_unlocked" data-i18n-title="filter_btn_only_club_unlocked_title"
+              title="Zobrazit pouze klubové ryby odemčené ve tvém klubu">🏆 V klubu</button>
+            <button type="button" class="pill-btn" id="btnOnlyBasket" onclick="window.fishaoApp.toggleOnlyBasket()"
+              data-i18n-title="filter_btn_basket_title"
+              title="Zobrazit pouze ryby přidané do tvého košíku">
+              🧺 <span data-i18n="filter_btn_basket">Košík</span>
+              <span id="basketCountBadge" class="basket-count-badge" style="display: none;">0</span>
+            </button>
           </div>
         </div>
       </div>
+
+      <!-- Active Basket / Custom Fish Group Bar -->
+      <div id="fishSelectionBar" class="fish-selection-bar" style="display: none;"></div>
 
       <!-- Status and counter bar -->
       <div class="status-counter-bar">
         <div class="counter-left">
           <span id="counter" class="counter-text">Zobrazeno 0 ryb</span>
+          <button type="button" id="btnAddFilteredToBasket" class="pill-btn basket-add-filtered-btn"
+            style="display: none;" onclick="window.fishaoApp.addFilteredFishesToBasket()">
+            🧺 + Přidat do košíku
+          </button>
           <span id="activeFilterDesc" class="active-filter-tags"></span>
         </div>
         <div class="counter-hint" data-i18n="counter_hint">
@@ -1289,6 +1313,10 @@
                 <button type="button" id="modalBtnBackyard" class="btn-backyard-pill"
                   onclick="window.fishaoApp.toggleBackyardFromModal()">
                   🏡 Za domem
+                </button>
+                <button type="button" id="modalBtnBasket" class="btn-basket-pill"
+                  onclick="window.fishaoApp.toggleBasketFromModal()">
+                  🧺 Do košíku
                 </button>
               </div>
             </div>
@@ -2238,7 +2266,7 @@
   <!-- End Cloudflare Web Analytics -->
 
   <!-- Data scripts and localization (only base CS loaded upfront; other languages load on demand) -->
-  <script defer src="data/i18n/ui_cs.js?v=8.2"></script>
+  <script defer src="data/i18n/ui_cs.js?v=8.3"></script>
   <script defer src="data/i18n/taxonomies.js?v=4.0"></script>
   <script defer src="data/i18n/fish_names.js?v=3.5"></script>
   <script defer src="data/i18n.js?v=5.1"></script>
@@ -2246,21 +2274,22 @@
   <script defer src="data/estimated_prices.js?v=1.0"></script>
   <script defer src="firebase-config.js?v=3.2"></script>
   <!-- Modular FISHAO Application Logic -->
-  <script defer src="js/state.js?v=5.4"></script>
+  <script defer src="js/state.js?v=5.5"></script>
   <script defer src="js/firestore-tx.js?v=3.4"></script>
-  <script defer src="js/table.js?v=4.6"></script>
-  <script defer src="js/table-snapshot.js?v=1.3"></script>
+  <script defer src="js/table.js?v=4.7"></script>
+  <script defer src="js/basket.js?v=1.0"></script>
+  <script defer src="js/table-snapshot.js?v=1.4"></script>
   <script defer src="js/clubs.js?v=4.0"></script>
-  <script defer src="js/market.js?v=4.21"></script>
-  <script defer src="js/filters.js?v=4.8"></script>
-  <script defer src="js/auth.js?v=4.11"></script>
-  <script defer src="js/players.js?v=4.4"></script>
+  <script defer src="js/market.js?v=4.22"></script>
+  <script defer src="js/filters.js?v=4.9"></script>
+  <script defer src="js/auth.js?v=4.12"></script>
+  <script defer src="js/players.js?v=4.5"></script>
   <script defer src="js/chat.js?v=2.6"></script>
   <script defer src="js/locations.js?v=1.3"></script>
   <script defer src="js/calendar.js?v=1.2"></script>
   <script defer src="js/guide.js?v=1.7"></script>
   <script defer src="js/reminders.js?v=1.3"></script>
-  <script defer src="js/main.js?v=5.18"></script>
+  <script defer src="js/main.js?v=5.19"></script>
 
 </body>
 

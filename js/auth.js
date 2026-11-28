@@ -76,6 +76,9 @@ function saveProfileToCache(uid, profile, privData) {
     var cachedLineLevel = (privData && typeof privData.lineLevel === "number")
       ? privData.lineLevel
       : ((typeof guideLineFromLevel === "number" && safeStorageGet('fishao_guide_line_saved') === '1') ? guideLineFromLevel : null);
+    var existingBasket = (privData && Array.isArray(privData.basketFishIds))
+      ? privData.basketFishIds
+      : (typeof basketFishIds !== "undefined" ? Array.from(basketFishIds) : []);
     var cachePayload = {
       uid: uid,
       displayName: profile.displayName || "",
@@ -87,7 +90,8 @@ function saveProfileToCache(uid, profile, privData) {
       caughtFishIds: Array.isArray(profile.caughtFishIds) ? profile.caughtFishIds : [],
       shinyFishIds: Array.isArray(profile.shinyFishIds) ? profile.shinyFishIds : [],
       backyardFishIds: Array.isArray(profile.backyardFishIds) ? profile.backyardFishIds : [],
-      friendUids: existingFriends
+      friendUids: existingFriends,
+      basketFishIds: existingBasket
     };
     if (cachedTreeLevel !== null) cachePayload.treeLevel = cachedTreeLevel;
     if (cachedLineLevel !== null) cachePayload.lineLevel = cachedLineLevel;
@@ -116,6 +120,9 @@ function hydrateProfileFromCache(uid) {
     friendUids = new Set(Array.isArray(cached.friendUids) ? cached.friendUids : []);
     if (typeof syncGuideLevelsFromProfile === "function") {
       syncGuideLevelsFromProfile(cached, true);
+    }
+    if (typeof syncBasketFromProfile === "function" && Array.isArray(cached.basketFishIds)) {
+      syncBasketFromProfile(cached);
     }
     return true;
   } catch (e) {
@@ -869,6 +876,9 @@ async function loadUserProfile(user, hadCachedProfile, cachedClubId) {
       if (typeof syncGuideLevelsFromProfile === "function") {
         syncGuideLevelsFromProfile(privData);
       }
+      if (typeof syncBasketFromProfile === "function") {
+        syncBasketFromProfile(privData);
+      }
 
       if (!privSnap.exists() && !isBootstrappingNewUser && handledFirstSnapshot && userDocExists && userProfile) {
         try {
@@ -1072,6 +1082,9 @@ function updateAuthUI() {
       filterOnlyBackyard = false;
       btnOnlyBackyard.classList.remove("active");
     }
+  }
+  if (typeof updateBasketUI === "function") {
+    updateBasketUI();
   }
 
   var gatePlayers = document.getElementById("gatePlayers");

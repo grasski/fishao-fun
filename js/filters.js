@@ -263,6 +263,12 @@ function applyFilters() {
     if (filterOnlyCaught && !caughtFishIds.has(f.id)) return false;
     if (collectionFilterMode === "missing_shiny" && shinyFishIds.has(f.id)) return false;
     if (filterOnlyBackyard && !backyardFishIds.has(f.id)) return false;
+    if (filterOnlyClubUnlocked && currentView !== "club") {
+      if (!f.is_club) return false;
+      if (typeof getUnlockStatus === "function" && !getUnlockStatus(f, currentClubPoints).isUnlocked) return false;
+    }
+    if (filterOnlyBasket && !basketFishIds.has(f.id)) return false;
+    if (activePlayerBackyardFilter && activePlayerBackyardFilter.fishIds && !activePlayerBackyardFilter.fishIds.has(f.id)) return false;
 
     if (currentView === "all" || currentView === "market") {
       if (collectionFilterMode === "caught" && !caughtFishIds.has(f.id)) return false;
@@ -398,6 +404,15 @@ function applyFilters() {
   if (filterOnlyBackyard) {
     filterNotes.push(t('filter_note_only_backyard'));
   }
+  if (filterOnlyClubUnlocked && currentView !== "club") {
+    filterNotes.push(t('filter_note_only_club_unlocked'));
+  }
+  if (filterOnlyBasket) {
+    filterNotes.push(t('filter_note_only_basket', { count: basketFishIds.size }));
+  }
+  if (activePlayerBackyardFilter && activePlayerBackyardFilter.displayName) {
+    filterNotes.push(t('filter_note_player_backyard', { name: activePlayerBackyardFilter.displayName }));
+  }
   if (collectionFilterMode === "missing_shiny") {
     filterNotes.push(t('filter_note_missing_shiny'));
   }
@@ -525,6 +540,14 @@ function resetFilters() {
   filterOnlyBackyard = false;
   var btnOnlyBackyard = document.getElementById("btnOnlyBackyard");
   if (btnOnlyBackyard) btnOnlyBackyard.classList.remove("active");
+
+  filterOnlyClubUnlocked = false;
+  var btnOnlyClubUnlocked = document.getElementById("btnOnlyClubUnlocked");
+  if (btnOnlyClubUnlocked) btnOnlyClubUnlocked.classList.remove("active");
+
+  filterOnlyBasket = false;
+  activePlayerBackyardFilter = null;
+  if (typeof updateBasketUI === 'function') updateBasketUI();
 
   var uncaughtCb = document.getElementById("filterUncaughtCheckbox");
   if (uncaughtCb) uncaughtCb.checked = false;

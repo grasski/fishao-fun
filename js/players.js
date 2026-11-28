@@ -1133,6 +1133,11 @@ function renderPlayersList() {
         '<div class="player-card-backyard">' +
           '<div class="player-card-backyard-header">' +
             '<span>🏡 ' + escapeHtml(t('player_card_backyard_title', { count: bFishes.length })) + '</span>' +
+            (bFishes.length > 0
+              ? '<button type="button" class="player-backyard-open-list-btn" data-backyard-list-uid="' + escapedUid + '" title="' + escapeHtml(t('player_backyard_open_list_title')) + '">' +
+                  escapeHtml(t('player_backyard_open_list_short')) +
+                '</button>'
+              : '') +
           '</div>' +
           backyardCardsHtml +
         '</div>' +
@@ -1154,6 +1159,15 @@ function renderPlayersList() {
     grid.addEventListener("click", function (ev) {
       var tEl = ev.target;
       if (!tEl || !tEl.closest) return;
+
+      var backyardListBtn = tEl.closest(".player-backyard-open-list-btn");
+      if (backyardListBtn) {
+        ev.stopPropagation();
+        if (typeof openPlayerBackyardInFishdex === 'function') {
+          openPlayerBackyardInFishdex(backyardListBtn.dataset.backyardListUid);
+        }
+        return;
+      }
 
       var expandBtn = tEl.closest(".player-backyard-expand-btn");
       if (expandBtn) {
@@ -1817,11 +1831,30 @@ async function openPlayerModal(uid) {
   // Backyard section rendering in modal
   var backyardWrap = document.getElementById("playerModalBackyardWrap");
   if (backyardWrap) {
+    var backyardActionsHtml = '';
+    if (bFishes.length > 0) {
+      backyardActionsHtml =
+        '<div class="player-modal-backyard-actions">' +
+          '<button type="button" class="pill-btn primary pmba-btn" onclick="window.fishaoApp.openPlayerBackyardInFishdex(\'' + escapeHtml(uid) + '\', false)">' +
+            escapeHtml(t('player_modal_backyard_open_list')) +
+          '</button>' +
+          (currentUser
+            ? '<button type="button" class="pill-btn pmba-btn" onclick="window.fishaoApp.openPlayerBackyardInFishdex(\'' + escapeHtml(uid) + '\', true)">' +
+                escapeHtml(t('player_modal_backyard_open_missing')) +
+              '</button>'
+            : '') +
+          '<button type="button" class="pill-btn pmba-btn" onclick="window.fishaoApp.addPlayerBackyardToBasket(\'' + escapeHtml(uid) + '\')">' +
+            escapeHtml(t('player_modal_backyard_add_basket')) +
+          '</button>' +
+        '</div>';
+    }
+
     var backyardHtml = '<div class="player-modal-backyard-section">' +
       '<div class="player-modal-backyard-header">' +
         '<span>' + t('player_modal_backyard_title', { count: bFishes.length }) + '</span>' +
         (isMe ? '<button type="button" class="btn-subtle-link" onclick="window.fishaoApp.closePlayerModal(); window.fishaoApp.openProfileModal();" style="font-size: 11.5px; color: #2dd4bf;">' + t('player_modal_edit_backyard') + '</button>' : '') +
-      '</div>';
+      '</div>' +
+      backyardActionsHtml;
 
     if (bFishes.length === 0) {
       backyardHtml += '<div style="font-size: 12px; color: var(--text-muted); font-style: italic; padding: 6px 0;">' +

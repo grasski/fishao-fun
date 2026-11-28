@@ -809,6 +809,9 @@ function openPriceModal(fid, skipSync) {
   if (typeof updateModalBackyardBtn === 'function') {
     updateModalBackyardBtn(fid);
   }
+  if (typeof updateModalBasketBtn === 'function') {
+    updateModalBasketBtn(fid);
+  }
   if (typeof renderModalBackyardOwners === 'function') {
     renderModalBackyardOwners(fid);
   }

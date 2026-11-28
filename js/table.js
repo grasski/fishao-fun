@@ -615,6 +615,7 @@ function renderTableHead() {
   var thead = document.getElementById("tableHead");
   if (!thead) return;
   var caughtCol = '<th style="width: 44px; text-align: center;" title="' + t('col_caught_title') + '">✓</th>';
+  var basketCol = '<th style="width: 40px; text-align: center;" title="' + escapeHtml(t('col_basket_title')) + '">🧺</th>';
   var isSunday = isMarketClosedToday();
   var priceColHtml = '<th title="' + t('col_price_title') + '">' + t('col_price') + (isSunday ? ' <span class="th-sunday-closed-pill" title="' + t('market_closed_sunday_tooltip') + '">🔒 ' + t('market_closed_tag') + '</span>' : '') + '</th>';
 
@@ -623,6 +624,7 @@ function renderTableHead() {
       '<tr>' +
       '<th style="width: 48px;">#</th>' +
       caughtCol +
+      basketCol +
       '<th style="width: 108px;">' + t('col_appearance') + '</th>' +
       '<th>' + t('col_area') + '</th>' +
       '<th>' + t('col_fish') + '</th>' +
@@ -638,6 +640,7 @@ function renderTableHead() {
       '<tr>' +
       '<th style="width: 48px;">#</th>' +
       caughtCol +
+      basketCol +
       '<th style="width: 108px;">' + t('col_appearance') + '</th>' +
       '<th>' + t('col_fish') + '</th>' +
       '<th>' + t('col_rarity') + '</th>' +
@@ -706,6 +709,9 @@ function renderFishRowHtml(f, idx, ctx) {
       escapeHtml(t('fossil_requirement_badge_title')) + '">🦴</span>';
   }
 
+  var inBasket = typeof basketFishIds !== 'undefined' && basketFishIds.has(f.id);
+  var basketBtnHtml = (typeof renderBasketBtn === 'function') ? renderBasketBtn(f.id) : '';
+
   if (ctx.isClubView) {
     var unlock = getUnlockStatus(f, currentClubPoints);
     var rowClass = [];
@@ -713,11 +719,13 @@ function renderFishRowHtml(f, idx, ctx) {
     var catchState = getFishCatchState(f.id);
     if (catchState === "caught") rowClass.push("row-caught");
     if (catchState === "shiny") rowClass.push("row-shiny");
+    if (inBasket) rowClass.push("row-in-basket");
     var areaName = rc.areaName;
 
     return '<tr class="' + rowClass.join(' ') + '" tabindex="0" data-fish-id="' + f.id + '" title="' + ctx.rowClickTitle + '">' +
       '<td style="color: var(--text-muted); font-weight: 600;">' + f.order + '</td>' +
       '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
+      '<td style="text-align: center;">' + basketBtnHtml + '</td>' +
       '<td><div class="fish-img-box"><img src="/images/fish_' + f.id + '.webp" alt="' + safeFishName + '" class="fish-img" width="92" height="52" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
       '<td class="loc-box">' +
       (areaName ? '<span class="loc-tag">' + escapeHtml(areaName) + '</span>' : '<span class="loc-unspecified">' + ctx.unspecText + '</span>') +
@@ -739,7 +747,11 @@ function renderFishRowHtml(f, idx, ctx) {
   }
 
   var catchState = getFishCatchState(f.id);
-  var rowCls = catchState === "shiny" ? "row-shiny" : (catchState === "caught" ? "row-caught" : "");
+  var stdRowCls = [];
+  if (catchState === "shiny") stdRowCls.push("row-shiny");
+  else if (catchState === "caught") stdRowCls.push("row-caught");
+  if (inBasket) stdRowCls.push("row-in-basket");
+  var rowCls = stdRowCls.join(' ');
   var locLabels = rc.locLabels;
   var areaLabels = rc.areaLabels;
   var locHtml = locLabels.map(function (locName) {
@@ -753,6 +765,7 @@ function renderFishRowHtml(f, idx, ctx) {
   return '<tr class="' + rowCls + '" tabindex="0" data-fish-id="' + f.id + '" title="' + ctx.rowClickTitle + '">' +
     '<td style="color: var(--text-muted); font-weight: 600;">' + (idx + 1) + '</td>' +
     '<td style="text-align: center;">' + renderCaughtBtn(f.id) + '</td>' +
+    '<td style="text-align: center;">' + basketBtnHtml + '</td>' +
     '<td><div class="fish-img-box"><img src="/images/fish_' + f.id + '.webp" alt="' + safeFishName + '" class="fish-img" width="92" height="52" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display=\'none\';"></div></td>' +
     '<td><div style="font-weight: 700; font-size: 15px; color: #fff;">' + safeFishName +
     (f.is_club ? '<span class="badge-club-tag">' + ctx.clubTagText + '</span>' : '') +
@@ -797,6 +810,14 @@ function bindTableDelegation(tbody) {
       cycleCaughtState(Number(catchBtn.dataset.catchId));
       return;
     }
+    var basketBtn = ev.target && ev.target.closest ? ev.target.closest('.basket-btn[data-basket-id]') : null;
+    if (basketBtn) {
+      ev.stopPropagation();
+      if (typeof toggleBasketFish === 'function') {
+        toggleBasketFish(Number(basketBtn.dataset.basketId));
+      }
+      return;
+    }
     var tr = ev.target && ev.target.closest ? ev.target.closest('tr[data-fish-id]') : null;
     if (tr) {
       openPriceModal(Number(tr.dataset.fishId));
@@ -805,7 +826,7 @@ function bindTableDelegation(tbody) {
 
   tbody.addEventListener('keydown', function (ev) {
     if (ev.key !== 'Enter' && ev.key !== ' ') return;
-    if (ev.target && ev.target.closest && ev.target.closest('.caught-btn')) return;
+    if (ev.target && ev.target.closest && (ev.target.closest('.caught-btn') || ev.target.closest('.basket-btn'))) return;
     var tr = ev.target && ev.target.closest ? ev.target.closest('tr[data-fish-id]') : null;
     if (tr && ev.target === tr) {
       ev.preventDefault();
@@ -926,10 +947,15 @@ function renderTableBody(data) {
   }
 
   if (data.length === 0) {
-    var colCount = currentView === "club" ? 11 : 10;
-    tbody.innerHTML = '<tr><td colspan="' + colCount + '" class="empty-state">' + t('table_empty_state') + '</td></tr>';
+    var colCount = currentView === "club" ? 12 : 11;
+    var emptyKey = (typeof filterOnlyBasket !== 'undefined' && filterOnlyBasket && typeof basketFishIds !== 'undefined' && basketFishIds.size === 0)
+      ? 'basket_empty_table_state'
+      : 'table_empty_state';
+    tbody.innerHTML = '<tr><td colspan="' + colCount + '" class="empty-state">' + t(emptyKey) + '</td></tr>';
     sentinel.style.display = 'none';
     document.getElementById("counter").innerText = t('counter_showing', { shown: 0, total: total });
+    if (typeof updateAddFilteredToBasketButton === 'function') updateAddFilteredToBasketButton();
+    if (typeof renderFishSelectionBar === 'function') renderFishSelectionBar();
     if (typeof updateScrollTopButton === 'function') updateScrollTopButton();
     return;
   }
@@ -974,6 +1000,8 @@ function renderTableBody(data) {
 
   _tableScrollState.offset = firstEnd;
   _tableScrollState.ctx = ctx;
+  if (typeof updateAddFilteredToBasketButton === 'function') updateAddFilteredToBasketButton();
+  if (typeof renderFishSelectionBar === 'function') renderFishSelectionBar();
   if (typeof updateScrollTopButton === 'function') updateScrollTopButton();
 
   if (firstEnd >= data.length) {

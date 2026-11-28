@@ -219,13 +219,27 @@ function captureActiveFilterMeta() {
     minSize: minEl && minEl.value !== '' ? minEl.value : '',
     maxSize: maxEl && maxEl.value !== '' ? maxEl.value : '',
     todayHighPrice: typeof filterTodayHighPrice !== 'undefined' ? !!filterTodayHighPrice : false,
-    hideLocked: !!(currentView === 'club' && hideLockedEl && hideLockedEl.checked)
+    hideLocked: !!(currentView === 'club' && hideLockedEl && hideLockedEl.checked),
+    onlyBasket: typeof filterOnlyBasket !== 'undefined' ? !!filterOnlyBasket : false,
+    onlyClubUnlocked: typeof filterOnlyClubUnlocked !== 'undefined' ? !!filterOnlyClubUnlocked : false,
+    playerBackyardName: (typeof activePlayerBackyardFilter !== 'undefined' && activePlayerBackyardFilter && activePlayerBackyardFilter.displayName)
+      ? activePlayerBackyardFilter.displayName
+      : ''
   };
 }
 
 function buildLocalizedFilterSummary(meta, view, lang) {
   if (!meta) return '';
   var parts = [];
+  if (meta.onlyBasket) {
+    parts.push('🧺 ' + tsTranslate(lang, 'filter_btn_basket'));
+  }
+  if (meta.playerBackyardName) {
+    parts.push('🏡 ' + meta.playerBackyardName);
+  }
+  if (meta.onlyClubUnlocked && view !== 'club') {
+    parts.push('🏆 ' + tsTranslate(lang, 'filter_btn_only_club_unlocked'));
+  }
   if (meta.q) {
     parts.push('"' + meta.q + '"');
   }

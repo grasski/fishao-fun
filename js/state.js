@@ -191,10 +191,32 @@ var filterNowActive = false;
 var filterTodayHighPrice = false;
 var filterOnlyCaught = false;
 var filterOnlyBackyard = false;
+var filterOnlyClubUnlocked = false;
+var filterOnlyBasket = false;
+var activePlayerBackyardFilter = null; // null | { uid: string, displayName: string, fishIds: Set<number> }
 var sortBestChanceOverride = false;
 var collectionFilterMode = "all"; // 'all' | 'caught' | 'missing' | 'missing_shiny'
 var ratingFilterValues = []; // Selected star ratings (["1".."5"]); empty = all ratings
 var locationFilterValues = []; // Selected location keys; empty = all locations
+
+// Personal Fish Basket ("Košík ryb" / custom catch list, localStorage + Firestore private settings)
+var BASKET_STORAGE_KEY = 'fishao_basket_v1';
+var BASKET_MAX_ITEMS = 200;
+var basketFishIds = new Set();
+try {
+  var savedBasketRaw = safeStorageGet(BASKET_STORAGE_KEY);
+  if (savedBasketRaw) {
+    var savedBasketArr = JSON.parse(savedBasketRaw);
+    if (Array.isArray(savedBasketArr)) {
+      savedBasketArr.forEach(function (id) {
+        var n = Number(id);
+        if (isFinite(n) && fishById.has(n) && basketFishIds.size < BASKET_MAX_ITEMS) {
+          basketFishIds.add(n);
+        }
+      });
+    }
+  }
+} catch (e) { }
 
 // Authentication & User Profile State
 var currentUser = null;

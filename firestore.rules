@@ -262,11 +262,13 @@ service cloud.firestore {
 
         allow create, update: if ((isSignedIn() && request.auth.uid == userId) || isAdmin())
           && docId == 'settings'
-          && request.resource.data.keys().hasOnly(['reminders', 'friendUids', 'lastLogin', 'updatedAt', 'treeLevel', 'lineLevel'])
+          && request.resource.data.keys().hasOnly(['reminders', 'friendUids', 'basketFishIds', 'lastLogin', 'updatedAt', 'treeLevel', 'lineLevel'])
           && (!('reminders' in request.resource.data)
               || (request.resource.data.reminders is list && request.resource.data.reminders.size() <= 100))
           && (!('friendUids' in request.resource.data)
               || (request.resource.data.friendUids is list && request.resource.data.friendUids.size() <= 300))
+          && (!('basketFishIds' in request.resource.data)
+              || (request.resource.data.basketFishIds is list && request.resource.data.basketFishIds.size() <= 200))
           && (!('treeLevel' in request.resource.data)
               || (request.resource.data.treeLevel is int && request.resource.data.treeLevel >= 1 && request.resource.data.treeLevel <= 20))
           && (!('lineLevel' in request.resource.data)
