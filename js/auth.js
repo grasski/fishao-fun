@@ -395,7 +395,8 @@ async function _runInitFirebaseSync() {
               var fetchedUtcDate = fetchedAtMs ? new Date(fetchedAtMs).toISOString().slice(0, 10) : "";
               var effectiveTtlMs = isMissingToday ? MISSING_TODAY_TTL_MS : SUMMARY_TTL_MS;
               var isSameUtcDay = !!(fetchedUtcDate && fetchedUtcDate === todayISO);
-              var isFreshTtl = !!(fetchedAtMs && isSameUtcDay && (Date.now() - fetchedAtMs) < effectiveTtlMs);
+              var ageMs = fetchedAtMs ? (Date.now() - fetchedAtMs) : -1;
+              var isFreshTtl = !!(fetchedAtMs && isSameUtcDay && ageMs >= 0 && ageMs < effectiveTtlMs);
 
               if (!isFreshTtl) {
                 var statusSnap = await firestoreModule.getDoc(syncStatusDocRef);
@@ -554,7 +555,8 @@ async function _runInitFirebaseSync() {
         syncManualImportVisibility();
       }
 
-      var hasFreshCfgCache = !!(cachedCfg && cachedCfg.ts && (Date.now() - cachedCfg.ts) < CONFIG_TTL_MS && !initialManualFlag);
+      var cfgAgeMs = (cachedCfg && typeof cachedCfg.ts === "number") ? (Date.now() - cachedCfg.ts) : -1;
+      var hasFreshCfgCache = !!(cachedCfg && cfgAgeMs >= 0 && cfgAgeMs < CONFIG_TTL_MS && !initialManualFlag);
       // Kick off market sync immediately using cached flag (avoids waiting on config roundtrip)
       syncMarketPricesMode(initialManualFlag);
 
