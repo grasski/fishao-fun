@@ -135,14 +135,14 @@
   <link rel="stylesheet" href="css/header.css?v=3.3">
   <link rel="stylesheet" href="css/nav.css?v=3.6">
   <link rel="stylesheet" href="css/filters.css?v=3.11">
-  <link rel="stylesheet" href="css/table.css?v=4.4">
+  <link rel="stylesheet" href="css/table.css?v=4.5">
   <link rel="stylesheet" href="css/clubs.css?v=3.3">
   <link rel="stylesheet" href="css/players.css?v=3.4">
   <link rel="stylesheet" href="css/modals.css?v=4.1">
   <link rel="stylesheet" href="css/chat.css?v=1.4">
   <link rel="stylesheet" href="css/locations-calendar.css?v=1.3">
   <link rel="stylesheet" href="css/guide.css?v=1.5">
-  <link rel="stylesheet" href="css/responsive.css?v=3.16">
+  <link rel="stylesheet" href="css/responsive.css?v=3.17">
 </head>
 
 <body>
@@ -409,13 +409,6 @@
             onchange="window.fishaoApp.toggleMissingShiny(this.checked)">
           <span data-i18n="filter_btn_missing_shiny">✨ Chybějící zářivé</span>
         </label>
-        <button type="button" class="pill-btn" id="btnClubOnlyBasket"
-          onclick="window.fishaoApp.toggleOnlyBasket()"
-          data-i18n-title="filter_btn_basket_title"
-          title="Zobrazit pouze ryby přidané do tvého košíku">
-          🧺 <span data-i18n="filter_btn_basket">Košík</span>
-          <span id="clubBasketCountBadge" class="basket-count-badge" style="display: none;">0</span>
-        </button>
       </div>
     </div>
 
@@ -1189,12 +1182,6 @@
               style="display: none;"
               data-i18n="filter_btn_only_club_unlocked" data-i18n-title="filter_btn_only_club_unlocked_title"
               title="Zobrazit pouze klubové ryby odemčené ve tvém klubu">🏆 V klubu</button>
-            <button type="button" class="pill-btn" id="btnOnlyBasket" onclick="window.fishaoApp.toggleOnlyBasket()"
-              data-i18n-title="filter_btn_basket_title"
-              title="Zobrazit pouze ryby přidané do tvého košíku">
-              🧺 <span data-i18n="filter_btn_basket">Košík</span>
-              <span id="basketCountBadge" class="basket-count-badge" style="display: none;">0</span>
-            </button>
           </div>
         </div>
       </div>
@@ -2050,6 +2037,21 @@
     </svg>
   </button>
 
+  <!-- Floating Action Button: Fish Basket ("Košík ryb") -->
+  <button type="button" id="basketFab" class="basket-fab"
+    onclick="window.fishaoApp.onBasketFabClick()"
+    title="Zobrazit pouze ryby přidané do tvého košíku" aria-label="Zobrazit pouze ryby přidané do tvého košíku"
+    data-i18n-title="filter_btn_basket_title" data-i18n-aria-label="filter_btn_basket_title"
+    style="display: none;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M5 10h14l-1.5 9a2 2 0 0 1-2 1.7H8.5a2 2 0 0 1-2-1.7L5 10z" />
+      <path d="M8.5 10L12 4l3.5 6" />
+      <path d="M10 14v3" />
+      <path d="M14 14v3" />
+    </svg>
+    <span id="basketFabBadge" class="fab-count-badge" style="display: none;">0</span>
+  </button>
+
   <!-- Floating Action Button: Fish Table Localized Snapshot -->
   <button type="button" id="tableSnapshotFab" class="table-snapshot-fab"
     onclick="window.fishaoApp.openTableSnapshotModal()"
@@ -2277,7 +2279,7 @@
   <script defer src="js/state.js?v=5.5"></script>
   <script defer src="js/firestore-tx.js?v=3.4"></script>
   <script defer src="js/table.js?v=4.7"></script>
-  <script defer src="js/basket.js?v=1.0"></script>
+  <script defer src="js/basket.js?v=1.1"></script>
   <script defer src="js/table-snapshot.js?v=1.4"></script>
   <script defer src="js/clubs.js?v=4.0"></script>
   <script defer src="js/market.js?v=4.22"></script>
@@ -2289,7 +2291,7 @@
   <script defer src="js/calendar.js?v=1.2"></script>
   <script defer src="js/guide.js?v=1.7"></script>
   <script defer src="js/reminders.js?v=1.3"></script>
-  <script defer src="js/main.js?v=5.19"></script>
+  <script defer src="js/main.js?v=5.20"></script>
 
 </body>
 

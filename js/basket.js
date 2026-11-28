@@ -120,22 +120,63 @@ function updateModalBasketBtn(fid) {
   btn.textContent = inBasket ? t('modal_btn_basket_yes') : t('modal_btn_basket_no');
 }
 
-function updateBasketUI() {
+function updateBasketFab() {
+  if (typeof document === 'undefined') return;
+  var fab = document.getElementById('basketFab');
+  if (!fab) return;
+
+  var isTable = (typeof isTableViewActive === 'function')
+    ? isTableViewActive()
+    : (currentView === 'all' || currentView === 'market' || currentView === 'club');
+  var isModalOpen = !!(document.body && document.body.classList.contains('modal-open'));
   var count = basketFishIds.size;
 
-  var btn = document.getElementById('btnOnlyBasket');
-  if (btn) btn.classList.toggle('active', filterOnlyBasket);
+  if (isModalOpen || (!isTable && count === 0)) {
+    fab.style.display = 'none';
+    return;
+  }
 
-  var clubBtn = document.getElementById('btnClubOnlyBasket');
-  if (clubBtn) clubBtn.classList.toggle('active', filterOnlyBasket);
+  fab.classList.toggle('active', isTable && filterOnlyBasket);
+  fab.setAttribute('aria-pressed', (isTable && filterOnlyBasket) ? 'true' : 'false');
+  fab.style.display = 'inline-flex';
 
-  ['basketCountBadge', 'clubBasketCountBadge'].forEach(function (id) {
-    var badge = document.getElementById(id);
-    if (!badge) return;
-    badge.textContent = String(count);
+  var badge = document.getElementById('basketFabBadge');
+  if (badge) {
+    badge.textContent = count > 99 ? '99+' : String(count);
     badge.style.display = count > 0 ? 'inline-flex' : 'none';
-  });
+  }
+}
 
+function onBasketFabClick() {
+  var isTable = (typeof isTableViewActive === 'function')
+    ? isTableViewActive()
+    : (currentView === 'all' || currentView === 'market' || currentView === 'club');
+
+  if (!isTable) {
+    if (typeof switchView === 'function') {
+      switchView('all');
+    }
+    filterOnlyBasket = true;
+    activePlayerBackyardFilter = null;
+    updateBasketUI();
+    applyFilters();
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { }
+    return;
+  }
+
+  toggleOnlyBasket();
+  if (filterOnlyBasket) {
+    var bar = document.getElementById('fishSelectionBar');
+    if (bar && typeof bar.scrollIntoView === 'function') {
+      var rect = bar.getBoundingClientRect();
+      if (rect.top < 0 || rect.top > (window.innerHeight || 800) * 0.65) {
+        try { bar.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { }
+      }
+    }
+  }
+}
+
+function updateBasketUI() {
   var clubUnlockedBtn = document.getElementById('btnOnlyClubUnlocked');
   if (clubUnlockedBtn) {
     var showClubUnlocked = !!(currentUser && currentClubId && currentView !== 'club');
@@ -147,6 +188,11 @@ function updateBasketUI() {
   }
 
   renderFishSelectionBar();
+  if (typeof updateScrollTopButton === 'function') {
+    updateScrollTopButton();
+  } else {
+    updateBasketFab();
+  }
 }
 
 function toggleBasketFish(fishId) {

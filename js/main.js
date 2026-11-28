@@ -1210,6 +1210,7 @@ window.fishaoApp = {
   toggleOnlyBackyard: toggleOnlyBackyard,
   toggleOnlyClubUnlocked: typeof toggleOnlyClubUnlocked === 'function' ? toggleOnlyClubUnlocked : function () {},
   toggleOnlyBasket: typeof toggleOnlyBasket === 'function' ? toggleOnlyBasket : function () {},
+  onBasketFabClick: typeof onBasketFabClick === 'function' ? onBasketFabClick : function () {},
   toggleBasketFish: typeof toggleBasketFish === 'function' ? toggleBasketFish : function () {},
   toggleBasketFromModal: typeof toggleBasketFromModal === 'function' ? toggleBasketFromModal : function () {},
   clearFishBasket: typeof clearFishBasket === 'function' ? clearFishBasket : function () {},
@@ -1443,27 +1444,34 @@ function updateScrollTopButton() {
   if (typeof updateTableSnapshotFab === 'function') {
     updateTableSnapshotFab();
   }
-  var btn = document.getElementById('scrollToTopBtn');
-  if (!btn) return;
-
-  var scrollY = window.scrollY || window.pageYOffset || 0;
-  var isModalOpen = document.body && document.body.classList.contains('modal-open');
-  if (scrollY <= 320 || isModalOpen) {
-    btn.style.display = 'none';
-    return;
+  if (typeof updateBasketFab === 'function') {
+    updateBasketFab();
   }
 
+  var scrollBtn = document.getElementById('scrollToTopBtn');
+  var scrollY = window.scrollY || window.pageYOffset || 0;
+  var isModalOpen = !!(document.body && document.body.classList.contains('modal-open'));
+  if (scrollBtn) {
+    scrollBtn.style.display = (scrollY > 320 && !isModalOpen) ? 'inline-flex' : 'none';
+  }
+
+  // Stack all visible bottom-right FABs dynamically without overlap
+  var isMobile = typeof window !== 'undefined' && window.innerWidth <= 640;
   var cookieBanner = document.getElementById('cookieConsentBanner');
   var cookieVisible = !!(cookieBanner && cookieBanner.style.display !== 'none');
-  var importBtn = document.getElementById('marketFloatingImportBtn');
-  var importVisible = !!(importBtn && importBtn.style.display !== 'none');
-  var snapshotBtn = document.getElementById('tableSnapshotFab');
-  var snapshotVisible = !!(snapshotBtn && snapshotBtn.style.display !== 'none');
+  var bottomY = isMobile ? 16 : 24;
+  if (cookieVisible) {
+    bottomY += isMobile ? 94 : 54;
+  }
 
-  btn.classList.toggle('above-cookie', cookieVisible);
-  btn.classList.toggle('above-import-fab', importVisible);
-  btn.classList.toggle('above-snapshot-fab', snapshotVisible);
-  btn.style.display = 'inline-flex';
+  var step = isMobile ? 48 : 54;
+  var fabIds = ['marketFloatingImportBtn', 'tableSnapshotFab', 'basketFab', 'scrollToTopBtn'];
+  for (var i = 0; i < fabIds.length; i++) {
+    var el = document.getElementById(fabIds[i]);
+    if (!el || el.style.display === 'none') continue;
+    el.style.bottom = bottomY + 'px';
+    bottomY += step;
+  }
 }
 
 function scheduleUpdateScrollTopButton() {
