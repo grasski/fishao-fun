@@ -227,11 +227,34 @@ async function _runInitFirebaseSync() {
 
     var hasHandledInitialAuth = false;
     var wasSignedIn = false;
+    var lastAppliedLastUpdated = "";
+    try {
+      var initMetaRaw = safeStorageGet('fishao_price_summary_meta_v2');
+      var initMeta = initMetaRaw ? JSON.parse(initMetaRaw) : null;
+      if (initMeta && typeof initMeta.lastUpdated === "string") {
+        lastAppliedLastUpdated = initMeta.lastUpdated;
+      }
+    } catch (e) { }
     var lastPriceSummarySig = computePriceSummarySig(priceSummary || {}, "");
+
+    var hasSummaryPricesForDate = function (sumObj, isoDate) {
+      if (!sumObj || typeof sumObj !== "object" || !isoDate) return false;
+      var keys = Object.keys(sumObj);
+      for (var i = 0; i < keys.length; i++) {
+        var entry = sumObj[keys[i]];
+        if (entry && entry.td === isoDate && Array.isArray(entry.t) && entry.t.length > 0) {
+          return true;
+        }
+      }
+      return false;
+    };
 
     var applySummarySnapshot = function (nextSummary, lastUpdatedStr) {
       var safeSum = compactSummaryMap((nextSummary && typeof nextSummary === "object") ? nextSummary : {});
       var nextSig = computePriceSummarySig(safeSum, lastUpdatedStr);
+      if (typeof lastUpdatedStr === "string" && lastUpdatedStr) {
+        lastAppliedLastUpdated = lastUpdatedStr;
+      }
 
       if (nextSig && nextSig === lastPriceSummarySig) {
         if (typeof lastUpdatedStr === "string") {
@@ -334,35 +357,101 @@ async function _runInitFirebaseSync() {
         return;
       }
 
-      // Auto-sync mode: check localStorage TTL + tiny sync_status before downloading shards
+      // Auto-sync mode: check localStorage TTL + tiny sync_status before downloading shards,
+      // and re-check on tab visibility/focus or UTC day rollover so long-lived desktop tabs stay fresh.
       var SUMMARY_TTL_MS = 15 * 60 * 1000;
-      var needsFetch = !priceSummary || Object.keys(priceSummary).length === 0;
-      if (!needsFetch) {
-        try {
-          var metaRaw = safeStorageGet('fishao_price_summary_meta_v2');
-          var meta = metaRaw ? JSON.parse(metaRaw) : null;
-          var isFreshTtl = !!(meta && meta.fetchedAt && (Date.now() - meta.fetchedAt) < SUMMARY_TTL_MS);
+      var MISSING_TODAY_TTL_MS = 2 * 60 * 1000;
+      var PERIODIC_CHECK_MS = 5 * 60 * 1000;
+      var autoSyncInFlight = null;
+      var autoSyncActive = true;
 
-          if (!isFreshTtl) {
-            var statusSnap = await firestoreModule.getDoc(syncStatusDocRef);
-            var statusData = statusSnap.exists() ? statusSnap.data() : null;
-            if (!statusData || !meta || !meta.lastUpdated || (statusData.lastSuccessAt && statusData.lastSuccessAt > meta.lastUpdated)) {
-              needsFetch = true;
-            } else {
-              safeStorageSet('fishao_price_summary_meta_v2', JSON.stringify({
-                lastUpdated: meta.lastUpdated || "",
-                fetchedAt: Date.now()
-              }));
+      var checkAutoSyncMarketPrices = function () {
+        if (!autoSyncActive) return Promise.resolve();
+        if (autoSyncInFlight) return autoSyncInFlight;
+
+        autoSyncInFlight = (async function () {
+          try {
+            var metaRaw = safeStorageGet('fishao_price_summary_meta_v2');
+            var meta = metaRaw ? JSON.parse(metaRaw) : null;
+
+            // If another open tab already fetched newer prices into localStorage, hydrate locally (0 reads).
+            if (meta && typeof meta.lastUpdated === "string" && meta.lastUpdated && meta.lastUpdated !== lastAppliedLastUpdated) {
+              var freshLocalRaw = safeStorageGet('fishao_price_summary_v2');
+              if (freshLocalRaw) {
+                var freshLocalParsed = JSON.parse(freshLocalRaw);
+                if (freshLocalParsed && typeof freshLocalParsed === "object" && Object.keys(freshLocalParsed).length > 0) {
+                  applySummarySnapshot(freshLocalParsed, meta.lastUpdated);
+                }
+              }
             }
-          }
-        } catch (e) {
-          needsFetch = true;
-        }
-      }
 
-      if (needsFetch) {
-        await fetchMarketSummaryShards();
-      }
+            var todayISO = (typeof getTodayISO === "function") ? getTodayISO() : new Date().toISOString().slice(0, 10);
+            var isSundayToday = (typeof isMarketClosedToday === "function") ? isMarketClosedToday() : (new Date().getUTCDay() === 0);
+            var isMissingToday = !isSundayToday && !hasSummaryPricesForDate(priceSummary, todayISO);
+            var needsFetch = !priceSummary || Object.keys(priceSummary).length === 0;
+
+            if (!needsFetch) {
+              var fetchedAtMs = (meta && typeof meta.fetchedAt === "number") ? meta.fetchedAt : 0;
+              var fetchedUtcDate = fetchedAtMs ? new Date(fetchedAtMs).toISOString().slice(0, 10) : "";
+              var effectiveTtlMs = isMissingToday ? MISSING_TODAY_TTL_MS : SUMMARY_TTL_MS;
+              var isSameUtcDay = !!(fetchedUtcDate && fetchedUtcDate === todayISO);
+              var isFreshTtl = !!(fetchedAtMs && isSameUtcDay && (Date.now() - fetchedAtMs) < effectiveTtlMs);
+
+              if (!isFreshTtl) {
+                var statusSnap = await firestoreModule.getDoc(syncStatusDocRef);
+                var statusData = statusSnap.exists() ? statusSnap.data() : null;
+                var statusHasNewerTs = !!(statusData && statusData.lastSuccessAt && (!meta || !meta.lastUpdated || statusData.lastSuccessAt > meta.lastUpdated));
+                var statusHasTodayMissingLocally = !!(isMissingToday && statusData && statusData.lastSuccessDate === todayISO);
+
+                if (!statusData || !meta || !meta.lastUpdated || statusHasNewerTs || statusHasTodayMissingLocally) {
+                  needsFetch = true;
+                } else {
+                  safeStorageSet('fishao_price_summary_meta_v2', JSON.stringify({
+                    lastUpdated: meta.lastUpdated || "",
+                    fetchedAt: Date.now()
+                  }));
+                }
+              }
+            }
+
+            if (needsFetch) {
+              await fetchMarketSummaryShards();
+            }
+          } catch (e) {
+            await fetchMarketSummaryShards();
+          } finally {
+            autoSyncInFlight = null;
+          }
+        })();
+
+        return autoSyncInFlight;
+      };
+
+      var onAutoSyncVisibility = function () {
+        if (document.visibilityState === "visible") {
+          checkAutoSyncMarketPrices();
+        }
+      };
+      var onAutoSyncFocus = function () {
+        checkAutoSyncMarketPrices();
+      };
+      var autoSyncIntervalId = setInterval(function () {
+        if (document.visibilityState === "visible") {
+          checkAutoSyncMarketPrices();
+        }
+      }, PERIODIC_CHECK_MS);
+
+      document.addEventListener("visibilitychange", onAutoSyncVisibility);
+      window.addEventListener("focus", onAutoSyncFocus);
+
+      marketPricesUnsubscribe = function () {
+        autoSyncActive = false;
+        clearInterval(autoSyncIntervalId);
+        document.removeEventListener("visibilitychange", onAutoSyncVisibility);
+        window.removeEventListener("focus", onAutoSyncFocus);
+      };
+
+      await checkAutoSyncMarketPrices();
     };
 
     authModule.onAuthStateChanged(auth, function (user) {
