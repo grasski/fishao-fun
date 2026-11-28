@@ -442,7 +442,7 @@
         var script = document.createElement('script');
         script.src = bundledUrl
           ? ((bundledUrl.charAt(0) === '/' || /^https?:\/\//i.test(bundledUrl)) ? bundledUrl : ('/' + bundledUrl))
-          : ('/data/i18n/ui_' + code + '.js?v=8.1');
+          : ('/data/i18n/ui_' + code + '.js?v=8.2');
         script.async = true;
         script.onload = function () {
           ui[code] = window[globalName] || {};

@@ -437,6 +437,7 @@ function switchView(view, skipSync) {
       if (playersContent) playersContent.style.display = "block";
       if (typeof loadAllPlayers === 'function') loadAllPlayers();
     }
+    updateScrollTopButton();
     return;
   } else {
     if (secPlayers) secPlayers.style.display = "none";
@@ -460,6 +461,7 @@ function switchView(view, skipSync) {
       renderClubSpecialFishes();
       updateCaughtStats();
     }
+    updateScrollTopButton();
     return;
   } else {
     if (secManage) secManage.style.display = "none";
@@ -473,6 +475,7 @@ function switchView(view, skipSync) {
     if (typeof resetLocationsFilters === 'function') resetLocationsFilters(true);
     if (typeof preloadLocationImages === 'function') preloadLocationImages();
     updateCaughtStats();
+    updateScrollTopButton();
     return;
   } else {
     if (secLocations) secLocations.style.display = "none";
@@ -485,6 +488,7 @@ function switchView(view, skipSync) {
     if (filterCard) filterCard.style.display = "none";
     if (typeof resetCalendarFilters === 'function') resetCalendarFilters(true);
     updateCaughtStats();
+    updateScrollTopButton();
     return;
   } else {
     if (secCalendar) secCalendar.style.display = "none";
@@ -935,6 +939,7 @@ function closeAllModals() {
   }
   if (typeof closeGuideShopItemModal === 'function') closeGuideShopItemModal();
   if (typeof closeGuideSnapshotModal === 'function') closeGuideSnapshotModal();
+  if (typeof closeTableSnapshotModal === 'function') closeTableSnapshotModal();
   resolveConfirmModal(false);
 }
 
@@ -952,6 +957,7 @@ function closeModalById(id) {
   else if (id === 'remindersAlertModalOverlay' && typeof closeRemindersAlertModal === 'function') closeRemindersAlertModal(false);
   else if (id === 'shopItemModalOverlay' && typeof closeGuideShopItemModal === 'function') closeGuideShopItemModal();
   else if (id === 'guideSnapshotModalOverlay' && typeof closeGuideSnapshotModal === 'function') closeGuideSnapshotModal();
+  else if (id === 'tableSnapshotModalOverlay' && typeof closeTableSnapshotModal === 'function') closeTableSnapshotModal();
   else if (id === 'confirmModalOverlay') resolveConfirmModal(false);
 }
 
@@ -1057,6 +1063,7 @@ function onModalOverlayClick(e, id) {
         try { toRestore.focus({ preventScroll: true }); } catch (e) { }
       }
     }
+    if (typeof updateScrollTopButton === 'function') updateScrollTopButton();
   }
 
   document.addEventListener('keydown', function (e) {
@@ -1341,6 +1348,19 @@ window.fishaoApp = {
   closeGuideSnapshotModal: typeof closeGuideSnapshotModal === 'function' ? closeGuideSnapshotModal : function () {},
   downloadGuideSnapshotPng: typeof downloadGuideSnapshotPng === 'function' ? downloadGuideSnapshotPng : function () {},
   copyGuideSnapshotToClipboard: typeof copyGuideSnapshotToClipboard === 'function' ? copyGuideSnapshotToClipboard : function () {},
+  openTableSnapshotModal: typeof openTableSnapshotModal === 'function' ? openTableSnapshotModal : function () {},
+  closeTableSnapshotModal: typeof closeTableSnapshotModal === 'function' ? closeTableSnapshotModal : function () {},
+  selectTableSnapshotLang: typeof selectTableSnapshotLang === 'function' ? selectTableSnapshotLang : function () {},
+  toggleTableSnapshotHighlight: typeof toggleTableSnapshotHighlight === 'function' ? toggleTableSnapshotHighlight : function () {},
+  clearTableSnapshotHighlight: typeof clearTableSnapshotHighlight === 'function' ? clearTableSnapshotHighlight : function () {},
+  onTableSnapshotFishSearch: typeof onTableSnapshotFishSearch === 'function' ? onTableSnapshotFishSearch : function () {},
+  selectTableSnapshotFishFromSearch: typeof selectTableSnapshotFishFromSearch === 'function' ? selectTableSnapshotFishFromSearch : function () {},
+  setTableSnapshotScope: typeof setTableSnapshotScope === 'function' ? setTableSnapshotScope : function () {},
+  shiftTableSnapshotWindow: typeof shiftTableSnapshotWindow === 'function' ? shiftTableSnapshotWindow : function () {},
+  toggleTableSnapshotTz: typeof toggleTableSnapshotTz === 'function' ? toggleTableSnapshotTz : function () {},
+  toggleTableSnapshotCaught: typeof toggleTableSnapshotCaught === 'function' ? toggleTableSnapshotCaught : function () {},
+  downloadTableSnapshotPng: typeof downloadTableSnapshotPng === 'function' ? downloadTableSnapshotPng : function () {},
+  copyTableSnapshotToClipboard: typeof copyTableSnapshotToClipboard === 'function' ? copyTableSnapshotToClipboard : function () {},
   setModalBaitAdvisorTimeMode: setModalBaitAdvisorTimeMode,
   toggleOtherBaitsVisibility: toggleOtherBaitsVisibility,
   toggleModalBaitAdvisorInfo: toggleModalBaitAdvisorInfo,
@@ -1406,6 +1426,9 @@ function scrollToTop() {
 }
 
 function updateScrollTopButton() {
+  if (typeof updateTableSnapshotFab === 'function') {
+    updateTableSnapshotFab();
+  }
   var btn = document.getElementById('scrollToTopBtn');
   if (!btn) return;
 
@@ -1420,9 +1443,12 @@ function updateScrollTopButton() {
   var cookieVisible = !!(cookieBanner && cookieBanner.style.display !== 'none');
   var importBtn = document.getElementById('marketFloatingImportBtn');
   var importVisible = !!(importBtn && importBtn.style.display !== 'none');
+  var snapshotBtn = document.getElementById('tableSnapshotFab');
+  var snapshotVisible = !!(snapshotBtn && snapshotBtn.style.display !== 'none');
 
   btn.classList.toggle('above-cookie', cookieVisible);
   btn.classList.toggle('above-import-fab', importVisible);
+  btn.classList.toggle('above-snapshot-fab', snapshotVisible);
   btn.style.display = 'inline-flex';
 }
 

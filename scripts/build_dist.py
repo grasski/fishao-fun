@@ -61,6 +61,7 @@ JS_FILES = [
     "js/state.js",
     "js/firestore-tx.js",
     "js/table.js",
+    "js/table-snapshot.js",
     "js/clubs.js",
     "js/market.js",
     "js/filters.js",

@@ -930,6 +930,7 @@ function renderTableBody(data) {
     tbody.innerHTML = '<tr><td colspan="' + colCount + '" class="empty-state">' + t('table_empty_state') + '</td></tr>';
     sentinel.style.display = 'none';
     document.getElementById("counter").innerText = t('counter_showing', { shown: 0, total: total });
+    if (typeof updateScrollTopButton === 'function') updateScrollTopButton();
     return;
   }
 
@@ -973,6 +974,7 @@ function renderTableBody(data) {
 
   _tableScrollState.offset = firstEnd;
   _tableScrollState.ctx = ctx;
+  if (typeof updateScrollTopButton === 'function') updateScrollTopButton();
 
   if (firstEnd >= data.length) {
     sentinel.style.display = 'none';

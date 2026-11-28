@@ -56,6 +56,9 @@ function scheduleViewRefresh(opts) {
     if (flags.modal && selectedModalFishId && typeof renderModalHistory === "function") {
       renderModalHistory(selectedModalFishId);
     }
+    if ((flags.filters || flags.marketTab || flags.modal) && typeof refreshOpenTableSnapshot === "function") {
+      refreshOpenTableSnapshot();
+    }
   });
 }
 
@@ -670,6 +673,7 @@ function checkCookieConsentBanner() {
   } else {
     banner.style.display = "none";
   }
+  if (typeof updateScrollTopButton === "function") updateScrollTopButton();
 }
 
 function acceptCookieConsent(fromPrivacyModal) {
